@@ -1,0 +1,360 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scienziati in 6 mosse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* colori del quaderno: azzurro come la scheda del libro */
+:root{--mb:#1BA7E1;--mb-d:#0B6E99;--mb-soft:#E3F4FC}
+.moves{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.mv{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:14px;border-radius:18px;border:2px solid var(--mb);background:var(--surface)}
+.mv .n{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;border:2.5px solid var(--mb);color:var(--mb-d);font:700 24px/1 var(--font-display);background:var(--mb-soft)}
+.mv h3{color:var(--mb-d);font-size:26px}
+.mv .gq{margin:4px 0 0;font-weight:700}
+.mv .gd{margin:4px 0 0;color:var(--muted)}
+.mv .gg{margin:8px 0 0;font-size:15px;background:var(--warn-soft);border-radius:10px;padding:6px 10px}
+.mv .ic{font-size:22px}
+/* ordina le mosse */
+.oline{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:8px;counter-reset:o}
+.oline li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid var(--good);background:var(--good-soft);counter-increment:o}
+.oline li::before{content:counter(o);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--good);color:#fff;font:700 20px var(--font-display)}
+.oline li b{font:400 24px/1.1 var(--font-hand)}
+.opool{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.ocard{appearance:none;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;border:2px solid var(--mb);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:70px}
+.ocard .emo{font-size:32px}.ocard b{font:400 24px/1.1 var(--font-hand)}
+.ocard.wrong{border-color:var(--bad);background:var(--bad-soft)}
+/* scheda come nel libro */
+.mys{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.my{appearance:none;display:grid;gap:4px;text-align:left;padding:14px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.my .emo{font-size:34px}.my b{font:400 26px/1.05 var(--font-hand)}.my span{color:var(--muted);font-size:15px}
+.my[aria-pressed="true"]{border-color:var(--mb);background:var(--mb-soft);box-shadow:0 0 0 3px var(--mb)}
+.sheet{margin-top:16px;border-radius:18px;background:var(--mb-soft);border:2px solid var(--mb);padding:14px;position:relative}
+.sheet .head{display:flex;flex-wrap:wrap;gap:6px 18px;font-weight:700;padding:6px 4px 12px;border-bottom:2px dotted var(--mb)}
+.sheet .head span b{font-weight:400;font-family:var(--font-hand);font-size:22px;color:var(--mb-d)}
+.sheet .ribbon{display:inline-block;margin:12px 0 10px;padding:6px 18px;background:var(--mb);color:#fff;font:400 26px/1 var(--font-hand);border-radius:6px 18px 0 0}
+.boxes{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.box{background:#fff;color:#1D3640;border-radius:12px;padding:12px;display:grid;gap:8px;border:2px solid transparent}
+.box.done{border-color:var(--good)}
+.box .bh{display:flex;align-items:center;gap:8px}
+.box .bn{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--mb);border-radius:6px;color:var(--mb-d);font:700 18px/1 var(--font-display)}
+.box .bt{font:400 24px/1 var(--font-hand);color:var(--mb-d)}
+.box .bi{margin-left:auto;font-size:24px}
+.box .bq{margin:0;font-weight:700}
+.box textarea{width:100%;min-height:96px;resize:vertical;border-radius:10px;border:2px solid #BFDFF0;padding:8px 10px;font:400 22px/1.3 var(--font-hand);color:#1D3640;background:repeating-linear-gradient(#fff 0 30px,#D9EEF8 30px 31px)}
+.box textarea:focus{outline:3px solid var(--mb);outline-offset:1px}
+.starters{display:flex;flex-wrap:wrap;gap:6px}
+.starters button{appearance:none;border:1.5px solid var(--mb);background:var(--mb-soft);color:var(--mb-d);border-radius:99px;padding:6px 12px;font:700 14px/1.1 var(--font-body);cursor:pointer;min-height:36px}
+.hintb{appearance:none;justify-self:start;border:0;background:none;color:var(--mb-d);font:700 14px var(--font-body);text-decoration:underline;cursor:pointer;padding:4px 0}
+.hintt{margin:0;font-size:15px;background:var(--warn-soft);border-radius:10px;padding:8px 10px}
+.ttl{display:grid;gap:4px;margin:12px 0 0;font-weight:700}.ttl input{min-height:46px;border-radius:10px;border:2px solid #BFDFF0;padding:6px 12px;font:400 24px/1.2 var(--font-hand);color:#1D3640;background:#fff}
+.prog{display:flex;gap:6px;align-items:center;margin:10px 0 0;font-weight:700}
+.prog i{width:26px;height:10px;border-radius:99px;background:#BFDFF0}.prog i.on{background:var(--good)}
+.arch{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.arch li{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:12px;background:var(--surface2);font-weight:700}
+</style>
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <path d="M70 30h24M74 30v34l-24 48a10 10 0 0 0 9 14h46a10 10 0 0 0 9-14L90 64V30" fill="none" stroke="#1BA7E1" stroke-width="6" stroke-linejoin="round" opacity=".8"/>
+    <path d="M58 100h52" stroke="#1BA7E1" stroke-width="6" opacity=".5"/>
+    <circle cx="150" cy="56" r="26" fill="none" stroke="#0B6E99" stroke-width="6" opacity=".7"/><path d="M168 74l20 20" stroke="#0B6E99" stroke-width="8" stroke-linecap="round" opacity=".7"/>
+    <text x="140" y="140" font-family="sans-serif" font-size="40" font-weight="700" fill="#F2B705" opacity=".8">?</text>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Scienze · Classe terza</p>
+        <h1>Scienziati in 6 mosse</h1>
+        <p class="lead">Impara le 6 mosse dello scienziato.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Scienziato: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#mosse">Le 6 mosse</a>
+    <a href="#ordina">In fila!</a>
+    <a href="#indagini">Indagini</a>
+    <a href="#scheda">La mia scheda</a>
+    <a href="#valuta">Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE (solo maestra) -->
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Il metodo scientifico</p>
+    <h2>Scienziati in 6 mosse</h2>
+    <dl class="facts">
+      <div><dt>Metodologia attiva</dt><dd>Inquiry-Based Learning (si impara indagando) con Gamification e Cooperative Learning: squadre di 4 con i ruoli di osservatore, segretario, sperimentatore e portavoce, che ruotano a ogni esperimento.</dd></div>
+      <div><dt>Durata</dt><dd>3 minuti di aggancio, 5 micro-step e 3 minuti di chiusura (circa 60 minuti). Si può dividere in due lezioni: le prime tre mosse il primo giorno, le ultime tre il secondo.</dd></div>
+      <div><dt>Obiettivi</dt><dd>Conoscere le fasi del metodo scientifico e metterle in ordine; distinguere una domanda che si può verificare con un esperimento da un'opinione; formulare un'ipotesi; progettare e svolgere un semplice esperimento; registrare i dati e trarre una conclusione.</dd></div>
+      <div><dt>Libro di testo</dt><dd>Pagina 97, «Il mio metodo scientifico»: la scheda dell'app ha le stesse sei caselle e le stesse domande del libro (il fenomeno, le domande, l'ipotesi, l'esperimento, l'analisi, la conclusione).</dd></div>
+      <div><dt>Materiali</dt><dd>Due mandarini (uno sbucciato), una bacinella d'acqua, oggetti piccoli di materiali diversi (tappo, chiave, gomma, matita, moneta, foglia, pallina di pongo), cubetti di ghiaccio, piattini, un righello, cartellini Sì/No per le squadre.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Matematica (tabelle, misure, conteggi), Tecnologia (strumenti di misura), Arte (disegnare l'esperimento), Scienze motorie (le mosse con il corpo e la staffetta).</dd></div>
+      <div><dt>Nell'app</dt><dd>Le 6 mosse da leggere e ascoltare, il gioco «In fila!», due indagini a carte, la scheda da scienziato vuota, da compilare durante gli esperimenti in classe (con inizi di frase e la spiegazione di ogni mossa) e l'autovalutazione. Le stelle fanno crescere l'avatar in Scienze. Nei Risultati trovi le schede scritte dai bambini.</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>Il mistero dei due mandarini</h3>
+    <p>Sulla cattedra una bacinella d'acqua e due mandarini uguali, ma uno è sbucciato. «Secondo voi che cosa succede se li metto nell'acqua?» Ogni squadra scrive la sua previsione su un foglietto. Poi la maestra li immerge: quello con la buccia galleggia, quello sbucciato va a fondo! «Perché? Oggi diventiamo scienziati e lo scopriamo in sei mosse.» (La buccia è piena di piccole bolle d'aria che lo tengono a galla.)</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Le 6 mosse con il corpo</h3><p>Ogni fase ha un gesto. <b>Fenomeno</b>: binocolo con le mani. <b>Domande</b>: un grande punto interrogativo disegnato con il braccio. <b>Ipotesi</b>: dito sulla tempia e «ding!» della lampadina. <b>Esperimento</b>: si mescola una pozione. <b>Analisi</b>: si scrive nell'aria. <b>Conclusione</b>: braccia in alto. La maestra chiama le mosse, prima in ordine e poi a sorpresa. Poi a coppie si gioca a «In fila!» nell'app.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>Leggiamo le mosse</h3><p>Alla LIM si apre «Le 6 mosse»: i bambini ascoltano la spiegazione con il pulsante 🔊 e la collegano a pagina 97 del libro. Poi indagine «Che mossa è?» tutti insieme: per ogni frase la classe fa il gesto della mossa giusta prima di toccare la risposta.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>15</b><small>min</small></div><div><span class="chip">Laboratorio</span><h3>Galleggia o affonda?</h3><p>A squadre, con la bacinella e gli oggetti. Nell'app ogni squadra apre «La mia scheda» (è vuota), scrive il titolo «Galleggia o affonda?» e le prime tre caselle: fenomeno, domande, ipotesi (per ogni oggetto: secondo noi galleggia o affonda?). Poi si fa l'esperimento e lo sperimentatore immerge gli oggetti uno alla volta.</p><div class="row"><button class="btn ghost" type="button" data-timer="15">Timer <span>15 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>Analisi e conclusione</h3><p>Alla lavagna una tabella con due colonne: galleggia / affonda. Ogni portavoce porta i risultati della sua squadra. Le squadre completano le caselle 4, 5 e 6: le ipotesi erano giuste? Che cosa hanno in comune gli oggetti che galleggiano?</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Domanda da scienziato?</h3><p>Indagine «Domanda da scienziato?» a squadre: prima di toccare la risposta, ogni squadra alza il cartellino Sì (si può verificare con un esperimento) o No (è un gusto, un'opinione). Ogni risposta giusta vale un timbro.</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+    </ol>
+    <p><b>Chiusura (3 minuti).</b> Si torna ai due mandarini: ora sapete spiegare il mistero con le sei mosse? Poi la scheda «Come è andata?».</p>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, badge e imprevisti</h3>
+      <ul class="tight">
+        <li><b>In fila!:</b> 2 stelle la prima volta che si mettono in ordine le sei mosse.</li>
+        <li><b>Indagini:</b> fino a 3 stelle ciascuna, migliorando il proprio record.</li>
+        <li><b>La mia scheda:</b> una stella per ogni casella scritta e 3 stelle quando la scheda è completa.</li>
+        <li><b>Autovalutazione:</b> 2 stelle.</li>
+        <li><b>Badge:</b> Mosse in fila, Riconosci-mosse, Domande da scienziato, Prima scheda, Scienziato instancabile, Scienziato riflessivo.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti a indagare?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>Il metodo in palestra</h3>
+      <ul class="tight">
+        <li><b>Staffetta delle 6 mosse:</b> sei cerchi a terra in fila, uno per mossa. Il corridore salta in ogni cerchio facendo il gesto della mossa e dicendone il nome.</li>
+        <li><b>Galleggia o affonda col corpo:</b> la maestra nomina un oggetto; chi pensa che galleggi resta in punta di piedi con le braccia aperte, chi pensa che affondi si accovaccia.</li>
+        <li><b>Scienziati statue:</b> sulla musica si cammina; allo stop la maestra dice una mossa e tutti si bloccano nel suo gesto.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Attenzione a tutti</p><h3>Per sostenere chi ha bisogno</h3>
+      <ul class="tight">
+        <li>Ogni istruzione ha il pulsante 🔊 e la maestra-guida in basso legge la sezione aperta.</li>
+        <li>Nella scheda ci sono inizi di frase da toccare e, per ogni casella, la spiegazione «Che cosa scrivo qui?» da leggere o ascoltare.</li>
+        <li>Le sei mosse hanno sempre lo stesso numero, la stessa icona e lo stesso gesto.</li>
+        <li>Si può scrivere poco: bastano poche parole per completare una casella.</li>
+      </ul></div>
+  </div>
+  <div class="row"><a class="btn" href="#mosse">Apri le 6 mosse</a><a class="btn ghost" href="#valuta">Scheda di autovalutazione</a></div>
+</section>
+
+<!-- LE 6 MOSSE -->
+<section class="view" id="sec-mosse" hidden>
+  <div class="panel">
+    <p class="eyebrow">Il metodo scientifico</p>
+    <h2>Le 6 mosse dello scienziato</h2>
+    <p class="lead">Leggi e ascolta le 6 mosse.</p>
+    <div class="moves" id="moves"></div>
+  </div>
+</section>
+
+<!-- IN FILA -->
+<section class="view" id="sec-ordina" hidden>
+  <div class="panel">
+    <p class="eyebrow">Gioco</p>
+    <h2>In fila!</h2>
+    <p class="lead">Tocca le mosse in ordine, dalla prima all'ultima.</p>
+    <div id="order"></div>
+  </div>
+</section>
+
+<!-- INDAGINI -->
+<section class="view" id="sec-indagini" hidden>
+  <div class="panel">
+    <p class="eyebrow">Le indagini</p>
+    <h2>Metti ogni carta nel gruppo giusto</h2>
+    <div id="sort"></div>
+  </div>
+</section>
+
+<!-- SCHEDA -->
+<section class="view" id="sec-scheda" hidden>
+  <div class="panel">
+    <p class="eyebrow">Il mio metodo scientifico</p>
+    <h2>La mia scheda da scienziato</h2>
+    <p class="lead">Compila la scheda quando fate un esperimento in classe. Scrivi una casella alla volta.</p>
+    <div id="sch"></div>
+  </div>
+</section>
+
+<!-- VALUTAZIONE -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andata la mia indagine?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Scienze.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,$=L.$,$$=L.$$,esc=L.esc,CQ=window.Cuccioli;
+const PH=[
+  {k:"fen",n:"Il fenomeno",i:"👀",q:"Quale fenomeno vuoi osservare?",d:"Osservo con attenzione qualcosa che succede intorno a me, usando i cinque sensi.",g:"Gesto: fai il binocolo con le mani.",st:["Ho osservato che ","Mi sono accorto che ","Il fenomeno è "]},
+  {k:"dom",n:"Le domande",i:"❓",q:"Quali sono le domande che ti poni?",d:"Mi faccio delle domande su quello che ho osservato: perché succede? Come? Che cosa succede se…?",g:"Gesto: disegna un grande punto interrogativo con il braccio.",st:["Perché ","Che cosa succede se ","Come mai "]},
+  {k:"ipo",n:"L'ipotesi",i:"💡",q:"Quali ipotesi puoi formulare?",d:"Provo a dare una risposta possibile alla domanda. È un'idea da controllare: può essere giusta o sbagliata.",g:"Gesto: dito sulla tempia e «ding!», si accende la lampadina.",st:["Secondo me ","Penso che ","Forse "]},
+  {k:"esp",n:"L'esperimento",i:"🧪",q:"Quale esperimento puoi fare?",d:"Preparo una prova per controllare se l'ipotesi è giusta: scrivo che cosa uso e che cosa faccio, passo dopo passo.",g:"Gesto: mescola una pozione nel pentolone.",st:["Mi serve ","Prima ","Poi ","Infine "]},
+  {k:"ana",n:"L'analisi",i:"📊",q:"Quali dati puoi analizzare e registrare?",d:"Guardo i risultati e li registro: conto, misuro, disegno o scrivo in una tabella.",g:"Gesto: scrivi nell'aria con il dito.",st:["Ho visto che ","Ho misurato ","Ho contato "]},
+  {k:"con",n:"La conclusione",i:"🏁",q:"Qual è la conclusione del tuo esperimento?",d:"Confronto i risultati con l'ipotesi: era giusta o sbagliata? Che cosa ho scoperto?",g:"Gesto: braccia in alto, come un campione!",st:["La mia ipotesi era giusta perché ","La mia ipotesi era sbagliata perché ","Ho scoperto che "]}
+];
+const MOVES={fen:{t:"Il fenomeno",i:"👀",c:"#1BA7E1"},dom:{t:"Le domande",i:"❓",c:"#7A4FC4"},ipo:{t:"L'ipotesi",i:"💡",c:"#E0A400"},esp:{t:"L'esperimento",i:"🧪",c:"#2E8B57"},ana:{t:"L'analisi",i:"📊",c:"#D2325F"},con:{t:"La conclusione",i:"🏁",c:"#0B6E99"}};
+const BIN=k=>({k,t:MOVES[k].t,i:MOVES[k].i,c:MOVES[k].c});
+const SI={k:"si",t:"Sì, da scienziato",d:"si può controllare con un esperimento",i:"🔬",c:"#2E8B57"},NO={k:"no",t:"No, è un'opinione",d:"dipende dai gusti di ognuno",i:"💭",c:"#B03030"};
+const SETS={
+  mossa:{t:"Che mossa è?",d:"Riconosci le 6 mosse dello scienziato",ask:"In quale mossa del metodo scientifico siamo?",emo:"🔎",c:"#E3F4FC",n:8,
+    move:"Fai il gesto della mossa prima di rispondere: binocolo, punto interrogativo, lampadina, pozione, scrivere nell'aria, braccia in alto!",bins:["fen","dom","ipo","esp","ana","con"].map(BIN),items:[
+    {t:"Ho notato che il pane lasciato fuori diventa duro.",i:"🍞",a:"fen",w:"Sto osservando qualcosa che succede: è il fenomeno."},
+    {t:"Vedo che le pozzanghere spariscono quando c'è il sole.",i:"☀️",a:"fen",w:"È un'osservazione di qualcosa che accade: il fenomeno."},
+    {t:"Perché il ghiaccio si scioglie?",i:"🧊",a:"dom",w:"È una domanda sul fenomeno."},
+    {t:"Che cosa succede se metto una pianta al buio?",i:"🌱",a:"dom",w:"Mi faccio una domanda: è la seconda mossa."},
+    {t:"Secondo me gli oggetti di legno galleggiano.",i:"🪵",a:"ipo",w:"È una possibile risposta da controllare: un'ipotesi."},
+    {t:"Penso che il sale si sciolga prima nell'acqua calda.",i:"🧂",a:"ipo",w:"«Penso che…» è un'ipotesi: un'idea da verificare."},
+    {t:"Metto due piantine: una alla luce e una al buio.",i:"🪴",a:"esp",w:"Preparo una prova per controllare: è l'esperimento."},
+    {t:"Riempio due bicchieri: uno con acqua calda e uno con acqua fredda.",i:"🥛",a:"esp",w:"Sto facendo una prova: è l'esperimento."},
+    {t:"Ogni giorno misuro la piantina con il righello.",i:"📏",a:"ana",w:"Raccolgo e registro i dati: è l'analisi."},
+    {t:"Scrivo in una tabella quali oggetti galleggiano.",i:"📋",a:"ana",w:"Registrare i risultati in una tabella è l'analisi."},
+    {t:"La mia ipotesi era giusta: il legno galleggia.",i:"✅",a:"con",w:"Confronto i risultati con l'ipotesi: è la conclusione."},
+    {t:"Ho scoperto che le piante hanno bisogno di luce.",i:"🏁",a:"con",w:"Dico che cosa ho scoperto: è la conclusione."}]},
+  domanda:{t:"Domanda da scienziato?",d:"Si può verificare con un esperimento?",ask:"Questa domanda si può controllare con un esperimento?",emo:"🔬",c:"#E8F5EC",n:8,
+    move:"Sì: alzati in punta di piedi come un razzo. No: siediti a gambe incrociate e pensa.",bins:[SI,NO],items:[
+    {t:"Il sale si scioglie più in fretta nell'acqua calda?",i:"🧂",a:"si",w:"Posso fare la prova con due bicchieri e vedere."},
+    {t:"Una calamita attira le monete?",i:"🧲",a:"si",w:"Basta avvicinare la calamita alle monete e osservare."},
+    {t:"Il ghiaccio si scioglie prima al sole o all'ombra?",i:"🧊",a:"si",w:"Con due cubetti e un orologio posso controllare."},
+    {t:"Una pianta cresce senza acqua?",i:"🌱",a:"si",w:"Posso osservare due piantine, una con l'acqua e una senza."},
+    {t:"Una candela si spegne sotto un bicchiere?",i:"🕯️",a:"si",w:"È un esperimento classico: si fa con un adulto e si osserva."},
+    {t:"Il tappo di sughero galleggia?",i:"🍾",a:"si",w:"Lo metto nell'acqua e lo vedo subito."},
+    {t:"Qual è il colore più bello?",i:"🎨",a:"no",w:"Dipende dai gusti: ognuno ha il suo colore preferito."},
+    {t:"Il gelato al cioccolato è il più buono?",i:"🍦",a:"no",w:"È un gusto personale, non si controlla con un esperimento."},
+    {t:"Quale cartone animato è il più divertente?",i:"📺",a:"no",w:"È un'opinione: ognuno la pensa in modo diverso."},
+    {t:"Quale stagione è la più bella?",i:"🍂",a:"no",w:"Dipende da chi risponde: è un'opinione."},
+    {t:"Il cane è l'animale più simpatico?",i:"🐶",a:"no",w:"Simpatico per chi? È un'opinione, non un fatto da misurare."},
+    {t:"È più bello giocare al parco o in cortile?",i:"🛝",a:"no",w:"È una preferenza personale."}]}
+};
+
+/* ---------- le 6 mosse ---------- */
+function renderMoves(){
+  $("#moves").innerHTML=PH.map((p,i)=>`<div class="mv"><span class="n">${i+1}</span><div><h3><span class="ic" aria-hidden="true">${p.i}</span> ${esc(p.n)}</h3><p class="gq">${esc(p.q)}</p><p class="gd lead">${esc(p.d)}</p><p class="gg">${esc(p.g)}</p></div></div>`).join("");
+}
+
+/* ---------- in fila ---------- */
+let OR=null;
+function renderOrder(){
+  if(!OR)OR={done:[],pool:L.shuffle(PH.map((x,i)=>i)),err:0};
+  const fin=OR.done.length===PH.length;
+  $("#order").innerHTML=(OR.done.length?`<ol class="oline">${OR.done.map(i=>`<li><div><b>${PH[i].i} ${esc(PH[i].n)}</b><p>${esc(PH[i].q)}</p></div></li>`).join("")}</ol>`:"")+
+    (fin?L.fb("good","Le sei mosse sono in fila!",[OR.err?"Errori: "+OR.err+". Riprova per farlo senza errori!":"Nessun errore: sei un vero scienziato!"])+
+      `<div class="move"><b>Ora fai le mosse con il corpo</b><span>Binocolo, punto interrogativo, lampadina, pozione, scrivere nell'aria, braccia in alto: tutte e sei di fila, sempre più veloce!</span></div><div class="row"><button class="btn" type="button" id="or-again">Rimescola</button></div>`
+     :`<p><b>Mossa ${OR.done.length+1}:</b> quale viene adesso?</p><div class="opool">${OR.pool.filter(i=>OR.done.indexOf(i)<0).map(i=>`<button class="ocard" type="button" data-o="${i}"><span class="emo" aria-hidden="true">${PH[i].i}</span><span><b>${esc(PH[i].n)}</b></span></button>`).join("")}</div><div id="ofb"></div>`);
+  if(fin){$("#or-again").addEventListener("click",()=>{OR=null;renderOrder()});return}
+  $$("[data-o]").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.o;
+    if(i===OR.done.length){OR.done.push(i);L.ding();
+      if(OR.done.length===PH.length){const S=L.state();if(!S.extra.fila){S.extra.fila=1;S.extra.ferr=OR.err;L.save();L.add(2);L.toast("Mosse in fila: due stelle!")}else L.checkBadges();L.fanfare()}
+      renderOrder();
+    }else{OR.err++;L.buzz();b.classList.add("wrong");const S=L.state();S.err["In fila!"]=(S.err["In fila!"]||0)+1;L.save();
+      $("#ofb").innerHTML=L.fb("bad","Non ancora!",[OR.done.length===0?"Prima di tutto lo scienziato osserva con attenzione.":"Dopo «"+PH[OR.done.length-1].n+"» che cosa fa lo scienziato?"])}
+  }));
+}
+
+/* ---------- la mia scheda ---------- */
+const MINC=8;
+const filled=v=>String(v||"").trim().length>=MINC;
+function sch(){const S=L.state();if(!S.extra.sch)S.extra.sch={title:"",f:{},got:{}};return S.extra.sch}
+function renderSheet(){
+  const S=L.state(),c=sch(),pid=CQ.who(),p=pid&&CQ.pupils[pid],arch=S.extra.arch||[],n=PH.filter(x=>filled(c.f[x.k])).length;
+  let h=`<div class="sheet"><div class="head"><span>Nome: <b>${esc(p?p.n:"")}</b></span><span>Data: <b>${new Date().toLocaleDateString("it-IT")}</b></span><span>Classe: <b>3ª</b></span></div>
+      <label class="ttl"><span>Il nostro esperimento:</span><input type="text" id="sch-t" maxlength="80" placeholder="Scrivi il titolo, per esempio quello che fate oggi in classe" value="${esc(c.title||"")}"></label>
+      <span class="ribbon">Il metodo scientifico</span>
+      <div class="boxes">${PH.map((x,i)=>`<div class="box${filled(c.f[x.k])?" done":""}" data-b="${x.k}"><div class="bh"><span class="bn">${i+1}</span><span class="bt">${esc(x.n)}</span><span class="bi" aria-hidden="true">${filled(c.f[x.k])?"✅":x.i}</span></div>
+        <p class="bq qtext">${esc(x.q)}</p>
+        <textarea data-f="${x.k}" aria-label="${esc(x.n)}" maxlength="600">${esc(c.f[x.k]||"")}</textarea>
+        <div class="starters" aria-label="Inizi di frase">${x.st.map(s=>`<button type="button" data-st="${x.k}" data-v="${esc(s)}">${esc(s.trim())}…</button>`).join("")}</div>
+        <button class="hintb" type="button" data-h="${x.k}">💡 Che cosa scrivo qui?</button><p class="hintt" data-ht="${x.k}" hidden>${esc(x.d)}</p></div>`).join("")}</div>
+      <div class="prog" aria-label="Caselle completate">${PH.map(x=>`<i class="${filled(c.f[x.k])?"on":""}"></i>`).join("")}<span>${n} caselle su 6</span></div></div>
+      <div class="row" style="margin-top:12px"><button class="btn" type="button" id="sch-dl"${n?"":" disabled"}>Scarica la mia scheda</button><button class="btn ghost" type="button" id="sch-new"${n||c.title?"":" disabled"}>${n===6?"Nuova scheda per un altro esperimento":"Ricomincia con una scheda vuota"}</button></div>
+      <div id="sch-conf"></div><p class="note" id="sch-msg" style="text-align:left"></p>`;
+  if(arch.length)h+=`<p class="eyebrow" style="margin-top:18px">Le mie schede completate</p><ul class="arch">${arch.slice().reverse().map(a=>`<li><span>🧪 ${esc(a.title||"Esperimento")}</span><span>${new Date(a.t).toLocaleDateString("it-IT")}</span></li>`).join("")}</ul>`;
+  $("#sch").innerHTML=h;
+  $("#sch-t").addEventListener("input",e=>{sch().title=e.target.value;L.save();const nb=$("#sch-new");if(nb)nb.disabled=false});
+  $$("[data-f]").forEach(t=>{t.addEventListener("input",()=>{const c=sch();c.f[t.dataset.f]=t.value;L.save();tick(t.dataset.f)});t.addEventListener("blur",()=>tick(t.dataset.f,true))});
+  $$("[data-st]").forEach(b=>b.addEventListener("click",()=>{const t=$(`[data-f="${b.dataset.st}"]`);t.value=(t.value&&!/\s$/.test(t.value)?t.value+" ":t.value)+b.dataset.v;t.focus();t.setSelectionRange(t.value.length,t.value.length);sch().f[b.dataset.st]=t.value;L.save()}));
+  $$("[data-h]").forEach(b=>b.addEventListener("click",()=>{const p=$(`[data-ht="${b.dataset.h}"]`);p.hidden=!p.hidden;if(!p.hidden)CQ.addSayButtons(p.parentNode)}));
+  $("#sch-dl").addEventListener("click",download);
+  $("#sch-new").addEventListener("click",()=>{const c=sch();
+    if(!c.done&&PH.some(x=>filled(c.f[x.k]))&&!$("#sch-conf").innerHTML){$("#sch-conf").innerHTML=L.fb("info","La scheda non è finita: vuoi davvero cancellarla?",[])+'<div class="row"><button class="btn" type="button" id="sch-yes">Sì, scheda vuota</button><button class="btn ghost" type="button" id="sch-no">No, continuo</button></div>';
+      $("#sch-yes").addEventListener("click",blank);$("#sch-no").addEventListener("click",()=>{$("#sch-conf").innerHTML=""});return}
+    blank()});
+}
+function blank(){const S=L.state();S.extra.sch={title:"",f:{},got:{}};L.save();renderSheet();$("#sch").scrollIntoView({behavior:"smooth"})}
+function tick(k,redraw){
+  const c=sch(),S=L.state(),box=$(`[data-b="${k}"]`);
+  const ok=filled(c.f[k]);if(box){box.classList.toggle("done",ok);$(".bi",box).textContent=ok?"✅":PH.find(x=>x.k===k).i}
+  const bar=$$(".prog i");PH.forEach((x,i)=>{if(bar[i])bar[i].classList.toggle("on",filled(c.f[x.k]))});const sp=$(".prog span");if(sp)sp.textContent=PH.filter(x=>filled(c.f[x.k])).length+" caselle su 6";
+  if(ok&&!c.got[k]){c.got[k]=1;L.save();L.add(1);L.ding()}
+  if(PH.every(x=>filled(c.f[x.k]))&&!c.done){c.done=1;S.extra.arch=(S.extra.arch||[]).concat([{title:c.title||"",t:Date.now(),f:Object.assign({},c.f)}]).slice(-8);S.extra.schede=(S.extra.schede||0)+1;L.save();L.add(3);L.fanfare();L.toast("Scheda completa! Tre stelle!");renderSheet()}
+}
+async function download(){
+  const c=sch(),pid=CQ.who(),p=pid&&CQ.pupils[pid],msg=$("#sch-msg");
+  const html=`<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Il mio metodo scientifico</title><style>body{font-family:Arial,sans-serif;color:#1D3640;margin:24px}h1{color:#1BA7E1;text-align:center;margin:0 0 6px}p.s{text-align:center;margin:0 0 16px}.h{display:flex;gap:24px;border-bottom:2px dotted #1BA7E1;padding-bottom:8px;margin-bottom:12px}.g{display:grid;grid-template-columns:1fr 1fr;gap:12px}.b{border:2px solid #1BA7E1;border-radius:10px;padding:10px;break-inside:avoid}.b h2{margin:0 0 4px;color:#0B6E99;font-size:18px}.b .q{font-weight:bold;margin:0 0 6px}.b .a{white-space:pre-wrap;font-size:16px;min-height:60px}</style></head><body><h1>IL MIO METODO SCIENTIFICO</h1><p class="s">${esc(c.title||"")}</p><div class="h"><span><b>Nome:</b> ${esc(p?p.n:"")}</span><span><b>Data:</b> ${new Date().toLocaleDateString("it-IT")}</span><span><b>Classe:</b> 3ª</span></div><div class="g">${PH.map((x,i)=>`<div class="b"><h2>${i+1}. ${esc(x.n)}</h2><p class="q">${esc(x.q)}</p><div class="a">${esc(c.f[x.k]||"")}</div></div>`).join("")}</div></body></html>`;
+  const name="metodo-scientifico-"+((p&&p.n)||"scheda").toLowerCase().replace(/[^a-z0-9]+/g,"-")+".html";
+  let d=null;try{d=await window.claude.use("downloads")}catch(e){}
+  try{if(d){await d.save({filename:name,data:html})}else{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),500)}msg.textContent="Scheda scaricata: si apre nel browser e si può stampare."}catch(e){msg.textContent="Download annullato o non riuscito."}
+}
+
+L.init({
+  key:"metodo-scientifico-v1",col:"metodo",subj:"sci",src:"metodo",title:"Scienziati in 6 mosse",
+  tabs:["lezione","mosse","ordina","indagini","scheda","valuta"],home:"mosse",sets:SETS,
+  badges:[
+    {id:"fila",n:"Mosse in fila",d:"Metti in ordine le sei mosse",ok:S=>!!S.extra.fila},
+    {id:"mossa",n:"Riconosci-mosse",d:"Almeno 7 su 8 in «Che mossa è?»",ok:S=>(S.best.mossa||0)>=7},
+    {id:"domanda",n:"Domande da scienziato",d:"Almeno 7 su 8 in «Domanda da scienziato?»",ok:S=>(S.best.domanda||0)>=7},
+    {id:"scheda",n:"Prima scheda",d:"Completa una scheda da scienziato",ok:S=>(S.extra.schede||0)>=1},
+    {id:"instancabile",n:"Scienziato instancabile",d:"Completa tre schede",ok:S=>(S.extra.schede||0)>=3},
+    {id:"riflessivo",n:"Scienziato riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So dire in ordine le sei mosse del metodo scientifico.","So riconoscere un fenomeno da osservare.","So farmi domande e formulare un'ipotesi.","So progettare un semplice esperimento.","So registrare i dati e trovare una conclusione.","Ho collaborato con la mia squadra di scienziati."],
+  likes:["Le 6 mosse","In fila!","Che mossa è?","Domanda da scienziato?","La mia scheda","L'esperimento in classe"],
+  imprevisti:[["Laboratorio silenzioso","Per un minuto si parla solo sussurrando, come in un vero laboratorio."],["Scambio di ruoli","Il segretario diventa sperimentatore e il portavoce diventa osservatore."],["Ipotesi doppia","Ogni squadra deve trovare due ipotesi diverse per lo stesso fenomeno."],["Mossa a sorpresa","La maestra dice un numero da 1 a 6: tutti fanno il gesto di quella mossa."],["Occhio di lince","La prossima risposta giusta vale due timbri, ma prima la squadra deve osservare in silenzio per 20 secondi."],["Scienziato ospite","Chi risponde giusto sceglie un compagno di un'altra squadra che spiega il perché."]],
+  onEnter:()=>{OR=null;renderMoves()},
+  onRoute:h=>{
+    if(h==="mosse")renderMoves();
+    if(h==="ordina")renderOrder();
+    if(h==="indagini")L.sortChooser($("#sort"),["mossa","domanda"]);
+    if(h==="scheda")renderSheet();
+  }
+});
+renderMoves();
+})();
+</script>
+</body></html>

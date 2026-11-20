@@ -1,0 +1,1186 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.stiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.stile{display:grid;justify-items:center;gap:4px;text-align:center;padding:12px 10px 14px;border-radius:20px;border:3px solid var(--c);background:color-mix(in srgb,var(--c) 18%,#fff);color:var(--ink);text-decoration:none;transition:transform .15s}
+.stile:hover,.stile:focus-visible{transform:translateY(-3px)}
+.stile .sti{display:grid;place-items:center;height:120px;width:100%;overflow:hidden}
+.stile .sti svg{width:56px;height:56px}
+.stile .sti .cq-av,.stile .sti>*{max-height:120px}
+.stile .sti .ic{display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:var(--c);color:#fff}
+.stile b{font-size:18px}.stile small{color:var(--muted);font-weight:700}
+.subjnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 14px}
+.subjnav .sj{text-decoration:none;color:var(--ink,#2A2140)}
+.subjnav .sj[aria-current="true"]{background:var(--c);color:#fff}
+.spage{border-radius:24px;border:3px solid var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface,#fff));padding:16px}
+.sphead{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.sphead h2{margin:0;font-size:34px;color:var(--c)}
+.spav{width:130px;max-height:210px;overflow:hidden;display:grid;place-items:center}.spav img{max-height:200px;width:auto}.spav svg{max-width:100%}
+.cgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.cpc{position:relative;display:grid;justify-items:center;gap:4px;text-align:center;padding:12px 10px;border-radius:18px;background:var(--paper,#FBF3E0);border:2px solid color-mix(in srgb,var(--c) 50%,#fff)}
+.cpc .rk{position:absolute;top:8px;left:10px;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700}
+.cpc .cav{display:grid;place-items:center;height:130px;width:100%;overflow:hidden;text-decoration:none}
+.cpc strong{font-size:17px}.cpc small{color:var(--muted);font-weight:700}
+.cpc .cbt{display:flex;gap:6px;margin-top:4px}
+.spav .ic,.stile .ic{display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:var(--c);color:#fff}
+</style></head><body>
+<title>Accademia dei Talenti</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cinzel+Decorative:wght@700;900&family=Open+Sans:wght@500;700;800&display=swap">
+<style>
+/* Layout: stessa identità delle altre app di classe. Pannelli colorati arrotondati, griglia di avatar in bolla chiara, scheda alunno con fascia colorata e curva. */
+:root{
+  --bg:#F6F5F3; --surface:#FFFFFF; --ink:#1F3A56; --muted:#546B82; --line:#D3DCE3; --edge:#1F3A56;
+  --sea:#4B97AB; --sea-soft:#D9EDF2; --on-sea:#FFFFFF;
+  --accent:#D2325F; --on-accent:#FFFFFF;
+  --orange:#DD9433; --green:#6FB67F; --sun:#F2C230;
+  --good:#2E8B57; --bad:#D8453D;
+  --mc:var(--sea);
+  --font-display:'Delius Unicase','Chewy','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Open Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15232F; --surface:#1D3345; --ink:#EEF3F6; --muted:#A5BBCA; --line:#35516A; --edge:#6C8DA6;
+    --sea:#5FB3C6; --sea-soft:#22485A; --on-sea:#0F2230;
+    --accent:#F0577F; --orange:#E3A04A; --green:#7CC48B; --sun:#F2CB45;
+    --good:#5BC98A; --bad:#FF7B6E; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15232F; --surface:#1D3345; --ink:#EEF3F6; --muted:#A5BBCA; --line:#35516A; --edge:#6C8DA6;
+  --sea:#5FB3C6; --sea-soft:#22485A; --on-sea:#0F2230;
+  --accent:#F0577F; --orange:#E3A04A; --green:#7CC48B; --sun:#F2CB45;
+  --good:#5BC98A; --bad:#FF7B6E; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink);
+  font:500 17px/1.55 var(--font-body);
+  padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:820px;margin:0 auto}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1{font:700 clamp(30px,8.5vw,44px)/1.05 var(--font-display);margin:8px 0 0;text-wrap:balance}
+h2{font:700 clamp(26px,7vw,36px)/1.15 var(--font-display);margin:0;text-wrap:balance}
+h3{font:700 21px/1.2 var(--font-display);margin:0}
+p{margin:0}
+.eyebrow{font:700 12px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.top > div{min-width:0}
+.pill{flex:none;display:flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--edge);border-radius:999px;padding:6px 14px;font:700 20px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.pill b{color:var(--sun);font-size:22px;-webkit-text-stroke:1px var(--edge)}
+.sec{font:700 13px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.note{font-size:14px;color:var(--muted);margin-top:14px;text-align:center}
+.warn{background:var(--sea-soft);border:2px solid var(--sea);border-radius:16px;padding:10px 14px;margin-bottom:14px;font-weight:700;font-size:15px}
+
+/* bottoni */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:9px 20px;border-radius:999px;border:2px solid var(--edge);background:var(--surface);color:var(--ink);font:700 17px/1 var(--font-display);cursor:pointer;text-decoration:none}
+@media (hover:hover){.btn:hover{border-color:var(--accent)}}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.sm{min-height:40px;padding:6px 14px;font-size:15px}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.c{justify-content:center}
+
+/* home classe */
+.hero{background:var(--sea);color:#fff;border-radius:24px;padding:22px}
+.hero h2{color:#fff;line-height:1.2}
+.hero p{margin-top:8px;font-weight:700;font-size:17px;line-height:1.4}
+.goal{margin-top:16px;background:rgba(255,255,255,.2);border-radius:16px;padding:12px 14px}
+.goal .t{display:flex;justify-content:space-between;gap:10px;font:700 16px/1.3 var(--font-body);flex-wrap:wrap}
+.goal .bar{margin-top:8px;background:rgba(255,255,255,.35)}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--orange);transition:width .5s}
+.goal .bar i{background:var(--sun)}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.selpanel{background:var(--surface);border:2px solid var(--edge);border-radius:20px;padding:14px;margin-bottom:16px}
+.selpanel select{min-height:44px;border-radius:12px;border:2px solid var(--edge);background:var(--surface);color:var(--ink);font:700 16px var(--font-body);padding:6px 10px;max-width:100%}
+.amts{display:flex;gap:8px;flex-wrap:wrap}
+.amts button{min-width:62px;min-height:52px;border-radius:16px;border:2px solid var(--edge);background:var(--sea-soft);font:700 22px/1 var(--font-display);cursor:pointer}
+.amts button:hover{background:var(--sun)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.attpanel{background:var(--surface);border:2px solid var(--edge);border-radius:22px;padding:16px;margin-bottom:16px}
+.attk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:6px 0 12px}
+.attk button{display:flex;align-items:center;gap:8px;min-height:56px;padding:6px 12px;border-radius:16px;border:2px solid var(--line);background:var(--surface);font:700 16px/1.1 var(--font-body);cursor:pointer;text-align:left}
+.attk button span{font-size:26px}
+.attk button[aria-pressed="true"]{border-color:var(--accent);background:var(--sea-soft);box-shadow:0 0 0 3px var(--accent)}
+.attd{color:var(--muted);margin:0 0 10px}
+@media (max-width:560px){.attk{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.attg{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+.ac{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px 10px;border-radius:18px;border:2px solid var(--edge);background:var(--surface);cursor:pointer;min-width:0;touch-action:manipulation}
+.ac:active{transform:scale(.97);background:var(--sun)}
+.ac .avw{width:100%;max-width:84px}
+.ac strong{font-size:15px;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.ac .n{position:absolute;top:6px;right:6px;min-width:34px;padding:3px 7px;border-radius:99px;background:var(--accent);color:#fff;font:700 15px/1.2 var(--font-display)}
+.ac.pop .n{animation:attpop .5s}
+@keyframes attpop{40%{transform:scale(1.5)}}
+.attrows{display:grid;gap:8px}
+.attrow{display:grid;grid-template-columns:34px 1fr auto auto;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface2,#f6f8fb)}
+.attrow>span{font-size:24px}.attrow small{display:block;color:var(--muted);font-weight:400}
+.attrow b.v{font:700 22px/1 var(--font-display);min-width:2.2ch;text-align:right}
+.attrow .amts button{min-width:52px;min-height:46px;font-size:18px}
+.chk{display:flex;gap:10px;align-items:center;font-weight:700;margin-top:10px;cursor:pointer}.chk input{width:24px;height:24px}
+.pc{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 10px 14px;background:var(--surface);border:2px solid var(--edge);border-radius:22px;cursor:pointer;text-align:center;position:relative;min-width:0}
+@media (hover:hover){.pc:hover{transform:translateY(-3px)}}
+.pc[aria-pressed="true"]{background:var(--sea-soft);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+.pc .avw{width:100%;max-width:124px}
+.pc strong{font:700 20px/1.1 var(--font-display);overflow-wrap:anywhere}
+.stg{font:800 12px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.pc .bar{width:100%;height:9px;margin-top:4px}
+.pc small{font:700 13px/1.2 var(--font-body);color:var(--muted);font-variant-numeric:tabular-nums}
+.ex{position:absolute;top:8px;right:8px;font:800 10px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;background:var(--sun);color:#1F3A56;border-radius:99px;padding:4px 7px}
+.av{display:block;width:100%;height:auto}
+.empty{background:var(--surface);border:2px dashed var(--edge);border-radius:22px;padding:28px 20px;text-align:center}
+.empty p{color:var(--muted);margin:8px auto 16px;max-width:42ch}
+
+/* form */
+.panel{background:var(--surface);border:2px solid var(--edge);border-radius:22px;padding:18px;margin-bottom:16px}
+label.l{display:block;font:700 14px/1.2 var(--font-body);color:var(--muted);margin:12px 0 6px}
+input[type=text],textarea{width:100%;min-height:46px;border-radius:14px;border:2px solid var(--edge);background:var(--surface);color:var(--ink);font:600 17px var(--font-body);padding:8px 12px}
+textarea{min-height:110px;resize:vertical}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opt{width:76px;padding:6px;border-radius:18px;border:2px solid var(--line);background:var(--surface);cursor:pointer;text-align:center}
+.opt:disabled{opacity:.4;cursor:default}
+.opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.opt small{display:block;font:700 12px/1.2 var(--font-body);color:var(--muted);margin-top:2px}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid var(--edge);cursor:pointer;padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--accent)}
+
+/* scheda alunno */
+.back{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--accent);font-weight:800;text-decoration:none;margin-bottom:6px}
+.mp{background:var(--surface);border:2px solid var(--edge);border-radius:22px;overflow:hidden;margin-bottom:16px}
+.mband{background:var(--mc);color:#fff;padding:20px 18px 32px;text-align:center;border-radius:0 0 50% 50% / 0 0 30px 30px}
+.mband h2{color:#fff}
+.mband .stg{color:#fff;opacity:.95;display:block;margin-top:6px;font-size:13px}
+.mbody{padding:0 18px 22px}
+.big{width:min(100%,280px);margin:-18px auto 0;position:relative}
+.xpline{text-align:center;font:700 18px/1.3 var(--font-display);margin-top:6px}
+.mbody .bar{height:14px;margin:10px auto 0;max-width:420px}
+.mbody .need{text-align:center;color:var(--muted);font-size:15px;margin-top:6px}
+.subj{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.sj{min-height:44px;padding:6px 14px;border-radius:99px;border:2px solid var(--line);background:var(--surface);font:700 15px/1.1 var(--font-body);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.sj i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.sj[aria-pressed="true"]{border-color:var(--c);background:var(--sea-soft);box-shadow:0 0 0 2px var(--c)}
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.sk{border:2px solid var(--line);border-radius:16px;padding:10px 12px}
+.sk.on{border-color:var(--green);background:var(--sea-soft)}
+.sk b{font:700 17px/1.2 var(--font-display);display:flex;justify-content:space-between;gap:8px}
+.sk .bar{height:8px;margin:6px 0 4px}
+.sk .bar i{background:var(--c)}
+.sk small{font-size:13px;color:var(--muted);font-weight:700}
+.path{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.path div{text-align:center;min-width:0}
+.path .av{max-width:96px;margin:0 auto}
+.path .lk .av{filter:brightness(0);opacity:.22}
+.path small{display:block;overflow-wrap:anywhere;font:800 11px/1.25 var(--font-body);letter-spacing:0;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.path .cur small{color:var(--accent)}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.log li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:5px}
+.log b{color:var(--good);font-variant-numeric:tabular-nums}
+details.teacher{margin-top:6px;border:2px dashed var(--edge);border-radius:18px;padding:4px 16px;background:var(--surface);margin-bottom:12px}
+details.teacher summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:800;color:var(--accent)}
+details.teacher div{padding:0 0 14px;color:var(--muted);font-size:16px}
+details.teacher div p + p{margin-top:8px}
+details.teacher select{min-height:44px;border-radius:12px;border:2px solid var(--edge);background:var(--surface);color:var(--ink);font:700 16px var(--font-body);padding:6px 10px}
+
+/* evoluzione */
+.ov{position:fixed;inset:0;z-index:20;background:rgba(16,32,46,.78);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.ov[hidden]{display:none}
+.ovc{width:min(100%,460px);max-height:100%;overflow:auto;background:var(--surface);border:3px solid var(--edge);border-radius:26px;padding:22px 18px;text-align:center}
+.ovc h2{color:var(--accent)}
+.evo{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0}
+.evo .a{width:34%;filter:grayscale(1);opacity:.55}
+.evo .arr{font:700 34px/1 var(--font-display);color:var(--accent)}
+.evo .b{width:52%;animation:pop .8s cubic-bezier(.3,1.6,.5,1)}
+.ovc p{color:var(--muted)}
+.ovc .rito{margin:12px 0 16px;padding:10px 12px;border-radius:16px;background:var(--sea-soft);color:var(--ink);font-size:15px;text-align:left}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;font-size:15px;max-width:calc(100% - 32px);text-align:center}
+.toast[hidden]{display:none}
+/* portale */
+/* tablet e touch */
+html{-webkit-text-size-adjust:100%}
+button,a,input,select,label,summary,[role=button],[data-act]{touch-action:manipulation}
+button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+@media (min-width:1000px){
+  .wrap{max-width:1120px}
+  .me-grid{display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:18px;align-items:start}
+  .me-grid>.me-l{position:sticky;top:12px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+}
+@media (min-width:700px) and (hover:none){.btn{min-height:52px}.amts button{min-width:70px;min-height:58px}.wd{padding:12px}}
+.fsbtn{margin-left:8px}
+
+.login{max-width:520px;margin:0 auto}
+.login .hero{text-align:center}
+.codein{min-height:64px;border-radius:18px;border:3px solid var(--edge);padding:6px 14px;font:800 30px 'Courier New',monospace;letter-spacing:3px;text-transform:uppercase;text-align:center;color:var(--ink);background:var(--surface);width:100%}
+.err{min-height:1.4em;color:var(--bad);font-weight:800;margin-top:8px}
+.hello{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.hello b{font:700 22px/1.2 var(--font-display)}
+.wardrobe{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.wd{display:grid;justify-items:center;gap:4px;padding:10px 8px;border-radius:18px;border:2px solid var(--line);background:var(--surface);cursor:pointer;text-align:center;font:700 14px/1.2 var(--font-body)}
+.wd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 3px var(--c)}
+.wd .wdav{width:90px}
+.wd small{color:var(--muted);font-size:12px}
+.pows{display:grid;gap:10px}
+.pw{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;border:2px solid var(--c);background:var(--sea-soft)}
+.pw.lk{border-style:dashed;border-color:var(--line);background:transparent;opacity:.75}
+.pw i{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--edge)}
+.pw i svg{width:64%;height:64%}
+.pw b{display:block;font:700 18px/1.2 var(--font-display)}
+.pw span{display:block;font-size:15px}
+.pw small{display:block;font-size:13px;color:var(--muted);font-weight:700}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.game{display:grid;gap:6px;padding:16px;border-radius:20px;border:3px solid var(--edge);background:var(--c);color:#1F3A56;text-decoration:none}
+.game b{font:700 22px/1.1 var(--font-display)}
+.game span{font-weight:700}
+.game em{font-style:normal;justify-self:start;margin-top:6px;background:#1F3A56;color:#fff;border-radius:99px;padding:6px 16px;font:700 16px var(--font-display)}
+.code{font:800 18px 'Courier New',monospace;letter-spacing:1px;background:var(--sea-soft);border-radius:10px;padding:3px 10px}
+.ctab{width:100%;border-collapse:collapse;font-size:16px}
+.ctab td,.ctab th{padding:8px 6px;border-bottom:1px dashed var(--line);text-align:left}
+.ctab th{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pc .code{font-size:13px;padding:2px 8px;margin-top:2px}
+.tbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tbar b{font:700 18px var(--font-display);color:var(--accent)}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;font-size:14px}
+.legend div{padding:8px 10px;border-radius:12px;border:2px solid var(--line)}
+.legend b{color:var(--c)}
+.rwrap{overflow-x:auto;border:2px solid var(--edge);border-radius:16px;margin-top:12px;-webkit-overflow-scrolling:touch}
+.rtab{border-collapse:collapse;font-size:15px;min-width:100%}
+.rtab th,.rtab td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}
+.rtab td:nth-child(n+2){white-space:normal;min-width:70px}
+.rtab th{background:var(--sea-soft);position:sticky;top:0}
+.rtab th button{all:unset;cursor:pointer;font:800 13px/1.2 var(--font-body);color:var(--ink);white-space:normal;display:block;min-height:32px}
+.rtab th:first-child,.rtab td:first-child{position:sticky;left:0;background:var(--surface);font-weight:800;z-index:1}
+.rtab th:first-child{background:var(--sea-soft);z-index:2}
+.rtab .num{text-align:center}
+.rtab td.wide{min-width:240px}
+.rtab tr.none td{color:var(--muted);font-style:italic}
+.rtab tfoot td{background:var(--sea-soft);border-bottom:0}
+</style>
+<link rel="stylesheet" href="cuccioli.css">
+<style id="magia">
+/* ===== Tema "scuola di magia": cielo notturno, pergamena, oro ===== */
+:root:not(#_){
+  --bg:#15112E; --surface:#FBF3E0; --surface2:#F3E6C6; --ink:#2A1E40; --muted:#6A5878; --line:#DCC9A0; --edge:#8A6A33;
+  --sea:#4B3A8C; --sea-soft:#F1E4C3; --on-sea:#FFF6DD;
+  --accent:#8B2F5A; --on-accent:#FFF6DD;
+  --orange:#C9822E; --green:#4E8A5E; --sun:#E9C24E; --gold:#D4AF37; --gold-l:#F5DE8C;
+  --good:#2E7D4F; --bad:#B33A3A; --night:#221B4D; --violet:#5B3A9E;
+  --font-display:'Cinzel','Palatino Linotype','Book Antiqua',Georgia,serif;
+  --font-magic:'Cinzel Decorative','Cinzel',Georgia,serif;
+  color-scheme:light;
+}
+html{background:#15112E}
+body{background:
+  radial-gradient(ellipse 80% 50% at 50% -8%,#4A3594 0%,rgba(74,53,148,0) 70%),
+  radial-gradient(ellipse 60% 40% at 100% 100%,#2E2266 0%,rgba(46,34,102,0) 70%),
+  linear-gradient(#1B1540,#120E28) fixed;
+  color:var(--ink);min-height:100vh;position:relative}
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background-image:radial-gradient(1.6px 1.6px at 12% 18%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 32% 72%,#fff,transparent 60%),radial-gradient(2px 2px at 58% 12%,#FFF3C4,transparent 60%),radial-gradient(1.3px 1.3px at 78% 44%,#fff,transparent 60%),radial-gradient(1.8px 1.8px at 90% 82%,#FFF3C4,transparent 60%),radial-gradient(1.1px 1.1px at 46% 38%,#fff,transparent 60%),radial-gradient(1.4px 1.4px at 6% 60%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 68% 90%,#fff,transparent 60%);
+  background-size:420px 420px}
+body::after{background-size:270px 270px;background-position:80px 120px;opacity:.6;animation:twinkle 4s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.25}to{opacity:.8}}
+@media (prefers-reduced-motion:reduce){body::after{animation:none}}
+
+/* intestazione con stemma */
+.top{position:relative;padding:6px 0 10px;border-bottom:1px solid rgba(212,175,55,.35);margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.crest{flex:none;width:64px;height:76px;filter:drop-shadow(0 0 10px rgba(233,194,78,.45))}
+.top h1{font:900 clamp(26px,6.4vw,46px)/1.05 var(--font-magic);margin:4px 0 0;letter-spacing:.01em;
+  background:linear-gradient(180deg,#FFF1B8 0%,#E9C24E 55%,#B8862B 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 18px rgba(233,194,78,.25)}
+.top .eyebrow{color:#CDB9F2;letter-spacing:.2em}
+.pill{background:linear-gradient(#2E2466,#1E1748);border:2px solid var(--gold);color:var(--gold-l);box-shadow:0 0 14px rgba(212,175,55,.35)}
+.pill b{color:var(--gold-l);-webkit-text-stroke:0;text-shadow:0 0 8px #E9C24E}
+.moon{position:absolute;right:-6px;top:-14px;width:46px;height:46px;opacity:.9;pointer-events:none;display:none}
+
+/* testi che stanno sul cielo */
+.note,#saveState{color:#BFB2DE}
+.back{color:var(--gold-l)}
+.tbar{background:rgba(34,27,77,.75);border:1.5px solid rgba(212,175,55,.5);border-radius:18px;padding:8px 12px}
+.tbar b{color:var(--gold-l);font-family:var(--font-magic)}
+
+/* pergamene */
+.panel,.mp,.empty,.selpanel,.attpanel,details.teacher,.ovc{
+  background:linear-gradient(180deg,#FCF5E3 0%,#F4E6C4 100%);border:2px solid var(--gold);
+  box-shadow:inset 0 0 0 5px rgba(252,245,227,.9),inset 0 0 0 6.5px rgba(138,106,51,.35),0 10px 28px rgba(0,0,0,.35)}
+.panel,.empty,.selpanel,.attpanel{border-radius:18px;position:relative}
+.panel::before,.attpanel::before,.selpanel::before{content:"✦";position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:16px;line-height:1;color:var(--gold);background:#1B1540;padding:2px 6px;border-radius:99px;border:1.5px solid var(--gold)}
+details.teacher{border-style:solid}
+details.teacher summary{color:var(--violet);font-family:var(--font-display)}
+h2,h3{font-family:var(--font-display);letter-spacing:.01em}
+.sec{font-family:var(--font-display);color:var(--accent);letter-spacing:.16em}
+.sec::before{content:"✧ "}
+
+/* atrio (hero) */
+.hero{background:radial-gradient(circle at 88% 18%,rgba(233,194,78,.35),rgba(233,194,78,0) 38%),radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 60% 70%,#fff,transparent),radial-gradient(1.2px 1.2px at 75% 40%,#fff,transparent),linear-gradient(135deg,#5B3A9E 0%,#2E2266 100%);
+  border:2px solid var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.15),0 12px 30px rgba(0,0,0,.4);border-radius:22px;position:relative;overflow:hidden}
+.hero h2{font-family:var(--font-magic);color:var(--gold-l)}
+.hero p{color:#EDE5FF}
+.hero::after{content:"";position:absolute;right:14px;top:12px;width:44px;height:44px;border-radius:50%;box-shadow:-9px 6px 0 0 #F5DE8C;transform:rotate(-15deg);opacity:.85}
+.goal{background:rgba(255,255,255,.12);border:1px solid rgba(245,222,140,.4)}
+.goal .t{color:#FFF6DD}
+
+/* bottoni */
+.btn{background:linear-gradient(#FCF5E3,#EFDDB5);border:2px solid var(--edge);color:var(--ink);font-family:var(--font-display);font-weight:700;letter-spacing:.02em}
+@media (hover:hover){.btn:hover{border-color:var(--gold);box-shadow:0 0 12px rgba(233,194,78,.6)}}
+.btn.pri{background:linear-gradient(#7A4FC4,#4B2E8F);border-color:var(--gold);color:var(--gold-l);box-shadow:0 0 0 2px rgba(212,175,55,.25)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.amts button{background:linear-gradient(#FCF5E3,#EFDDB5);border-color:var(--edge);font-family:var(--font-display)}
+.amts button:hover,.amts button[aria-pressed="true"]{background:linear-gradient(#F5DE8C,#E0B445)!important}
+
+/* ritratti degli allievi: cornici ad arco */
+.pc,.ac{background:linear-gradient(180deg,#FCF5E3,#F1E1BB);border:3px solid var(--gold);border-radius:80px 80px 18px 18px;box-shadow:inset 0 0 0 3px #FCF5E3,inset 0 0 0 4.5px rgba(138,106,51,.4),0 8px 20px rgba(0,0,0,.35)}
+.pc{padding-top:16px}
+@media (hover:hover){.pc:hover{box-shadow:inset 0 0 0 3px #FCF5E3,inset 0 0 0 4.5px rgba(138,106,51,.4),0 0 22px rgba(233,194,78,.7)}}
+.pc[aria-pressed="true"],.attk button[aria-pressed="true"],.sj[aria-pressed="true"]{background:#EFE0FF;border-color:var(--violet);box-shadow:0 0 0 3px var(--violet),0 0 18px rgba(155,110,240,.6)}
+.pc strong{font-family:var(--font-display)}
+.stg{color:var(--violet);font-family:var(--font-display);letter-spacing:.1em}
+.ac .n{background:linear-gradient(#7A4FC4,#4B2E8F);color:var(--gold-l);border:1.5px solid var(--gold)}
+.ac:active{background:#F5DE8C}
+.attk button,.sj,.wd,.opt,.sk,.attrow{background:#FCF5E3;border-color:var(--line)}
+.attk button{font-family:var(--font-display);font-size:15px}
+
+/* barre come pozioni */
+.bar{background:#E2D0A6;box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}
+.bar i{background:linear-gradient(90deg,#9B6EF0,#E9C24E);box-shadow:0 0 8px rgba(233,194,78,.7)}
+.goal .bar{background:rgba(255,255,255,.2)}
+.goal .bar i{background:linear-gradient(90deg,#F5DE8C,#E9C24E)}
+
+/* scheda allievo */
+.mp{border-radius:22px}
+.mband{background:radial-gradient(1.5px 1.5px at 15% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 80% 25%,#fff,transparent),radial-gradient(1.2px 1.2px at 60% 60%,#fff,transparent),linear-gradient(135deg,color-mix(in srgb,var(--mc) 55%,#2E2266),#2E2266)}
+.mband h2{font-family:var(--font-magic);color:var(--gold-l)}
+.xpline{font-family:var(--font-display);color:var(--violet)}
+.path .cur small{color:var(--violet)}
+.pw{background:#F6EEFF}
+.log b{color:var(--violet)}
+
+/* libri degli incantesimi (app) */
+.game{background:linear-gradient(90deg,var(--c) 0 16px,rgba(0,0,0,.12) 16px 18px,#FCF5E3 18px)!important;border:2px solid var(--gold);color:var(--ink);padding-left:30px;border-radius:8px 18px 18px 8px;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.game b{font-family:var(--font-display)}
+.game em{background:linear-gradient(#7A4FC4,#4B2E8F);color:var(--gold-l);border:1.5px solid var(--gold);font-family:var(--font-display)}
+.code{background:#EFE0FF;color:#3A2470}
+.codein{border-color:var(--gold);background:#FCF5E3;box-shadow:0 0 16px rgba(233,194,78,.45)}
+
+/* tabelle */
+.rwrap{border-color:var(--gold);background:#FCF5E3}
+.rtab th,.rtab th:first-child,.rtab tfoot td{background:#EADBB4}
+.rtab td:first-child{background:#FCF5E3}
+.ctab th{font-family:var(--font-display)}
+
+/* festa dell'evoluzione e avvisi */
+.ov{background:radial-gradient(circle at 50% 40%,rgba(91,58,158,.85),rgba(18,14,40,.92))}
+.ovc h2{color:var(--violet);font-family:var(--font-magic)}
+.ovc .rito{background:#EFE0FF}
+.toast{background:linear-gradient(#4B2E8F,#2E2266);color:var(--gold-l);border:1.5px solid var(--gold);box-shadow:0 0 18px rgba(233,194,78,.5)}
+.warn{background:#FFF1D0;border-color:var(--orange);color:var(--ink)}
+:focus-visible{outline-color:var(--gold)}
+.hello b{color:var(--gold-l);font-family:var(--font-magic)}
+.okmsg{color:var(--good);font-weight:800}
+.tme{display:flex;align-items:center;gap:10px}
+.offrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.offrow small{color:var(--muted)}
+.offbtn{border-color:var(--good)!important;color:var(--good)!important}.offbtn.off{border-color:var(--bad)!important;color:var(--bad)!important;background:#FBE9E9!important}
+.game.isoff{filter:grayscale(.85);opacity:.75}
+.sfil{margin:0 0 14px}.sfil .sj small{opacity:.7;font-weight:800}
+.sgroup{margin-top:6px}.sgroup+.sgroup{margin-top:20px}
+.sgh{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid color-mix(in srgb,var(--c) 45%,transparent);font:700 20px/1.2 var(--font-display);color:var(--ink)}
+.sgh small{margin-left:auto;font:700 13px/1 var(--font-body);color:var(--muted)}
+.sgi{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--edge),0 0 10px color-mix(in srgb,var(--c) 60%,transparent)}
+.sgi svg{width:62%;height:62%}
+.gby{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}.gby .cq-tw{width:26px;height:26px}
+.tgroup+.tgroup{margin-top:18px}
+.tgh{display:flex;align-items:center;gap:10px;font:700 18px/1.2 var(--font-display);color:var(--violet);margin:0 0 10px}
+.hhead{display:flex;align-items:center;gap:16px}
+.hhead .cq-tfig{width:110px;flex:none;margin:-4px 6px -8px 0}
+.welcome{display:flex;align-items:flex-end;gap:14px;text-align:left!important}
+details.fold{padding:0!important;overflow:hidden}
+details.fold>summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:64px;padding:12px 18px;cursor:pointer;user-select:none}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary .sec{margin:0!important;flex:1}
+details.fold>summary .fic{font-size:28px;line-height:1}
+details.fold>summary .fchev{flex:none;width:40px;height:40px;border-radius:50%;background:var(--sea-soft);border:2px solid var(--edge);position:relative}
+details.fold>summary .fchev:after{content:"";position:absolute;left:50%;top:45%;width:10px;height:10px;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:translate(-50%,-50%) rotate(45deg);transition:transform .2s}
+details.fold[open]>summary .fchev:after{transform:translate(-50%,-25%) rotate(-135deg)}
+details.fold[open]>summary{border-bottom:2px dashed var(--line)}
+details.fold>summary:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+details.fold>.fbody{padding:14px 18px 18px}
+.welcome{position:relative;overflow:hidden}
+.welcome{padding-bottom:64px!important}
+.welcome .wcastle{position:absolute;right:0;bottom:0;width:100%;height:auto;max-height:92%;opacity:.95;pointer-events:none;z-index:0;filter:drop-shadow(0 0 1.5px rgba(245,222,140,.55)) drop-shadow(0 0 12px rgba(233,194,78,.25))}
+.welcome .wfig,.welcome .wtxt{position:relative;z-index:1}
+.welcome .wtxt h2,.welcome .wtxt p{text-shadow:0 2px 8px rgba(14,10,36,.85)}
+.welcome .wfig{flex:none}.welcome .wfig .cq-tfig{width:150px}
+.welcome .wtxt{flex:1;min-width:0}
+@media (max-width:460px){.welcome .wfig .cq-tfig{width:96px}}
+.tavs{display:flex;justify-content:center;gap:8px}
+.firstt{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+.firstt .btn .cq-tw{width:30px;height:30px}.firstt .btn .cq-tav.init{font-size:14px}.tavs{gap:14px;margin:6px 0}
+.tlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:22px}
+.tch{display:flex;gap:14px;align-items:center}
+.tcard.me{box-shadow:0 0 0 3px var(--violet),0 10px 28px rgba(0,0,0,.35)}
+.lnkf select{min-height:46px;border-radius:14px;border:2px solid var(--edge);background:var(--surface);font:600 16px var(--font-body);padding:6px 10px}
+.game small.lnk{font:700 11px/1 var(--font-body);background:var(--violet);color:#fff;border-radius:99px;padding:3px 7px;vertical-align:middle;letter-spacing:.06em;text-transform:uppercase}
+.game .btn.danger{justify-self:start}
+.attrow small.selfv{color:var(--violet);font-weight:700;margin-top:2px}
+.panel .note{color:var(--muted)}
+.bktab tr.sel td{background:#FFF1D0}
+.bktab td{vertical-align:middle}
+@media (max-width:700px){.bktab th:nth-child(4),.bktab td:nth-child(4){display:none}}
+.game em{white-space:nowrap;font-size:15px;padding:7px 14px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="crest" viewBox="0 0 64 76" aria-hidden="true">
+        <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".6" stop-color="#E9C24E"/><stop offset="1" stop-color="#A9781F"/></linearGradient>
+        <linearGradient id="cv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6E48BE"/><stop offset="1" stop-color="#2E2266"/></linearGradient></defs>
+        <path d="M32 2L60 10V36C60 54 47 66 32 74C17 66 4 54 4 36V10Z" fill="url(#cg)"/>
+        <path d="M32 7L55 13.5V36C55 51 44.5 61 32 68C19.5 61 9 51 9 36V13.5Z" fill="url(#cv)"/>
+        <path d="M16 46Q24 42 32 46Q40 42 48 46V56Q40 52 32 56Q24 52 16 56Z" fill="#FCF5E3" stroke="#A9781F" stroke-width="1.2"/>
+        <path d="M32 46V56" stroke="#A9781F" stroke-width="1.2"/>
+        <path d="M32 15L34.6 22.4L42.4 22.6L36.2 27.4L38.4 34.9L32 30.4L25.6 34.9L27.8 27.4L21.6 22.6L29.4 22.4Z" fill="#F5DE8C"/>
+        <circle cx="17" cy="20" r="1.4" fill="#fff"/><circle cx="47" cy="27" r="1.2" fill="#fff"/><circle cx="20" cy="36" r="1" fill="#fff"/><circle cx="45" cy="16" r="1" fill="#fff"/>
+      </svg>
+      <div style="min-width:0">
+        <div class="eyebrow">Classe terza · Scuola di magia</div>
+        <h1>Accademia dei Talenti</h1>
+      </div>
+    </div>
+    <div class="row"><div class="pill" aria-live="polite"><b>★</b><span id="totalXp">0</span></div><button class="btn sm fsbtn" id="fsbtn" type="button" hidden>Schermo intero</button></div>
+  </header>
+  <main id="app"><div class="empty"><h3>Sto caricando la classe</h3><p>Un attimo.</p></div></main>
+  <p class="note" id="saveState"></p>
+</div>
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script src="stagioni.js"></script>
+<script>
+(function(){
+"use strict";
+var C=window.Cuccioli,app=document.getElementById("app"),esc=C.esc;
+var ST={attMode:false,attK:"par",attAmt:1,attLast:null,selMode:false,sel:{},selSubj:"geo",selAmt:1,subj:"geo",setupOpen:false,setupVals:{},confirmDel:false,wd:null,pinErr:"",codeErr:"",teacher:false};
+
+var GOAL_K=[8,20,40,70];
+var REWARDS=["10 minuti di gioco libero in palestra","una lezione all'aperto","la merenda di classe insieme","una caccia al tesoro nel quartiere con la mappa"];
+function totalXp(){var t=0;Object.keys(C.pupils).forEach(function(i){t+=C.pupils[i].xp||0});return t}
+function setTeacher(v){C.setTeacher(v,true);if(v)C.logout()}
+function hash(){return location.hash.replace("#","")}
+function go(h){if(hash()===h)render();else location.hash=h}
+function bar(p){var s=C.stageOf(p.xp||0),t=C.thr();return s>=4?100:Math.round(100*((p.xp||0)-t[s])/(t[s+1]-t[s]))}
+
+/* ---------- accesso alunno ---------- */
+function viewLogin(){
+  var t1=C.teachers()[0];
+  var h='<div class="login"><section class="hero welcome"><svg class="wcastle" viewBox="0 0 420 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"><defs><linearGradient id="wcg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3D2E86"/><stop offset="1" stop-color="#1C1545"/></linearGradient><linearGradient id="wlk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B2D7A"/><stop offset="1" stop-color="#1A1440"/></linearGradient><radialGradient id="wwin"><stop offset="0" stop-color="#FFF1B8"/><stop offset="1" stop-color="#E9A93E"/></radialGradient></defs><path d="M0 220V186Q70 172 140 180Q210 150 290 158Q360 150 420 168V220Z" fill="url(#wlk)" opacity=".9"/><g fill="url(#wcg)"><path d="M120 170V120h14v-8h-6l13-34 13 34h-6v8h14v50z"/><path d="M166 170V96h10V84h-6l16-46 16 46h-6v12h10v74z"/><path d="M206 170v-40h80v40z"/><path d="M206 130l-4-10h88l-4 10z"/><path d="M212 120V70h8V58h-5l12-40 12 40h-5v12h8v50z"/><path d="M250 120V60h10V46h-6l15-52 15 52h-6v14h10v60z"/><path d="M296 170V108h10v-8h-6l14-38 14 38h-6v8h10v62z"/><path d="M338 172v-34h12v-6h-5l11-28 11 28h-5v6h12v34z"/><path d="M80 176v-22h40v22z"/><path d="M78 154l-2-6h46l-2 6z"/><path d="M350 174v-18h36v18z"/><path d="M134 170h34v-14h-34zM282 170h16v-16h-16z"/></g><g stroke="url(#wcg)" stroke-width="3" fill="none"><path d="M276 60V20M276 20l14 5-14 5"/><path d="M186 42V14M186 14l12 4-12 4"/></g><path d="M276 24l12 4-12 4z" fill="#C0392B"/><path d="M186 16l10 3-10 3z" fill="#E9C24E"/><g fill="url(#wwin)"><rect x="180" y="104" width="6" height="10" rx="3"/><rect x="180" y="128" width="6" height="10" rx="3"/><rect x="226" y="80" width="5" height="9" rx="2.5"/><rect x="264" y="72" width="6" height="10" rx="3"/><rect x="264" y="96" width="6" height="10" rx="3"/><rect x="222" y="142" width="6" height="9" rx="3"/><rect x="242" y="142" width="6" height="9" rx="3"/><rect x="262" y="142" width="6" height="9" rx="3"/><rect x="138" y="130" width="5" height="9" rx="2.5"/><rect x="309" y="120" width="5" height="9" rx="2.5"/><rect x="353" y="146" width="4" height="8" rx="2"/><rect x="96" y="160" width="5" height="8" rx="2.5"/></g><path d="M238 170v-12a8 8 0 0 1 16 0v12z" fill="#E9A93E" opacity=".8"/><g fill="#F5DE8C" opacity=".35"><rect x="180" y="190" width="6" height="2"/><rect x="264" y="194" width="6" height="2"/><rect x="242" y="188" width="10" height="2"/></g></svg>'+(t1&&t1.img?'<div class="wfig">'+C.tFigure(t1,"maga")+'</div>':'')+'<div class="wtxt"><h2>Ciao! Chi sei?</h2><p>Benvenuto all\'Accademia dei Talenti! Sono la '+esc(C.tName(t1))+'. Scrivi il codice segreto del tuo cartellino e guarda come cresce il tuo avatar.</p></div></section>'+
+    '<div class="panel" style="margin-top:16px"><form id="loginf" autocomplete="off"><label class="l" for="code">Il mio codice</label><input class="codein" id="code" type="text" maxlength="14" autocapitalize="characters" spellcheck="false" placeholder="LUPO-42"><p class="err" role="alert">'+esc(ST.codeErr)+'</p>'+C.keepKidBox()+'<div class="row c"><button class="btn pri" type="submit">Entra</button></div></form></div>';
+  if(C.loaded&&!Object.keys(C.pupils).length)h+='<p class="note">La maestra deve ancora creare la classe e i codici.</p>';
+  if(C.canTeach())h+='<div class="row c" style="margin-top:8px"><a class="btn sm" href="#maestra">Area maestra</a></div>';
+  app.innerHTML=h+'</div>';
+}
+
+/* ---------- pagina personale dell'alunno ---------- */
+function viewMe(id){
+  var p=C.pupils[id],s=C.stageOf(p.xp||0),t=C.thr(),col=C.colorHex(p.co);
+  var wd=ST.wd===null||ST.wd===undefined?(p.ls||"none"):ST.wd;
+  var subj=wd==="none"?null:wd;
+  var need=s>=4?"Sei una Leggenda!":"Mancano "+(t[s+1]-(p.xp||0))+" stelle per diventare "+C.STAGES[s+1];
+  var h='<div class="hello"><b>Ciao '+esc(p.n)+'!</b><button class="btn sm" data-act="logout">Non sono io / Esci</button></div>';
+  h+='<div class="me-grid"><div class="me-l"><div class="mp" style="--mc:'+col+'"><div class="mband"><h2>'+esc(p.n)+'</h2><span class="stg">'+C.STAGES[s]+(subj?' · '+esc(C.subjOf(subj).cos):'')+'</span></div><div class="mbody">'+
+    '<div class="big">'+C.avatar(p,{subj:subj})+'</div><div class="xpline">'+(p.xp||0)+' ★</div><div class="bar"><i style="width:'+bar(p)+'%"></i></div><p class="need">'+need+'</p></div></div></div><div class="me-r">';
+  h+='<div class="panel"><p class="sec">Le mie materie</p><p style="color:var(--muted);margin:0 0 10px">Scegli una materia per vedere i suoi giochi.</p>'+subjTiles(kidGames(),"m-",p)+'</div>';
+  var pws=C.powers(p,s);
+  h+='<div class="panel"><p class="sec">I miei poteri magici</p><div class="pows">'+pws.map(function(w){return '<div class="pw" style="--c:'+w.c+'"><i>'+C.icon(w.el)+'</i><div><b>'+esc(w.name)+'</b><span>'+esc(w.d)+'</span><small>In classe: '+esc(w.perk)+'</small></div></div>'}).join("")+
+    (s<4?'<div class="pw lk" style="--c:var(--line)"><i style="background:var(--line)">?</i><div><b>Potere misterioso</b><span>Lo scopri quando diventi '+C.STAGES[s+1]+'.</span><small>Il colore del potere dipende dalla materia in cui hai più stelle.</small></div></div>':'')+'</div></div>';
+  h+='<details class="panel fold" data-fold="armadio"'+(FOLD.armadio?' open':'')+'><summary><span class="fic" aria-hidden="true">👗</span><span class="sec">Il mio armadio</span><span class="fchev" aria-hidden="true"></span></summary><div class="fbody"><p style="color:var(--muted);margin-bottom:10px">Il costume cambia con la materia: cappello da subito, oggetto magico con '+C.UNLOCK+' stelle, mantello con '+C.TIER3+' stelle. Tocca per provarlo.</p><div class="wardrobe">'+
+    C.SUBJ.map(function(x){var v=(p.sj||{})[x.k]||0,tr=C.tierOf(p,x.k);return '<button class="wd" style="--c:'+x.c+'" data-act="wd" data-v="'+x.k+'" aria-pressed="'+(wd===x.k)+'"><div class="wdav">'+C.avatar(p,{subj:x.k,medals:false,powers:false})+'</div>'+esc(x.cos)+'<small>'+esc(x.n)+' · '+v+' ★ · '+(tr>=3?'completo':tr===2?'mantello a '+C.TIER3:'oggetto a '+C.UNLOCK)+'</small></button>'}).join("")+
+    '<button class="wd" style="--c:var(--edge)" data-act="wd" data-v="none" aria-pressed="'+(wd==="none")+'"><div class="wdav">'+C.avatar(p,{subj:null,medals:false,powers:false})+'</div>Senza costume<small>come sono io</small></button></div></div></details>';
+  h+='<details class="panel fold" data-fold="medaglie"'+(FOLD.medaglie?' open':'')+'><summary><span class="fic" aria-hidden="true">🏅</span><span class="sec">Materie e medaglie</span><span class="fchev" aria-hidden="true"></span></summary><div class="fbody">'+skills(p)+'</div></details>';
+  h+=logPanel(p)+'</div></div>';
+  app.innerHTML=h;
+}
+var FOLD={};
+document.addEventListener("toggle",function(e){var d=e.target;if(d&&d.dataset&&d.dataset.fold)FOLD[d.dataset.fold]=d.open},true);
+function skills(p){
+  return '<div class="skills">'+C.SUBJ.map(function(x){
+    var v=(p.sj||{})[x.k]||0,on=x.a&&v>=C.UNLOCK,pc=x.a?Math.min(100,Math.round(100*v/C.UNLOCK)):100;
+    return '<div class="sk'+(on?" on":"")+'" style="--c:'+x.c+'"><b><span>'+x.n+'</span><span>'+v+' ★</span></b><div class="bar"><i style="width:'+pc+'%"></i></div><small>'+(x.a?(on?"Medaglia: "+x.a:"Medaglia: "+x.a+" ("+Math.min(v,C.UNLOCK)+"/"+C.UNLOCK+")"):"Fa crescere l'avatar")+'</small></div>';
+  }).join("")+'</div>';
+}
+function logPanel(p){
+  var lg=(p.log||[]).slice(-8).reverse(),GN={mille:"Missione Mille",mondo:"Io nel mondo",calcolo:"Officina dei Calcoli",tabelline:"Arcipelago delle Tabelline",materia:"Detective della Materia",stati:"Danza delle Particelle",metodo:"Scienziati in 6 mosse",labirinto:"Nel labirinto dei quadri",suoni:"Suoni e Silenzi",maestra:"dalla maestra"};
+  return '<div class="panel"><p class="sec">Ultime stelle</p>'+(lg.length?'<ul class="log">'+lg.map(function(l){var sd=C.subjOf(l.s);var at=l.a&&C.attOf(l.a),tm=l.m&&C.tById(l.m),dm=tm?'dalla '+C.tName(tm):'dalla maestra';if(at)return '<li><span>'+at.i+' '+esc(at.n)+' · '+esc(dm)+'</span><b>+'+(l.ap||l.p)+'</b></li>';return '<li><span>'+(sd?sd.n:"")+(l.g&&GN[l.g]?' · '+GN[l.g]:'')+'</span><b>+'+l.p+'</b></li>'}).join("")+'</ul>':'<p style="color:var(--muted)">Ancora nessuna stella. Gioca per cominciare!</p>')+'</div>';
+}
+
+/* ---------- area maestra ---------- */
+function viewPin(){
+  var list=C.teachers(),has=list.some(function(t){return t.pin||t.hp}),nf=ST.pinFor&&C.tById(ST.pinFor),news=C.newTeachers();
+  if(!has&&!nf)nf=list[0];
+  var h='<a class="back" href="#">← Torna all\'accesso</a><div class="login"><div class="panel" style="text-align:center">';
+  if(nf){
+    h+=C.tAvatar(nf,"big")+'<h3 style="margin-top:8px">Benvenuta '+esc(C.tName(nf))+'!</h3><p style="color:var(--muted);margin:6px 0 10px">Scegli il tuo PIN personale, da 4 a 8 cifre. Ti fa entrare nell\'Area maestra e nelle tue app, e dice all\'Accademia chi sei. Non dirlo ai bambini.</p>';
+  }else{
+    h+='<div class="tavs">'+list.map(function(t){return C.tAvatar(t)}).join("")+'</div><h3 style="margin-top:8px">Area maestra</h3><p style="color:var(--muted);margin:6px 0 10px">Scrivi il tuo PIN personale: l\'Accademia riconosce chi sei e ti mostra le tue app.</p>';
+  }
+  h+='<form id="pinf" autocomplete="off"><input class="codein" id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••"><p class="err" role="alert">'+esc(ST.pinErr)+'</p>'+C.rememberBox()+'<div class="row c"><button class="btn pri" type="submit">'+(nf?'Salva il PIN ed entra':'Entra')+'</button>'+(ST.pinFor?'<button class="btn" type="button" data-act="pinfor" data-id="">Annulla</button>':'')+'</div></form>';
+  if(!nf&&news.length)h+='<div class="firstt"><p><b>Prima volta qui?</b> Tocca il tuo nome e scegli il tuo PIN.</p><div class="row c">'+news.map(function(t){return '<button class="btn sm" type="button" data-act="pinfor" data-id="'+t.id+'">'+C.tAvatar(t)+' '+esc(C.tName(t))+'</button>'}).join("")+'</div></div>';
+  app.innerHTML=h+'</div></div>';
+  setTimeout(function(){var i=document.getElementById("pin");if(i)i.focus()},30);
+}
+function goalHTML(ids){
+  var n=ids.length;if(!n)return "";
+  var t=totalXp(),ms=GOAL_K.map(function(k){return k*n}),i=0;
+  while(i<ms.length&&t>=ms[i])i++;
+  if(i>=ms.length)return '<div class="goal"><div class="t"><span>Traguardi di classe raggiunti</span><span>'+t+' ★</span></div><div class="bar"><i style="width:100%"></i></div></div>';
+  var lo=i?ms[i-1]:0,pc=Math.round(100*(t-lo)/(ms[i]-lo));
+  return '<div class="goal"><div class="t"><span>Premio di classe: '+REWARDS[i]+'</span><span>'+t+' / '+ms[i]+' ★</span></div><div class="bar"><i style="width:'+pc+'%"></i></div></div>';
+}
+function card(id,p){
+  var s=C.stageOf(p.xp||0),t=C.thr(),sel=!!ST.sel[id];
+  return '<button class="pc" data-act="'+(ST.selMode?"pick":"open")+'" data-id="'+id+'"'+(ST.selMode?' aria-pressed="'+sel+'"':'')+'>'+
+    '<div class="avw">'+C.avatar(p)+'</div><strong>'+esc(p.n)+'</strong><span class="stg">'+(C.CH[p.sp]?C.STAGES[s]:'Scegli la caricatura')+'</span><span class="code">'+esc(C.fmtCode(p.code||"—"))+'</span>'+
+    '<div class="bar"><i style="width:'+bar(p)+'%"></i></div><small>'+(p.xp||0)+' ★'+(s<4?' · prossima a '+t[s+1]:'')+'</small></button>';
+}
+function subjOptions(sel){return C.SUBJ.map(function(s){return '<option value="'+s.k+'"'+(s.k===sel?" selected":"")+'>'+s.n+'</option>'}).join("")}
+function takenSet(except){var t={};Object.keys(C.pupils).forEach(function(i){var q=C.pupils[i];if(i!==except&&C.CH[q.sp])t[q.sp]={id:i,n:q.n}});return t}
+function speciesPicker(cur,taken){
+  return '<div class="opts">'+C.CHARS.map(function(c,i){
+    var o=taken[c.k],no=o&&c.k!==cur;
+    return '<button class="opt" data-act="sp" data-v="'+c.k+'" aria-pressed="'+(c.k===cur)+'"'+(no?' disabled':'')+' aria-label="Caricatura '+(i+1)+(no?', già di '+esc(o.n):'')+'">'+C.avatar({sp:c.k,co:"teal",xp:20},{stage:2,subj:null,powers:false})+'<small>'+(no?esc(o.n):'n. '+(i+1))+'</small></button>';
+  }).join("")+'</div>';
+}
+function colorPicker(cur){return '<div class="opts">'+C.COLORS.map(function(c){return '<button class="sw" data-act="co" data-v="'+c.k+'" aria-label="Colore '+c.k+'" aria-pressed="'+(c.k===cur)+'" style="background:'+c.h+'"></button>'}).join("")+'</div>'}
+function setupPanel(){
+  var own=takenSet(null);
+  return '<div class="panel"><h3>Nomi della classe</h3><p class="note" style="text-align:left;margin:6px 0 14px">Scrivi il nome di ogni bambino sotto la sua caricatura. A ogni nuovo nome l\'app crea anche il suo codice d\'accesso.</p><div class="sgrid">'+C.CHARS.map(function(c,i){
+    var v=ST.setupVals[c.k];if(v===undefined)v=own[c.k]?own[c.k].n:"";
+    return '<div class="sc"><img src="img/'+c.k+'.webp" alt="Caricatura '+(i+1)+'"><label class="l" for="nm_'+c.k+'">Caricatura '+(i+1)+'</label><input type="text" id="nm_'+c.k+'" data-k="'+c.k+'" maxlength="30" autocomplete="off" value="'+esc(v)+'"></div>';
+  }).join("")+'</div><div class="row" style="margin-top:16px"><button class="btn pri" data-act="setupsave">Salva i nomi</button></div></div>';
+}
+/* ---------- pagine per materia ---------- */
+function kidGames(){return C.allGames().filter(function(g){return !C.isOff(g.k)})}
+function kidCard(g,sd){var t=C.tById(g.by||"t1");return gameCard(g,'<span>Vesti da '+esc(sd.cos)+'</span>'+(t&&C.teachers().length>1?'<span class="gby">'+C.tAvatar(t)+'con la '+esc(C.tName(t))+'</span>':''),g.ext?'Apri ▶':'Gioca ▶')}
+function teachCard(g,sd){var off=C.isOff(g.k);
+  return gameCard(g,'<span class="offrow"><button class="btn sm offbtn'+(off?' off':'')+'" type="button" data-act="appoff" data-id="'+esc(g.k)+'" aria-pressed="'+(!off)+'">'+(off?'🔒 Disattivata':'✅ Attiva')+'</button><small>'+(off?'I bambini non la vedono':'I bambini la vedono')+'</small></span>'+(g.ext?'<button class="btn sm danger" type="button" data-act="lnkdel" data-id="'+esc(g.k)+'">Togli</button>':''),g.ext?'Apri il link ▶':'Apri come maestra ▶').replace('class="game"','class="game'+(off?' isoff':'')+'"')}
+function subjTiles(list,pre,p){
+  var groups=C.SUBJ.map(function(s){return {s:s,g:list.filter(function(g){return (g.s||"imp")===s.k})}}).filter(function(x){return x.g.length});
+  if(!groups.length)return '<p class="note">Per ora non ci sono app.</p>';
+  return '<div class="stiles">'+groups.map(function(x){var st=p?((p.sj||{})[x.s.k]||0):null;
+    return '<a class="stile" href="#'+pre+x.s.k+'" style="--c:'+x.s.c+'"><span class="sti">'+(p?C.avatar(p,{subj:x.s.k,medals:false,powers:false}):'<span class="ic">'+C.icon(x.s.k)+'</span>')+'</span><b>'+esc(x.s.n)+'</b><small>'+x.g.length+(x.g.length===1?' app':' app')+(st!==null?' · '+st+' ★':'')+'</small></a>'}).join("")+'</div>';
+}
+function viewSubjPage(k,teach){
+  var sd=C.subjOf(k);if(!sd){location.hash=teach?"#maestra":"";return}
+  var w=C.who(),p=!teach&&w&&C.pupils[w],me=C.me()||C.teachers()[0];
+  var list=teach?C.allGames().filter(function(g){return (g.by||"t1")===me.id}):kidGames();
+  var all=list,mine=list.filter(function(g){return (g.s||"imp")===k});
+  var others=C.SUBJ.filter(function(s){return all.some(function(g){return (g.s||"imp")===s.k})});
+  var h=(teach?tbar():'<div class="hello"><b>Ciao '+esc(p.n)+'!</b><button class="btn sm" data-act="logout">Non sono io / Esci</button></div>');
+  h+='<div class="subjnav" role="navigation" aria-label="Materie"><a class="btn sm" href="#'+(teach?'maestra':'')+'">← '+(teach?'La classe':'La mia pagina')+'</a>'+others.map(function(s){return '<a class="sj" href="#'+(teach?'am-':'m-')+s.k+'" style="--c:'+s.c+'" aria-current="'+(s.k===k)+'"><i></i>'+esc(s.n)+'</a>'}).join("")+'</div>';
+  h+='<section class="spage" style="--c:'+sd.c+'"><div class="sphead"><div class="spav">'+(p?C.avatar(p,{subj:k,medals:false,powers:false}):(me&&me.img?C.tFigure(me,k):C.icon(k)))+'</div><div><p class="sec" style="margin:0">'+(teach?'Le mie app di':'I giochi di')+'</p><h2>'+esc(sd.n)+'</h2><p>'+(p?'Qui ti vesti da '+esc(sd.cos)+'. Hai '+(((p.sj||{})[k])||0)+' stelle in '+esc(sd.n)+'.':mine.length+(mine.length===1?' app':' app')+' in questa materia.')+'</p></div></div>'+
+    (mine.length?'<div class="games">'+mine.map(function(g){return teach?teachCard(g,sd):kidCard(g,sd)}).join("")+'</div>':'<p class="note">In questa materia non ci sono app.</p>')+'</section>';
+  app.innerHTML=h;
+}
+function mySubjs(){var me=C.me()||C.teachers()[0];var l=(me&&me.subj&&me.subj.length?me.subj:C.SUBJ.map(function(x){return x.k})).filter(function(k){return k!=="imp"&&C.subjOf(k)});return C.SUBJ.filter(function(x){return l.indexOf(x.k)>=0})}
+function classTiles(ids){
+  return '<div class="stiles">'+mySubjs().map(function(x){var tot=ids.reduce(function(a,id){return a+(((C.pupils[id].sj||{})[x.k])||0)},0);
+    var best=ids.slice().sort(function(a,b){return (((C.pupils[b].sj||{})[x.k])||0)-(((C.pupils[a].sj||{})[x.k])||0)})[0],bp=best&&C.pupils[best];
+    return '<a class="stile" href="#cm-'+x.k+'" style="--c:'+x.c+'"><span class="sti"><span class="ic">'+C.icon(x.k)+'</span></span><b>'+esc(x.n)+'</b><small>'+tot+' ★ di classe'+(bp&&((bp.sj||{})[x.k])?' · in testa '+esc(bp.n):'')+'</small></a>'}).join("")+'</div>';
+}
+function viewClassSubj(k){
+  var sd=C.subjOf(k);if(!sd){location.hash="#maestra";return}
+  var ids=C.sortedIds(),me=C.me()||C.teachers()[0],sv=function(id){return ((C.pupils[id].sj||{})[k])||0};
+  var ord=ids.slice().sort(function(a,b){return sv(b)-sv(a)||String(C.pupils[a].n).localeCompare(C.pupils[b].n)});
+  var tot=ids.reduce(function(a,id){return a+sv(id)},0),zero=ids.filter(function(id){return !sv(id)}).length;
+  var h=tbar()+'<div class="subjnav" role="navigation" aria-label="Materie"><a class="btn sm" href="#maestra">← La classe</a>'+mySubjs().map(function(s){return '<a class="sj" href="#cm-'+s.k+'" style="--c:'+s.c+'" aria-current="'+(s.k===k)+'"><i></i>'+esc(s.n)+'</a>'}).join("")+'</div>';
+  h+='<section class="spage" style="--c:'+sd.c+'"><div class="sphead"><div class="spav">'+(me&&me.img?C.tFigure(me,k):'<span class="ic">'+C.icon(k)+'</span>')+'</div><div><p class="sec" style="margin:0">La classe in</p><h2>'+esc(sd.n)+'</h2><p>'+ids.length+' alunni · '+tot+' stelle di classe'+(zero?' · '+zero+' ancora a zero':'')+'</p></div></div>';
+  if(!ids.length)h+='<p class="note">Ancora nessun alunno.</p>';
+  else h+='<div class="cgrid">'+ord.map(function(id,i){var p=C.pupils[id],v=sv(id),tr=C.tierOf(p,k);
+    return '<div class="cpc"><span class="rk">'+(i+1)+'</span><a href="#a-'+id+'" class="cav">'+C.avatar(p,{subj:k,medals:false,powers:false})+'</a><strong>'+esc(p.n)+'</strong><small>'+v+' ★ in '+esc(sd.n)+' · '+(tr>=3?'costume completo':tr===2?'mantello a '+C.TIER3:'oggetto a '+C.UNLOCK)+'</small>'+
+      (C.canWrite?'<div class="cbt">'+[1,2,3].map(function(a){return '<button class="btn sm" type="button" data-act="saward" data-id="'+id+'" data-s="'+k+'" data-p="'+a+'">+'+a+'</button>'}).join("")+'</div>':'')+'</div>'}).join("")+'</div>';
+  app.innerHTML=h+'</section>';
+}
+/* app raggruppate per materia, nell'ordine delle materie; con più materie compaiono i filtri */
+function bySubj(list,card,key){
+  var groups=C.SUBJ.map(function(s){return {s:s,g:list.filter(function(g){return (g.s||"imp")===s.k})}}).filter(function(x){return x.g.length});
+  var f=(ST.gsub||{})[key]||"all";if(f!=="all"&&!groups.some(function(x){return x.s.k===f}))f="all";
+  var h=groups.length>1?'<div class="subj sfil" role="group" aria-label="Materia"><button class="sj" style="--c:var(--violet)" data-act="gsub" data-k="'+key+'" data-v="all" aria-pressed="'+(f==="all")+'">Tutte</button>'+groups.map(function(x){return '<button class="sj" style="--c:'+x.s.c+'" data-act="gsub" data-k="'+key+'" data-v="'+x.s.k+'" aria-pressed="'+(f===x.s.k)+'"><i></i>'+esc(x.s.n)+' <small>'+x.g.length+'</small></button>'}).join("")+'</div>':'';
+  return h+groups.filter(function(x){return f==="all"||x.s.k===f}).map(function(x){
+    return '<div class="sgroup" style="--c:'+x.s.c+'"><p class="sgh"><span class="sgi">'+C.icon(x.s.k)+'</span><span>'+esc(x.s.n)+'</span><small>'+x.g.length+(x.g.length===1?' app':' app')+'</small></p><div class="games">'+x.g.map(function(g){return card(g,x.s)}).join("")+'</div></div>'}).join("");
+}
+function gameCard(g,extra,cta){var sd=C.subjOf(g.s)||C.subjOf("imp");
+  return '<a class="game" href="'+esc(g.href)+'"'+(g.ext?' target="_blank" rel="noopener"':'')+' style="--c:'+sd.c+';background:color-mix(in srgb,'+sd.c+' 30%,#fff)"><b>'+esc(g.t)+(g.ext?' <small class="lnk">link</small>':'')+'</b><span>'+esc(g.d)+'</span>'+extra+'<em>'+cta+'</em></a>'}
+function tbar(){var me=C.me();return '<div class="tbar"><b class="tme">'+C.tAvatar(me)+'<span>'+(me?'Maestra '+esc(me.n):'Area maestra')+'</span></b><div class="row"><a class="btn sm" href="#maestre">Maestre</a><a class="btn sm" href="#maestra">La classe</a><a class="btn sm" href="#alunni">Alunni</a><a class="btn sm" href="#codici">Codici</a><a class="btn sm" href="#risultati">Risultati</a><a class="btn sm" href="#backup">Backup</a><button class="btn sm" data-act="tout">Esci dall\'area maestra</button></div></div>'}
+function viewPupils(){
+  var ids=C.sortedIds(),n=ids.length,h=tbar();
+  if(!C.canWrite)h+='<div class="warn">Stai guardando la classe in sola lettura. Solo chi può modificare la pagina assegna i punti.</div>';
+  h+='<div class="subjnav" role="navigation" aria-label="Pagine"><a class="btn sm" href="#maestra">← La classe</a>'+mySubjs().map(function(s){return '<a class="sj" href="#cm-'+s.k+'" style="--c:'+s.c+'"><i></i>'+esc(s.n)+'</a>'}).join("")+'</div>';
+  h+='<section class="hero"><div class="hhead"><div><h2>Gli alunni</h2><p>'+(n?n+(n===1?' alunno':' alunni')+'. Tocca un alunno per aprire la sua scheda.':'Ancora nessun alunno.')+'</p></div></div></section>';
+  if(C.canWrite)h+='<div class="tools"><button class="btn'+(ST.attMode?' pri':'')+'" data-act="attmode"'+(n?'':' disabled')+'>'+(ST.attMode?'Chiudi il registro':'Atteggiamenti')+'</button><button class="btn'+(ST.selMode?' pri':'')+'" data-act="selmode"'+(n?'':' disabled')+'>'+(ST.selMode?'Chiudi selezione':'Assegna punti a più alunni')+'</button><button class="btn'+(ST.setupOpen?' pri':'')+'" data-act="setuptoggle">'+(ST.setupOpen?'Chiudi':'Nomi della classe')+'</button></div>';
+  if(C.canWrite&&ST.setupOpen)h+=setupPanel();
+  if(C.canWrite&&ST.selMode){
+    var cnt=Object.keys(ST.sel).filter(function(k){return ST.sel[k]&&C.pupils[k]}).length;
+    h+='<div class="selpanel"><div class="row" style="justify-content:space-between"><b>'+cnt+' selezionati</b><button class="btn sm" data-act="selall">Seleziona tutti</button></div>'+
+      '<label class="l" for="selSubj">Materia</label><select id="selSubj">'+subjOptions(ST.selSubj)+'</select>'+
+      '<label class="l">Punti da assegnare</label><div class="amts">'+[1,2,3,5].map(function(a){return '<button data-act="selamt" data-v="'+a+'" aria-pressed="'+(ST.selAmt===a)+'" style="'+(ST.selAmt===a?'background:var(--sun)':'')+'">+'+a+'</button>'}).join("")+'</div>'+
+      '<div class="row" style="margin-top:14px"><button class="btn pri" data-act="selgo"'+(cnt?'':' disabled')+'>Assegna a '+cnt+'</button></div></div>';
+  }
+  if(C.canWrite&&ST.attMode&&n){h+=attPanel(ids);}
+  else if(!n)h+='<div class="empty"><h3>Ancora nessun alunno</h3><p>Scrivi il nome di ogni bambino sotto la sua caricatura: l\'app crea anche il codice d\'accesso.</p>'+(C.canWrite?'<button class="btn pri" data-act="setuptoggle">Inserisci i nomi</button>':'')+'</div>';
+  else h+='<div class="grid">'+ids.map(function(id){return card(id,C.pupils[id])}).join("")+'</div>';
+  app.innerHTML=h;
+}
+function viewClass(){
+  var ids=C.sortedIds(),n=ids.length,h=tbar();
+  if(!C.canWrite)h+='<div class="warn">Stai guardando la classe in sola lettura. Solo chi può modificare la pagina assegna i punti.</div>';
+  var me=C.me()||C.teachers()[0];
+  h+='<section class="hero"><div class="hhead">'+(me&&me.img?C.tFigure(me,"maga"):C.tAvatar(me,"tbig"))+'<div><h2>Ciao '+esc(C.tName(me))+'!</h2><p>La classe in crescita: ogni alunno entra con il suo codice in tutte le app delle maestre. Le stelle dei giochi diventano punti nella materia dell\'app.</p></div></div>'+goalHTML(ids)+'</section>';
+  var mine=C.allGames().filter(function(g){return (g.by||"t1")===me.id});
+  var appsH='<div class="panel" style="margin-top:22px"><p class="sec">Le mie app</p><p style="color:var(--muted);margin:0 0 10px">Il tuo PIN vale in tutte le tue app: si aprono già in modalità maestra, con la lezione e le parti riservate. Le app delle altre maestre non le vedi qui e la loro lezione resta riservata a loro.</p>'+
+    (mine.length?subjTiles(mine,"am-",null):'<p>Non hai ancora app nell\'Accademia. Aggiungine una con un link qui sotto, oppure manda i file delle tue app a chi gestisce l\'Accademia per collegarle con i punti.</p>')+
+    linkForm(me)+'</div>';
+  h+='<div class="panel" style="margin-bottom:16px"><p class="sec">La classe</p><p style="color:var(--muted);margin:0 0 10px">Apri gli alunni per i codici, gli atteggiamenti e i punti, oppure una materia per la classifica e i costumi.</p>'+
+    '<div class="stiles"><a class="stile" href="#alunni" style="--c:var(--violet,#6B4FBB)"><span class="sti"><span class="ic">'+C.icon("imp")+'</span></span><b>Gli alunni</b><small>'+(n?n+(n===1?' alunno':' alunni'):'Inserisci i nomi')+'</small></a>'+classTiles(ids).replace('<div class="stiles">','')+'</div>';
+  h+=appsH;
+  h+='<div style="margin-top:22px"></div><details class="teacher"><summary>Costumi e poteri magici: come funzionano</summary><div><p>Il costume segue la materia: nelle app l\'avatar indossa quello della materia del gioco, nel portale quello dell\'ultima materia in cui ha preso stelle. Con '+C.UNLOCK+' stelle in una materia arriva l\'oggetto magico, con '+C.TIER3+' il mantello.</p><p>A ogni evoluzione l\'alunno conquista un potere: Scintilla (Apprendista), Aura (Esploratore), Ali (Campione), Stella (Leggenda). Il colore e il nome del potere vengono dalla materia in cui ha più stelle in quel momento, così ogni avatar è diverso. Ogni potere ha un piccolo privilegio da usare in classe, se vuoi.</p></div></details>';
+  h+='<details class="teacher"><summary>Variante in movimento: il rito dell\'evoluzione</summary><div><p>Quando un alunno evolve la classe si ferma e fa il rito: tutti si accovacciano come semi, il compagno che evolve conta fino a tre, poi tutti si alzano insieme con le braccia aperte.</p><p>Per lo stadio Campione si può aggiungere un\'andatura speciale fino alla porta, per la Leggenda un giro d\'onore dell\'aula con applauso a ritmo.</p></div></details>';
+  h+='<details class="teacher"><summary>Impostazioni e consigli</summary><div><label class="l" for="pace">Ritmo di evoluzione</label><select id="pace"><option value="0.5"'+(C.pace===0.5?" selected":"")+'>Veloce: Apprendista a 5 punti, Leggenda a 50</option><option value="1"'+(C.pace===1?" selected":"")+'>Normale: Apprendista a 10 punti, Leggenda a 100</option><option value="2"'+(C.pace===2?" selected":"")+'>Lento: Apprendista a 20 punti, Leggenda a 200</option><option value="4"'+(C.pace===4?" selected":"")+'>Molto lento: Apprendista a 40 punti, Leggenda a 400</option></select>'+
+    '<p style="margin-top:12px">Ogni stella vinta nei giochi vale 1 punto. Se la classe evolve troppo in fretta, scegli un ritmo più lento.</p><p>Usa solo i nomi di battesimo e premia soprattutto impegno e progressi personali, non il confronto tra compagni.</p><p>Le caricature sono i volti dei bambini: tieni il link della pagina privato e condividilo solo con chi ne ha titolo, dopo aver verificato i consensi delle famiglie.</p>'+
+    '<div class="row" style="margin-top:12px"><button class="btn sm" data-act="pinreset">Cambia il PIN</button></div></div></details>';
+  app.innerHTML=h;
+}
+function viewCodes(){
+  var ids=C.sortedIds(),miss=ids.filter(function(i){return !C.pupils[i].code}).length;
+  var h=tbar()+'<div class="panel"><h3>Codici d\'accesso</h3><p style="color:var(--muted);margin:6px 0 12px">Ogni bambino scrive il suo codice per entrare nel portale e in ogni app. Il codice è fisso: resta lo stesso per tutto l\'anno, in tutte le app e su tutti i tablet, anche se cambi il nome o la caricatura. Non distingue maiuscole e trattino.</p>';
+  if(!ids.length)h+='<p>Prima inserisci i nomi della classe.</p>';
+  else h+='<table class="ctab"><thead><tr><th>Alunno</th><th>Codice</th></tr></thead><tbody>'+ids.map(function(id){var p=C.pupils[id];return '<tr><td><b>'+esc(p.n)+'</b></td><td><span class="code">'+esc(C.fmtCode(p.code||"—"))+'</span></td></tr>'}).join("")+'</tbody></table>';
+  h+='<div class="row" style="margin-top:14px">'+(miss?'<button class="btn pri" data-act="genall">Crea i codici mancanti ('+miss+')</button>':'')+(ids.length?'<button class="btn" data-act="cards">Scarica i cartellini da stampare</button><button class="btn" data-act="copycodes">Copia l\'elenco</button>':'')+'</div><p class="note" id="cardsMsg" style="text-align:left"></p></div>';
+  app.innerHTML=h;
+}
+function viewPupil(id){
+  var p=C.pupils[id],s=C.stageOf(p.xp||0),t=C.thr(),col=C.colorHex(p.co);
+  var need=s>=4?"Stadio massimo raggiunto":"Mancano "+(t[s+1]-(p.xp||0))+" punti per diventare "+C.STAGES[s+1];
+  var h=tbar()+'<a class="back" href="#alunni">← Gli alunni</a><div class="mp" style="--mc:'+col+'"><div class="mband"><h2>'+esc(p.n)+'</h2><span class="stg">'+(C.CH[p.sp]?C.STAGES[s]:'Scegli la caricatura')+' · codice '+esc(C.fmtCode(p.code||"—"))+'</span></div><div class="mbody">'+
+    '<div class="big">'+C.avatar(p)+'</div><div class="xpline">'+(p.xp||0)+' ★</div><div class="bar"><i style="width:'+bar(p)+'%"></i></div><p class="need">'+need+'</p></div></div>';
+  if(C.canWrite){
+    h+='<div class="panel"><p class="sec">Assegna punti</p><div class="subj">'+C.SUBJ.map(function(x){return '<button class="sj" style="--c:'+x.c+'" data-act="subj" data-v="'+x.k+'" aria-pressed="'+(ST.subj===x.k)+'"><i></i>'+x.n+'</button>'}).join("")+'</div>'+
+      '<div class="amts">'+[1,2,3,5].map(function(a){return '<button data-act="award" data-p="'+a+'" aria-label="Assegna '+a+' punti">+'+a+'</button>'}).join("")+'</div>'+
+      '<div class="row" style="margin-top:12px"><button class="btn sm" data-act="undo"'+((p.log&&p.log.length)?'':' disabled')+'>Annulla l\'ultimo</button></div></div>';
+  }
+  h+=attPupil(p);
+  var pws=C.powers(p,s);
+  h+='<div class="panel"><p class="sec">Poteri magici</p>'+(pws.length?'<div class="pows">'+pws.map(function(w){return '<div class="pw" style="--c:'+w.c+'"><i>'+C.icon(w.el)+'</i><div><b>'+esc(w.name)+'</b><small>In classe: '+esc(w.perk)+'</small></div></div>'}).join("")+'</div>':'<p style="color:var(--muted)">Il primo potere arriva con lo stadio Apprendista.</p>')+'</div>';
+  h+='<div class="panel"><p class="sec">Materie e medaglie</p>'+skills(p)+'</div>';
+  h+='<div class="panel"><p class="sec">Le tappe dell\'evoluzione</p><div class="path">'+C.STAGES.map(function(nm,i){
+    return '<div class="'+(i>s?"lk":i===s?"cur":"")+'">'+C.avatar(p,{stage:i})+'<small>'+nm+'<br>'+t[i]+' ★</small></div>';
+  }).join("")+'</div></div>';
+  h+=logPanel(p);
+  if(C.canWrite){
+    h+='<div class="panel"><p class="sec">La sua caricatura</p><label class="l" for="rn">Nome</label><input type="text" id="rn" maxlength="30" value="'+esc(p.n)+'" autocomplete="off">'+
+      '<label class="l">Caricatura</label>'+speciesPicker(p.sp,takenSet(id))+'<label class="l">Colore dell\'anello</label>'+colorPicker(p.co)+
+      '<div class="row" style="margin-top:20px">'+(ST.confirmDel?'<span style="font-weight:700">Eliminare per sempre?</span><button class="btn sm danger" data-act="delgo">Sì, elimina</button><button class="btn sm" data-act="delno">No</button>':'<button class="btn sm danger" data-act="delask">Elimina alunno</button>')+'</div></div>';
+  }
+  app.innerHTML=h;
+}
+
+/* ---------- atteggiamenti ---------- */
+function attPanel(ids){
+  var a=C.attOf(ST.attK);
+  var h='<div class="attpanel"><p class="sec">Registro degli atteggiamenti</p>'+
+    '<div class="attk" role="group" aria-label="Voce">'+C.ATT.map(function(x){return '<button type="button" data-act="attk" data-v="'+x.k+'" aria-pressed="'+(ST.attK===x.k)+'"><span aria-hidden="true">'+x.i+'</span>'+esc(x.n)+'</button>'}).join("")+'</div>'+
+    '<p class="attd"><b>'+a.i+' '+esc(a.n)+':</b> '+esc(a.d)+'.</p>'+
+    '<div class="row" style="justify-content:space-between;align-items:center"><div class="amts" role="group" aria-label="Punti">'+[1,2,3].map(function(v){return '<button type="button" data-act="attamt" data-v="'+v+'" aria-pressed="'+(ST.attAmt===v)+'" style="'+(ST.attAmt===v?'background:var(--sun)':'')+'">+'+v+'</button>'}).join("")+'</div>'+
+    '<div class="row"><button class="btn sm" data-act="attall">+'+ST.attAmt+' a tutta la classe</button><button class="btn sm" data-act="attundo"'+(ST.attLast?'':' disabled')+'>Annulla l\'ultimo</button></div></div>'+
+    '<p class="attd" style="margin-top:12px">Tocca un alunno per dargli <b>+'+ST.attAmt+' in '+esc(a.n)+'</b>. Il numero sul cartellino è il suo totale in questa voce.</p>'+
+    '<div class="attg">'+ids.map(function(id){var p=C.pupils[id],v=(p.at||{})[ST.attK]||0;return '<button type="button" class="ac" data-act="attgive" data-id="'+id+'" aria-label="'+esc(p.n)+': '+v+' punti in '+esc(a.n)+'"><span class="n">'+v+'</span><div class="avw">'+C.avatar(p,{subj:"imp",powers:false})+'</div><strong>'+esc(p.n)+'</strong></button>'}).join("")+'</div>'+
+    '<label class="chk"><input type="checkbox" id="attxp"'+(C.attXp()?' checked':'')+'> I punti degli atteggiamenti fanno crescere anche l\'avatar</label>'+
+    '<p class="note" style="text-align:left;margin-top:6px">Il totale per periodo è nei Risultati, foglio «Atteggiamenti».</p></div>';
+  return h;
+}
+function attPupil(p){
+  var at=p.at||{},sa=C.asAvg(p);
+  function self(v){if(v==null)return '';var l=C.ASLV[Math.max(0,Math.min(2,Math.round(v)-1))];return '<small class="selfv">Si valuta: '+l[1]+' '+l[2]+' ('+String(Math.round(v*10)/10).replace(".",",")+')</small>'}
+  return '<div class="panel"><p class="sec">Atteggiamenti</p>'+(sa.n?'<p style="color:var(--muted);margin:0 0 10px">Accanto ai tuoi punti c\'è la sua autovalutazione, media delle schede «Come è andata?» compilate nelle app ('+sa.n+').</p>':'<p style="color:var(--muted);margin:0 0 10px">L\'autovalutazione comparirà qui quando compilerà la scheda «Come è andata?» in un\'app.</p>')+'<div class="attrows">'+C.ATT.map(function(x){return '<div class="attrow"><span aria-hidden="true">'+x.i+'</span><div><b>'+esc(x.n)+'</b><small>'+esc(x.d)+'</small>'+self(sa[x.k])+'</div><b class="v">'+(at[x.k]||0)+'</b>'+(C.canWrite?'<div class="amts"><button type="button" data-act="attone" data-k="'+x.k+'" data-p="1" aria-label="+1 '+esc(x.n)+'">+1</button><button type="button" data-act="attone" data-k="'+x.k+'" data-p="2" aria-label="+2 '+esc(x.n)+'">+2</button></div>':'<span></span>')+'</div>'}).join("")+'</div></div>';
+}
+var ATTPER=[["tutto","Tutto l'anno"],["q1","1° quadrimestre"],["q2","2° quadrimestre"],["mese","Questo mese"],["sett","Questa settimana"]];
+function attPeriod(k){
+  var now=new Date(),y=now.getMonth()>=8?now.getFullYear():now.getFullYear()-1;
+  if(k==="q1")return {n:"1° quadrimestre",from:+new Date(y,8,1),to:+new Date(y+1,1,1)};
+  if(k==="q2")return {n:"2° quadrimestre",from:+new Date(y+1,1,1),to:+new Date(y+1,6,1)};
+  if(k==="mese")return {n:"questo mese",from:+new Date(now.getFullYear(),now.getMonth(),1),to:Infinity};
+  if(k==="sett"){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate());d.setDate(d.getDate()-((d.getDay()+6)%7));return {n:"questa settimana",from:+d,to:Infinity}}
+  return {n:"tutto l'anno",from:0,to:Infinity};
+}
+
+/* ---------- fogli dei risultati ---------- */
+var RES={loaded:false,alunni:{},mondo:{},calcolo:{},tabelline:{},materia:{},stati:{},metodo:{},labirinto:{},suoni:{}},RS={app:"accademia",key:"n",dir:1};
+var ERRL={riporto:"Dimentica il riporto",riportoprima:"Riporto prima di moltiplicare",inverso:"Inverte la sottrazione",cambio:"Dimentica il cambio",riportoscritto:"Scrive il riporto nel risultato",tabellina:"Tabelline",mancante:"Caselle vuote",quoziente:"Divisione: quante volte ci sta",calcolo:"Errori di calcolo",strategia:"Passaggi delle strategie",proprieta:"Proprietà"};
+var QM=["So costruire 1000 con 10 centinaia","So contare di 100 in 100, avanti e indietro","So scrivere 1000 in cifre e in lettere","Ho lavorato bene con la mia squadra"];
+var QW=["So dire in ordine i cerchi, da Io fino al pianeta","So distinguere la destra dalla sinistra","Ho collaborato con i miei compagni","Ho ascoltato quando parlava un compagno","Ho provato anche quando era difficile"];
+var QT=["Conosco la regola di ogni isola","Ricordo le tabelline senza contare sulle dita","Uso i trucchi delle guide","So che 3 × 7 e 7 × 3 danno lo stesso risultato","Ho aiutato il mio equipaggio"];
+var QMA=["So spiegare che cos'è la materia","So riconoscere che cosa è materia e che cosa non lo è","So dire di che materiale è fatto un oggetto","So dire se una sostanza è naturale o artificiale","So distinguere materia organica e inorganica","So mettere i rifiuti nel bidone giusto","Ho collaborato con la mia squadra di detective"];
+var QS=["So riconoscere solidi, liquidi e gas","So spiegare come sono legate le molecole","So che caldo e freddo fanno cambiare stato","Conosco i nomi delle trasformazioni","So raccontare il viaggio della goccia","Ho collaborato con i compagni"];
+var QC=["So usare una strategia per calcolare a mente","So fare addizioni e sottrazioni in colonna con il riporto e il cambio","So fare moltiplicazioni e divisioni in colonna","Conosco le proprietà delle operazioni","So trovare un errore e spiegare perché è sbagliato","Ho lavorato bene con il mio compagno"];
+function loadResults(){
+  if(C.mode!=="db"){
+    C.sortedIds().forEach(function(id){
+      function rd(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}}
+      var m=rd("missione-mille-v2:"+id);if(m)RES.alunni[id]={stelle:m.stars,badge:Object.keys(m.badges||{}).filter(function(k){return m.badges[k]}),stato:m};
+      var w=rd("io-nel-mondo-v1:"+id);if(w)RES.mondo[id]=w;
+      var c=rd("officina-calcoli-v1:"+id);if(c)RES.calcolo[id]=c;
+      var t=rd("arcipelago-tabelline-v1:"+id);if(t)RES.tabelline[id]=t;
+      var ma=rd("detective-materia-v1:"+id);if(ma)RES.materia[id]=ma;
+      var sa=rd("danza-particelle-v1:"+id);if(sa)RES.stati[id]=sa;
+      var me=rd("metodo-scientifico-v1:"+id);if(me)RES.metodo[id]=me;
+      var lb=rd("labirinto-quadri-v1:"+id);if(lb)RES.labirinto[id]=lb;
+      var su=rd("suoni-silenzi-v1:"+id);if(su)RES.suoni[id]=su;
+    });return;
+  }
+  if(RES.loaded)return;RES.loaded=true;
+  ["alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni"].forEach(function(col){
+    C.db.collection(col).onSnapshot(function(snap){var m={};snap.docs.forEach(function(d){m[d.id]=d.data()});RES[col]=m;if(hash()==="risultati")render()},function(){RES.err=true;if(hash()==="risultati")render()});
+  });
+}
+function fmtDate(t){if(!t)return "";var d=new Date(t);if(isNaN(d))return "";return d.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}
+function mondoStars(s){var g=s.g||{},t=(g.pair||0)+(g.look||0);["drag","swap","tray"].forEach(function(k){Object.keys(g[k]||{}).forEach(function(x){t+=g[k][x]||0})});(s.missions||[]).forEach(function(m){if(m)t+=2});return t+Math.min(s.bonus||0,10)}
+function cnt(o){return Object.keys(o||{}).length}
+function topErr(e){return Object.keys(e||{}).sort(function(a,b){return e[b]-e[a]}).slice(0,3).map(function(k){return (ERRL[k]||k)+" ("+e[k]+")"}).join(", ")}
+var LVL={1:"1",2:"2",3:"3"};
+function sheetDef(app){
+  var ids=C.sortedIds(),cols,rows,legend="",title;
+  function P(id){return C.pupils[id]}
+  if(app==="accademia"){
+    title="Accademia dei Talenti";
+    cols=[{k:"n",h:"Alunno"},{k:"code",h:"Codice"},{k:"stage",h:"Stadio"},{k:"xp",h:"Stelle totali",num:1}]
+      .concat(C.SUBJ.map(function(s){return {k:"s_"+s.k,h:s.n,num:1}}))
+      .concat([{k:"last",h:"Ultima stella"}]);
+    rows=ids.map(function(id){var p=P(id),r={n:p.n,code:C.fmtCode(p.code||""),stage:C.STAGES[C.stageOf(p.xp||0)],xp:p.xp||0};C.SUBJ.forEach(function(s){r["s_"+s.k]=(p.sj||{})[s.k]||0});var lg=(p.log||[]);r.last=lg.length?fmtDate(lg[lg.length-1].t):"";r._t=lg.length?lg[lg.length-1].t:0;return r});
+  }else if(app==="mille"){
+    title="Missione Mille";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"badge",h:"Badge"},{k:"scomp",h:"Scomposizioni",num:1},{k:"comp",h:"Composizioni",num:1},{k:"lett",h:"Lettere e lettura",num:1},{k:"conf",h:"Confronti e ordine",num:1},{k:"abaco",h:"Sfide abaco",num:1},{k:"mis",h:"Missioni abaco",num:1},{k:"salti",h:"Salti giusti",num:1},{k:"banco",h:"Modi di fare 1000 €",num:1}]
+      .concat(QM.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"sess",h:"Sessioni",num:1},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var d=RES.alunni[id],r={n:P(id).n};if(!d){r._none=1;return r}var s=d.stato||{},va=(s.valuta||{}).a||{};
+      r.stelle=d.stelle||0;r.badge=(d.badge||[]).length;r.scomp=s.scomp||0;r.comp=s.comp||0;r.lett=(s.lett||0)+(s.leggi||0);r.conf=(s.conf||0)+(s.ord||0);r.abaco=s.abaco||0;r.mis=cnt(s.missioni);r.salti=s.quiz||0;r.banco=(s.found||[]).length;
+      QM.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.sess=d.sessioni||"";r.last=fmtDate(d.ultimoAccesso);r._t=d.ultimoAccesso?Date.parse(d.ultimoAccesso):0;return r});
+    legend=QM;
+  }else if(app==="mondo"){
+    title="Io nel mondo";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"cerchi",h:"Cerchi visitati (su 7)",num:1},{k:"pair",h:"Collega i cerchi ★",num:1},{k:"look",h:"Che immagine è? ★",num:1},{k:"puzzle",h:"Puzzle completati",num:1},{k:"mis",h:"Missioni (su 3)",num:1},{k:"badge",h:"Badge",num:1}]
+      .concat(QW.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"bello",h:"La cosa più bella",wide:1},{k:"pross",h:"La prossima volta",wide:1},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.mondo[id],r={n:P(id).n};if(!s){r._none=1;return r}var g=s.g||{},se=s.se||{};
+      r.stelle=mondoStars(s);r.cerchi=(s.visited||[]).length;r.pair=g.pair||0;r.look=g.look||0;r.puzzle=cnt(g.swap)+cnt(g.tray)+cnt(g.drag);r.mis=(s.missions||[]).filter(Boolean).length;r.badge=(s.badges||[]).length;
+      QW.forEach(function(q,i){r["q"+(i+1)]=se["se"+(i+1)]||""});r.bello=s.sebello||"";r.pross=s.seprossima||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QW;
+  }else if(app==="materia"||app==="stati"){
+    var isM=app==="materia",Q=isM?QMA:QS,SRC=isM?RES.materia:RES.stati;
+    var SETS=isM?[["materia","Materia o no? (su 8)"],["materiali","Che materiale è? (su 8)"],["origine","Naturale o artificiale? (su 8)"],["organica","Organica o inorganica? (su 8)"],["rifiuti","Nel bidone giusto (su 8)"]]:[["stati","Solido, liquido, gassoso (su 8)"],["identikit","Identikit (su 8)"],["trasf","Trasformazioni (su 8)"]];
+    title=isM?"I Detective della Materia":"La Danza delle Particelle";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1}].concat(SETS.map(function(x){return {k:"b_"+x[0],h:"Record "+x[1],num:1}})).concat([{k:"giri",h:"Indagini giocate",num:1}])
+      .concat(isM?[{k:"exp",h:"Esperimenti (su 3)",num:1},{k:"expok",h:"Esperimenti giusti al primo colpo",num:1}]:[{k:"mis",h:"Missioni particelle (su 7)",num:1},{k:"goccia",h:"Viaggio della goccia"}])
+      .concat([{k:"badge",h:"Badge",num:1},{k:"errn",h:"Errori fatti",num:1},{k:"errs",h:"Carte più difficili",wide:1}])
+      .concat(Q.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=SRC[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},rd=s.rounds||{},va=(s.valuta||{}).a||{},e=s.err||{},ex=s.exp||{},vi=s.vis||{},xt=s.extra||{};
+      r.stelle=s.stars||0;SETS.forEach(function(x){r["b_"+x[0]]=b[x[0]]!=null?b[x[0]]:""});
+      r.giri=Object.keys(rd).reduce(function(a,k){return a+(rd[k]||0)},0);
+      if(isM){r.exp=cnt(ex);r.expok=Object.keys(ex).filter(function(k){return ex[k]===2}).length}
+      else{r.mis=["sol","liq","gas","fus","eva","con","soli"].filter(function(k){return vi[k]}).length;r.goccia=xt.goccia?(xt.gerr?"Sì ("+xt.gerr+" errori)":"Sì, senza errori"):"No"}
+      r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errn=Object.keys(e).reduce(function(a,k){return a+e[k]},0);
+      r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
+      Q.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=Q;
+  }else if(app==="metodo"){
+    var QME=["So dire in ordine le sei mosse","So riconoscere un fenomeno","So farmi domande e formulare un'ipotesi","So progettare un esperimento","So registrare i dati e trovare una conclusione","Ho collaborato con la squadra"];
+    var FN={fen:"Fenomeno",dom:"Domande",ipo:"Ipotesi",esp:"Esperimento",ana:"Analisi",con:"Conclusione"},MN={gal:"Galleggia o affonda?",ghi:"Il ghiaccio che sparisce",pia:"La piantina e la luce",sal:"Il sale che scompare",lib:"Mistero scelto da me"};
+    title="Scienziati in 6 mosse";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"fila",h:"Mosse in fila"},{k:"b_mossa",h:"Record Che mossa è? (su 8)",num:1},{k:"b_domanda",h:"Record Domanda da scienziato? (su 8)",num:1},{k:"schede",h:"Schede completate",num:1},{k:"mis",h:"Esperimento"},{k:"cas",h:"Caselle scritte (su 6)",num:1}]
+      .concat(Object.keys(FN).map(function(k){return {k:"f_"+k,h:FN[k],wide:1}}))
+      .concat([{k:"badge",h:"Badge",num:1},{k:"errs",h:"Carte più difficili",wide:1}]).concat(QME.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.metodo[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},x=s.extra||{},va=(s.valuta||{}).a||{},e=s.err||{};
+      var sc=x.sch&&(x.sch.m||x.sch.title||Object.keys(x.sch.f||{}).length)?x.sch:((x.arch||[]).slice(-1)[0]||{f:{}});var f=sc.f||{};
+      r.stelle=s.stars||0;r.fila=x.fila?(x.ferr?"Sì ("+x.ferr+" errori)":"Sì, senza errori"):"No";r.b_mossa=b.mossa!=null?b.mossa:"";r.b_domanda=b.domanda!=null?b.domanda:"";r.schede=x.schede||0;
+      r.mis=sc.title||MN[sc.m]||"";r.cas=Object.keys(FN).filter(function(k){return String(f[k]||"").trim().length>=8}).length;
+      Object.keys(FN).forEach(function(k){r["f_"+k]=String(f[k]||"").trim()});
+      r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
+      QME.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QME;
+  }else if(app==="labirinto"){
+    var QLB=["So raccontare la storia","So osservare un quadro","So riconoscere caldi e freddi","So dire chi ha dipinto i quadri","Ho dipinto con fantasia","Ho collaborato con la squadra"];
+    var PN={monet:"Monet",turner:"Turner",degas:"Degas",botero:"Botero",vangogh:"Van Gogh",escher:"Escher",klimt:"Klimt"};
+    title="Nel labirinto dei quadri";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"porte",h:"Porte aperte (su 7)",num:1},{k:"quali",h:"Ultima porta aperta"},{k:"oss",h:"Quadri osservati",num:1},{k:"b_quadro",h:"Record Dentro quale quadro? (su 8)",num:1},{k:"b_colori",h:"Record Caldo o freddo? (su 8)",num:1},{k:"b_genere",h:"Record Ritratto o paesaggio? (su 8)",num:1},{k:"sc",h:"Schede completate (su 11)",num:1},{k:"qm",h:"Quadri magici",num:1},{k:"tit",h:"Titolo del quadro",wide:1},{k:"chi",h:"Chi ci abita",wide:1},{k:"por",h:"La porta magica",wide:1},{k:"badge",h:"Badge",num:1},{k:"errs",h:"Più difficili",wide:1}]
+      .concat(QLB.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.labirinto[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},x=s.extra||{},lb=x.lab||{open:{},look:{}},va=(s.valuta||{}).a||{},e=s.err||{};
+      var at=x.atl&&Object.keys(x.atl.f||{}).length?x.atl:((x.arch||[]).slice(-1)[0]||{f:{}});var f=at.f||{};
+      var op=Object.keys(PN).filter(function(k){return (lb.open||{})[k]});
+      r.stelle=s.stars||0;r.porte=op.length;r.quali=op.length?PN[op[op.length-1]]:"";r.oss=Object.keys(lb.look||{}).length;
+      r.b_quadro=b.quadro!=null?b.quadro:"";r.b_colori=b.colori!=null?b.colori:"";r.b_genere=b.genere!=null?b.genere:"";r.qm=x.quadri||0;r.sc=Object.keys(x.sch2||{}).filter(function(k){return x.sch2[k]._done}).length;
+      r.tit=String(f.tit||"").trim();r.chi=String(f.chi||"").trim();r.por=String(f.por||"").trim();
+      r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
+      QLB.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QLB;
+  }else if(app==="suoni"){
+    var QSU=["Distinguo suono e silenzio","Leggo i simboli","Suono a tempo con il corpo","Riconosco forte e piano","Scrivo un ritmo di 4 tempi","Suono insieme ai compagni"];
+    title="Suoni e Silenzi";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"righe",h:"Righe suonate a tempo",num:1},{k:"r1",h:"Cap. 1 PA-SH",num:1},{k:"r2",h:"Cap. 2 PO-O",num:1},{k:"r3",h:"Cap. 3 TITTI",num:1},{k:"r4",h:"Cap. 4 TEKETEKE",num:1},{k:"d1",h:"Dettato 1 (su 5)",num:1},{k:"d2",h:"Dettato 2 (su 5)",num:1},{k:"d3",h:"Dettato 3 (su 6)",num:1},{k:"d4",h:"Dettato 4 (su 6)",num:1},{k:"comp",h:"Composizioni (su 4)",num:1},{k:"att",h:"Attività fatte",num:1},{k:"b_silenzio",h:"Suono o silenzio? (su 8)",num:1},{k:"b_forte",h:"Forte o piano? (su 8)",num:1},{k:"b_rumore",h:"Suono o rumore? (su 8)",num:1},{k:"b_durata",h:"Quanto dura? (su 8)",num:1},{k:"badge",h:"Badge",num:1},{k:"errs",h:"Errori più frequenti",wide:1}]
+      .concat(QSU.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.suoni[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},m=(s.extra||{}).mu||{rows:{},done:{}},va=(s.valuta||{}).a||{},e=s.err||{},rk=Object.keys(m.rows||{});
+      r.stelle=s.stars||0;r.righe=rk.length;[1,2,3,4].forEach(function(n){r["r"+n]=rk.filter(function(k){return k.indexOf("c"+n)===0}).length});
+      ["c1e2","c2e2","c3e2","c4e2"].forEach(function(k,i){var v=b["d-"+k];r["d"+(i+1)]=v!=null?v:""});
+      r.comp=["c1a3","c2a2","c3a2","c4a2"].filter(function(k){return (m.done||{})[k]}).length;r.att=["c1a1","c1a2","c2a1","c3a1","c4a1"].filter(function(k){return (m.done||{})[k]}).length;
+      ["silenzio","forte","rumore","durata"].forEach(function(k){r["b_"+k]=b[k]!=null?b[k]:""});
+      r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
+      QSU.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QSU;
+  }else if(app==="tabelline"){
+    title="Arcipelago delle Tabelline";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"isole",h:"Isole conquistate (su 9)",num:1},{k:"quali",h:"Tabelline conquistate"},{k:"best",h:"Ponti: miglior risultato",wide:1},{k:"path",h:"Sentieri",num:1},{k:"race",h:"Record corsa",num:1},{k:"hunt",h:"Tesori trovati",num:1},{k:"badge",h:"Badge",num:1},{k:"errn",h:"Errori fatti",num:1},{k:"errs",h:"Tabelline più difficili",wide:1}]
+      .concat(QT.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.tabelline[id],r={n:P(id).n};if(!s){r._none=1;return r}var isl=s.isl||{},c=s.cnt||{},va=(s.valuta||{}).a||{},e=s.err||{};
+      var cq=Object.keys(isl).filter(function(k){return isl[k].conq}).map(Number).sort(function(a,b){return a-b});
+      r.stelle=s.stars||0;r.isole=cq.length;r.quali=cq.map(function(n){return "×"+n}).join(" ");
+      r.best=Object.keys(isl).filter(function(k){return isl[k].best!=null}).map(Number).sort(function(a,b){return a-b}).map(function(n){return "×"+n+": "+isl[n].best+"/10"}).join(", ");
+      r.path=c.path||0;r.race=s.best||0;r.hunt=c.hunt||0;r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errn=Object.keys(e).reduce(function(a,k){return a+e[k]},0);
+      r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k.replace("×"," × ")+" ("+e[k]+")"}).join(", ");
+      QT.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QT;
+  }else if(app==="calcolo"){
+    title="Officina dei Calcoli";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"strat",h:"Strategie",num:1},{k:"add",h:"Addizioni",num:1},{k:"sub",h:"Sottrazioni",num:1},{k:"mul",h:"Moltiplicazioni",num:1},{k:"div",h:"Divisioni",num:1},{k:"prop",h:"Proprietà",num:1},{k:"det",h:"Errori scoperti",num:1},{k:"badge",h:"Badge",num:1},{k:"errn",h:"Errori fatti",num:1},{k:"errs",h:"Errori più frequenti",wide:1}]
+      .concat(QC.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.calcolo[id],r={n:P(id).n};if(!s){r._none=1;return r}var c=s.cnt||{},va=(s.valuta||{}).a||{},e=s.err||{};
+      r.stelle=s.stars||0;["strat","add","sub","mul","div","prop","det"].forEach(function(k){r[k]=c[k]||0});r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errn=Object.keys(e).reduce(function(a,k){return a+e[k]},0);r.errs=topErr(e);
+      QC.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QC;
+  }else if(app==="atteggiamenti"){
+    var pr=attPeriod(RS.per),who=RS.who||"me",myT=C.teacherId()||"t1";
+    title="Atteggiamenti - "+pr.n+(who==="me"?" - "+C.tName(C.me()):" - tutte le maestre");
+    var mineOnly=who==="me";if(mineOnly&&!pr.from)pr={n:pr.n,from:0,to:Infinity,force:1};
+    cols=[{k:"n",h:"Alunno"}].concat(C.ATT.map(function(a){return {k:"a_"+a.k,h:a.n,num:1}})).concat([{k:"tot",h:"Totale",num:1},{k:"last",h:"Ultimo punto"}])
+      .concat(C.ATT.map(function(a){return {k:"s_"+a.k,h:"Si valuta: "+a.n+" (1-3)",num:1}})).concat([{k:"sn",h:"Schede compilate",num:1}]);
+    rows=ids.map(function(id){var p=P(id),r={n:p.n,tot:0},lt=0;
+      if(!pr.from&&!pr.force){C.ATT.forEach(function(a){var v=(p.at||{})[a.k]||0;r["a_"+a.k]=v;r.tot+=v});(p.atl||[]).forEach(function(e){if(e.t>lt)lt=e.t})}
+      else{C.ATT.forEach(function(a){r["a_"+a.k]=0});(p.atl||[]).forEach(function(e){if(mineOnly&&(e.m||"t1")!==myT)return;if(e.t>=pr.from&&e.t<pr.to&&r.hasOwnProperty("a_"+e.k)){r["a_"+e.k]+=e.p;r.tot+=e.p;if(e.t>lt)lt=e.t}})}
+      r.last=lt?fmtDate(lt):"";r._t=lt;
+      var sa=C.asAvg(p,pr.from,pr.to);C.ATT.forEach(function(a){r["s_"+a.k]=sa[a.k]==null?"":Math.round(sa[a.k]*10)/10});r.sn=sa.n;return r});
+    legend=[];
+  }
+  return {title:title,cols:cols,rows:rows,legend:legend};
+}
+function sortedRows(def){
+  var k=RS.key,dir=RS.dir,col=def.cols.filter(function(c){return c.k===k})[0]||def.cols[0];
+  return def.rows.slice().sort(function(a,b){
+    if(a._none!==b._none)return a._none?1:-1;
+    var x=k==="last"?a._t:a[col.k],y=k==="last"?b._t:b[col.k];
+    if(col.num||k==="last"){x=+x||0;y=+y||0;return (x-y)*dir}
+    return String(x==null?"":x).localeCompare(String(y==null?"":y),"it")*dir;
+  });
+}
+function viewResults(){
+  loadResults();
+  var myId=C.teacherId()||"t1",apps=[["accademia","Accademia"]].concat([["mille","Missione Mille"],["mondo","Io nel mondo"],["calcolo","Officina dei Calcoli"],["tabelline","Arcipelago delle Tabelline"],["materia","Detective della Materia"],["stati","Danza delle Particelle"],["metodo","Scienziati in 6 mosse"],["labirinto","Nel labirinto dei quadri"],["suoni","Suoni e Silenzi"]].filter(function(a){return C.appOwner(a[0])===myId})).concat([["atteggiamenti","Atteggiamenti"]]);
+  if(!apps.some(function(a){return a[0]===RS.app}))RS.app="accademia";
+  var def=sheetDef(RS.app),rows=sortedRows(def),played=def.rows.filter(function(r){return !r._none});
+  var h=tbar()+'<div class="panel"><h3>Fogli dei risultati</h3><p style="color:var(--muted);margin:6px 0 12px">Un foglio per ogni app. Si aggiorna da solo quando i bambini giocano. Tocca il titolo di una colonna per ordinare.</p>'+
+    '<div class="subj" role="group" aria-label="Foglio">'+apps.map(function(a){return '<button class="sj" style="--c:var(--accent)" data-act="rsapp" data-v="'+a[0]+'" aria-pressed="'+(RS.app===a[0])+'">'+a[1]+'</button>'}).join("")+'</div>';
+  if(RS.app==="atteggiamenti")h+='<p class="sec" style="margin-top:4px">Osservazioni</p><div class="subj" role="group" aria-label="Di chi">'+[["me","Le mie"],["all","Di tutte le maestre"]].map(function(x){return '<button class="sj" style="--c:var(--violet)" data-act="rswho" data-v="'+x[0]+'" aria-pressed="'+((RS.who||"me")===x[0])+'">'+x[1]+'</button>'}).join("")+'</div>';
+  if(RS.app==="atteggiamenti")h+='<p class="sec" style="margin-top:4px">Periodo</p><div class="subj" role="group" aria-label="Periodo">'+ATTPER.map(function(x){return '<button class="sj" style="--c:var(--sun)" data-act="rsper" data-v="'+x[0]+'" aria-pressed="'+((RS.per||"tutto")===x[0])+'">'+x[1]+'</button>'}).join("")+'</div><p style="color:var(--muted);margin:0 0 10px">I punti che hai dato nel registro degli atteggiamenti, per ogni voce. Utile per le osservazioni e la valutazione del comportamento.</p>';
+  if(RES.err)h+='<div class="warn">Non riesco a leggere tutti i risultati. Controlla la connessione.</div>';
+  if(!def.rows.length)h+='<p>Prima inserisci i nomi della classe.</p>';
+  else{
+    h+='<div class="rwrap"><table class="rtab"><thead><tr>'+def.cols.map(function(c){var on=RS.key===c.k;return '<th'+(c.num?' class="num"':'')+'><button type="button" data-act="rssort" data-v="'+c.k+'">'+esc(c.h)+(on?(RS.dir>0?' ▲':' ▼'):'')+'</button></th>'}).join("")+'</tr></thead><tbody>'+
+      rows.map(function(r){return '<tr'+(r._none?' class="none"':'')+'>'+def.cols.map(function(c,i){var v=r[c.k];if(r._none&&i>0)return i===1?'<td colspan="'+(def.cols.length-1)+'">Non ha ancora giocato</td>':'';return '<td'+(c.num?' class="num"':c.wide?' class="wide"':'')+'>'+esc(v==null?"":v)+'</td>'}).join("")+'</tr>'}).join("");
+    var avg=def.cols.map(function(c,i){if(i===0)return '<td><b>Media della classe</b></td>';if(!c.num||!played.length)return '<td></td>';var vals=played.map(function(r){return r[c.k]}).filter(function(v){return v!==""&&v!=null&&!isNaN(+v)}).map(Number);var s=vals.reduce(function(a,b){return a+b},0);return '<td class="num"><b>'+(vals.length?(Math.round(s/vals.length*10)/10).toString().replace(".",","):"")+'</b></td>'});
+    h+='</tbody><tfoot><tr>'+avg.join("")+'</tr></tfoot></table></div>';
+    h+='<p class="note" style="text-align:left">'+played.length+(played.length===1?' alunno su ':' alunni su ')+def.rows.length+' hanno giocato.'+(def.legend.length?' Autovalutazione: 1 = Ci provo ancora, 2 = Ci sono quasi, 3 = Ci sono!':'')+'</p>';
+    if(def.legend.length)h+='<details class="teacher"><summary>Le frasi dell\'autovalutazione</summary><div><ol>'+def.legend.map(function(q){return '<li>'+esc(q)+'</li>'}).join("")+'</ol></div></details>';
+    h+='<div class="row" style="margin-top:12px"><button class="btn pri" data-act="rsdl">Scarica il foglio per Excel</button><button class="btn" data-act="rscopy">Copia la tabella</button></div><p class="note" id="rsMsg" style="text-align:left"></p>';
+  }
+  app.innerHTML=h+'</div>';
+}
+function r0(x){return x!==""&&x!==null}
+function sheetText(sep){
+  var def=sheetDef(RS.app),rows=sortedRows(def);
+  function cell(v){v=v==null?"":String(v);if(/^[=+\-@]/.test(v))v="'"+v;return sep===";"&&/[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v.replace(/\t|\n/g," ")}
+  var lines=[def.cols.map(function(c){return cell(c.h)}).join(sep)];
+  rows.forEach(function(r){lines.push(def.cols.map(function(c,i){return r._none&&i>0?(i===1?"Non ha ancora giocato":""):cell(r[c.k])}).join(sep))});
+  return {title:def.title,text:lines.join("\r\n")};
+}
+
+/* ---------- maestre ---------- */
+function linkForm(me){
+  if(!C.canWrite)return '';
+  if(!ST.lnkOpen)return '<div class="row" style="margin-top:12px"><button class="btn" data-act="lnkopen">+ Aggiungi un\'app con un link</button></div>';
+  var subs=(me.subj&&me.subj.length?me.subj:C.SUBJ.map(function(s){return s.k}));
+  return '<div class="lnkf"><p class="sec" style="margin-top:14px">Nuova app con un link</p><p style="color:var(--muted);margin:0 0 8px">Va bene un Genially, un Wordwall, un\'app fatta con Claude o qualsiasi pagina web. I bambini la aprono dalla loro pagina; i punti glieli dai tu con «Assegna punti».</p>'+
+    '<label class="l" for="lk_t">Nome dell\'app</label><input type="text" id="lk_t" maxlength="60" placeholder="Per esempio: Il bosco delle parole">'+
+    '<label class="l" for="lk_u">Link</label><input type="text" id="lk_u" placeholder="https://…" inputmode="url">'+
+    '<label class="l" for="lk_s">Materia</label><select id="lk_s">'+subs.map(function(k){var s=C.subjOf(k);return s?'<option value="'+k+'">'+esc(s.n)+'</option>':''}).join("")+'</select>'+
+    '<label class="l" for="lk_d">Breve descrizione per i bambini</label><input type="text" id="lk_d" maxlength="140" placeholder="Che cosa si fa in questa app?">'+
+    '<p class="err" role="alert">'+esc(ST.lnkErr||"")+'</p><div class="row"><button class="btn pri" data-act="lnkadd">Aggiungi</button><button class="btn" data-act="lnkopen">Annulla</button></div></div>';
+}
+function viewMaestre(){
+  var me=C.me(),list=C.teachers(),h=tbar();
+  h+='<section class="hero"><h2>Le maestre dell\'Accademia</h2><p>Possono entrare solo le maestre di questo elenco, ognuna con il suo PIN personale. Solo la maestra Valentina può aggiungere o togliere maestre. Ognuna vede le sue app, i suoi fogli dei risultati e le sue osservazioni sugli atteggiamenti. I bambini, i codici e gli avatar sono gli stessi per tutte.</p></section>';
+  h+='<div class="tlist">'+list.map(function(t){
+    var gs=C.allGames().filter(function(g){return (g.by||"t1")===t.id}),isMe=me&&me.id===t.id;
+    return '<div class="panel tcard'+(isMe?' me':'')+'"><div class="tch">'+C.tAvatar(t,"big")+'<div><h3>'+esc(C.tName(t))+(isMe?' <small class="code">sei tu</small>':'')+'</h3><p style="color:var(--muted)">'+((t.subj||[]).map(function(k){var s=C.subjOf(k);return s?s.n:""}).filter(Boolean).join(", ")||"Nessuna materia scelta")+'</p><p>'+gs.length+(gs.length===1?' app':' app')+' · '+(t.pin?'PIN scelto':'<b>deve ancora scegliere il PIN</b>')+'</p></div></div>'+
+      (t.id!=="t1"&&C.canWrite&&!isMe&&me&&me.id==="t1"?'<div class="row" style="margin-top:10px"><button class="btn sm danger" data-act="tadel" data-id="'+t.id+'">'+(ST.taDel===t.id?'Sicura? Tocca di nuovo per togliere':'Togli questa maestra')+'</button></div>':'')+'</div>'}).join("")+'</div>';
+  if(me&&C.canWrite){
+    h+='<div class="panel"><p class="sec">Il mio profilo</p><label class="l" for="ta_me">Il mio nome</label><div class="row"><input type="text" id="ta_me" maxlength="30" value="'+esc(me.n)+'" style="flex:1;min-width:160px"><button class="btn" data-act="taname">Salva</button></div>'+
+      '<label class="l">Le mie materie</label><div class="subj">'+C.SUBJ.filter(function(s){return s.k!=="imp"}).map(function(s){var on=(me.subj||[]).indexOf(s.k)>=0;return '<button class="sj" style="--c:'+s.c+'" data-act="tasubj" data-v="'+s.k+'" aria-pressed="'+on+'"><i></i>'+esc(s.n)+'</button>'}).join("")+'</div>'+
+      '<label class="l" for="ta_pin">Cambia il mio PIN</label><div class="row"><input type="password" id="ta_pin" inputmode="numeric" maxlength="8" placeholder="Nuovo PIN" style="max-width:200px"><button class="btn" data-act="tapin">Salva il PIN</button></div><p class="err" role="alert">'+esc(ST.taErr||"")+'</p>'+
+      (me.img?'':'<p style="color:var(--muted);font-size:15px">Per avere la tua caricatura al posto dell\'iniziale, manda l\'immagine a chi gestisce l\'Accademia.</p>')+'</div>';
+    if(me.id==="t1")h+='<div class="panel"><p class="sec">Aggiungi una maestra</p><p style="color:var(--muted);margin:0 0 8px">Scrivi il suo nome. La prima volta che apre l\'Area maestra tocca il suo nome e sceglie il suo PIN personale. Prima però deve poter aprire l\'Accademia: condividila con lei da claude.ai con il permesso di modifica.</p><div class="row"><input type="text" id="ta_n" maxlength="30" placeholder="Per esempio: Laura" style="flex:1;min-width:160px"><button class="btn pri" data-act="taadd">Aggiungi</button></div></div>';
+  }
+  app.innerHTML=h;
+}
+
+/* ---------- backup ---------- */
+var BK={list:null,loading:false,busy:"",msg:"",ok:false,confirm:null,file:null};
+function bkWhen(t){var d=new Date(t);return d.toLocaleDateString("it-IT",{weekday:"short",day:"numeric",month:"short"})+" alle "+d.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}
+function bkSize(n){return n>1e6?(n/1e6).toFixed(1).replace(".",",")+" MB":Math.max(1,Math.round(n/1000))+" kB"}
+function bkRefresh(){BK.loading=true;C.bkList().then(function(l){BK.list=l;BK.loading=false;if(hash()==="backup")render()},function(){BK.list=[];BK.loading=false;BK.msg="Non riesco a leggere l'elenco dei backup.";BK.ok=false;if(hash()==="backup")render()})}
+function viewBackup(){
+  if(BK.list===null&&!BK.loading)bkRefresh();
+  var h=tbar();
+  h+='<section class="hero"><h2>Backup e recupero dei dati</h2><p>Qui trovi le copie di tutti i dati della classe: alunni, codici, avatar, punti, atteggiamenti e i risultati di tutte le app. Ogni volta che l\'Accademia o un\'app viene usata su questo account, salvo una copia da sola (al massimo una ogni '+C.BK_EVERY_MIN+' minuti). Tengo le ultime '+C.BK_KEEP+'.</p></section>';
+  h+='<div class="panel" style="margin-top:22px"><p class="sec">Salva o scarica</p><div class="row">'+
+    '<button class="btn pri" data-act="bknow"'+(BK.busy?' disabled':'')+'>'+(BK.busy==="save"?'Sto salvando…':'Salva un backup adesso')+'</button>'+
+    '<button class="btn" data-act="bkdl"'+(BK.busy?' disabled':'')+'>'+(BK.busy==="dl"?'Preparo il file…':'Scarica il backup sul dispositivo')+'</button>'+
+    '<label class="btn" for="bkfile" style="cursor:pointer">Ripristina da un file</label><input type="file" id="bkfile" accept=".json,application/json" hidden></div>'+
+    '<p style="color:var(--muted);margin-top:10px;font-size:15px">Il file scaricato è una copia in più, da tenere sul computer o su una chiavetta: serve se un giorno qualcosa va storto anche qui.</p>'+
+    (BK.msg?'<p class="'+(BK.ok?'okmsg':'err')+'" role="status" style="margin-top:10px">'+esc(BK.msg)+'</p>':'')+'</div>';
+  if(BK.file){
+    var f=BK.file;
+    h+='<div class="panel bkconf"><p class="sec">Ripristino da file</p><p><b>Backup del '+esc(bkWhen(f.t))+'</b> · alunni: '+f.n+'.</p><p style="margin:8px 0 12px">Tutti i dati di adesso saranno sostituiti con quelli del file. Prima salvo comunque una copia di sicurezza, così puoi tornare indietro.</p><div class="row"><button class="btn pri" data-act="bkfilego"'+(BK.busy?' disabled':'')+'>Sì, ripristina</button><button class="btn" data-act="bkcancel">Annulla</button></div></div>';
+  }
+  h+='<div class="panel"><p class="sec">Copie salvate</p>';
+  if(BK.list===null)h+='<p style="color:var(--muted)">Sto leggendo l\'elenco…</p>';
+  else if(!BK.list.length)h+='<p style="color:var(--muted)">Ancora nessun backup. Il primo si salva da solo tra pochi secondi, oppure premi «Salva un backup adesso».</p>';
+  else h+='<table class="ctab bktab"><thead><tr><th>Quando</th><th>Tipo</th><th>Alunni</th><th>Peso</th><th></th></tr></thead><tbody>'+BK.list.map(function(b,i){
+      var c=BK.confirm===b.id;
+      return '<tr'+(c?' class="sel"':'')+'><td><b>'+esc(bkWhen(b.t))+'</b>'+(i===0?' <span class="code">ultimo</span>':'')+'</td><td>'+esc(b.kind||"")+'</td><td>'+(b.n||0)+'</td><td>'+bkSize(b.size||0)+'</td><td style="text-align:right;white-space:nowrap">'+
+      (c?'<span style="font-weight:700;margin-right:6px">Sostituisco tutti i dati di adesso?</span><button class="btn sm pri" data-act="bkgo" data-id="'+b.id+'"'+(BK.busy?' disabled':'')+'>Sì, ripristina</button> <button class="btn sm" data-act="bkcancel">No</button>'
+         :'<button class="btn sm" data-act="bkask" data-id="'+b.id+'"'+(BK.busy?' disabled':'')+'>Ripristina</button> <button class="btn sm" data-act="bkfile1" data-id="'+b.id+'"'+(BK.busy?' disabled':'')+'>Scarica</button>')+'</td></tr>'}).join("")+'</tbody></table>';
+  h+='<p class="note" style="text-align:left">Prima di ogni ripristino salvo una copia «prima del ripristino»: se cambi idea, ripristini quella.</p></div>';
+  app.innerHTML=h;
+}
+async function bkDownload(payload){
+  var d=null;try{d=await window.claude.use("downloads")}catch(e){}
+  var dt=new Date(payload.t),z=function(n){return ("0"+n).slice(-2)};var name="backup-accademia-dei-talenti-"+dt.getFullYear()+"-"+z(dt.getMonth()+1)+"-"+z(dt.getDate())+"-"+z(dt.getHours())+z(dt.getMinutes())+".json";
+  var data=JSON.stringify(payload);
+  if(d){await d.save({filename:name,data:data});return}
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+function bkFind(id){return (BK.list||[]).filter(function(b){return b.id===id})[0]}
+function bkDone(msg,ok){BK.busy="";BK.msg=msg;BK.ok=ok;BK.confirm=null;render()}
+async function bkRestoreFlow(payload){
+  BK.busy="restore";BK.msg="Sto ripristinando i dati, non chiudere la pagina…";BK.ok=true;render();
+  try{await C.bkRestore(payload);BK.msg="Ripristino fatto. Ricarico l'Accademia…";render();setTimeout(function(){location.reload()},1200)}
+  catch(e){bkDone((e&&e.message&&e.message.length>20)?e.message:"Il ripristino non è riuscito. Controlla la connessione e riprova.",false)}
+}
+
+/* ---------- instradamento ---------- */
+function route(){
+  var h=hash();
+  if(h==="gioca-mille"||h==="gioca-mondo"||h==="gioca-calcolo"||h==="gioca-tabelline"||h==="gioca-materia"||h==="gioca-stati"||h==="gioca-metodo"||h==="gioca-labirinto"||h==="gioca-suoni"){location.href=({"gioca-mille":"mille.html","gioca-mondo":"mondo.html","gioca-calcolo":"calcolo.html","gioca-tabelline":"tabelline.html","gioca-materia":"materia.html","gioca-stati":"stati.html","gioca-metodo":"metodo.html","gioca-labirinto":"labirinto.html","gioca-suoni":"ritmo.html"})[h];return}
+  if(!C.loaded){app.innerHTML='<div class="empty"><h3>Sto caricando la classe</h3><p>Un attimo.</p></div>';return}
+  var tz=h==="maestra"||h==="codici"||h==="risultati"||h==="backup"||h==="maestre"||h.indexOf("a-")===0||h.indexOf("am-")===0||h.indexOf("cm-")===0||h==="alunni";
+  if(tz){
+    if(!C.canTeach())return viewLogin();
+    if(!C.teacher())return viewPin();
+    if(h==="codici")return viewCodes();
+    if(h==="risultati")return viewResults();
+    if(h==="backup")return viewBackup();
+    if(h==="maestre")return viewMaestre();
+    if(h.indexOf("am-")===0)return viewSubjPage(h.slice(3),true);
+    if(h.indexOf("cm-")===0)return viewClassSubj(h.slice(3));
+    if(h==="alunni")return viewPupils();
+    if(h.indexOf("a-")===0&&C.pupils[h.slice(2)])return viewPupil(h.slice(2));
+    return viewClass();
+  }
+  var w=C.who();
+  if(w&&h.indexOf("m-")===0)return viewSubjPage(h.slice(2),false);
+  if(w)return viewMe(w);
+  viewLogin();
+}
+function render(){
+  var ae=document.activeElement,fid=ae&&ae.id&&(ae.id.indexOf("nm_")===0||ae.id==="code"||ae.id==="pin"||ae.id==="rn")?ae.id:null,fp=fid?ae.selectionStart:0,fv=fid?ae.value:null;
+  var y=window.scrollY;
+  route();
+  if(fid){var fe=document.getElementById(fid);if(fe){if(fid==="code"||fid==="pin"||fid==="rn")fe.value=fv;fe.focus();try{fe.setSelectionRange(fp,fp)}catch(x){}}}
+  var w=C.who(),me=w&&C.pupils[w];
+  var hz=hash(),tz=hz==="maestra"||hz==="codici"||hz==="risultati"||hz.indexOf("a-")===0;
+  document.getElementById("totalXp").textContent=(me&&!tz)?(me.xp||0):totalXp();
+  document.getElementById("saveState").textContent=C.mode==="db"
+    ?(C.loadFail?"Non riesco a leggere i dati salvati. Controlla la connessione.":"Salvataggio automatico attivo: punti e codici valgono in tutte le app della classe.")
+    :"Anteprima: i dati restano solo su questo dispositivo.";
+  window.scrollTo(0,y);
+}
+
+/* ---------- azioni ---------- */
+function curId(){var h=hash();return h.indexOf("a-")===0?h.slice(2):null}
+function addCodes(){var n=0;C.sortedIds().forEach(function(id){var p=C.pupils[id];if(!p.code){var q=C.clone(p);q.code=C.newCode(p.sp);C.put(id,q);n++}});return n}
+var A={
+  logout:function(){C.logout();ST.wd=null;ST.codeErr="";render()},
+  wd:function(t){ST.wd=t.dataset.v;render()},
+  tout:function(){C.forget();setTeacher(false);location.hash=""},
+  pinreset:function(){C.forget();C.saveSettings({pin:""});setTeacher(false);ST.pinErr="";go("maestra")},
+  open:function(t){location.hash="a-"+t.dataset.id},
+  pick:function(t){ST.sel[t.dataset.id]=!ST.sel[t.dataset.id];render()},
+  selmode:function(){ST.selMode=!ST.selMode;ST.sel={};render()},
+  selall:function(){var all=C.sortedIds().every(function(i){return ST.sel[i]});C.sortedIds().forEach(function(i){ST.sel[i]=!all});render()},
+  selamt:function(t){ST.selAmt=+t.dataset.v;render()},
+  selgo:function(){
+    var ids=Object.keys(ST.sel).filter(function(k){return ST.sel[k]&&C.pupils[k]});if(!ids.length)return;
+    C.award(ids,ST.selSubj,ST.selAmt,"maestra");
+    C.toast("+"+ST.selAmt+" a "+ids.length+(ids.length===1?" alunno":" alunni"));
+    ST.sel={};ST.selMode=false;render();
+  },
+  setuptoggle:function(){ST.setupOpen=!ST.setupOpen;ST.setupVals={};render()},
+  setupsave:function(){
+    var made=0,upd=0;
+    C.CHARS.forEach(function(c,i){
+      var v=ST.setupVals[c.k];if(v===undefined)return;
+      v=v.trim().slice(0,30);if(!v)return;
+      var o=takenSet(null)[c.k];
+      if(o){if(o.n!==v){var q=C.clone(C.pupils[o.id]);q.n=v;C.put(o.id,q);upd++}return}
+      C.put(C.newId(),{n:v,sp:c.k,co:C.COLORS[i%C.COLORS.length].k,xp:0,sj:{},log:[],pw:{},code:C.newCode(c.k),c:Date.now()});
+      made++;
+    });
+    addCodes();
+    ST.setupOpen=false;ST.setupVals={};render();
+    C.toast(made||upd?(made+upd)+(made+upd===1?" nome salvato":" nomi salvati")+". I codici sono nella scheda Codici.":"Nessun nome da salvare");
+  },
+  rsapp:function(t){RS.app=t.dataset.v;RS.key="n";RS.dir=1;render()},
+  rsper:function(t){RS.per=t.dataset.v;render()},
+  rswho:function(t){RS.who=t.dataset.v;render()},
+  appoff:function(t){var k=t.dataset.id,me=C.me();if(!me||C.appOwner(k)!==me.id)return;var v=!C.isOff(k);C.setOff(k,v);C.toast(v?'App disattivata: i bambini non la vedono più.':'App attivata: i bambini la ritrovano nella loro pagina.')},
+  gsub:function(t){ST.gsub=ST.gsub||{};ST.gsub[t.dataset.k]=t.dataset.v;render()},
+  pinfor:function(t){ST.pinFor=t.dataset.id||null;ST.pinErr="";render()},
+  lnkadd:function(){var me=C.me();if(!me)return;var g=function(i){var e=document.getElementById(i);return e?e.value.trim():""};
+    var t=g("lk_t"),u=g("lk_u"),s=g("lk_s"),d=g("lk_d");
+    if(!t||!/^https?:\/\//i.test(u)){ST.lnkErr="Scrivi il nome dell'app e un link che inizia con https://";render();return}
+    var l=(C.settings.links||[]).concat([{id:"l"+Date.now().toString(36),by:me.id,t:t.slice(0,60),href:u,s:s||(me.subj||[])[0]||"imp",d:d.slice(0,140)}]);
+    ST.lnkErr="";ST.lnkOpen=false;C.saveSettings({links:l});C.toast("App aggiunta: i bambini la trovano nella loro pagina.")},
+  lnkdel:function(t){var me=C.me(),id=t.dataset.id;C.saveSettings({links:(C.settings.links||[]).filter(function(l){return !(l.id===id&&me&&l.by===me.id)})})},
+  lnkopen:function(){ST.lnkOpen=!ST.lnkOpen;ST.lnkErr="";render()},
+  taadd:function(){if((C.teacherId()||"")!=="t1")return;var e=document.getElementById("ta_n"),n=e?e.value.trim():"";if(!n){ST.taErr="Scrivi il nome della maestra.";render();return}
+    var list=C.teachers().concat([{id:"t"+Date.now().toString(36),n:n.slice(0,30),img:"",subj:["ita","sto","civ"],pin:""}]);ST.taErr="";C.saveTeachers(list);C.toast("Maestra aggiunta: al primo accesso sceglie il suo PIN.")},
+  tasubj:function(t){var me=C.me();if(!me)return;var k=t.dataset.v,s=(me.subj||[]).slice(),i=s.indexOf(k);if(i>=0)s.splice(i,1);else s.push(k);
+    C.saveTeachers(C.teachers().map(function(x){return x.id===me.id?Object.assign({},x,{subj:s}):x}))},
+  taname:function(){var me=C.me(),e=document.getElementById("ta_me"),n=e?e.value.trim():"";if(!me||!n)return;C.saveTeachers(C.teachers().map(function(x){return x.id===me.id?Object.assign({},x,{n:n.slice(0,30)}):x}));C.toast("Nome salvato.")},
+  tapin:function(){var me=C.me(),e=document.getElementById("ta_pin"),v=e?e.value.trim():"";if(!me)return;var er=C.checkPin(v,me.id);ST.taErr=er;if(!er)C.toast("Nuovo PIN salvato.");render()},
+  tadel:function(t){var id=t.dataset.id;if(id==="t1"||(C.teacherId()||"")!=="t1")return;if(ST.taDel!==id){ST.taDel=id;render();return}ST.taDel=null;
+    C.saveTeachers(C.teachers().filter(function(x){return x.id!==id}));C.saveSettings({links:(C.settings.links||[]).filter(function(l){return l.by!==id})})},
+  bknow:function(){BK.busy="save";BK.msg="";render();C.bkSave("manuale").then(function(){C.saveSettings({bkLast:Date.now()});bkDone("Backup salvato.",true);bkRefresh()},function(){bkDone("Non sono riuscito a salvare il backup. Controlla la connessione.",false)})},
+  bkdl:function(){BK.busy="dl";BK.msg="";render();C.bkPayload("file").then(bkDownload).then(function(){bkDone("File del backup pronto.",true)},function(){bkDone("Download annullato o non riuscito.",false)})},
+  bkfile1:function(t){var b=bkFind(t.dataset.id);if(!b)return;BK.busy="dl";render();C.bkLoad(b).then(bkDownload).then(function(){bkDone("File del backup pronto.",true)},function(){bkDone("Non riesco a scaricare questa copia.",false)})},
+  bkask:function(t){BK.confirm=t.dataset.id;BK.file=null;render()},
+  bkcancel:function(){BK.confirm=null;BK.file=null;render()},
+  bkgo:function(t){var b=bkFind(t.dataset.id);if(!b)return;BK.busy="restore";render();C.bkLoad(b).then(bkRestoreFlow,function(){bkDone("Questa copia non si legge più. Prova con un'altra.",false)})},
+  bkfilego:function(){var p=BK.file&&BK.file.p;BK.file=null;if(p)bkRestoreFlow(p)},
+  attmode:function(){ST.attMode=!ST.attMode;ST.selMode=false;ST.sel={};ST.attLast=null;render()},
+  attk:function(t){ST.attK=t.dataset.v;render()},
+  attamt:function(t){ST.attAmt=+t.dataset.v;render()},
+  attgive:function(t){var id=t.dataset.id;if(!C.pupils[id])return;C.giveAtt([id],ST.attK,ST.attAmt);ST.attLast=[id];var a=C.attOf(ST.attK);C.toast(a.i+" +"+ST.attAmt+" "+a.n+" a "+C.pupils[id].n);C.tone&&C.tone([660,880]);render();var el=document.querySelector('.ac[data-id="'+id+'"]');if(el)el.classList.add("pop")},
+  attall:function(){var ids=C.sortedIds();C.giveAtt(ids,ST.attK,ST.attAmt);ST.attLast=ids;var a=C.attOf(ST.attK);C.toast(a.i+" +"+ST.attAmt+" "+a.n+" a tutta la classe");render()},
+  attundo:function(){(ST.attLast||[]).forEach(function(id){var p=C.pupils[id],l=p&&p.log&&p.log[p.log.length-1];if(l&&l.a)C.undoLast(id)});ST.attLast=null;render()},
+  attone:function(t){var id=curId();if(!id)return;C.giveAtt([id],t.dataset.k,+t.dataset.p);var a=C.attOf(t.dataset.k);C.toast(a.i+" +"+t.dataset.p+" "+a.n)},
+  rssort:function(t){if(RS.key===t.dataset.v)RS.dir=-RS.dir;else{RS.key=t.dataset.v;RS.dir=t.dataset.v==="n"?1:-1}render()},
+  rsdl:async function(){
+    var msg=document.getElementById("rsMsg"),d=null,sh=sheetText(";");
+    try{d=await window.claude.use("downloads")}catch(e){}
+    if(!d){if(msg)msg.textContent="Da qui non posso scaricare file. Usa «Copia la tabella» e incollala in Excel o in Fogli Google.";return}
+    var name="risultati-"+sh.title.toLowerCase().replace(/[^a-z0-9]+/g,"-")+"-"+new Date().toISOString().slice(0,10)+".csv";
+    try{await d.save({filename:name,data:"\ufeff"+sh.text});if(msg)msg.textContent="File pronto: si apre con Excel o Fogli Google."}catch(e){if(msg)msg.textContent="Download annullato o non riuscito."}
+  },
+  rscopy:function(){
+    var msg=document.getElementById("rsMsg"),sh=sheetText("\t");
+    try{navigator.clipboard.writeText(sh.text).then(function(){if(msg)msg.textContent="Tabella copiata: incollala in Excel o in Fogli Google."},function(){if(msg)msg.textContent="Non riesco a copiare da qui."})}catch(e){if(msg)msg.textContent="Non riesco a copiare da qui."}
+  },
+  genall:function(){var n=addCodes();C.toast(n+" codici creati");render()},
+  cards:async function(){
+    var msg=document.getElementById("cardsMsg"),d=null;
+    try{d=await window.claude.use("downloads")}catch(e){}
+    if(!d){if(msg)msg.textContent="Da qui non posso scaricare file. Usa «Copia l'elenco» e incollalo in un documento da stampare.";return}
+    try{await d.save({filename:"codici-cuccioli-in-crescita.html",data:C.cardsHTML()});if(msg)msg.textContent="File pronto: aprilo e stampalo dal browser."}
+    catch(e){if(msg)msg.textContent="Download annullato o non riuscito."}
+  },
+  copycodes:function(t){
+    var txt=C.sortedIds().map(function(id){var p=C.pupils[id];return p.n+"\t"+C.fmtCode(p.code||"")}).join("\n");
+    var msg=document.getElementById("cardsMsg");
+    try{navigator.clipboard.writeText(txt).then(function(){if(msg)msg.textContent="Elenco copiato."},function(){if(msg)msg.textContent="Non riesco a copiare da qui."})}catch(e){if(msg)msg.textContent="Non riesco a copiare da qui."}
+  },
+  subj:function(t){ST.subj=t.dataset.v;render()},
+  saward:function(t){var id=t.dataset.id;if(C.pupils[id])C.award([id],t.dataset.s,+t.dataset.p,"maestra")},
+  award:function(t){var id=curId();if(id)C.award([id],ST.subj,+t.dataset.p,"maestra")},
+  undo:function(){var id=curId();if(id)C.undoLast(id)},
+  sp:function(t){var id=curId(),p=C.pupils[id];if(!p||takenSet(id)[t.dataset.v]||!C.CH[t.dataset.v])return;var q=C.clone(p);q.sp=t.dataset.v;C.put(id,q)},
+  co:function(t){var id=curId(),p=C.pupils[id];if(!p)return;var q=C.clone(p);q.co=t.dataset.v;C.put(id,q)},
+  delask:function(){ST.confirmDel=true;render()},
+  delno:function(){ST.confirmDel=false;render()},
+  delgo:function(){var id=curId(),p=id&&C.pupils[id];ST.confirmDel=false;if(id){if(p&&p.code&&p.sp)C.keepCode(p.sp,p.code);C.remove(id);location.hash="maestra"}render()}
+};
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-act]");if(!t||!app.contains(t))return;
+  var f=A[t.dataset.act];if(f){e.preventDefault();f(t)}
+});
+document.addEventListener("submit",function(e){
+  if(e.target.id==="loginf"){
+    e.preventDefault();
+    var v=document.getElementById("code").value,kk=e.target.querySelector("[name=keepkid]"),kp1=!!(kk&&kk.checked);
+    if(window.Registro){var bt=e.target.querySelector("button[type=submit]");bt.disabled=true;
+      window.Registro.login("p",v,kp1).then(function(r){bt.disabled=false;if(!r.ok){ST.codeErr=r.err;render();return}if(r.id&&C.pupils[r.id])C.pupils[r.id].code=C.normCode(v);codeLogin(v,kp1)});return}
+    codeLogin(v,kp1);
+  }
+  if(e.target.id==="pinf"){
+    e.preventDefault();var pin=document.getElementById("pin").value.trim(),kp=e.target.querySelector("[name=keep]"),keep=kp&&kp.checked;
+    if(window.Registro&&!ST.pinFor){var bt2=e.target.querySelector("button[type=submit]");bt2.disabled=true;
+      window.Registro.login("t",pin,keep).then(function(r){bt2.disabled=false;if(!r.ok){ST.pinErr=r.err;render();return}pinLogin(pin,keep)});return}
+    pinLogin(pin,keep);
+  }
+});
+function codeLogin(v,keep){
+  var id=C.findByCode(v);
+  if(!id){ST.codeErr=!v.trim()?"Scrivi il tuo codice.":(C.mode==="local"&&!C.db&&!Object.keys(C.pupils).length?"Questo dispositivo non è collegato al registro della classe: fai l'accesso a Claude con un account a cui la maestra ha condiviso l'Accademia, poi riapri la pagina.":"Codice non trovato. Controlla il cartellino.");render();return}
+  ST.codeErr="";ST.wd=null;C.setWho(id,keep);C.tone([[659,.1],[880,.2]]);render();window.scrollTo(0,0);
+}
+function pinLogin(pin,keep){
+  var er=C.checkPin(pin,ST.pinFor||null);if(er){ST.pinErr=er;render();return}
+  ST.pinErr="";ST.pinFor=null;setTeacher(C.pinTeacher);if(keep)C.remember(C.pinTeacher);else C.forget();render();
+}
+document.addEventListener("input",function(e){var t=e.target;if(t.dataset&&t.dataset.k&&t.id.indexOf("nm_")===0)ST.setupVals[t.dataset.k]=t.value});
+document.addEventListener("change",function(e){
+  if(e.target&&e.target.id==="bkfile"){var fl=e.target.files&&e.target.files[0];if(!fl)return;var rd=new FileReader();
+    rd.onload=function(){var p=null;try{p=JSON.parse(rd.result)}catch(x){}var err=C.bkCheck(p);if(err){BK.msg=err;BK.ok=false;BK.file=null}else{BK.file={p:p,t:p.t,n:p.n};BK.msg="";BK.confirm=null}render()};
+    rd.onerror=function(){BK.msg="Non riesco a leggere il file.";BK.ok=false;render()};rd.readAsText(fl);return}
+  var t=e.target;
+  if(t.id==="selSubj")ST.selSubj=t.value;
+  if(t.id==="pace")C.saveSettings({pace:+t.value});
+  if(t.id==="attxp")C.saveSettings({attXp:!!t.checked});
+  if(t.id==="rn"){var id=curId(),p=C.pupils[id],v=t.value.trim().slice(0,30);if(p&&v&&v!==p.n){var q=C.clone(p);q.n=v;C.put(id,q)}}
+});
+window.addEventListener("hashchange",function(){ST.confirmDel=false;ST.pinErr="";render();window.scrollTo(0,0)});
+
+C.fsButton(document.getElementById("fsbtn"));
+C.on(render);
+render();
+C.boot().then(render);
+})();
+</script>
+
+</body></html>

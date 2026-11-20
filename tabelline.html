@@ -1,0 +1,807 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>L'Arcipelago delle Tabelline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css">
+<style>
+/* Layout: una carta nautica. In alto il mare con le nove isole, sotto il diario di bordo dell'isola scelta.
+   Colori: blu del mare, sabbia, e un colore per ogni isola. Tastierino grande per il tablet. */
+:root{
+  --bg:#FBF6EC; --surface:#FFFDF8; --surface2:#F4EEE2; --ink:#20384F; --muted:#5B6F80; --line:#E4DAC8;
+  --sea:#3E9BC4; --sea2:#2C7FA8; --sand:#F4DFA8; --accent:#13304A; --accent-ink:#FFFFFF; --accent-soft:#D6E8F1;
+  --good:#17744A; --good-soft:#D8F0E3; --bad:#B03030; --bad-soft:#FADDDD; --warn-soft:#FFF1C9; --gold:#F2B705;
+  --font-display:'Fredoka',system-ui,sans-serif; --font-body:'Atkinson Hyperlegible',system-ui,sans-serif;
+  --font-hand:'Patrick Hand','Comic Sans MS','Segoe Print',cursive;
+  --paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .45 0 0 0 0 .3 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1C2A; --surface:#132A3C; --surface2:#183449; --ink:#E8F4FB; --muted:#A2BCCD; --line:#28465E;
+    --sea:#1F6E94; --sea2:#185A7A; --sand:#C9B27A; --accent:#E8F4FB; --accent-ink:#0B1C2A; --accent-soft:#28465E;
+    --good:#4FD08F; --good-soft:#163B2B; --bad:#FF8A8A; --bad-soft:#40202A; --warn-soft:#3F3418; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg) var(--paper);color:var(--ink);font:17px/1.5 var(--font-body);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.15;text-wrap:balance}
+h1,h2,h3{font-family:var(--font-hand);font-weight:400;letter-spacing:.3px}
+h1{font-size:clamp(36px,9vw,58px)}
+h2{font-size:clamp(28px,6vw,38px)}
+h3{font-size:26px}
+p{margin:0}
+:focus-visible{outline:3px solid var(--sea2);outline-offset:2px}
+button,a,input,label,summary{touch-action:manipulation}
+button,.btn{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);max-width:66ch}
+
+header{position:relative;overflow:hidden}
+header .deco{position:absolute;right:-24px;top:-14px;width:min(30vw,230px);opacity:.85;pointer-events:none}
+.badge{background:var(--surface)}
+header .wrap{position:relative;display:grid;gap:14px;padding-top:max(18px,env(safe-area-inset-top,0px));padding-bottom:14px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.board{display:grid;grid-template-columns:auto 1fr;gap:12px}
+.stars{display:grid;place-items:center;min-width:86px;padding:8px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-align:center}
+.stars b{font:700 30px/1 var(--font-display)}
+.stars small{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.badges{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:720px){.badges{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.badge{display:grid;gap:1px;padding:7px 10px;border-radius:10px;border:1.5px dashed var(--line);color:var(--muted);min-width:0}
+.badge b{font:600 14px/1.2 var(--font-display)}
+.badge small{font-size:11.5px;line-height:1.25}
+.badge.got{border:1.5px solid var(--good);background:var(--good-soft);color:var(--ink)}
+.badge.got small{color:var(--good);font-weight:700}
+.who{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:14px;color:var(--muted)}
+.link{appearance:none;background:none;border:0;padding:8px 0;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer}
+
+nav{position:sticky;top:0;z-index:20;background:var(--bg);border-block:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:46px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;font:600 16px var(--font-display)}
+.tabs a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{display:block;padding-block:18px 40px}
+section.view{display:grid;gap:16px;min-width:0}
+.panel{background:var(--surface) var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:12px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:600 17px var(--font-display);cursor:pointer;text-decoration:none}
+.btn.ghost{background:var(--surface2);color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+@media (min-width:700px) and (hover:none){.btn{min-height:54px}.tabs a{min-height:52px;font-size:18px}}
+
+/* mappa */
+.map{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:16/10;min-height:300px;background:#6FC3DD}
+.map svg.sea{position:absolute;inset:0;width:100%;height:100%}
+.isl{position:absolute;transform:translate(-50%,-50%);width:min(21%,170px);aspect-ratio:1;border:0;padding:0;background:none;cursor:pointer;display:grid;place-items:center}
+.isl svg{width:100%;height:100%;overflow:visible}
+.isl .lab{position:absolute;left:50%;bottom:-4%;transform:translateX(-50%) rotate(-3deg);white-space:nowrap;background:#FFFDF8;color:#20384F;font:400 clamp(15px,2.4vw,22px)/1 var(--font-hand);padding:4px 12px 5px;border-radius:10px;border:2px solid #20384F;box-shadow:2px 3px 0 rgba(32,56,79,.25)}
+.isl .flag{display:none}
+.isl:hover svg,.isl:focus-visible svg{transform:translateY(-4px)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--muted)}
+
+/* isola */
+.ihead{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.ibig{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font:400 48px/1 var(--font-hand);color:#20384F;border:3px solid #20384F;filter:url(#wc)}
+.guide{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:#FFF3C9 var(--paper);border:2px dashed #E3C77A}
+.guide p{font:400 21px/1.35 var(--font-hand)}
+.guide svg{width:58px;height:58px}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.act{position:relative;display:grid;gap:6px;text-align:left;padding:16px;border-radius:20px 26px 18px 24px;border:2.5px solid #20384F;background:var(--c) var(--paper);color:#20384F;cursor:pointer;font:inherit;box-shadow:3px 4px 0 rgba(32,56,79,.18)}
+.act b{font:400 27px/1.05 var(--font-hand)}
+.act span{font-weight:700;font-size:15px}
+.act small{font-weight:700;font-size:13px;opacity:.85}
+
+/* sentiero */
+.path{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(min-width:700px){.path{grid-template-columns:repeat(10,1fr)}}
+.stone{display:grid;place-items:center;aspect-ratio:1;border-radius:48% 52% 45% 55%/55% 45% 55% 45%;border:2.5px solid #C9B27A;background:#F4DFA8 var(--paper);color:#20384F;font:400 clamp(24px,5vw,34px)/1 var(--font-hand);position:relative}
+.stone small{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font:700 11px var(--font-body);background:var(--surface);color:var(--muted);border-radius:99px;padding:1px 6px;border:1px solid var(--line)}
+.stone.now{border-color:var(--sea2);box-shadow:0 0 0 4px var(--accent-soft);background:var(--surface)}
+.stone.ok{border-color:var(--good);background:var(--good-soft)}
+
+/* domanda e tastierino */
+.qbox{display:grid;gap:10px;justify-items:center;text-align:center}
+.qcount{font-weight:700;color:var(--muted)}
+.q{font:400 clamp(52px,13vw,84px)/1.05 var(--font-hand)}
+.q .ans{display:inline-block;min-width:1.6em;padding:0 .15em;border-bottom:5px solid var(--sea2);color:var(--sea2)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots i{width:16px;height:16px;border-radius:50%;background:var(--line);display:block}
+.dots i.ok{background:var(--good)}.dots i.ko{background:var(--bad)}.dots i.now{background:var(--sea2)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(100%,340px)}
+.pad button{appearance:none;min-height:62px;border-radius:16px 20px 14px 18px;border:2px solid #C9BBA0;background:#FFFDF8 var(--paper);color:var(--ink);font:400 34px var(--font-hand);cursor:pointer;box-shadow:2px 3px 0 rgba(32,56,79,.12)}
+.pad button.ok{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-size:22px}
+.pad button.del{font-size:22px}
+.pad button:active{transform:translateY(2px)}
+@media (min-width:700px) and (hover:none){.pad{width:min(100%,400px)}.pad button{min-height:72px;font-size:32px}}
+.timer{font:700 34px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.timer.low{color:var(--bad)}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;width:min(100%,420px)}
+.bar i{display:block;height:100%;background:var(--sea2);transition:width .3s}
+
+/* spiegazioni */
+.fb{border-radius:14px;padding:14px 16px;display:grid;gap:8px;width:100%}
+.fb.good{background:var(--good-soft)}.fb.bad{background:var(--bad-soft)}.fb.info{background:var(--warn-soft)}
+.fb b.t{font:400 25px/1.2 var(--font-hand)}
+.fb ul{margin:0;padding-left:22px;display:grid;gap:4px;text-align:left}
+.skip{font:700 18px/1.4 var(--font-display);color:var(--muted);letter-spacing:.5px;word-break:break-word}
+
+/* tavola pitagorica */
+.beach{position:relative;border-radius:24px;overflow:hidden;padding:16px;display:grid;gap:12px;min-height:520px}
+.beach>.bg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.beach>*:not(.bg){position:relative;z-index:1}
+.bhead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.bhead h2{color:#fff;text-shadow:2px 2px 0 #20384F,-1px -1px 0 #20384F,1px -1px 0 #20384F,-1px 1px 0 #20384F;font-size:clamp(30px,6vw,44px)}
+.bbtn{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:999px;border:2.5px solid #20384F;background:#FFF8E1;color:#20384F;font:400 22px/1 var(--font-hand);cursor:pointer;text-decoration:none;box-shadow:2px 3px 0 rgba(32,56,79,.3)}
+.bbtn[aria-pressed="true"]{background:#F2C14E}
+.bbtn.red{background:#D2563F;color:#fff;font-size:26px;min-height:56px;padding:0 28px}
+.bgrid{display:grid;gap:14px;align-items:end}
+@media(min-width:820px){.bgrid{grid-template-columns:minmax(240px,32%) 1fr}}
+.bguide{display:grid;gap:10px;justify-items:center;align-content:end}
+.bubble{position:relative;background:#F2D27E;border-radius:50%/45%;padding:22px 26px;font:400 20px/1.3 var(--font-hand);color:#20384F;text-align:center;box-shadow:2px 3px 0 rgba(32,56,79,.2);max-width:340px}
+.bubble::after{content:"";position:absolute;left:30%;bottom:-16px;border:12px solid transparent;border-top:18px solid #F2D27E;border-bottom:0}
+.bubble b{font-weight:400;color:#B4412E}
+.pit{width:min(150px,40vw);height:auto}
+@media(max-width:819px){.bguide{grid-template-columns:auto 1fr;align-items:end;justify-items:start}.bguide .row{grid-column:1/-1}.pit{width:110px;grid-row:1}.bubble{grid-column:2;grid-row:1}}
+.grass{position:relative;border-radius:10px;padding:14px;overflow:hidden}
+.grass>.gr{position:absolute;inset:0;width:100%;height:100%}
+.grass>.tavwrap{position:relative}
+#tav-play .fb,#tav-play .qbox{background:#FFFDF8 var(--paper);border-radius:16px;padding:14px}
+.tavwrap{overflow-x:auto}
+.tav{display:grid;grid-template-columns:repeat(11,minmax(30px,1fr));gap:0;min-width:400px;max-width:620px;margin:0 auto;background:#FFFDF8;border:3px solid #20384F;border-radius:4px;filter:url(#pen)}
+.tav span,.tav button{display:grid;place-items:center;aspect-ratio:1;border-radius:0;font:400 clamp(16px,3vw,26px)/1 var(--font-hand);border:0;border-right:1.6px solid #20384F;border-bottom:1.6px solid #20384F;padding:0;background:#FFFDF8;color:#20384F}
+.tav .h{background:#FFFDF8;color:#20384F;font-size:clamp(18px,3.4vw,30px)!important}
+.tav .c{cursor:pointer;color:#B4412E}
+.tav .c.blank{color:transparent}
+.tav .c.new{animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+.tav .c.hl{background:#FFF1C9}
+.tav .c.sel{background:var(--gold);color:#13304A}
+.tav .c.mir{outline:3px solid var(--gold);outline-offset:-3px}
+.tav .c.hid{background:#F4DFA8;color:#20384F}
+.tav .c.hid.now{outline:3px solid var(--sea2);outline-offset:-3px}
+.tav .c.won{background:var(--good-soft)}
+.tav .c.sq{box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
+
+/* lezione e valutazione */
+.facts{display:grid;gap:10px;margin:0}
+.facts div{display:grid;gap:2px}
+.facts dt{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:0}
+@media(min-width:720px){.facts{grid-template-columns:1fr 1fr;gap:14px 24px}}
+.lsteps{list-style:none;margin:0;padding:0;display:grid}
+.lstep{display:grid;grid-template-columns:58px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.lstep:first-child{border-top:0}
+.mins{display:grid;justify-items:center;padding:8px 0;border-radius:12px;background:var(--surface2);height:max-content}
+.mins b{font:700 26px/1 var(--font-display)}
+.mins small{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.lstep>div{display:grid;gap:6px}
+.chip{justify-self:start;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:1.5px solid var(--muted)}
+ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
+.imp{padding:14px;border-radius:12px;background:var(--warn-soft);display:grid;gap:4px}
+.imp b{font:600 18px var(--font-display)}
+.cols{display:grid;gap:16px}
+@media(min-width:760px){.cols{grid-template-columns:1fr 1fr}}
+.item{border:0;margin:0;padding:14px 0;border-top:1px solid var(--line);display:grid;gap:10px}
+.item:first-of-type{border-top:0}
+.item legend{padding:0;font:600 19px/1.3 var(--font-display)}
+.lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lv input,.likes input{position:absolute;opacity:0;width:1px;height:1px}
+.lv label{display:grid;justify-items:center;gap:4px;padding:10px 6px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);cursor:pointer;text-align:center;font-size:14px;line-height:1.2;min-height:76px;align-content:center}
+.lv label svg{width:34px;height:26px}
+.lv input:checked+label{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.likes{display:flex;flex-wrap:wrap;gap:8px}
+.likes label{padding:10px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface2);cursor:pointer;font-weight:700}
+.likes input:checked+label{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tcard{position:relative;border-radius:18px;padding:22px 20px 18px;background:var(--tc);overflow:hidden;max-width:520px;width:100%;margin:0 auto}
+.tcard .wash{position:absolute;inset:-10%;width:120%;height:120%;pointer-events:none}
+.tcard .tt{position:relative;display:flex;align-items:center;gap:12px;font:400 34px/1 var(--font-hand);color:#20384F;margin-bottom:10px}
+.tcard .tt span{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:var(--tn);border:2.5px solid #20384F;font-size:36px}
+.tcard ol{position:relative;list-style:none;margin:0;padding:0;display:grid}
+.tcard li{display:grid;grid-template-columns:1fr 64px;column-gap:10px;align-items:center;font:400 28px/1.45 var(--font-hand);color:#20384F;border-bottom:1.5px dashed rgba(32,56,79,.18)}
+.tcard li b{grid-column:2;grid-row:1/3;align-self:stretch;display:grid;place-items:center;font-weight:400;text-align:center;background:var(--tn);border-left:2px solid rgba(32,56,79,.25);border-right:2px solid rgba(32,56,79,.25)}
+.tcard li small{grid-column:1;font:400 16px/1.3 var(--font-body);color:#4A5E70;padding:0 0 6px}
+.tcard li:first-child b{border-radius:12px 12px 0 0}.tcard li:last-child b{border-radius:0 0 12px 12px}
+.tcard li{border-bottom:0}.tcard li small{border-bottom:1.5px dashed rgba(32,56,79,.18)}
+.summary{padding:14px;border-radius:12px;background:var(--good-soft);display:grid;gap:4px}
+.foot{color:var(--muted);font-size:14px;padding-block:8px 40px}
+@media (prefers-reduced-motion:no-preference){.isl svg{transition:transform .2s}.pop{animation:pop .4s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{from{transform:scale(.7)}to{transform:scale(1)}}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <filter id="wc" x="-15%" y="-15%" width="130%" height="130%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+    <feColorMatrix in="g" type="matrix" values="0.25 0 0 0 0.76  0.25 0 0 0 0.76  0.25 0 0 0 0.76  0 0 0 0 1" result="gr"/>
+    <feBlend in="d" in2="gr" mode="multiply" result="m"/>
+    <feComposite in="m" in2="d" operator="in"/>
+  </filter>
+  <filter id="pen" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="2" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 160" aria-hidden="true"><g filter="url(#wc)"><path d="M150 160C140 110 150 70 175 30" stroke="#9A6B3E" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M175 30C150 18 120 22 100 40C125 36 145 40 160 48Z" fill="#7CC48B"/><path d="M175 30C185 10 205 4 225 8C210 20 196 28 182 36Z" fill="#5FB27A"/>
+    <path d="M175 30C160 8 135 0 115 4C135 12 152 22 165 34Z" fill="#9BD39A"/><path d="M175 30C195 34 210 50 215 70C200 58 188 48 172 40Z" fill="#6DBB83"/>
+    <path d="M40 160C30 120 60 92 95 100C70 110 60 130 62 160Z" fill="#9BD39A"/><path d="M10 160C0 130 15 105 40 100C30 120 30 140 36 160Z" fill="#7CC48B"/>
+    <circle cx="178" cy="40" r="6" fill="#B07A43"/><circle cx="170" cy="44" r="5.5" fill="#9A6B3E"/></g></svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Matematica · Classe terza</p>
+        <h1>L'Arcipelago delle Tabelline</h1>
+        <p class="lead">Nove isole da esplorare. Alla fine c'è il tesoro!</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Navigatore: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#mappa">La mappa</a>
+    <a href="#isola" id="tab-isola">L'isola</a>
+    <a href="#corsa">Corsa dei venti</a>
+    <a href="#tesoro">Il tesoro</a>
+    <a href="#valuta">Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE (solo maestra) -->
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Le tabelline</p>
+    <h2>Navigatori dell'Arcipelago</h2>
+    <dl class="facts">
+      <div><dt>Metodologia attiva</dt><dd>Storytelling matematico e Gamification, con Cooperative Learning: equipaggi di 3 o 4 bambini che esplorano un'isola alla volta.</dd></div>
+      <div><dt>Durata</dt><dd>3 minuti di aggancio, 5 micro-step e 3 minuti di chiusura (circa 55 minuti). Si ripete per ogni isola, una o due tabelline a settimana.</dd></div>
+      <div><dt>Ispirazione e lettura</dt><dd>Il percorso si accompagna bene alla lettura ad alta voce del libro «L'isola delle tabelline» di Germano Pettarin e Jacopo Olivieri (Einaudi Ragazzi): un capitolo come aggancio, poi l'esplorazione dell'isola nell'app.</dd></div>
+      <div><dt>Materiali</dt><dd>Cerchi o tappetini numerati da 1 a 10 sul pavimento, una mappa dell'arcipelago su cartellone, carte delle tabelline, la LIM o il tablet con questa app.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Scienze motorie (salti sul sentiero), Musica (tabelline a ritmo e in rima), Geografia (carta nautica e punti cardinali), Arte (disegnare la propria isola), Scienze (6 zampe degli insetti, 8 tentacoli del polpo).</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>Il messaggio nella bottiglia</h3>
+    <p>La maestra arriva con una bottiglia chiusa. Dentro c'è un biglietto: «Sull'isola del 7 si salta così: 7, 14, 21, … Chi scopre la regola segreta può sbarcare». Le squadre hanno un minuto per scrivere i due numeri successivi sulla mini lavagna. Al tre si alzano le lavagne e si apre l'isola alla LIM.</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Il sentiero dei salti</h3><p>Dieci cerchi a terra, numerati da 1 a 10. Un bambino salta di cerchio in cerchio dicendo i numeri della tabellina dell'isola (per il 3: «3, 6, 9…»); la squadra batte le mani a ogni salto. Poi alla LIM si completa il sentiero nell'app.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>La regola segreta</h3><p>Si osserva la tabellina: come finiscono i numeri? Che trucco usa la guida dell'isola (il doppio, il doppio del doppio, la metà di dieci…)? Ogni equipaggio scrive il trucco con parole sue sul diario di bordo.</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>12</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Il ponte di corda</h3><p>A turno nell'equipaggio, dieci domande nell'app per attraversare il ponte. Chi sbaglia legge il trucco ad alta voce ai compagni prima di riprovare. Con 8 risposte giuste su 10 l'isola è conquistata.</p><div class="row"><button class="btn ghost" type="button" data-timer="12">Timer <span>12 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Manuale</span><h3>Le carte dell'isola</h3><p>Ogni equipaggio costruisce dieci carte: davanti l'operazione (3 × 4), dietro il risultato. Si gioca a memory a coppie, poi le carte vanno nel forziere dell'isola.</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>La corsa dei venti</h3><p>Sfida a tempo nell'app con le isole già conquistate. In palestra: la maestra dice una moltiplicazione, chi conosce il risultato corre al cerchio con la cifra delle decine e poi a quello delle unità.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+    </ol>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, bandiere e imprevisti</h3>
+      <ul class="tight">
+        <li><b>Stelle:</b> sentiero completato, ponte attraversato (fino a 3 stelle), corsa dei venti, numeri nascosti del tesoro.</li>
+        <li><b>Bandiere:</b> ogni isola conquistata pianta una bandiera sulla mappa.</li>
+        <li><b>Badge:</b> Mozzo, Esploratore, Capitano, Ammiraglio, Vento veloce, Custode del tesoro.</li>
+        <li><b>Imprevisti:</b> pesca una carta per cambiare le regole per un minuto.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti a salpare?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>Le tabelline con il corpo</h3>
+      <ul class="tight">
+        <li><b>Campana delle tabelline:</b> si salta su una campana a 10 caselle dicendo i multipli; sulle caselle pari si atterra a piedi uniti.</li>
+        <li><b>Palla dei multipli:</b> in cerchio, chi riceve la palla dice il multiplo successivo; chi sbaglia fa un giro su se stesso e rientra.</li>
+        <li><b>Rap delle tabelline:</b> ogni equipaggio inventa un ritmo con mani e piedi per la tabellina della sua isola.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Attenzione a tutti</p><h3>Per sostenere chi ha bisogno</h3>
+      <ul class="tight">
+        <li>Il sentiero mostra sempre i salti già fatti: si può contare in avanti.</li>
+        <li>Dopo un errore l'app mostra il trucco dell'isola e il conteggio salto per salto.</li>
+        <li>La tavola pitagorica del tesoro ricorda la proprietà commutativa: 3 × 7 = 7 × 3.</li>
+        <li>Nella corsa dei venti si possono scegliere solo le isole già conquistate.</li>
+      </ul></div>
+  </div>
+  <div class="panel"><p class="eyebrow">Risorsa per la LIM</p><h3>Tavola pitagorica interattiva</h3><p>Il Genially «Tavola pitagorica interattiva – Isola delle tabelline» si apre in una nuova finestra: utile alla LIM per presentare la tavola prima del tesoro dell'app.</p><div class="row"><a class="btn" href="https://view.genially.com/67ee4d6945bb841b8ac931e5" target="_blank" rel="noopener">Apri il Genially ↗</a></div></div>
+  <div class="row"><a class="btn" href="#mappa">Apri la mappa</a><a class="btn ghost" href="#valuta">Scheda di autovalutazione</a></div>
+</section>
+
+<!-- MAPPA -->
+<section class="view" id="sec-mappa" hidden>
+  <div class="panel">
+    <p class="eyebrow">La carta nautica</p>
+    <h2>Scegli un'isola</h2>
+    <p class="lead">Ogni isola è una tabellina. Scegli un'isola. Con 8 risposte giuste la conquisti.</p>
+    <div class="map" id="map"></div>
+    <div class="legend"><span>🚩 isola conquistata</span><span id="map-count"></span></div>
+  </div>
+</section>
+
+<!-- ISOLA -->
+<section class="view" id="sec-isola" hidden>
+  <div class="panel" id="isola-card"></div>
+  <div class="panel" id="isola-play" hidden></div>
+</section>
+
+<!-- CORSA -->
+<section class="view" id="sec-corsa" hidden>
+  <div class="panel" id="corsa-card"></div>
+</section>
+
+<!-- TESORO -->
+<section class="view" id="sec-tesoro" hidden>
+  <div class="beach">
+    <svg class="bg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6FB8E0"/><stop offset="1" stop-color="#BDE6F5"/></linearGradient></defs>
+      <rect width="400" height="240" fill="url(#sky)"/>
+      <g fill="#fff" filter="url(#wc)" opacity=".95"><ellipse cx="70" cy="40" rx="34" ry="12"/><ellipse cx="92" cy="32" rx="22" ry="12"/><ellipse cx="300" cy="30" rx="40" ry="13"/><ellipse cx="330" cy="22" rx="22" ry="11"/><ellipse cx="200" cy="70" rx="26" ry="8"/></g>
+      <g filter="url(#wc)"><rect x="-10" y="150" width="420" height="40" fill="#4FB3C8"/><rect x="-10" y="176" width="420" height="10" fill="#7CCFD9"/><path d="M-10 186Q100 178 200 186T410 184V250H-10Z" fill="#F2D49C"/></g>
+      <g filter="url(#pen)" stroke="#fff" stroke-width="1" fill="none" opacity=".8"><path d="M40 162q10-3 20 0M150 170q12-3 24 0M260 160q10-3 20 0M330 172q12-3 24 0"/></g>
+      <g filter="url(#wc)">
+        <path d="M18 240C14 190 22 150 40 110" stroke="#9A6B3E" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M40 110c-22-10-44-4-56 10 18-4 34-4 48 0zM40 110c14-18 36-20 50-10-16 2-30 6-44 14zM40 110c-6-20-26-28-42-24 16 6 28 14 36 26zM40 110c22 0 36 14 38 30-12-12-22-18-36-24z" fill="#5FB27A"/>
+        <path d="M384 240C390 190 380 150 360 112" stroke="#9A6B3E" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M360 112c22-10 44-4 56 10-18-4-34-4-48 0zM360 112c-14-18-36-20-50-10 16 2 30 6 44 14zM360 112c6-20 26-28 42-24-16 6-28 14-36 26zM360 112c-22 0-36 14-38 30 12-12 22-18 36-24z" fill="#6DBB83"/>
+      </g>
+    </svg>
+    <div class="bhead"><h2>Il tesoro: la tavola pitagorica</h2>
+      <div class="row"><button class="bbtn" type="button" data-tm="scopri" aria-pressed="true">Scopri</button><button class="bbtn" type="button" data-tm="tutta" aria-pressed="false">Tutta la tavola</button><button class="bbtn" type="button" data-tm="caccia" aria-pressed="false">Caccia ai numeri nascosti</button></div></div>
+    <div class="bgrid">
+      <div class="bguide">
+        <div class="bubble" id="bubble"></div>
+        <svg class="pit" viewBox="0 0 120 170" aria-hidden="true" filter="url(#pen)">
+          <path d="M34 84Q30 160 22 166H98Q92 150 88 84Z" fill="#FBFAF4" stroke="#20384F" stroke-width="2.5"/>
+          <path d="M24 160H96" stroke="#3E8FC6" stroke-width="5"/><path d="M36 86L80 160" stroke="#3E8FC6" stroke-width="4"/>
+          <path d="M84 96L100 116" stroke="#F2C9A5" stroke-width="9" stroke-linecap="round"/>
+          <rect x="92" y="104" width="26" height="34" rx="3" fill="#F6E7C1" stroke="#20384F" stroke-width="2"/><path d="M98 132L98 112L114 132Z" fill="none" stroke="#B4412E" stroke-width="2"/>
+          <circle cx="60" cy="50" r="22" fill="#F2C9A5" stroke="#20384F" stroke-width="2.5"/>
+          <path d="M40 30Q60 14 80 30" fill="none" stroke="#5FA35A" stroke-width="5" stroke-linecap="round"/><path d="M40 52Q38 84 60 86Q82 84 80 52Q74 70 60 70Q46 70 40 52Z" fill="#8E9AA3" stroke="#20384F" stroke-width="2"/>
+          <path d="M40 46q-4-10 4-16M80 46q4-10-4-16" stroke="#8E9AA3" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="53" cy="48" r="2.2" fill="#20384F"/><circle cx="67" cy="48" r="2.2" fill="#20384F"/>
+          <path d="M54 62q6 4 12 0" fill="none" stroke="#20384F" stroke-width="2" stroke-linecap="round"/>
+          <path d="M40 166l-6 4h18zM78 166l-2 4h18z" fill="#7A4E2A"/>
+        </svg>
+        <div class="row" style="justify-content:center"><button class="bbtn red" type="button" id="tav-reset">Ricomincia</button><a class="bbtn" href="https://view.genially.com/67ee4d6945bb841b8ac931e5" target="_blank" rel="noopener">Genially ↗</a></div>
+      </div>
+      <div class="grass">
+        <svg class="gr" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#wc)"><rect x="-5" y="-5" width="110" height="110" fill="#A9D98C"/><ellipse cx="25" cy="20" rx="40" ry="25" fill="#C2E6A4" opacity=".8"/><ellipse cx="80" cy="85" rx="40" ry="25" fill="#93CF7A" opacity=".7"/></g></svg>
+        <div class="tavwrap"><div class="tav" id="tav"></div></div>
+      </div>
+    </div>
+    <div id="tav-play"></div>
+  </div>
+</section>
+
+<!-- VALUTAZIONE -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andato il viaggio?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Matematica.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script>
+(function(){
+"use strict";
+const CQ=window.Cuccioli;
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const esc=CQ.esc;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const toast=m=>CQ.toast(m);
+const ding=()=>CQ.tone([[659,.1],[880,.2]]);
+const buzz=()=>CQ.tone([[220,.18]]);
+
+/* ---------- le isole ---------- */
+const ISLANDS=[
+  {n:2,name:"Isola dei Gemelli",col:"#F7B7C9",x:14,y:28,guide:"Euclide",g:"il geometra greco",rule:"Ogni numero ha il suo gemello: per 2 si fa il doppio.",trick:(k)=>`${k} × 2 è il doppio di ${k}: ${k} + ${k} = ${2*k}.`,end:"I risultati sono tutti pari: finiscono con 0, 2, 4, 6 o 8."},
+  {n:3,name:"Isola dei Triangoli",col:"#F9DC6B",x:36,y:18,guide:"Pitagora",g:"il maestro dei triangoli",rule:"Il triangolo ha 3 lati: per 3 fai il doppio e aggiungi ancora una volta il numero.",trick:(k)=>`${k} × 3 = ${k} × 2 + ${k}: ${2*k} + ${k} = ${3*k}.`,end:"Somma le cifre del risultato: viene sempre 3, 6 o 9."},
+  {n:4,name:"Isola dei Quadrati",col:"#A6DB98",x:60,y:14,guide:"Ipazia",g:"la scienziata di Alessandria",rule:"Il quadrato ha 4 lati: per 4 fai il doppio del doppio.",trick:(k)=>`${k} × 4: il doppio di ${k} è ${2*k}, il doppio di ${2*k} è ${4*k}.`,end:"I risultati sono tutti pari."},
+  {n:5,name:"Isola delle Mani",col:"#F9B871",x:84,y:24,guide:"Fibonacci",g:"il mercante dei numeri",rule:"Una mano ha 5 dita: per 5 fai per 10 e poi la metà.",trick:(k)=>`${k} × 5: ${k} × 10 = ${10*k}, la metà è ${5*k}.`,end:"I risultati finiscono sempre con 0 o con 5."},
+  {n:6,name:"Isola degli Esagoni",col:"#C9B5F2",x:20,y:66,guide:"Archimede",g:"l'inventore di Siracusa",rule:"Le celle delle api hanno 6 lati: per 6 fai per 5 e aggiungi ancora una volta il numero.",trick:(k)=>`${k} × 6 = ${k} × 5 + ${k}: ${5*k} + ${k} = ${6*k}.`,end:"È il doppio della tabellina del 3."},
+  {n:7,name:"Isola dell'Arcobaleno",col:"#F5A38A",x:42,y:52,guide:"Talete",g:"il misuratore di piramidi",rule:"L'arcobaleno ha 7 colori: per 7 fai per 5 più per 2.",trick:(k)=>`${k} × 7 = ${k} × 5 + ${k} × 2: ${5*k} + ${2*k} = ${7*k}.`,end:"È l'isola più difficile: ripassala spesso!"},
+  {n:8,name:"Isola dei Polpi",col:"#8EDCD2",x:64,y:60,guide:"Al-Khwarizmi",g:"il padre dei calcoli",rule:"Il polpo ha 8 tentacoli: per 8 fai il doppio della tabellina del 4.",trick:(k)=>`${k} × 8: ${k} × 4 = ${4*k}, il doppio è ${8*k}.`,end:"I risultati sono tutti pari."},
+  {n:9,name:"Isola delle Dita Magiche",col:"#9CCBF2",x:86,y:68,guide:"Gauss",g:"il genio dei conti veloci",rule:"Per 9 fai per 10 e togli una volta il numero.",trick:(k)=>`${k} × 9 = ${k} × 10 − ${k}: ${10*k} − ${k} = ${9*k}.`,end:"Somma le cifre del risultato: fa sempre 9 (2 + 7 = 9)."},
+  {n:10,name:"Isola dello Zero",col:"#EDE3CC",x:52,y:86,guide:"Brahmagupta",g:"l'amico dello zero",rule:"Per 10 basta aggiungere uno 0: ogni cifra si sposta di un posto a sinistra.",trick:(k)=>`${k} × 10: aggiungi lo 0 e ottieni ${10*k}.`,end:"I risultati finiscono tutti con 0."}
+];
+const IS=n=>ISLANDS.find(i=>i.n===n);
+/* isola ad acquerello: laguna chiara, sabbia, collina del colore dell'isola, alberelli a matita, palma */
+function islandSvg(c,conq,n){
+  let r=n*7,tr="";const R=()=>{r=(r*9301+49297)%233280;return r/233280};
+  for(let i=0;i<14;i++){const a=R()*Math.PI*2,d=R()*20,x=50+Math.cos(a)*d*1.5,y=58+Math.sin(a)*d*.7,rr=4+R()*3,g=["#5FAE6E","#79C285","#4E9C62","#8ACB8C"][i%4];tr+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rr.toFixed(1)}" fill="${g}"/>`}
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+  <g filter="url(#wc)"><ellipse cx="50" cy="60" rx="49" ry="34" fill="#BFE7F1" opacity=".9"/>
+  <path d="M8 62C6 46 24 36 50 35C78 34 95 46 93 62C91 78 72 86 50 86C26 86 10 78 8 62Z" fill="#F4DFA8"/>
+  <path d="M18 60C18 48 32 41 50 41C70 41 83 49 82 60C81 71 67 77 50 77C32 77 18 71 18 60Z" fill="${c}"/>
+  ${tr}</g>
+  <g filter="url(#pen)" fill="none" stroke="#20384F" stroke-width="1.4" stroke-linecap="round" opacity=".75"><path d="M18 60C18 48 32 41 50 41C70 41 83 49 82 60C81 71 67 77 50 77C32 77 18 71 18 60Z"/></g>
+  <g filter="url(#wc)"><path d="M66 50 Q68 30 72 18" stroke="#9A6B3E" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  <path d="M72 18c-10-4-20 0-24 8 8-3 16-3 22-1zM72 18c8-8 18-8 24-2-8 0-15 2-21 5zM72 18c-3-9-12-13-20-12 7 3 13 7 17 13zM72 18c9 0 15 7 16 15-5-6-10-9-16-12z" fill="#5FB27A"/></g>
+  ${conq?'<g filter="url(#pen)"><path d="M32 54V28" stroke="#20384F" stroke-width="2.2"/><path d="M32 28L50 33L32 39Z" fill="#E86A6A" stroke="#20384F" stroke-width="1.6"/></g>':""}</svg>`;
+}
+function guideSvg(c){return `<svg viewBox="0 0 64 64" aria-hidden="true" filter="url(#pen)"><circle cx="32" cy="36" r="20" fill="#FFD9B3" stroke="#13304A" stroke-width="2.5"/><path d="M12 30Q16 10 32 10Q48 10 52 30Z" fill="${c}" stroke="#13304A" stroke-width="2.5"/><path d="M18 44Q32 62 46 44" fill="#fff" stroke="#13304A" stroke-width="2.5"/><circle cx="25" cy="34" r="2.4" fill="#13304A"/><circle cx="39" cy="34" r="2.4" fill="#13304A"/><path d="M27 41q5 4 10 0" fill="none" stroke="#13304A" stroke-width="2" stroke-linecap="round"/></svg>`}
+
+/* ---------- stato dell'alunno ---------- */
+const KEY0="arcipelago-tabelline-v1";
+let KEY=KEY0,PID=null,chipCtl=null,dbT=null;
+const fresh=()=>({stars:0,badges:{},isl:{},cnt:{path:0,bridge:0,race:0,hunt:0},best:0,err:{},valuta:{a:{},like:"",done:false}});
+let S=fresh();
+function load(src){
+  let s=fresh();
+  try{const o=src!==undefined?src:JSON.parse(localStorage.getItem(KEY)||"null");
+    if(o&&typeof o==="object"){s=Object.assign(s,o);s.cnt=Object.assign(fresh().cnt,o.cnt||{});s.valuta=Object.assign(fresh().valuta,o.valuta||{});s.isl=o.isl||{};s.err=o.err||{};s.badges=o.badges||{}}}catch(e){}
+  return s;
+}
+function save(){
+  if(PID)S.ts=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+  if(PID&&CQ.db){clearTimeout(dbT);const pid=PID,d=JSON.parse(JSON.stringify(S));dbT=setTimeout(()=>{CQ.db.doc("tabelline/"+pid).set(d).catch(()=>{})},1500)}
+}
+function addStars(n){if(n<=0)return;S.stars+=n;save();renderBoard();if(PID&&CQ.pupils[PID])CQ.award(PID,"mat",n,"tabelline")}
+const conq=()=>ISLANDS.filter(i=>(S.isl[i.n]||{}).conq).map(i=>i.n);
+function errFact(a,b){const k=Math.min(a,b)+"×"+Math.max(a,b);S.err[k]=(S.err[k]||0)+1;save()}
+
+const BADGES=[
+  {id:"mozzo",n:"Mozzo",how:"Prima isola conquistata",ok:()=>conq().length>=1},
+  {id:"esploratore",n:"Esploratore",how:"5 isole conquistate",ok:()=>conq().length>=5},
+  {id:"ammiraglio",n:"Ammiraglio",how:"Tutte le 9 isole",ok:()=>conq().length>=9},
+  {id:"capitano",n:"Capitano",how:"Un ponte senza errori",ok:()=>Object.keys(S.isl).some(k=>S.isl[k].best===10)},
+  {id:"vento",n:"Vento veloce",how:"20 risposte nella corsa",ok:()=>S.best>=20},
+  {id:"tesoro",n:"Custode del tesoro",how:"3 cacce al tesoro",ok:()=>S.cnt.hunt>=3}
+];
+function renderBoard(){
+  $("#stars").textContent=S.stars;
+  $("#badges").innerHTML=BADGES.map(b=>`<li class="badge${S.badges[b.id]?" got":""}"><b>${b.n}</b><small>${S.badges[b.id]?"Conquistato":b.how}</small></li>`).join("");
+}
+function checkBadges(){
+  BADGES.forEach(b=>{if(!S.badges[b.id]&&b.ok()){S.badges[b.id]=true;S.stars+=2;save();if(PID&&CQ.pupils[PID])CQ.award(PID,"mat",2,"tabelline");toast("Nuovo badge: "+b.n+". Due stelle in più!");CQ.tone([[523,.12],[659,.12],[784,.22]])}});
+  renderBoard();
+}
+function fbHTML(kind,title,lines){return `<div class="fb ${kind}" role="status"><b class="t">${title}</b>${lines&&lines.length?(lines.length===1?`<p>${lines[0]}</p>`:`<ul>${lines.map(l=>`<li>${l}</li>`).join("")}</ul>`):""}</div>`}
+
+/* ---------- tastierino ---------- */
+let PAD=null;
+function padHTML(){return `<div class="pad" role="group" aria-label="Tastierino">${[1,2,3,4,5,6,7,8,9].map(d=>`<button type="button" data-k="${d}">${d}</button>`).join("")}<button type="button" class="del" data-k="del" aria-label="Cancella">⌫</button><button type="button" data-k="0">0</button><button type="button" class="ok" data-k="ok">OK</button></div>`}
+function padBind(root,cfg){PAD=Object.assign({v:"",max:3},cfg);paint()}
+function paint(){if(PAD&&PAD.show)PAD.show(PAD.v)}
+document.addEventListener("click",ev=>{
+  const b=ev.target.closest(".pad [data-k]");if(!b||!PAD)return;
+  const k=b.dataset.k;
+  if(k==="del")PAD.v=PAD.v.slice(0,-1);
+  else if(k==="ok"){if(PAD.v!=="")PAD.ok(+PAD.v);return}
+  else if(PAD.v.length<PAD.max)PAD.v+=k;
+  paint();
+});
+document.addEventListener("keydown",ev=>{
+  if(!PAD||$("main").hidden)return;
+  const vis=PAD.root&&PAD.root.offsetParent;if(!vis)return;
+  if(/^\d$/.test(ev.key)){if(PAD.v.length<PAD.max)PAD.v+=ev.key;paint();ev.preventDefault()}
+  else if(ev.key==="Backspace"){PAD.v=PAD.v.slice(0,-1);paint();ev.preventDefault()}
+  else if(ev.key==="Enter"){if(PAD.v!=="")PAD.ok(+PAD.v);ev.preventDefault()}
+});
+
+/* ---------- mappa ---------- */
+function renderMap(){
+  const c=conq();
+  let w="",r=11;const R=()=>{r=(r*9301+49297)%233280;return r/233280};
+  for(let i=0;i<70;i++){const x=R()*160,y=R()*100,l=3+R()*5;w+=`<path d="M${x.toFixed(1)} ${y.toFixed(1)} q${(l/2).toFixed(1)} -2 ${l.toFixed(1)} 0" />`}
+  $("#map").innerHTML=`<svg class="sea" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#wc)"><rect x="-8" y="-8" width="176" height="116" fill="#7CCBE2"/><ellipse cx="40" cy="30" rx="60" ry="30" fill="#9AD8EA" opacity=".7"/><ellipse cx="125" cy="75" rx="55" ry="28" fill="#5DB7D6" opacity=".6"/></g><g filter="url(#pen)" fill="none" stroke="#fff" stroke-width=".7" stroke-linecap="round" opacity=".85">${w}</g></svg>`+
+    ISLANDS.map(i=>{const st=S.isl[i.n]||{},stars=st.stars||0;return `<button class="isl" type="button" data-n="${i.n}" style="left:${i.x}%;top:${i.y}%" aria-label="${esc(i.name)}, tabellina del ${i.n}${st.conq?", conquistata":""}">${islandSvg(i.col,st.conq,i.n)}<span class="lab">× ${i.n}${stars?" "+"★".repeat(stars):""}</span></button>`}).join("");
+  $("#map-count").textContent=`Isole conquistate: ${c.length} su 9`;
+}
+$("#map").addEventListener("click",ev=>{const b=ev.target.closest("[data-n]");if(!b)return;openIsland(+b.dataset.n)});
+
+/* ---------- isola ---------- */
+let CUR=null;
+function openIsland(n){CUR=n;try{sessionStorage.setItem("arcipelago-isola",n)}catch(e){}renderIsland();$("#isola-play").hidden=true;location.hash="#isola";window.scrollTo(0,0)}
+function renderIsland(){
+  if(!CUR){$("#isola-card").innerHTML=`<p class="lead">Scegli prima un'isola sulla mappa.</p><div class="row"><a class="btn" href="#mappa">Apri la mappa</a></div>`;return}
+  const i=IS(CUR),st=S.isl[CUR]||{};
+  $("#isola-card").innerHTML=`<div class="ihead"><div class="ibig" style="background:${i.col}">×${i.n}</div><div><p class="eyebrow">Tabellina del ${i.n}</p><h2>${esc(i.name)}</h2><p class="lead">${st.conq?"🚩 Isola conquistata":"Isola da conquistare"}${st.best!=null?` · miglior ponte: ${st.best} su 10`:""}</p></div></div>
+    <div class="guide">${guideSvg(i.col)}<p><b>${esc(i.guide)}</b>, ${esc(i.g)}, ti dà il benvenuto: «${esc(i.rule)}»<br><span class="lead">${esc(i.end)}</span></p></div>
+    <div class="acts">
+      <button class="act" type="button" data-a="path" style="--c:#F4DFA8"><b>1. Il sentiero dei salti</b><span>Scopri la regola: salta di ${i.n} in ${i.n} da ${i.n} a ${i.n*10}.</span><small>${(st.path||0)?"Fatto ✓":"Da fare"}</small></button>
+      <button class="act" type="button" data-a="bridge" style="--c:${i.col}"><b>2. Il ponte di corda</b><span>10 domande: con 8 giuste conquisti l'isola.</span><small>${st.best!=null?"Miglior ponte: "+st.best+"/10":"Da fare"}</small></button>
+      <button class="act" type="button" data-a="list" style="--c:#D6E8F1"><b>Il diario di bordo</b><span>Tutta la tabellina del ${i.n} con il trucco della guida.</span><small>Per ripassare</small></button>
+    </div>`;
+}
+$("#isola-card").addEventListener("click",ev=>{const b=ev.target.closest("[data-a]");if(!b)return;({path:startPath,bridge:startBridge,list:showList})[b.dataset.a]()});
+
+function showList(){
+  const i=IS(CUR),p=$("#isola-play");p.hidden=false;PAD=null;
+  p.innerHTML=`<p class="eyebrow">Diario di bordo</p><div class="tcard" style="--tc:${i.col}55;--tn:${i.col}"><svg class="wash" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#wc)"><ellipse cx="30" cy="25" rx="45" ry="30" fill="${i.col}" opacity=".45"/><ellipse cx="75" cy="80" rx="45" ry="30" fill="${i.col}" opacity=".35"/></g></svg>
+    <div class="tt">Tabellina del <span>${i.n}</span></div>
+    <ol>${Array.from({length:10},(_,k)=>`<li>${k+1} × ${i.n} =<b>${(k+1)*i.n}</b><small>${esc(i.trick(k+1))}</small></li>`).join("")}</ol></div>`;
+  p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* sentiero dei salti */
+let PT=null;
+function startPath(){
+  const i=IS(CUR);PT={n:i.n,k:1,errs:0,done:false};
+  const p=$("#isola-play");p.hidden=false;
+  p.innerHTML=`<p class="eyebrow">Il sentiero dei salti</p><h3>Salta di ${i.n} in ${i.n}</h3><p class="lead">Scrivi il numero della pietra illuminata. Ogni salto aggiunge ${i.n}.</p><div class="path" id="stones"></div>
+    <div class="qbox"><div class="q" id="pq"></div>${padHTML()}<div id="pfb" style="width:100%"></div></div>`;
+  padBind(p,{root:p,max:3,show:v=>{$("#pq").innerHTML=`${PT.k===1?"":`${(PT.k-1)*PT.n} + ${PT.n} = `}<span class="ans">${v||"?"}</span>`},ok:pathOk});
+  drawStones();paint();p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function drawStones(){
+  $("#stones").innerHTML=Array.from({length:10},(_,j)=>{const k=j+1,cls=k<PT.k?"ok":k===PT.k&&!PT.done?"now":"";return `<div class="stone ${cls}"><small>${k}°</small>${k<PT.k||PT.done?k*PT.n:(k===PT.k?"?":"")}</div>`}).join("");
+}
+function pathOk(v){
+  if(!PT||PT.done)return;
+  const exp=PT.k*PT.n;
+  if(v===exp){
+    PT.k++;PAD.v="";ding();
+    if(PT.k>10){PT.done=true;drawStones();const st=PT.errs===0?2:1;S.isl[PT.n]=Object.assign({},S.isl[PT.n],{path:1});S.cnt.path++;save();addStars(st);checkBadges();
+      $("#pfb").innerHTML=fbHTML("good",`Sentiero completato! ${st===2?"Due stelle!":"Una stella!"}`,[`La regola dell'isola: ${PT.n}, ${Array.from({length:9},(_,j)=>(j+2)*PT.n).join(", ")}.`,"Ora prova il ponte di corda."]);renderIsland();PAD=null;return}
+    drawStones();$("#pfb").innerHTML="";paint();
+  }else{
+    PT.errs++;buzz();errFact(PT.k,PT.n);PAD.v="";paint();
+    const prev=(PT.k-1)*PT.n;
+    $("#pfb").innerHTML=fbHTML("bad","Salto sbagliato",[PT.k===1?`La prima pietra è ${PT.n} × 1 = ${PT.n}.`:`Dalla pietra ${prev} fai un salto di ${PT.n}: ${prev} + ${PT.n} = ${exp}. Hai scritto ${v}.`]);
+  }
+}
+
+/* ponte di corda */
+let BR=null;
+function makeQ(n,k){
+  const t=pick(["mul","mul","rev","miss","div"]);
+  if(t==="mul")return {a:k,b:n,txt:`${k} × ${n} = `,ans:k*n,kind:t};
+  if(t==="rev")return {a:n,b:k,txt:`${n} × ${k} = `,ans:k*n,kind:t};
+  if(t==="miss")return {a:k,b:n,txt:`? × ${n} = ${k*n}`,ans:k,kind:t};
+  return {a:k,b:n,txt:`${k*n} : ${n} = `,ans:k,kind:t};
+}
+function startBridge(){
+  const i=IS(CUR),ks=shuffle([1,2,3,4,5,6,7,8,9,10]);
+  BR={n:i.n,qs:ks.map(k=>makeQ(i.n,k)),i:0,ok:0,res:[],first:true,done:false};
+  const p=$("#isola-play");p.hidden=false;
+  p.innerHTML=`<p class="eyebrow">Il ponte di corda</p><h3>Attraversa il ponte dell'${esc(i.name)}</h3><div class="qbox"><div class="dots" id="dots"></div><div class="qcount" id="bc"></div><div class="q pop" id="bq"></div>${padHTML()}<div id="bfb" style="width:100%"></div></div>`;
+  padBind(p,{root:p,max:3,show:showBridgeQ,ok:bridgeOk});
+  showBridge();p.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function showBridgeQ(v){const q=BR.qs[BR.i];if(!q)return;const s=q.kind==="miss"?q.txt.replace("?",`<span class="ans">${v||"?"}</span>`):q.txt+`<span class="ans">${v||"?"}</span>`;$("#bq").innerHTML=s}
+function showBridge(){
+  $("#dots").innerHTML=BR.qs.map((q,j)=>`<i class="${BR.res[j]===true?"ok":BR.res[j]===false?"ko":j===BR.i?"now":""}"></i>`).join("");
+  $("#bc").textContent=`Asse ${BR.i+1} di 10`;paint();
+}
+function explainQ(q,n,v){
+  const i=IS(n),k=q.kind==="rev"?q.b:q.a,p=k*n,lines=[];
+  if(q.kind==="miss")lines.push(`Quale numero per ${n} fa ${p}? È ${k}, perché ${k} × ${n} = ${p}.`);
+  else if(q.kind==="div")lines.push(`${p} : ${n} = ${k}, perché ${k} × ${n} = ${p}. La divisione è l'operazione inversa della moltiplicazione.`);
+  else lines.push(`${q.kind==="rev"?`${n} × ${k}`:`${k} × ${n}`} = ${p}.${q.kind==="rev"?` È uguale a ${k} × ${n} (proprietà commutativa).`:""}`);
+  lines.push(`Il trucco di ${i.guide}: ${i.trick(k)}`);
+  if(k>1)lines.push(`Contando a salti: ${Array.from({length:k},(_,j)=>(j+1)*n).join(", ")}.`);
+  if(v!=null&&q.kind!=="miss"&&q.kind!=="div"&&v===p+n)lines.unshift(`Hai fatto un salto in più: ${v} è ${k+1} × ${n}.`);
+  else if(v!=null&&q.kind!=="miss"&&q.kind!=="div"&&v===p-n)lines.unshift(`Ti manca un salto: ${v} è ${k-1} × ${n}.`);
+  return lines;
+}
+function bridgeOk(v){
+  if(!BR||BR.done)return;
+  const q=BR.qs[BR.i];
+  if(v===q.ans){
+    if(BR.first){BR.ok++;BR.res[BR.i]=true}
+    ding();BR.i++;BR.first=true;PAD.v="";
+    $("#bfb").innerHTML=BR.res[BR.i-1]?"":fbHTML("info","Giusto, questa volta!",["Questo asse non conta, ma ora lo sai."]);
+    if(BR.i>=10)return endBridge();
+    const el=$("#bq");el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");showBridge();
+  }else{
+    if(BR.first){BR.res[BR.i]=false;errFact(q.kind==="rev"?q.b:q.a,BR.n)}
+    BR.first=false;buzz();PAD.v="";showBridge();
+    $("#bfb").innerHTML=fbHTML("bad",`Hai scritto ${v}: l'asse scricchiola!`,explainQ(q,BR.n,v).concat(["Riprova a rispondere."]));
+  }
+}
+function endBridge(){
+  BR.done=true;PAD=null;
+  const ok=BR.ok,st=ok===10?3:ok>=8?2:ok>=6?1:0,prev=S.isl[BR.n]||{},wasC=!!prev.conq,conqNow=ok>=8;
+  S.isl[BR.n]=Object.assign({},prev,{best:Math.max(prev.best||0,ok),stars:Math.max(prev.stars||0,st),conq:wasC||conqNow,tries:(prev.tries||0)+1});
+  S.cnt.bridge++;save();addStars(st);checkBadges();renderMap();
+  const wrong=BR.qs.filter((q,j)=>BR.res[j]===false).map(q=>q.txt.replace("?","…").trim()+(q.kind==="miss"?"":" "+q.ans));
+  $("#dots").innerHTML=BR.qs.map((q,j)=>`<i class="${BR.res[j]?"ok":"ko"}"></i>`).join("");
+  $("#bc").textContent="";$("#bq").innerHTML="";
+  $(".pad",$("#isola-play")).remove();
+  $("#bfb").innerHTML=fbHTML(conqNow?"good":"info",conqNow?(wasC?`Ponte attraversato di nuovo: ${ok} su 10!`:`🚩 Isola conquistata! ${ok} risposte giuste su 10.`):`${ok} su 10: il ponte regge ancora poco. Ne servono 8.`,
+    [st?`Hai guadagnato ${st} ${st===1?"stella":"stelle"}.`:"Nessuna stella questa volta: ripassa il diario di bordo e riprova.",wrong.length?`Da ripassare: ${wrong.join(" · ")}.`:"Nessun errore: sei un vero Capitano!"])+
+    `<div class="row" style="margin-top:10px"><button class="btn" type="button" data-a2="again">Riprova il ponte</button><a class="btn ghost" href="#mappa">Torna alla mappa</a></div>`;
+  if(conqNow&&!wasC)CQ.tone([[523,.12],[659,.12],[784,.12],[1047,.3]]);
+  renderIsland();
+}
+$("#isola-play").addEventListener("click",ev=>{const b=ev.target.closest("[data-a2]");if(b&&b.dataset.a2==="again")startBridge()});
+
+/* ---------- corsa dei venti ---------- */
+let RC=null,RCsel=null,rcT=null;
+function renderRace(){
+  if(RC&&!RC.done)return;
+  const c=conq();if(RCsel===null)RCsel=c.length?c.slice():[2,5,10];
+  $("#corsa-card").innerHTML=`<p class="eyebrow">Corsa dei venti</p><h2>Un minuto di vento in poppa</h2><p class="lead">Rispondi a più domande che puoi in 60 secondi. Scegli le isole della corsa${c.length?"":" (conquista un'isola per sbloccarle tutte: per ora ci sono 2, 5 e 10)"}.</p>
+    <div class="row" role="group" aria-label="Isole della corsa">${ISLANDS.map(i=>{const on=RCsel.includes(i.n),ok=c.includes(i.n)||[2,5,10].includes(i.n);return `<button class="btn ${on?"":"ghost"}" type="button" data-rn="${i.n}" ${ok?"":"disabled"} aria-pressed="${on}" style="min-width:64px">× ${i.n}</button>`}).join("")}</div>
+    <p class="lead">Record personale: <b>${S.best||0}</b> risposte.</p><div class="row"><button class="btn" type="button" id="rc-go">Salpa!</button></div><div id="rc-play"></div>`;
+}
+$("#corsa-card").addEventListener("click",ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.rn){const n=+b.dataset.rn;RCsel=RCsel.includes(n)?RCsel.filter(x=>x!==n):RCsel.concat([n]);if(!RCsel.length)RCsel=[n];renderRace()}
+  if(b.id==="rc-go")startRace();
+  if(b.id==="rc-again"){RC=null;renderRace()}
+});
+function nextRaceQ(){const n=pick(RCsel),k=rnd(1,10);RC.q=Math.random()<.5?{txt:`${k} × ${n} = `,ans:k*n,a:k,n}:{txt:`${n} × ${k} = `,ans:k*n,a:k,n}}
+function startRace(){
+  RC={left:60,ok:0,ko:0,done:false,miss:[]};nextRaceQ();
+  const p=$("#rc-play");
+  p.innerHTML=`<div class="qbox"><div class="timer" id="rt">60</div><div class="bar"><i id="rb" style="width:100%"></i></div><div class="qcount" id="rcnt">Risposte giuste: 0</div><div class="q" id="rq"></div>${padHTML()}<div id="rfb" style="width:100%"></div></div>`;
+  $("#rc-go").disabled=true;
+  padBind(p,{root:p,max:3,show:v=>{$("#rq").innerHTML=RC.q.txt+`<span class="ans">${v||"?"}</span>`},ok:raceOk});paint();
+  clearInterval(rcT);rcT=setInterval(()=>{RC.left--;$("#rt").textContent=RC.left;$("#rt").classList.toggle("low",RC.left<=10);$("#rb").style.width=(RC.left/60*100)+"%";if(RC.left<=0)endRace()},1000);
+  p.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function raceOk(v){
+  if(!RC||RC.done)return;
+  if(v===RC.q.ans){RC.ok++;$("#rfb").innerHTML=""}
+  else{RC.ko++;errFact(RC.q.a,RC.q.n);RC.miss.push(`${RC.q.a} × ${RC.q.n} = ${RC.q.ans}`);buzz();$("#rfb").innerHTML=fbHTML("bad",`${RC.q.txt}${RC.q.ans}`,[IS(RC.q.n).trick(RC.q.a)])}
+  $("#rcnt").textContent="Risposte giuste: "+RC.ok;PAD.v="";nextRaceQ();paint();
+}
+function endRace(){
+  clearInterval(rcT);if(!RC||RC.done)return;RC.done=true;PAD=null;
+  const st=RC.ok>=30?3:RC.ok>=20?2:RC.ok>=10?1:0,rec=RC.ok>(S.best||0);
+  if(rec)S.best=RC.ok;S.cnt.race++;save();addStars(st);checkBadges();
+  $("#rc-play").innerHTML=fbHTML("good",`Terra in vista! ${RC.ok} risposte giuste${rec?" · nuovo record!":""}`,[st?`Hai guadagnato ${st} ${st===1?"stella":"stelle"} (10 risposte = 1 stella, 20 = 2, 30 = 3).`:"Con 10 risposte giuste arriva la prima stella.",RC.miss.length?`Da ripassare: ${[...new Set(RC.miss)].join(" · ")}.`:"Nessun errore!"])+`<div class="row" style="margin-top:10px"><button class="btn" type="button" id="rc-again">Nuova corsa</button></div>`;
+  $("#rc-go").disabled=false;CQ.tone([[523,.12],[659,.12],[784,.22]]);
+}
+
+/* ---------- il tesoro: tavola pitagorica ---------- */
+let TV={mode:"scopri",sel:null,rev:{},hunt:null,last:null};
+const BUBBLE={
+  scopri:"Benvenuti, giovani esploratori!<br>Io sono <b>Pitagora</b> e questa è la mia tavola.<br>Tocca una casella e scopri il risultato!",
+  tutta:"Ecco tutta la mia tavola!<br>Tocca un numero: la sua casella <b>gemella</b> si illumina. 3 × 7 e 7 × 3 fanno lo stesso!",
+  caccia:"Ho nascosto <b>otto numeri</b> nella tavola.<br>Tocca una casella con il punto di domanda e scrivi il numero giusto!"
+};
+function setBubble(t){$("#bubble").innerHTML=t}
+function renderTav(){
+  let h="<span class='h'>×</span>";for(let c=1;c<=10;c++)h+=`<span class="h">${c}</span>`;
+  for(let r=1;r<=10;r++){
+    h+=`<span class="h">${r}</span>`;
+    for(let c=1;c<=10;c++){
+      const k=r+"-"+c;let cls="c",txt=r*c;
+      if(TV.mode==="caccia"&&TV.hunt){const hc=TV.hunt.cells[k];if(hc&&!hc.ok){cls+=" hid"+(TV.hunt.cur===k?" now":"");txt="?"}else if(hc&&hc.ok)cls+=" won"}
+      else if(TV.mode==="scopri"&&!TV.rev[k]){cls+=" blank";txt=""}
+      if(TV.sel){if(TV.sel.r===r&&TV.sel.c===c)cls+=" sel";else if(TV.sel.r===c&&TV.sel.c===r&&TV.mode!=="caccia")cls+=" mir";else if(TV.sel.r===r||TV.sel.c===c)cls+=" hl"}
+      if(TV.last===k)cls+=" new";
+      h+=`<button type="button" class="${cls}" data-r="${r}" data-c="${c}" aria-label="${r} per ${c}${txt===""?"":", "+txt}">${txt}</button>`;
+    }
+  }
+  $("#tav").innerHTML=h;TV.last=null;
+  $$(".bbtn[data-tm]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tm===TV.mode?"true":"false"));
+  if(!$("#bubble").innerHTML)setBubble(BUBBLE[TV.mode]);
+}
+function cellInfo(r,c){
+  const lines=[r===c?`È un numero quadrato: ${r} volte ${r}.`:`Anche ${c} × ${r} = ${r*c}: la casella gemella dà lo stesso risultato (proprietà commutativa).`];
+  if(c>1&&IS(c))lines.push(IS(c).trick(r));else if(r>1&&IS(r))lines.push(IS(r).trick(c));else lines.push("Per 1 il numero resta uguale.");
+  return lines;
+}
+$("#tav").addEventListener("click",ev=>{
+  const b=ev.target.closest("[data-r]");if(!b)return;const r=+b.dataset.r,c=+b.dataset.c,k=r+"-"+c;
+  if(TV.mode==="caccia"&&TV.hunt){if(TV.hunt.cells[k]&&!TV.hunt.cells[k].ok){TV.hunt.cur=k;TV.sel={r,c};renderTav();huntAsk()}return}
+  TV.sel={r,c};
+  if(TV.mode==="scopri"&&!TV.rev[k]){TV.rev[k]=1;TV.last=k;ding()}
+  renderTav();
+  setBubble(`<b>${r} × ${c} = ${r*c}</b><br>${cellInfo(r,c).join("<br>")}`);
+});
+function setMode(m){
+  TV.mode=m;TV.sel=null;PAD=null;$("#tav-play").innerHTML="";setBubble(BUBBLE[m]);
+  if(m==="caccia"){
+    const pool=[],ns=conq().length?conq():[2,5,10];
+    for(let r=1;r<=10;r++)for(let col=2;col<=10;col++)if(ns.includes(col)||ns.includes(r))pool.push(r+"-"+col);
+    const cells={};shuffle(pool).slice(0,8).forEach(k=>cells[k]={ok:false});TV.hunt={cells,cur:null,errs:0};
+  }else TV.hunt=null;
+  renderTav();
+}
+$$(".bbtn[data-tm]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.tm)));
+$("#tav-reset").addEventListener("click",()=>{TV.rev={};if(TV.mode==="caccia")setMode("caccia");else{TV.sel=null;setBubble(BUBBLE[TV.mode]);renderTav()}});
+function huntAsk(){
+  const [r,c]=TV.hunt.cur.split("-").map(Number);
+  setBubble(`Quanto fa <b>${r} × ${c}</b>?<br>Scrivilo con il tastierino.`);
+  $("#tav-play").innerHTML=`<div class="qbox"><div class="q" id="hq"></div>${padHTML()}<div id="hfb" style="width:100%"></div></div>`;
+  padBind($("#tav-play"),{root:$("#tav-play"),max:3,show:v=>{$("#hq").innerHTML=`${r} × ${c} = <span class="ans">${v||"?"}</span>`},ok:v=>{
+    if(v===r*c){TV.hunt.cells[TV.hunt.cur].ok=true;ding();const left=Object.keys(TV.hunt.cells).filter(k=>!TV.hunt.cells[k].ok).length;TV.hunt.cur=null;TV.sel=null;PAD=null;renderTav();
+      if(!left){const st=TV.hunt.errs<=1?2:1;S.cnt.hunt++;save();addStars(st);checkBadges();$("#tav-play").innerHTML=fbHTML("good",`Tesoro ritrovato! ${st===2?"Due stelle!":"Una stella!"}`,["Tutti gli otto numeri sono al loro posto."]);setBubble("Bravissimi! Avete ritrovato tutto il mio tesoro.<br>Premete <b>Ricomincia</b> per una nuova caccia.")}
+      else{$("#tav-play").innerHTML="";setBubble(`Giusto! ${r} × ${c} = ${r*c}.<br>Ne mancano <b>${left}</b>: tocca un altro punto di domanda.`)}}
+    else{TV.hunt.errs++;errFact(r,c);buzz();PAD.v="";paint();$("#hfb").innerHTML=fbHTML("bad",`Non è ${v}`,[`Guarda la riga del ${r} e la colonna del ${c}.`,c>1?IS(c).trick(r):`Per 1 il numero resta uguale: ${r}.`])}
+  }});paint();
+  $("#tav-play").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* ---------- autovalutazione ---------- */
+const VQ=[["q1","Conosco la regola di ogni isola (salto di 2 in 2, di 3 in 3…)."],["q2","Ricordo le tabelline senza contare sulle dita."],["q3","Uso i trucchi delle guide (il doppio, la metà di 10, per 10 meno…)."],["q4","So che 3 × 7 e 7 × 3 danno lo stesso risultato."],["q5","Ho aiutato il mio equipaggio."]];
+const LVV=[[1,"Ci provo ancora"],[2,"Ci sono quasi"],[3,"Ci sono!"]];
+const LIKES=["Il sentiero dei salti","Il ponte di corda","La corsa dei venti","Il tesoro"];
+const stairs=v=>{let h='<svg viewBox="0 0 34 26" aria-hidden="true">';for(let i=1;i<=3;i++){const ht=6+i*6;h+=`<rect x="${(i-1)*12}" y="${26-ht}" width="10" height="${ht}" rx="2" fill="currentColor" opacity="${i<=v?1:.22}"/>`}return h+"</svg>"};
+function buildV(){
+  $("#vitems").innerHTML=VQ.map(it=>`<fieldset class="item"><legend>${it[1]}</legend><div class="lv">${LVV.map(l=>{const id=it[0]+"-"+l[0];return `<input type="radio" name="${it[0]}" id="${id}" value="${l[0]}"${S.valuta.a[it[0]]===l[0]?" checked":""}><label for="${id}">${stairs(l[0])}<span>${l[1]}</span></label>`}).join("")}</div></fieldset>`).join("");
+  $("#vlikes").innerHTML=LIKES.map((t,i)=>`<input type="radio" name="like" id="like${i}" value="${t}"${S.valuta.like===t?" checked":""}><label for="like${i}">${t}</label>`).join("");
+  $("#v-done").disabled=!VQ.every(it=>S.valuta.a[it[0]]);
+  if(S.valuta.done)vSum();else $("#v-sum").hidden=true;
+}
+function vSum(){const a=S.valuta.a,top=VQ.filter(it=>a[it[0]]===3).length,low=VQ.filter(it=>a[it[0]]===1).map(it=>it[1].replace(/\.$/,""));const box=$("#v-sum");box.innerHTML=`<b>${top} frasi su ${VQ.length} con «Ci sono!»</b>${low.length?`<span>Da riprendere: ${low.join("; ")}.</span>`:"<span>Nessuna frase da riprendere. Buon vento!</span>"}${S.valuta.like?`<span>Mi è piaciuto di più: ${S.valuta.like.toLowerCase()}.</span>`:""}`;box.hidden=false}
+$("#vform").addEventListener("change",ev=>{const t=ev.target;if(t.type!=="radio")return;if(t.name==="like")S.valuta.like=t.value;else S.valuta.a[t.name]=+t.value;S.valuta.done=false;$("#v-sum").hidden=true;save();$("#v-done").disabled=!VQ.every(it=>S.valuta.a[it[0]])});
+$("#v-done").addEventListener("click",()=>{const first=!S.valuta.done;S.valuta.done=true;save();vSum();if(first){addStars(2);toast("Scheda completata. Due stelle!")}checkBadges()});
+
+/* ---------- lezione: timer e imprevisti ---------- */
+let timer=null;
+const fmt=s=>("0"+Math.floor(s/60)).slice(-2)+":"+("0"+s%60).slice(-2);
+function stopTimer(){if(!timer)return;clearInterval(timer.id);timer.btn.querySelector("span").textContent=timer.btn.dataset.timer+" min";timer=null}
+$$("[data-timer]").forEach(b=>b.addEventListener("click",()=>{if(timer&&timer.btn===b){stopTimer();return}stopTimer();let left=+b.dataset.timer*60;const sp=b.querySelector("span");sp.textContent=fmt(left);timer={btn:b,id:setInterval(()=>{left--;if(left<=0){stopTimer();toast("Tempo scaduto. Si passa al prossimo micro-step.");CQ.tone([[660,.15],[660,.15],[880,.3]]);return}sp.textContent=fmt(left)},1000)}}));
+const IMPREVISTI=[["Tempesta!","Tutti in piedi: dite la tabellina dell'isola saltando a ogni numero."],["Bonaccia","Silenzio assoluto: rispondete mostrando il risultato con le dita o con le carte."],["Vento a favore","La prossima risposta giusta vale doppio."],["Isola nascosta","La maestra dice un risultato (es. 42): chi trova per primo due moltiplicazioni che lo danno?"],["Cambio di rotta","Si dice la tabellina al contrario, da 10 × a 1 ×."],["Pappagallo ripetitore","Chi risponde giusto sceglie un compagno che ripete il trucco della guida."]];
+let lastImp=-1;
+$("#draw").addEventListener("click",()=>{let i;do{i=Math.floor(Math.random()*IMPREVISTI.length)}while(i===lastImp);lastImp=i;$("#imp").innerHTML=`<b>${IMPREVISTI[i][0]}</b><span>${IMPREVISTI[i][1]}</span>`});
+
+/* ---------- navigazione ---------- */
+const TABS=["lezione","mappa","isola","corsa","tesoro","valuta"];
+function route(){
+  let h=location.hash.slice(1);const home=CQ.teacher()?"lezione":"mappa";
+  if(TABS.indexOf(h)<0||(h==="lezione"&&!CQ.teacher()))h=home;
+  if(h!=="corsa"&&RC&&!RC.done){clearInterval(rcT);RC=null}
+  TABS.forEach(t=>{$("#sec-"+t).hidden=t!==h});
+  $$(".tabs a").forEach(a=>{const on=a.getAttribute("href")==="#"+h;a.classList.toggle("on",on);if(on){a.setAttribute("aria-current","page");try{a.scrollIntoView({block:"nearest",inline:"center"})}catch(e){}}else a.removeAttribute("aria-current")});
+  if(h==="mappa")renderMap();
+  if(h==="isola")renderIsland();
+  if(h==="corsa")renderRace();
+  if(h==="tesoro")renderTav();
+}
+window.addEventListener("hashchange",()=>{route();const hh=$("header").offsetHeight;if(window.scrollY>hh)window.scrollTo(0,hh)});
+function applyTeacher(){$$("[data-teacher]").forEach(el=>{el.hidden=!CQ.teacher()});route()}
+
+/* ---------- accesso con il codice ---------- */
+async function enter(r){
+  if(r&&r.id){
+    PID=r.id;KEY=KEY0+":"+PID;
+    let local=null;try{local=localStorage.getItem(KEY)}catch(e){}
+    S=load();
+    if(!local&&CQ.db){try{const snap=await CQ.db.doc("tabelline/"+PID).get();if(snap.exists)S=load(snap.data())}catch(e){}}
+    if(!chipCtl)chipCtl=CQ.chip($("#cq-chip"),PID,"mat",{onLogout:leave});else chipCtl.setId(PID);
+    $("#cq-chip").hidden=false;$("#who-name").textContent=CQ.pupils[PID].n;
+  }else{PID=null;KEY=KEY0;S=fresh();$("#cq-chip").hidden=true;$("#who-name").textContent="modalità maestra (senza stelle)"}
+  try{CUR=+sessionStorage.getItem("arcipelago-isola")||null}catch(e){}
+  $("nav").hidden=false;$("main").hidden=false;$("#who").hidden=false;
+  RC=null;TV={mode:"scopri",sel:null,rev:{},hunt:null,last:null};$("#bubble").innerHTML="";PAD=null;$("#isola-play").hidden=true;
+  renderBoard();buildV();applyTeacher();
+  if(!location.hash)location.hash=CQ.teacher()?"#lezione":"#mappa";
+  window.scrollTo(0,0);
+}
+function openGate(){PID=null;CQ.gate({title:"L'Arcipelago delle Tabelline",subj:"mat"}).then(enter)}
+function leave(){stopTimer();clearInterval(rcT);$("nav").hidden=true;$("main").hidden=true;$("#who").hidden=true;$("#cq-chip").hidden=true;window.scrollTo(0,0);openGate()}
+$("#switch").addEventListener("click",()=>{CQ.logout();CQ.setTeacher(false,true);leave()});
+
+renderBoard();
+openGate();
+})();
+</script>
+</body></html>

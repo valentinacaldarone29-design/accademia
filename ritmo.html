@@ -1,0 +1,446 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Suoni e Silenzi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+:root{--mb:#3B7DC4;--mb-d:#1F4F86;--mb-soft:#E6F0FA}
+/* simboli ritmici */
+.rows{display:grid;gap:10px;margin:8px 0}
+.rrow{display:grid;grid-template-columns:auto repeat(4,1fr);gap:6px;align-items:center;padding:8px 10px;border-radius:16px;background:#fff;border:2px solid #D3E2F3}
+.rrow .rn{font:700 14px var(--font-body);color:var(--mb-d);width:26px;text-align:center}
+.rrow.ok{border-color:var(--good);background:var(--good-soft)}
+.cell{display:grid;justify-items:center;gap:4px;padding:6px 2px;border-radius:12px;transition:background .1s,transform .1s}
+.cell.span2{grid-column:span 2}
+.cell.on{background:#FFE58A;transform:scale(1.06)}
+.cell .sy{font:700 15px/1 var(--font-body);color:#33475E;letter-spacing:.02em}
+.sym{display:block;width:54px;height:54px}
+.cell.pi .sym{transform:scale(.62)}
+.sym circle.f{fill:#1B2430}.sym circle.h{fill:#fff;stroke:#1B2430;stroke-width:7}
+.sym path.x{stroke:#1B2430;stroke-width:10;stroke-linecap:round;fill:none}
+.sym path.b{stroke:#1B2430;stroke-width:6;fill:none}
+/* barra dei comandi */
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.bar .btn{min-height:46px}
+.tempo{display:flex;gap:4px}.tempo button{appearance:none;border:2px solid var(--mb);background:#fff;color:var(--mb-d);border-radius:99px;padding:6px 12px;font:700 14px var(--font-body);cursor:pointer;min-height:40px}
+.tempo button[aria-pressed="true"]{background:var(--mb);color:#fff}
+/* cosa suoniamo? */
+.cards{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));margin:6px 0 10px}
+.scard{appearance:none;display:grid;justify-items:center;gap:2px;padding:8px 4px;border-radius:14px;border:3px solid #fff;box-shadow:0 0 0 2px #C9D7E8;font:700 14px var(--font-body);color:#1B2430;cursor:pointer;min-height:86px}
+.scard span{font-size:32px;line-height:1.1}
+.scard[aria-pressed="true"]{box-shadow:0 0 0 4px var(--mb-d)}
+.c-r{background:#F26B6B}.c-b{background:#A9DBF5}.c-g{background:#8CC152}.c-y{background:#F5E04A}.c-m{background:conic-gradient(#F26B6B 0 25%,#A9DBF5 0 50%,#F5E04A 0 75%,#8CC152 0)}
+/* passi */
+.step{border-radius:20px;border:3px solid var(--sc,#3B7DC4);background:var(--surface);padding:14px 16px;margin:0 0 16px}
+.step>.sh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.step>.sh .kind{font:700 13px var(--font-body);text-transform:uppercase;letter-spacing:.06em;padding:4px 10px;border-radius:99px;background:var(--sc);color:#fff}
+.step>.sh h3{margin:0;font:600 24px/1.15 var(--font-display)}
+.step>.sh .dn{margin-left:auto;font-size:22px}
+.step.att{--sc:#E07A2E}.step.ese{--sc:#3B7DC4}
+.intro{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:12px;border-radius:16px;background:var(--mb-soft);margin:0 0 14px}
+.intro .face{font-size:54px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}
+.legend .lg{display:grid;justify-items:center;gap:2px;padding:6px 10px;border-radius:12px;background:#fff;border:2px solid #D3E2F3;font-weight:700}
+.legend .lg small{color:var(--muted);font-weight:700}
+/* tocca a tempo */
+.tapz{appearance:none;width:100%;min-height:120px;border-radius:24px;border:4px solid var(--mb-d);background:linear-gradient(#5C9BE0,#2E6BB0);color:#fff;font:700 28px var(--font-display);cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.tapz:active,.tapz.hit{background:linear-gradient(#FFD34D,#E9A800);color:#1B2430}
+.count{font:700 40px var(--font-display);text-align:center;color:var(--mb-d);min-height:48px}
+/* compositore */
+.house{display:grid;gap:8px}
+.floor{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px;border-radius:14px;background:#FFF8E8;border:2px solid #E7D3A3}
+.room{appearance:none;display:grid;place-items:center;min-height:86px;border-radius:12px;border:2px dashed #C9B27A;background:#fff;cursor:pointer;padding:4px}
+.room.span2{grid-column:span 2}
+.room.fill{border-style:solid;border-color:#3B7DC4}
+.room.on{background:#FFE58A}
+.room .sy{font:700 13px var(--font-body);color:#33475E}
+.picker{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.picker button{appearance:none;display:grid;justify-items:center;padding:4px 8px;border-radius:12px;border:2px solid #C9D7E8;background:#fff;cursor:pointer;min-width:70px;font:700 13px var(--font-body);color:#1B2430}
+.picker button[aria-pressed="true"]{border-color:var(--mb-d);box-shadow:0 0 0 2px var(--mb-d)}
+.picker .sym{width:40px;height:40px}
+/* dettato */
+.dopts{display:grid;gap:8px}
+.dopt{appearance:none;text-align:left;border:3px solid #C9D7E8;border-radius:16px;background:#fff;padding:4px;cursor:pointer}
+.dopt .rrow{border:0;padding:4px 8px}
+.dopt.right{border-color:var(--good);background:var(--good-soft)}.dopt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.score{font:700 18px var(--font-body);color:var(--mb-d)}
+.big{font-size:20px}
+.snav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-top:6px;padding-top:12px;border-top:2px dashed #D3E2F3}
+.snav .btn{min-height:52px;font-size:18px}
+.sdots{display:flex;gap:6px;flex-wrap:wrap}
+.sdot{appearance:none;width:40px;height:40px;border-radius:50%;border:3px solid #E07A2E;background:#fff;font:700 16px var(--font-body);color:#1B2430;cursor:pointer}
+.sdot.ese{border-color:#3B7DC4}
+.sdot.ok{background:var(--good-soft)}
+.sdot[aria-current="step"]{background:#1B2430;color:#fff}
+.mtip{border-left:6px solid #E07A2E;background:#FFF3E6;padding:10px 12px;border-radius:12px;margin:8px 0}
+</style>
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <circle cx="40" cy="60" r="22" fill="#1B2430"/><circle cx="96" cy="60" r="22" fill="none" stroke="#1B2430" stroke-width="7"/>
+    <path d="M136 40l36 40M172 40l-36 40" stroke="#1B2430" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="60" cy="130" r="14" fill="#1B2430"/><circle cx="92" cy="130" r="14" fill="#1B2430"/><path d="M60 130h32" stroke="#1B2430" stroke-width="6"/>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Musica · Classe terza</p>
+        <h1>Suoni e Silenzi</h1>
+        <p class="lead">Leggi i pallini, suona con il corpo e inventa i tuoi ritmi.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Musicista: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#cap1">PA e SH</a>
+    <a href="#cap2">PO-O, forte e piano</a>
+    <a href="#cap3">TITTI</a>
+    <a href="#cap4">TEKETEKE</a>
+    <a href="#indagini">Giochi</a>
+    <a href="#valuta">Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Musica</p>
+    <h2>Suoni e Silenzi: leggo e suono i ritmi</h2>
+    <dl class="facts">
+      <div><dt>Il libro</dt><dd>«Suoni e Silenzi» di Libero Iannuzzi (Maestro Libero). Ogni simbolo ha tante sillabe quanti sono i battiti: PA (1 tempo), SH (silenzio di 1 tempo), PO-O (2 tempi), TITTI (2 suoni in 1 tempo), TEKETEKE (4 suoni in 1 tempo). I simboli assomigliano alle note vere: semiminima, pausa, minima, crome e semicrome.</dd></div>
+      <div><dt>Metodologia attiva</dt><dd>Gamification e apprendimento attraverso il corpo (body percussion): ogni capitolo alterna un'<b>attività</b> in movimento o creativa e un'<b>esercitazione</b> di lettura e ascolto. Le carte «Cosa suoniamo?» decidono con che cosa si suona: mani, cosce, petto, piedi o uno strumento.</dd></div>
+      <div><dt>Durata</dt><dd>4 capitoli, uno per simbolo nuovo, di 2 incontri da 45-60 minuti ciascuno.</dd></div>
+      <div><dt>Obiettivi</dt><dd>Distinguere suono e silenzio, suono forte e piano, suono e rumore; leggere e suonare ritmi di 4 tempi con PA, SH, PO-O, TITTI e TEKETEKE; scrivere ritmi rispettando le durate; mantenere il tempo insieme alla classe.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Matematica (frazioni e durate: 1/4, 1/2, 1/8, 1/16; contare i tempi), Scienze (le onde sonore), Scienze motorie (coordinazione, body percussion), Italiano (le sillabe).</dd></div>
+      <div><dt>Nell'app</dt><dd>Quattro capitoli con attività ed esercitazioni alternate: lettore che suona i ritmi evidenziando i simboli, il gioco «Suona a tempo» che controlla i battiti dei bambini, il dettato ritmico, le case e i condomini dei pallini per comporre. Le basi del libro si trovano con i QR code delle pagine.</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>Il silenzio misterioso</h3>
+    <p>Luci spente, tutti con gli occhi chiusi. La maestra batte 4 colpi sul tavolo, poi resta in silenzio per 4 tempi, poi altri 4 colpi. «Che cosa avete sentito? E nei momenti in cui non c'era niente?» Anche il silenzio fa parte della musica: oggi impariamo a scriverlo!</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step · per ogni capitolo</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>5</b><small>min</small></div><div><span class="chip">Scoperta</span><h3>Il personaggio presenta il simbolo</h3><p>Si legge la pagina del capitolo (Rocco il Cocco, Gedeone il Peperone, Luana la Banana…). Alla LIM si ascolta il simbolo nuovo con il lettore dell'app.</p><div class="row"><button class="btn ghost" type="button" data-timer="5">Timer <span>5 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Attività</span><h3>In movimento</h3><p>L'attività del capitolo: statue sui silenzi, gesti grandi e piccoli per forte e piano, gemelli TITTI a coppie, il treno TEKETEKE.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Esercitazione</span><h3>Leggo e suono</h3><p>Lettura delle righe toccando ogni simbolo, prima lenta poi con il lettore; poi «Suona a tempo» a turno o a squadre.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Creazione</span><h3>La casa dei pallini</h3><p>A coppie si compone un ritmo nella casa, nella scuola o nel condominio; poi la classe lo legge e lo suona con la carta «Cosa suoniamo?».</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Dettato ritmico a squadre</h3><p>Alla LIM: l'app suona, le squadre scrivono sulla lavagnetta quale riga hanno sentito. Chiusura con la canzone di fine capitolo del libro.</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+    </ol>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle e badge</h3>
+      <ul class="tight">
+        <li><b>Suona a tempo:</b> 1 stella per ogni riga suonata bene (almeno 3 battiti su 4 giusti).</li>
+        <li><b>Dettato ritmico:</b> fino a 3 stelle, migliorando il record.</li>
+        <li><b>Case e condomini:</b> 1 stella per ogni composizione completa.</li>
+        <li><b>Attività:</b> 1 stella quando la classe la completa.</li>
+        <li><b>Badge:</b> Amico dei pallini, Re del silenzio, Forte e piano, Gemelli TITTI, Super veloce, Compositore, Musicista riflessivo.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti a suonare?</b><span>Ogni imprevisto cambia le regole per una riga.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>Il corpo è lo strumento</h3>
+      <ul class="tight">
+        <li><b>Statue sonore:</b> si cammina sui PA, ci si blocca sugli SH.</li>
+        <li><b>Gigante e formichina:</b> passi pesanti per i pallini grandi (forte), in punta di piedi per i piccoli (piano).</li>
+        <li><b>PO-O lungo:</b> sul PO-O si fa un passo lungo e si tiene la posa per 2 tempi.</li>
+        <li><b>Il treno TEKETEKE:</b> in fila, piccoli passi veloci sul TEKETEKE e passi normali sul PA.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Attenzione a tutti</p><h3>Per sostenere chi ha bisogno</h3>
+      <ul class="tight">
+        <li>Tre velocità: si parte sempre da «Lento».</li>
+        <li>Il lettore illumina il simbolo che si sta suonando e mostra la sillaba.</li>
+        <li>In «Suona a tempo» si può usare un grande pulsante o la barra spaziatrice.</li>
+        <li>Nelle composizioni il PO-O occupa da solo due stanze: niente errori di durata.</li>
+      </ul></div>
+  </div>
+</section>
+
+<section class="view" id="sec-cap1" hidden><div class="panel"><div id="c1"></div></div></section>
+<section class="view" id="sec-cap2" hidden><div class="panel"><div id="c2"></div></div></section>
+<section class="view" id="sec-cap3" hidden><div class="panel"><div id="c3"></div></div></section>
+<section class="view" id="sec-cap4" hidden><div class="panel"><div id="c4"></div></div></section>
+
+<section class="view" id="sec-indagini" hidden>
+  <div class="panel">
+    <p class="eyebrow">I giochi</p>
+    <h2>Metti ogni carta nel gruppo giusto</h2>
+    <div id="sort"></div>
+  </div>
+</section>
+
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come sto andando con i ritmi?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Musica.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,$=L.$,$$=L.$$,esc=L.esc;
+
+/* ---------- simboli ---------- */
+/* un ritmo è un array di 4 tempi: P=PA, S=SH, O=PO-O (2 tempi, seguito da "-"), T=TITTI, K=TEKETEKE; minuscolo = piano */
+const SYL={P:"PA",S:"SH",O:"PO-O",T:"TIT-TI",K:"TE-KE-TE-KE"};
+const NAME={P:"PA",S:"SH",O:"PO-O",T:"TITTI",K:"TEKETEKE"};
+function svg(t){const u=t.toUpperCase();
+  if(u==="P")return '<svg class="sym" viewBox="0 0 60 60"><circle class="f" cx="30" cy="30" r="24"/></svg>';
+  if(u==="S")return '<svg class="sym" viewBox="0 0 60 60"><path class="x" d="M12 12L48 48M48 12L12 48"/></svg>';
+  if(u==="O")return '<svg class="sym" viewBox="0 0 60 60"><circle class="h" cx="30" cy="30" r="22"/></svg>';
+  if(u==="T")return '<svg class="sym" viewBox="0 0 60 60"><path class="b" d="M14 30H46"/><circle class="f" cx="14" cy="30" r="13"/><circle class="f" cx="46" cy="30" r="13"/></svg>';
+  if(u==="K")return '<svg class="sym" viewBox="0 0 60 60"><path class="b" d="M30 14V46M14 30H46"/><circle class="f" cx="30" cy="13" r="10"/><circle class="f" cx="30" cy="47" r="10"/><circle class="f" cx="13" cy="30" r="10"/><circle class="f" cx="47" cy="30" r="10"/></svg>';
+  return "";}
+function cells(row){let h="";row.forEach((t,i)=>{if(t==="-")return;const sp=t.toUpperCase()==="O";h+=`<div class="cell${sp?" span2":""}${t!==t.toUpperCase()?" pi":""}" data-b="${i}">${svg(t)}<span class="sy">${SYL[t.toUpperCase()]}</span></div>`});return h}
+function rowHTML(row,i,cls){return `<div class="rrow ${cls||""}" data-r="${i}"><span class="rn">${i+1}</span>${cells(row)}</div>`}
+const R=s=>{const a=[];for(const c of s.replace(/\s/g,"")){if(c.toUpperCase()==="O"){a.push(c,"-")}else a.push(c)}return a};
+
+/* ---------- audio: suoni del corpo e strumenti ---------- */
+let AC=null;
+function ac(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C)AC=new C()}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function noiseBuf(a){const b=a.createBuffer(1,a.sampleRate*.6,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
+let NB=null;
+function env(a,g,t,peak,dec){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+.004);g.gain.exponentialRampToValueAtTime(0.0001,t+dec)}
+function noise(a,t,f,q,type,peak,dec,out){const s=a.createBufferSource();s.buffer=NB||(NB=noiseBuf(a));const fl=a.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const g=a.createGain();env(a,g,t,peak,dec);s.connect(fl).connect(g).connect(out);s.start(t);s.stop(t+dec+.05)}
+function tone(a,t,f,f2,peak,dec,out,type){const o=a.createOscillator();o.type=type||"sine";o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dec*.6);const g=a.createGain();env(a,g,t,peak,dec);o.connect(g).connect(out);o.start(t);o.stop(t+dec+.05)}
+const SRC=[
+ {k:"mani",n:"Mani",e:"👏",c:"c-r",play:(a,t,v,o)=>{noise(a,t,1400,1.2,"bandpass",.9*v,.12,o);noise(a,t+.008,2200,1.5,"bandpass",.5*v,.09,o)}},
+ {k:"cosce",n:"Cosce",e:"🦵",c:"c-b",play:(a,t,v,o)=>{noise(a,t,700,.9,"bandpass",.9*v,.14,o);tone(a,t,180,90,.5*v,.12,o)}},
+ {k:"petto",n:"Petto",e:"🫁",c:"c-g",play:(a,t,v,o)=>{tone(a,t,140,70,.9*v,.2,o);noise(a,t,400,.8,"lowpass",.3*v,.1,o)}},
+ {k:"piedi",n:"Piedi",e:"🦶",c:"c-y",play:(a,t,v,o)=>{tone(a,t,95,45,1*v,.28,o);noise(a,t,250,.7,"lowpass",.4*v,.12,o)}},
+ {k:"tamb",n:"Tamburello",e:"🥁",c:"c-r",play:(a,t,v,o)=>{tone(a,t,220,120,.5*v,.15,o);noise(a,t,7000,.8,"highpass",.5*v,.35,o)}},
+ {k:"legni",n:"Legnetti",e:"🥢",c:"c-b",play:(a,t,v,o)=>{tone(a,t,2100,1900,.8*v,.07,o,"triangle")}},
+ {k:"mara",n:"Maracas",e:"🪇",c:"c-g",play:(a,t,v,o)=>{noise(a,t,5000,.7,"highpass",.7*v,.09,o)}},
+ {k:"tria",n:"Triangolo",e:"🔺",c:"c-y",play:(a,t,v,o)=>{tone(a,t,2600,0,.35*v,1.1,o);tone(a,t,3900,0,.18*v,.9,o)}},
+ {k:"jolly",n:"Jolly",e:"🃏",c:"c-m",play:null}
+];
+let SND="mani",BPM=70;
+function srcPlay(k,a,t,v,o){let s=SRC.find(x=>x.k===k);if(!s||!s.play){s=SRC[(Math.random()*8)|0]}s.play(a,t,v,o)}
+function click(a,t,acc,o){tone(a,t,acc?1500:1000,0,.25,.05,o,"square")}
+/* onset di un ritmo: [tempo relativo in battiti, piano?] */
+function onsets(row){const r=[];row.forEach((t,i)=>{const u=t.toUpperCase(),p=t!==u;if(u==="P"||u==="O")r.push([i,p]);if(u==="T"){r.push([i,p],[i+.5,p])}if(u==="K"){for(let k=0;k<4;k++)r.push([i+k/4,p])}});return r}
+
+/* ---------- lettore: suona una o più righe evidenziando i simboli ---------- */
+let PLAY=null;
+function stopAll(){if(PLAY){PLAY.timers.forEach(clearTimeout);PLAY.out&&PLAY.out.disconnect();$$(".cell.on,.room.on").forEach(c=>c.classList.remove("on"));const b=PLAY.btn;PLAY=null;if(b)b.textContent=b.dataset.lbl}}
+function playRows(rows,host,btn,opts){
+  opts=opts||{};stopAll();const a=ac();if(!a){L.toast("Il suono non è disponibile su questo dispositivo.");return}
+  const out=a.createGain();out.gain.value=.9;out.connect(a.destination);
+  const d=60/BPM,t0=a.currentTime+.15,timers=[],pre=opts.countIn===false?0:4,snd=SND==="jolly"?null:SND;
+  for(let i=0;i<pre;i++)click(a,t0+i*d,i===0,out);
+  rows.forEach((row,ri)=>{const base=t0+(pre+ri*4)*d,rs=snd||SRC[(Math.random()*8)|0].k;
+    if(!opts.silent)onsets(row).forEach(([b,p])=>srcPlay(rs,a,base+b*d,p?.35:1,out));
+    if(opts.metro)for(let i=0;i<4;i++)click(a,base+i*d,i===0,out);
+    row.forEach((t,bi)=>{if(t==="-")return;timers.push(setTimeout(()=>{$$(".cell.on,.room.on",host).forEach(c=>c.classList.remove("on"));const el=$(`[data-r="${ri}"] [data-b="${bi}"]`,host);if(el){el.classList.add("on");if(opts.scroll!==false&&bi===0)el.closest("[data-r]").scrollIntoView({block:"nearest",behavior:"smooth"})}},(base+bi*d-a.currentTime)*1000))})});
+  const end=t0+(pre+rows.length*4)*d;
+  if(opts.count){for(let i=0;i<pre;i++)timers.push(setTimeout(()=>opts.count(4-i),(t0+i*d-a.currentTime)*1000));timers.push(setTimeout(()=>opts.count(""),(t0+pre*d-a.currentTime)*1000))}
+  timers.push(setTimeout(()=>{const f=opts.done;stopAll();f&&f()},(end-a.currentTime)*1000+150));
+  PLAY={timers,out,btn,t0,pre,d};if(btn){btn.dataset.lbl=btn.dataset.lbl||btn.textContent;btn.textContent="■ Ferma"}
+  return PLAY;
+}
+function controls(id){return `<div class="bar"><button class="btn" type="button" data-play="${id}">▶ Ascolta e leggi</button><button class="btn ghost" type="button" data-metro="${id}">▶ Solo il metronomo</button>${tempoHTML()}</div>`}
+function tempoHTML(){return `<span class="tempo" role="group" aria-label="Velocità">${[[60,"Lento"],[70,"Medio"],[88,"Veloce"]].map(z=>`<button type="button" data-bpm="${z[0]}" aria-pressed="${BPM===z[0]}">${z[1]}</button>`).join("")}</span>`}
+function cardsHTML(){return `<p class="eyebrow" style="margin:8px 0 0">Cosa suoniamo?</p><div class="cards" role="group" aria-label="Cosa suoniamo">${SRC.map(s=>`<button type="button" class="scard ${s.c}" data-snd="${s.k}" aria-pressed="${SND===s.k}"><span aria-hidden="true">${s.e}</span>${s.n}</button>`).join("")}</div>`}
+function wireCommon(host){
+  $$("[data-bpm]",host).forEach(b=>b.addEventListener("click",()=>{BPM=+b.dataset.bpm;$$("[data-bpm]").forEach(z=>z.setAttribute("aria-pressed",String(+z.dataset.bpm===BPM)))}));
+  $$("[data-snd]",host).forEach(b=>b.addEventListener("click",()=>{SND=b.dataset.snd;$$("[data-snd]").forEach(z=>z.setAttribute("aria-pressed",String(z.dataset.snd===SND)));const a=ac();if(a){const o=a.createGain();o.connect(a.destination);srcPlay(SND,a,a.currentTime+.02,1,o)}}));
+}
+
+/* ---------- stato ---------- */
+function mu(){const S=L.state();if(!S.extra.mu)S.extra.mu={done:{},rows:{},comp:{},dict:{}};return S.extra.mu}
+function markDone(id,stars,msg){const m=mu();if(m.done[id])return false;m.done[id]=1;L.save();if(stars){L.add(stars);L.fanfare();L.toast(msg||("Bravo! "+(stars===1?"Una stella!":stars+" stelle!")))}const d=$(`[data-step="${id}"] .dn`);if(d)d.textContent="✅";return true}
+
+/* ---------- componenti ---------- */
+/* 1. leggi e suona: righe + lettore + "Suona a tempo" */
+function cReader(id,rows){
+  return {h:`${cardsHTML()}${controls(id)}<div class="rows" id="rw-${id}">${rows.map((r,i)=>rowHTML(r,i,mu().rows[id+":"+i]?"ok":"")).join("")}</div>
+   <div class="mtip">👉 Prima leggete le righe lentamente toccando ogni simbolo con il dito. Poi ascoltatele e suonatele insieme.</div>
+   <h4 style="margin:12px 0 4px">🎯 Suona a tempo</h4><p>Scegli una riga. Dopo il conto «4, 3, 2, 1» tocca il pulsante (o premi la barra spaziatrice) su ogni suono. Sui silenzi non toccare!</p>
+   <div class="bar">${rows.map((r,i)=>`<button class="btn ghost" type="button" data-tap="${i}">Riga ${i+1}</button>`).join("")}</div>
+   <div class="count" id="ct-${id}" aria-live="polite"></div><button class="tapz" type="button" id="tz-${id}" disabled>Tocca a tempo</button><div id="tr-${id}"></div>`,
+   wire:host=>{
+    $(`[data-play="${id}"]`,host).addEventListener("click",e=>{if(PLAY){stopAll();return}playRows(rows,$("#rw-"+id),e.currentTarget)});
+    $(`[data-metro="${id}"]`,host).addEventListener("click",e=>{if(PLAY){stopAll();return}playRows(rows,$("#rw-"+id),e.currentTarget,{silent:true,metro:true})});
+    const tz=$("#tz-"+id);let taps=null,cur=null;
+    const hit=()=>{if(!taps||!AC)return;taps.push(AC.currentTime);tz.classList.add("hit");setTimeout(()=>tz.classList.remove("hit"),90)};
+    tz.addEventListener("pointerdown",e=>{e.preventDefault();hit()});
+    const kh=e=>{if(e.code==="Space"&&taps){e.preventDefault();hit()}};document.addEventListener("keydown",kh);
+    $$("[data-tap]",host).forEach(b=>b.addEventListener("click",()=>{
+      const i=+b.dataset.tap,row=rows[i];taps=[];cur=i;tz.disabled=false;$("#tr-"+id).innerHTML="";
+      const P=playRows([row],document.createElement("div"),null,{silent:true,metro:true,scroll:false,count:n=>{$("#ct-"+id).textContent=n},done:()=>{
+        tz.disabled=true;const exp=onsets(row).map(([bb])=>P.t0+(P.pre+bb)*P.d),tol=Math.min(.2,P.d*.22);
+        let ok=0;const used=new Set();exp.forEach(t=>{let best=-1,bd=9;taps.forEach((x,k)=>{if(!used.has(k)&&Math.abs(x-t)<bd){bd=Math.abs(x-t);best=k}});if(best>=0&&bd<=Math.max(tol,P.d/(row.some(t=>/k/i.test(t))?8:3.5))){used.add(best);ok++}});
+        const extra=taps.length-used.size,score=Math.max(0,ok-Math.max(0,extra-1)),pct=exp.length?score/exp.length:1;
+        const good=pct>=.75;const key=id+":"+i,m=mu();
+        $("#tr-"+id).innerHTML=L.fb(good?"good":"bad",good?`Riga ${i+1}: ottimo! ${ok} suoni su ${exp.length} a tempo.`:`Riga ${i+1}: ${ok} suoni su ${exp.length} a tempo.`,[good?"Hai rispettato anche i silenzi.":(extra>1?"Attento: hai toccato anche sui silenzi o troppe volte.":"Ascolta prima la riga con «Ascolta e leggi», poi riprova a velocità Lenta.")]);
+        if(good){L.ding();if(!m.rows[key]){m.rows[key]=1;L.save();L.add(1);L.toast("Riga suonata a tempo: una stella!");const r=$(`#rw-${id} [data-r="${i}"]`);if(r)r.classList.add("ok")}}else{L.buzz();const S=L.state(),ek="Suona a tempo ("+(CAPS[id.slice(0,2)]||{t:""}).t+")";S.err=S.err||{};S.err[ek]=(S.err[ek]||0)+1;L.save()}
+        taps=null;$("#ct-"+id).textContent="";
+      }});
+      // evidenzia la riga mentre si suona
+      const el=$(`#rw-${id} [data-r="${i}"]`);if(el){el.scrollIntoView({block:"nearest"});row.forEach((t,bi)=>{if(t==="-")return;P.timers.push(setTimeout(()=>{$$(".cell.on",el.parentNode).forEach(c=>c.classList.remove("on"));const c=$(`[data-b="${bi}"]`,el);c&&c.classList.add("on")},(P.t0+(P.pre+bi)*P.d-AC.currentTime)*1000))})}
+    }));
+   }};
+}
+/* 2. dettato ritmico */
+function genRow(pool,len){const r=[];while(r.length<4){const t=pool[(Math.random()*pool.length)|0];if(t.toUpperCase()==="O"){if(r.length<=2)r.push(t,"-")}else r.push(t)}return r}
+function cDict(id,pool,n){
+  return {h:`<p>Ascolta il ritmo e scegli la riga giusta. ${n} ascolti: ogni risposta giusta al primo colpo vale un punto.</p>${tempoHTML()}<div id="dc-${id}"></div>`,
+   wire:host=>{let k=0,sc=0,first=true,ans,opts;const box=$("#dc-"+id);
+    function next(){if(k>=n){const S=L.state(),prev=S.best["d-"+id];if(prev==null||sc>prev){S.best["d-"+id]=sc;L.save()}const st=sc>=n?3:sc>=n-1?2:sc>=Math.ceil(n/2)?1:0,ps=mu().dict[id]||0;if(st>ps){mu().dict[id]=st;L.save();L.add(st-ps)}
+        if(sc>=n-1)markDone(id,0);box.innerHTML=L.fb(sc>=n-1?"good":"info",`Hai indovinato ${sc} su ${n}!`,[st>ps?`Hai guadagnato ${st-ps} ${st-ps===1?"stella":"stelle"}.`:"Riprova per migliorare il record."])+'<div class="row"><button class="btn" type="button" data-again>Gioca di nuovo</button></div>';if(st>ps)L.fanfare();
+        $("[data-again]",box).addEventListener("click",()=>{k=0;sc=0;next()});return}
+      ans=genRow(pool);const seen=new Set([ans.join("")]);opts=[ans];let guard=0;while(opts.length<3&&guard++<80){const r=genRow(pool);if(!seen.has(r.join(""))){seen.add(r.join(""));opts.push(r)}}opts=L.shuffle(opts);first=true;
+      box.innerHTML=`<p class="score">Ascolto ${k+1} di ${n} · punti: ${sc}</p><div class="bar"><button class="btn" type="button" data-hear>▶ Ascolta il ritmo</button></div><div class="dopts">${opts.map((o,i)=>`<button class="dopt" type="button" data-o="${i}">${rowHTML(o,i)}</button>`).join("")}</div><div class="df"></div>`;
+      const hb=$("[data-hear]",box);hb.addEventListener("click",()=>{if(PLAY){stopAll();return}playRows([ans],document.createElement("div"),hb,{scroll:false})});
+      $$("[data-o]",box).forEach(b=>b.addEventListener("click",()=>{const o=opts[+b.dataset.o];if(o.join("")===ans.join("")){b.classList.add("right");if(first)sc++;L.ding();stopAll();$$("[data-o]",box).forEach(z=>z.disabled=true);setTimeout(()=>{k++;next()},900)}else{b.classList.add("wrong");b.disabled=true;first=false;L.buzz();$(".df",box).innerHTML=L.fb("bad","Non è questa. Riascolta e conta i suoni.",[])}}));}
+    next();}};
+}
+/* 3. compositore: case, scuole, condomini */
+function cComp(id,floors,pool,txt){
+  return {h:`<p>${txt}</p><div class="picker" role="group" aria-label="Scegli il simbolo">${pool.map((t,i)=>`<button type="button" data-pk="${t}" aria-pressed="${i===0}">${svg(t)}<span>${SYL[t.toUpperCase()]}${t!==t.toUpperCase()?" piano":""}</span></button>`).join("")}<button type="button" data-pk="" aria-pressed="false"><span style="font-size:28px">🧽</span><span>Svuota</span></button></div>
+   <div class="house" id="hs-${id}"></div>${cardsHTML()}<div class="bar"><button class="btn" type="button" data-cplay>▶ Suona il mio ritmo</button>${tempoHTML()}<button class="btn ghost" type="button" data-cclr>Ricomincia</button></div><div id="cf-${id}"></div>`,
+   wire:host=>{const m=mu();let pick=pool[0];let g=m.comp[id]||Array.from({length:floors},()=>[null,null,null,null]);
+    function save(){m.comp[id]=g;L.save()}
+    function draw(){$("#hs-"+id).innerHTML=g.map((fl,r)=>{let h="";fl.forEach((t,i)=>{if(t==="-")return;const sp=t&&t.toUpperCase()==="O";h+=`<button type="button" class="room${sp?" span2":""}${t?" fill":""}" data-b="${i}" data-f="${r}" aria-label="Piano ${r+1}, stanza ${i+1}">${t?svg(t)+'<span class="sy">'+SYL[t.toUpperCase()]+'</span>':'<span class="sy">vuota</span>'}</button>`});return `<div class="floor" data-r="${r}">${h}</div>`}).join("");
+      $$("#hs-"+id+" .room").forEach(b=>b.addEventListener("click",()=>{const r=+b.dataset.f,i=+b.dataset.b,fl=g[r];
+        if(fl[i]&&fl[i].toUpperCase()==="O")fl[i+1]=null;
+        if(pick&&pick.toUpperCase()==="O"){if(i===3){L.toast("Il PO-O dura 2 tempi: mettilo dove c'è una stanza libera accanto.");return}if(fl[i+1]&&fl[i+1].toUpperCase()==="O")fl[i+2]=null;fl[i]=pick;fl[i+1]="-"}else fl[i]=pick||null;
+        save();draw();check();const a=ac();if(a&&pick){const o=a.createGain();o.connect(a.destination);srcPlay(SND,a,a.currentTime+.02,pick!==pick.toUpperCase()?.35:1,o)}}))}
+    function full(){return g.every(fl=>fl.every(x=>x))}
+    function check(){if(full()&&!m.done[id]){markDone(id,1,"Composizione completa: una stella!");$("#cf-"+id).innerHTML=L.fb("good","Il tuo ritmo è completo!",["Suonalo con la classe. Poi cambia la carta «Cosa suoniamo?» e suonalo di nuovo."])}}
+    $$("[data-pk]",host).forEach(b=>b.addEventListener("click",()=>{pick=b.dataset.pk;$$("[data-pk]",host).forEach(z=>z.setAttribute("aria-pressed",String(z===b)))}));
+    $("[data-cplay]",host).addEventListener("click",e=>{if(PLAY){stopAll();return}const rows=g.map(fl=>fl.map(x=>x||"S"));playRows(rows,$("#hs-"+id),e.currentTarget,{metro:false})});
+    $("[data-cclr]",host).addEventListener("click",()=>{g=Array.from({length:floors},()=>[null,null,null,null]);save();draw()});
+    draw();}};
+}
+/* 4. attività guidata (in classe) */
+function cAct(id,html,btn){return {h:html+`<div class="row"><button class="btn" type="button" data-actdone="${id}"${mu().done[id]?" disabled":""}>${mu().done[id]?"✅ Fatto con la classe":(btn||"L'abbiamo fatto!")}</button></div>`,wire:host=>{const b=$(`[data-actdone="${id}"]`,host);b.addEventListener("click",()=>{if(markDone(id,1,"Attività fatta: una stella!")){b.disabled=true;b.textContent="✅ Fatto con la classe"}})}}}
+/* 5. gioco «batti o fermati» (statue sonore) */
+function cStatue(id,pool){
+  return cAct(id,`<p>La maestra fa partire il gioco alla LIM. Quando vedi un <b>PA</b> batti le mani (o fai un passo), quando vedi <b>SH</b> diventa una statua!</p>${cardsHTML()}<div class="bar"><button class="btn" type="button" data-stat>▶ Inizia il gioco (8 tempi)</button>${tempoHTML()}</div><div class="rows" id="st-${id}"></div>`,"Abbiamo giocato!");
+}
+function wireStatue(id,pool,host){const b=$("[data-stat]",host);b.addEventListener("click",()=>{if(PLAY){stopAll();return}const rows=[genRow(pool),genRow(pool)];$("#st-"+id).innerHTML=rows.map((r,i)=>rowHTML(r,i)).join("");playRows(rows,$("#st-"+id),b)})}
+
+/* ---------- i capitoli ---------- */
+const LEG=t=>`<div class="lg">${svg(t)}<span>${SYL[t.toUpperCase()]}</span><small>${{P:"suono · 1 tempo",S:"silenzio · 1 tempo",O:"suono lungo · 2 tempi",T:"2 suoni · 1 tempo",K:"4 suoni · 1 tempo"}[t.toUpperCase()]}</small></div>`;
+const CAPS={
+ c1:{t:"Rocco il Cocco: PA e SH",face:"🥥",intro:"Ogni <b>pallino</b> è un suono e si legge <b>PA</b>. Ogni <b>crocetta</b> è un silenzio e si legge <b>SH</b>. In ogni riga ci sono 4 tempi.",leg:["P","S"],steps:[
+   {id:"c1a1",k:"att",t:"Suoni e silenzi intorno a noi",c:()=>cAct("c1a1",`<p>Chiudete gli occhi per 30 secondi e ascoltate. Quali suoni sentite? Poi la classe resta in silenzio assoluto per 4 tempi: anche il silenzio si può «suonare»!</p><div class="mtip">I suoni nascono dalle <b>onde sonore</b>, invisibili, che arrivano alle orecchie. I silenzi non hanno onde sonore.</div><p>Ogni bambino dice un suono che ha sentito; la maestra lo scrive alla lavagna.</p>`)},
+   {id:"c1e1",k:"ese",t:"Leggo e suono PA e SH",c:()=>cReader("c1e1",["PPPP","SSSS","PPSS","SSPP","PSPS","PSSP"].map(R))},
+   {id:"c1a2",k:"att",t:"Statue sonore",c:()=>cStatue("c1a2",["P","S"])},
+   {id:"c1e2",k:"ese",t:"Dettato ritmico: PA e SH",c:()=>cDict("c1e2",["P","S"],5)},
+   {id:"c1a3",k:"att",t:"La casa dei pallini",c:()=>cComp("c1a3",1,["P","S"],"Nella casa dei pallini ci sono 4 stanze: in ogni stanza si sta per un solo tempo. Scegli il simbolo e toccate le stanze per riempirle.")},
+   {id:"c1e3",k:"ese",t:"Con il mio corpo",c:()=>cReader("c1e3",["PPPS","PPPS","PSPS","PPPS"].map(R))}]},
+ c2:{t:"Gedeone il Peperone: PO-O, forte e piano",face:"🌶️",intro:"Il pallino <b>vuoto</b> dura di più: dura <b>2 tempi</b> e si legge <b>PO-O</b>. I pallini <b>grandi</b> si suonano <b>forte</b>, quelli <b>piccoli</b> si suonano <b>piano</b>.",leg:["P","p","O","S"],steps:[
+   {id:"c2a1",k:"att",t:"Gigante e formichina",c:()=>cAct("c2a1",`<p>La maestra suona pallini grandi e piccoli con il lettore. Sui pallini <b>grandi</b> (forte) fate passi pesanti da gigante; su quelli <b>piccoli</b> (piano) camminate in punta di piedi come una formichina.</p><div class="mtip">I suoni forti hanno onde sonore altissime e si sentono anche da lontano; i suoni deboli hanno onde basse e si sentono poco.</div>${cardsHTML()}<div class="bar"><button class="btn" type="button" data-play="c2a1">▶ Suona forte e piano</button>${tempoHTML()}</div><div class="rows" id="rw-c2a1">${["PPpp","ppPP","PpPp","pPpP"].map(R).map((r,i)=>rowHTML(r,i)).join("")}</div>`),rows:["PPpp","ppPP","PpPp","pPpP"].map(R)},
+   {id:"c2e1",k:"ese",t:"Leggo e suono con il PO-O",c:()=>cReader("c2e1",["PPO","OPP","OO","PSO","pPO","PPpp"].map(R))},
+   {id:"c2a2",k:"att",t:"La scuola dei pallini",c:()=>cComp("c2a2",2,["P","p","O","S"],"Alla scuola dei pallini c'è un maestro che la sa luuunga: è il PO-O e dura 2 tempi, quindi occupa due stanze. Mettine almeno uno!")},
+   {id:"c2e2",k:"ese",t:"Dettato ritmico: PO-O",c:()=>cDict("c2e2",["P","S","O"],5)}]},
+ c3:{t:"Luana la Banana: TITTI",face:"🍌",intro:"Due pallini uniti si leggono <b>TITTI</b> e vanno suonati insieme, veloci: due suoni in <b>un solo tempo</b>. Sono i gemellini della famiglia dei pallini!",leg:["T","P","O","S"],steps:[
+   {id:"c3a1",k:"att",t:"I gemelli TITTI",c:()=>cAct("c3a1",`<p>A coppie, uno di fronte all'altro: sul PA batte le mani un bambino solo; sul TITTI i due gemelli battono le mani uno contro l'altro due volte, veloci. Sullo SH, braccia incrociate!</p><div class="mtip">Provate a camminare: sul PA un passo, sul TITTI due passetti veloci.</div>`)},
+   {id:"c3e1",k:"ese",t:"Leggo e suono con TITTI",c:()=>cReader("c3e1",["PPTP","TTPP","TPTP","PTTS","TTO","OTT"].map(R))},
+   {id:"c3a2",k:"att",t:"Il condominio dei pallini",c:()=>cComp("c3a2",3,["P","T","O","S"],"La famiglia si è trasferita in un condominio di 3 piani. I gemellini TITTI occupano sempre una sola stanza: sono piccoli e dormono nello stesso letto!")},
+   {id:"c3e2",k:"ese",t:"Dettato ritmico: TITTI",c:()=>cDict("c3e2",["P","S","O","T"],6)}]},
+ c4:{t:"Alla carica! TEKETEKE",face:"🚀",intro:"Quattro pallini attaccati, molto piccoli, si leggono <b>TE-KE-TE-KE</b>: quattro suoni super veloci in <b>un solo tempo</b>. Ripassa tutte le durate!",leg:["K","T","P","O","S"],steps:[
+   {id:"c4a1",k:"att",t:"Il treno TEKETEKE",c:()=>cAct("c4a1",`<p>Tutti in fila come un treno. Sul PA un passo normale, sul TITTI due passetti, sul TEKETEKE quattro passettini velocissimi sul posto. Sullo SH il treno si ferma in stazione!</p><div class="mtip">Poi lo stesso con le mani sulle cosce: il TEKETEKE si fa alternando destra e sinistra.</div>`)},
+   {id:"c4e1",k:"ese",t:"Leggo e suono con TEKETEKE",c:()=>cReader("c4e1",["PPKP","KKPP","TKTK","PKTS","KKO","OTK"].map(R))},
+   {id:"c4a2",k:"att",t:"La grigliata di Rocco",c:()=>cComp("c4a2",4,["P","T","K","O","S"],"Rocco il Cocco fa una grigliata di suoni e silenzi: la griglia ha 16 posti. PA è un hamburger, PO-O una bistecca da 2 posti, TITTI una salsiccia, TEKETEKE uno spiedino, SH una melanzana. Scegli il menù!")},
+   {id:"c4e2",k:"ese",t:"Il grande dettato",c:()=>cDict("c4e2",["P","S","O","T","K"],6)}]}
+};
+function renderCap(k){
+  const cap=CAPS[k],host=$("#"+k.replace("c","c")),m=mu();
+  const built=cap.steps.map(s=>({s,o:s.c()}));
+  $("#"+k).innerHTML=`<div class="intro"><span class="face" aria-hidden="true">${cap.face}</span><div><h2 style="margin:0">${esc(cap.t)}</h2><p class="lead" style="margin:4px 0 0">${cap.intro}</p></div></div><div class="legend">${cap.leg.map(LEG).join("")}</div>`+
+    built.map((b,i)=>`<div class="step ${b.s.k}" data-step="${b.s.id}"><div class="sh"><span class="kind">${b.s.k==="att"?"🎵 Attività":"✏️ Esercitazione"} ${i+1}</span><h3>${esc(b.s.t)}</h3><span class="dn" aria-hidden="true">${m.done[b.s.id]||(b.s.k==="ese"&&Object.keys(m.rows).some(x=>x.indexOf(b.s.id+":")===0))?"✅":""}</span></div>${b.o.h}</div>`).join("");
+  const root=$("#"+k);
+  root.insertAdjacentHTML("beforeend",`<div class="snav"><button class="btn ghost" type="button" data-sprev>← Indietro</button><span class="sdots">${built.map((b,i)=>`<button type="button" class="sdot ${b.s.k}" data-sgo="${i}" aria-label="${i+1}. ${esc(b.s.t)}">${i+1}</button>`).join("")}</span><button class="btn" type="button" data-snext>Avanti →</button></div>`);
+  const nk="cap"+(+k.slice(1)+1),hasNext=!!CAPS["c"+(+k.slice(1)+1)];
+  const show=i=>{stopAll();STEP[k]=i=Math.max(0,Math.min(built.length-1,i));
+    $$(".step",root).forEach((el,j)=>el.hidden=j!==i);
+    $$("[data-sgo]",root).forEach((b,j)=>{b.setAttribute("aria-current",j===i?"step":"false");b.classList.toggle("ok",!!(m.done[built[j].s.id]||Object.keys(m.rows).some(x=>x.indexOf(built[j].s.id+":")===0)))});
+    $("[data-sprev]",root).disabled=i===0;
+    const nx=$("[data-snext]",root);nx.textContent=i<built.length-1?`Avanti: ${built[i+1].s.k==="att"?"attività":"esercitazione"} →`:(hasNext?"Capitolo successivo →":"Ai giochi →");};
+  $("[data-sprev]",root).addEventListener("click",()=>{show(STEP[k]-1);root.scrollIntoView({block:"start",behavior:"smooth"})});
+  $("[data-snext]",root).addEventListener("click",()=>{if(STEP[k]<built.length-1){show(STEP[k]+1);root.scrollIntoView({block:"start",behavior:"smooth"})}else location.hash=hasNext?"#"+nk:"#indagini"});
+  $$("[data-sgo]",root).forEach(b=>b.addEventListener("click",()=>show(+b.dataset.sgo)));
+  wireCommon(root);
+  built.forEach(b=>{const el=$(`[data-step="${b.s.id}"]`,root);b.o.wire&&b.o.wire(el);
+    if(b.s.id==="c2a1"){$("[data-play=\"c2a1\"]",el).addEventListener("click",e=>{if(PLAY){stopAll();return}playRows(b.s.rows,$("#rw-c2a1"),e.currentTarget)})}
+    if(/a\d$/.test(b.s.id)&&$("[data-stat]",el))wireStatue(b.s.id,["P","S"],el);
+    if(b.s.k==="ese"&&b.s.id.slice(-2)!=="e2"){const rs=Object.keys(m.rows).filter(x=>x.indexOf(b.s.id+":")===0).length;if(rs>=2)markDone(b.s.id,0)}
+  });
+  show(STEP[k]||0);
+  CQ.addSayButtons&&CQ.addSayButtons(root);
+}
+const STEP={};
+const CQ=window.Cuccioli;
+
+/* ---------- giochi a carte ---------- */
+const SETS={
+ silenzio:{t:"Suono o silenzio?",d:"C'è un'onda sonora oppure no?",ask:"È un suono o un silenzio?",emo:"🤫",c:"#E6F0FA",n:8,move:"Suono: batti le mani una volta. Silenzio: dito sulla bocca!",bins:[{k:"s",t:"Suono",d:"ha un'onda sonora",i:"🔊",c:"#3B7DC4"},{k:"z",t:"Silenzio",d:"nessuna onda",i:"🤫",c:"#8C6FC7"}],items:[
+  {t:"Il cane che abbaia",i:"🐕",a:"s",w:"L'abbaiare fa vibrare l'aria: è un suono."},{t:"La campanella della scuola",i:"🔔",a:"s",w:"La campanella è un suono forte."},{t:"Un pallino nero (PA)",i:"⚫",a:"s",w:"Il PA è un suono."},{t:"Il compagno che fischietta",i:"😗",a:"s",w:"Il fischio è un suono."},{t:"La pioggia sui vetri",i:"🌧️",a:"s",w:"Le gocce fanno un suono."},
+  {t:"Una crocetta (SH)",i:"❌",a:"z",w:"La crocetta è un silenzio."},{t:"La classe con il dito sulla bocca",i:"🤐",a:"z",w:"Nessuno parla: silenzio."},{t:"Il momento in cui la musica si ferma",i:"⏸️",a:"z",w:"Quando la musica si ferma c'è silenzio."},{t:"Le statue sonore immobili",i:"🗿",a:"z",w:"Le statue non fanno suoni."},{t:"Un fiore che sboccia",i:"🌷",a:"z",w:"Il fiore che sboccia non si sente: silenzio."}]},
+ forte:{t:"Forte o piano?",d:"Onde sonore alte o basse?",ask:"Questo suono è forte o piano?",emo:"🔊",c:"#FCEBDD",n:8,move:"Forte: braccia in alto come un gigante. Piano: rannicchiati come una formichina!",bins:[{k:"f",t:"Forte",d:"si sente da lontano",i:"📢",c:"#E07A2E"},{k:"p",t:"Piano",d:"si sente poco",i:"🐜",c:"#2E8B57"}],items:[
+  {t:"Il tuono del temporale",i:"⛈️",a:"f",w:"Il tuono ha onde sonore altissime: forte."},{t:"La sirena dell'ambulanza",i:"🚑",a:"f",w:"La sirena si sente da lontano: forte."},{t:"Un pallino grande",i:"⚫",a:"f",w:"I pallini grandi si suonano forte."},{t:"Il ruggito del leone",i:"🦁",a:"f",w:"Il ruggito è forte."},{t:"I tamburi della banda",i:"🥁",a:"f",w:"I tamburi suonano forte."},
+  {t:"Il ticchettio dell'orologio",i:"⏱️",a:"p",w:"Si sente appena: piano."},{t:"Un pallino piccolo",i:"•",a:"p",w:"I pallini piccoli si suonano piano."},{t:"Il gatto che fa le fusa",i:"🐈",a:"p",w:"Le fusa sono un suono debole."},{t:"Un segreto sussurrato",i:"🤫",a:"p",w:"Il sussurro è piano."},{t:"Le foglie mosse dal vento leggero",i:"🍃",a:"p",w:"Il fruscio è piano."}]},
+ rumore:{t:"Suono o rumore?",d:"Onde ordinate o disordinate?",ask:"È un suono bello o un rumore?",emo:"🎻",c:"#E8F5EC",n:8,move:"Suono bello: ondeggia dolcemente. Rumore: tappati le orecchie!",bins:[{k:"b",t:"Suono bello",d:"onde ordinate",i:"🎵",c:"#2E8B57"},{k:"r",t:"Rumore",d:"onde disordinate",i:"🔨",c:"#D2325F"}],items:[
+  {t:"Il violino che suona una melodia",i:"🎻",a:"b",w:"Il violino ha onde sonore ordinate."},{t:"Il canto degli uccellini",i:"🐦",a:"b",w:"Il canto è un suono piacevole."},{t:"Il flauto dolce",i:"🪈",a:"b",w:"Il flauto fa un suono ordinato."},{t:"La chitarra",i:"🎸",a:"b",w:"La chitarra fa suoni belli."},{t:"Il coro della classe",i:"🎤",a:"b",w:"Cantare insieme fa un suono bello."},
+  {t:"Il martello pneumatico",i:"🛠️",a:"r",w:"Il martello fa onde disordinate: rumore."},{t:"Il gesso che stride sulla lavagna",i:"🖍️",a:"r",w:"Lo stridio è un rumore fastidioso."},{t:"Il traffico nell'ora di punta",i:"🚗",a:"r",w:"Il traffico è rumore."},{t:"Una sedia trascinata",i:"🪑",a:"r",w:"Trascinare la sedia fa rumore."},{t:"Il frullatore",i:"🌀",a:"r",w:"Il frullatore fa rumore."}]},
+ durata:{t:"Quanto dura?",d:"1 tempo o 2 tempi?",ask:"Quanti tempi dura?",emo:"⏱️",c:"#F1ECFA",n:8,move:"1 tempo: un salto. 2 tempi: un salto e resta fermo un tempo!",bins:[{k:"1",t:"1 tempo",d:"una stanza",i:"1️⃣",c:"#3B7DC4"},{k:"2",t:"2 tempi",d:"due stanze",i:"2️⃣",c:"#E07A2E"}],items:[
+  {t:"PA, il pallino nero",i:"⚫",a:"1",w:"PA dura 1 tempo."},{t:"SH, la crocetta",i:"❌",a:"1",w:"SH è un silenzio di 1 tempo."},{t:"TITTI, i due gemellini",i:"⚫⚫",a:"1",w:"TITTI sono 2 suoni in 1 tempo."},{t:"TEKETEKE, i quattro velocissimi",i:"✤",a:"1",w:"TEKETEKE sono 4 suoni in 1 tempo."},{t:"La semiminima (nota da 1/4)",i:"♩",a:"1",w:"La semiminima è come il PA: 1 tempo."},
+  {t:"PO-O, il pallino vuoto",i:"⚪",a:"2",w:"PO-O dura 2 tempi."},{t:"La minima (nota da 1/2)",i:"𝅗𝅥",a:"2",w:"La minima è come il PO-O: 2 tempi."},{t:"Il maestro della scuola dei pallini",i:"🧑‍🏫",a:"2",w:"Il maestro è il PO-O: la sa luuunga, 2 tempi."},{t:"La bistecca della grigliata di Rocco",i:"🥩",a:"2",w:"La bistecca è il PO-O: occupa 2 posti."}]}
+};
+
+L.init({
+  key:"suoni-silenzi-v1",col:"suoni",subj:"mus",src:"suoni",title:"Suoni e Silenzi",
+  tabs:["lezione","cap1","cap2","cap3","cap4","indagini","valuta"],home:"cap1",sets:SETS,
+  badges:[
+    {id:"amico",n:"Amico dei pallini",d:"Suona 2 righe a tempo nel capitolo 1",ok:S=>!!S.extra.mu&&Object.keys(S.extra.mu.rows).filter(k=>k.indexOf("c1")===0).length>=2},
+    {id:"silenzio",n:"Re del silenzio",d:"Almeno 4 su 5 nel dettato PA e SH",ok:S=>(S.best["d-c1e2"]||0)>=4},
+    {id:"fortepiano",n:"Forte e piano",d:"Almeno 7 su 8 in «Forte o piano?»",ok:S=>(S.best.forte||0)>=7},
+    {id:"titti",n:"Gemelli TITTI",d:"Suona 2 righe a tempo con TITTI",ok:S=>!!S.extra.mu&&Object.keys(S.extra.mu.rows).filter(k=>k.indexOf("c3")===0).length>=2},
+    {id:"veloce",n:"Super veloce",d:"Almeno 5 su 6 nel grande dettato",ok:S=>(S.best["d-c4e2"]||0)>=5},
+    {id:"compositore",n:"Compositore",d:"Completa 3 composizioni",ok:S=>!!S.extra.mu&&["c1a3","c2a2","c3a2","c4a2"].filter(k=>S.extra.mu.done[k]).length>=3},
+    {id:"riflessivo",n:"Musicista riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So distinguere un suono da un silenzio.","So leggere PA, SH, PO-O, TITTI e TEKETEKE.","So suonare un ritmo a tempo con il corpo.","So riconoscere un suono forte e uno piano.","So scrivere un ritmo che dura 4 tempi.","Ho suonato insieme ai compagni rispettando il tempo."],
+  likes:["Suona a tempo","Il dettato ritmico","Le case dei pallini","Le statue sonore","Il treno TEKETEKE","I giochi a carte"],
+  imprevisti:[["Cambio strumento!","Si pesca una carta «Cosa suoniamo?» a caso e si suona la riga con quella."],["Tutto piano","La prossima riga si suona sottovoce, piano piano."],["Al contrario","La riga si legge da destra a sinistra."],["Il direttore","Un bambino fa il direttore d'orchestra e decide la velocità."],["Silenzio d'oro","Chi suona su uno SH dà la mano al compagno, che diventa il prossimo direttore."],["Eco","La maestra suona la riga, la classe ripete come un'eco."]],
+  onRoute:h=>{stopAll();if(/^cap\d$/.test(h||""))renderCap("c"+h.slice(3));if(h==="indagini")L.sortChooser($("#sort"),["silenzio","forte","rumore","durata"])}
+});
+})();
+</script>
+</body></html>

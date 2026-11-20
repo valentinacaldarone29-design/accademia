@@ -1,0 +1,414 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>La Danza delle Particelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* simulatore delle particelle */
+.simgrid{display:grid;gap:16px;align-items:start}
+@media(min-width:820px){.simgrid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}}
+.stage{position:relative;border-radius:20px;background:var(--surface2);padding:12px;display:grid;gap:10px}
+.stage canvas{width:100%;height:auto;display:block;border-radius:14px;touch-action:pan-y}
+.thermo{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.thermo .tv{font:700 30px/1 var(--font-display);font-variant-numeric:tabular-nums;min-width:4.2ch;text-align:right}
+.thermo input{width:100%;height:44px;accent-color:var(--sc,var(--liq))}
+.rb{appearance:none;width:54px;height:54px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font-size:26px;cursor:pointer}
+.rb:active{transform:translateY(1px)}
+.stname{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.stname b{font:400 40px/1 var(--font-hand);color:var(--sc)}
+.stname span{color:var(--muted);font-weight:700}
+.idc{border-radius:16px;border:3px solid var(--sc);padding:14px 16px;display:grid;gap:8px;background:var(--surface)}
+.idc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.idc dt{font-weight:700;color:var(--muted)}
+.idc dd{margin:0}
+.flash{font:400 30px/1.1 var(--font-hand);color:var(--sc);min-height:1.2em}
+.mlist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.mlist li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center;padding:7px 10px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface2);font-weight:700;font-size:15px}
+.mlist li i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);font-style:normal;font-size:14px}
+.mlist li.ok{border-color:var(--good);background:var(--good-soft)}
+.mlist li.ok i{background:var(--good);border-color:var(--good);color:#fff}
+/* viaggio della goccia */
+.trip{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:t}
+.trip li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid var(--good);background:var(--good-soft);counter-increment:t}
+.trip li::before{content:counter(t);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--good);color:#fff;font:700 20px var(--font-display)}
+.trip li b{font:400 24px/1.1 var(--font-hand)}
+.pool{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.tcard{appearance:none;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;border:2px solid var(--liq);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:76px}
+.tcard .emo{font-size:36px}
+.tcard b{font:400 24px/1.1 var(--font-hand);display:block}
+.tcard.wrong{border-color:var(--bad);background:var(--bad-soft)}
+</style>
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <rect x="22" y="54" width="44" height="44" rx="6" fill="#5E8E1A" opacity=".85"/>
+    <g fill="#fff" opacity=".9"><circle cx="34" cy="66" r="5"/><circle cx="54" cy="66" r="5"/><circle cx="34" cy="86" r="5"/><circle cx="54" cy="86" r="5"/></g>
+    <path d="M86 70c8 10 18 24 18 34a18 18 0 0 1-36 0c0-10 10-24 18-34z" transform="translate(16 -10)" fill="#C2337A" opacity=".85"/>
+    <g fill="#1C8FB5" opacity=".85"><circle cx="160" cy="40" r="7"/><circle cx="182" cy="74" r="6"/><circle cx="150" cy="100" r="7"/><circle cx="186" cy="124" r="5"/><circle cx="160" cy="146" r="6"/></g>
+    <path d="M140 46l-10 6M176 84l-8 6M146 108l-10 2" stroke="#1C8FB5" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Scienze · Classe terza</p>
+        <h1>La Danza delle Particelle</h1>
+        <p class="lead">Scalda e raffredda l'acqua. Guarda come cambia!</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Scienziato: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#particelle">Le particelle</a>
+    <a href="#indagini">Indagini</a>
+    <a href="#goccia">Il viaggio della goccia</a>
+    <a href="#valuta">Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE (solo maestra) -->
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Gli stati della materia</p>
+    <h2>La Danza delle Particelle: solido, liquido, gassoso</h2>
+    <dl class="facts">
+      <div><dt>Metodologia attiva</dt><dd>Role-playing (i bambini diventano particelle) e Gamification, con laboratorio a postazioni in Cooperative Learning: squadre di 4 con ruoli a rotazione.</dd></div>
+      <div><dt>Durata</dt><dd>3 minuti di aggancio, 5 micro-step e 3 minuti di chiusura (circa 55 minuti). Va bene dopo «I Detective della Materia».</dd></div>
+      <div><dt>Obiettivi</dt><dd>Riconoscere solidi, liquidi e gas e le loro caratteristiche (forma e volume); immaginare la materia fatta di particelle che si muovono più o meno liberamente; capire che il calore e il freddo fanno cambiare stato; conoscere fusione, solidificazione, evaporazione e condensazione; ricostruire il ciclo dell'acqua.</dd></div>
+      <div><dt>Materiali</dt><dd>Cubetti di ghiaccio, piattini, un tamburello, una corda lunga, recipienti di forme diverse (bottiglia, piatto, bicchiere), un misurino, una siringa senza ago, un termometro, un cronometro, uno specchietto.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Geografia (ciclo dell'acqua, fiumi e mari, clima), Matematica (leggere il termometro, misurare la capacità), Musica (il ritmo del tamburello guida la danza), Arte (disegnare la materia a puntini), Tecnologia (freezer, bollitore, frigorifero), Scienze motorie (danza e circuito della goccia).</dd></div>
+      <div><dt>Libro di testo</dt><dd>Pagine 135–138: i tre stati della materia (roccia, pioggia, vapore), le molecole con legami molto forti, forti e deboli, le caratteristiche dello stato solido, liquido e gassoso. L'app usa le stesse parole e gli stessi colori del libro: verde il solido, fucsia il liquido, azzurro il gassoso.</dd></div>
+      <div><dt>Nell'app</dt><dd>Il simulatore delle particelle con il termometro e 7 missioni, tre indagini a carte (stati, identikit, trasformazioni), il viaggio della goccia e la scheda di autovalutazione. Le stelle fanno crescere l'avatar in Scienze.</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>I tre fratelli con lo stesso nome</h3>
+    <p>Sulla cattedra tre barattoli trasparenti chiusi: uno con un cubetto di ghiaccio, uno con un po' d'acqua, uno «vuoto» ma appannato, appena tenuto sopra il bollitore. La maestra sussurra: «Sono tre fratelli e si chiamano tutti allo stesso modo. Chi sono?». Ogni squadra ha un minuto per scrivere un'ipotesi. Risposta: sono tutti acqua, in tre stati diversi. Il cubetto resta sulla cattedra fino alla fine: che cosa gli succederà?</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Siamo particelle</h3><p>In palestra o in un'aula libera. Il tamburello è il termometro. Battito lento: siamo un <b>solido</b>, tutti stretti per mano, vibriamo sul posto senza spostarci. Battito più veloce: diventiamo <b>liquido</b>, ci lasciamo le mani e scivoliamo vicini dentro il cerchio della corda (il recipiente). Battito velocissimo: siamo un <b>gas</b>, voliamo liberi per tutta la stanza. Poi la maestra raffredda e si torna indietro.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>Il termometro magico</h3><p>Alla LIM si apre «Le particelle». A turno un bambino muove il termometro e la classe descrive come ballano le molecole, confrontandolo con la danza appena fatta: per mano stretti sono i legami molto forti, vicini ma liberi i legami forti, lontani i legami deboli. Poi si completa pagina 135 del libro (roccia, pioggia, vapore e la tabella dei legami) e sul quaderno la carta d'identità dei tre stati, come a pagina 136–138: forma, spazio, si può afferrare, si può comprimere.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>12</b><small>min</small></div><div><span class="chip">Laboratorio</span><h3>Tre postazioni</h3><p><b>La forma dell'acqua</b>: con il misurino si versa la stessa quantità d'acqua in bottiglia, piatto e bicchiere: la forma cambia, la quantità no. <b>La siringa</b>: con l'aria lo stantuffo si schiaccia, con l'acqua no. <b>La gara del ghiaccio</b>: tre cubetti al sole, sul termosifone e all'ombra; si scrive l'orario e si controlla a fine lezione. Poi indagini «Solido, liquido o gassoso?» e «Identikit» nell'app: nell'Identikit ci sono anche gli indovinelli del libro («È fragile, rigido, compatto, duro: che cosa può essere?»).</p><div class="row"><button class="btn ghost" type="button" data-timer="12">Timer <span>12 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Le trasformazioni</h3><p>La maestra soffia sullo specchietto: compare l'appannatura (condensazione). Si costruisce alla lavagna la ruota delle trasformazioni con le frecce. Poi indagine «Le trasformazioni» a squadre: prima di toccare il gruppo, ogni squadra alza il cartellino con il nome scelto; ogni risposta giusta vale un timbro.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Il viaggio della goccia</h3><p>Circuito a quattro stazioni: <b>mare</b> (accovacciati, si ondeggia), <b>evaporazione</b> (ci si alza lentamente sulle punte), <b>nuvola</b> (tutti stretti a braccia unite, si condensa), <b>pioggia</b> (si scende muovendo le dita), poi <b>fiume</b> (corsa leggera in fila fino al mare). Al ritorno in classe si mette in ordine il viaggio nell'app.</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+    </ol>
+    <p><b>Chiusura (3 minuti).</b> Si controlla la gara del ghiaccio: quale cubetto si è sciolto prima e perché? Poi la scheda «Come è andata?».</p>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, missioni e badge</h3>
+      <ul class="tight">
+        <li><b>Missioni del laboratorio:</b> nel simulatore, una stella per ogni stato raggiunto e per ogni trasformazione scoperta (7 in tutto).</li>
+        <li><b>Indagini:</b> fino a 3 stelle ciascuna, migliorando il proprio record.</li>
+        <li><b>Viaggio della goccia:</b> 2 stelle la prima volta che lo si completa; 2 stelle per l'autovalutazione.</li>
+        <li><b>Badge:</b> Particella curiosa, Mago delle trasformazioni, Classificatore, Identikit perfetto, Viaggiatore dell'acqua, Scienziato riflessivo.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti a ballare?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>La materia in palestra</h3>
+      <ul class="tight">
+        <li><b>Danza delle particelle a musica:</b> al posto del tamburello, tre brani (lento, medio, veloce); al cambio di musica si cambia stato.</li>
+        <li><b>Il recipiente vivente:</b> quattro bambini con la corda formano un recipiente che cambia forma (quadrato, triangolo, cerchio); le particelle liquide dentro devono seguirne la forma senza uscire.</li>
+        <li><b>Statue di ghiaccio:</b> «Gelata!» tutti immobili per 10 secondi; «Disgelo!» si torna a scivolare.</li>
+        <li><b>Staffetta degli stati:</b> tre cerchi a terra (solido, liquido, gassoso); la maestra mostra un'immagine e il corridore va nel cerchio giusto.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Attenzione a tutti</p><h3>Per sostenere chi ha bisogno</h3>
+      <ul class="tight">
+        <li>Il simulatore ha due pulsanti grandi (più caldo, più freddo) oltre al cursore.</li>
+        <li>Colori fissi per gli stati, gli stessi del libro: verde solido, fucsia liquido, azzurro gassoso.</li>
+        <li>Ogni risposta ha la spiegazione; nel viaggio della goccia c'è un suggerimento dopo un errore.</li>
+        <li>La danza delle particelle dà a tutti un'immagine concreta da ricordare.</li>
+      </ul></div>
+  </div>
+  <div class="row"><a class="btn" href="#particelle">Apri il simulatore</a><a class="btn ghost" href="#valuta">Scheda di autovalutazione</a></div>
+</section>
+
+<!-- PARTICELLE -->
+<section class="view" id="sec-particelle" hidden>
+  <div class="panel">
+    <p class="eyebrow">Il laboratorio delle particelle</p>
+    <h2>Scalda e raffredda l'acqua</h2>
+    <p class="lead">La materia è fatta di molecole piccolissime. Muovi il termometro e guardale ballare!</p>
+    <div class="simgrid">
+      <div class="stage" id="stage">
+        <canvas id="cv" width="520" height="400" aria-label="Recipiente con le particelle dell'acqua"></canvas>
+        <div class="thermo"><button class="rb" type="button" id="cold" aria-label="Più freddo">❄️</button><input type="range" id="temp" min="-20" max="130" step="1" value="-10" aria-label="Temperatura"><button class="rb" type="button" id="hot" aria-label="Più caldo">🔥</button></div>
+        <div class="row" style="justify-content:space-between"><span class="tv" id="tv" style="font:700 30px/1 var(--font-display)">−10 °C</span><span class="flash" id="flash" aria-live="polite"></span></div>
+      </div>
+      <div style="display:grid;gap:14px">
+        <div class="stname" id="stname"></div>
+        <div class="idc" id="idc"></div>
+        <div><p class="eyebrow" style="margin-bottom:6px">Missioni del laboratorio</p><ul class="mlist" id="mlist"></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDAGINI -->
+<section class="view" id="sec-indagini" hidden>
+  <div class="panel">
+    <p class="eyebrow">Le indagini</p>
+    <h2>Metti ogni carta nel gruppo giusto</h2>
+    <div id="sort"></div>
+  </div>
+</section>
+
+<!-- GOCCIA -->
+<section class="view" id="sec-goccia" hidden>
+  <div class="panel">
+    <p class="eyebrow">Il ciclo dell'acqua</p>
+    <h2>Il viaggio della goccia</h2>
+    <p class="lead">Aiuta la goccia Gocciolina. Tocca le tappe del viaggio in ordine.</p>
+    <div id="trip"></div>
+  </div>
+</section>
+
+<!-- VALUTAZIONE -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andata la danza?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Scienze.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,$=L.$,$$=L.$$,esc=L.esc;
+const SOL={k:"sol",t:"Solido",d:"ha una forma propria",i:"🧊",c:"#5E8E1A"},LIQ={k:"liq",t:"Liquido",d:"prende la forma del recipiente",i:"💧",c:"#C2337A"},GAS={k:"gas",t:"Gassoso",d:"occupa tutto lo spazio a disposizione",i:"💨",c:"#1C8FB5"};
+const FUS={k:"fus",t:"Fusione",d:"da solido a liquido",i:"🧊➜💧",c:"#5E8E1A"},SOLI={k:"soli",t:"Solidificazione",d:"da liquido a solido",i:"💧➜🧊",c:"#C2337A"},EVA={k:"eva",t:"Evaporazione",d:"da liquido a gas",i:"💧➜💨",c:"#1C8FB5"},CON={k:"con",t:"Condensazione",d:"da gas a liquido",i:"💨➜💧",c:"#12424F"};
+const SETS={
+  stati:{t:"Solido, liquido o gassoso?",d:"In che stato si trova?",ask:"In che stato si trova questa materia?",emo:"🧪",c:"#DDE8F7",n:8,
+    move:"Solido: tutti stretti per mano. Liquido: scivolate piano intorno al banco. Gassoso: correte sul posto con le braccia aperte. Via con la prossima parola della maestra!",bins:[SOL,LIQ,GAS],items:[
+    {t:"Il cubetto di ghiaccio",i:"🧊",a:"sol",w:"È acqua allo stato solido: ha una forma tutta sua."},
+    {t:"La roccia della montagna",i:"🏔️",a:"sol",w:"La roccia ha una forma propria: è un solido."},
+    {t:"La matita",i:"✏️",a:"sol",w:"Ha una forma sua e la tieni in mano: è un solido."},
+    {t:"Il panetto di burro del frigo",i:"🧈",a:"sol",w:"Freddo di frigo è solido. Se lo scaldi in padella diventa liquido!"},
+    {t:"La sabbia",i:"⏳",a:"sol",w:"Sembra scorrere come un liquido, ma ogni granello è un piccolo solido con la sua forma."},
+    {t:"La tavoletta di cioccolato",i:"🍫",a:"sol",w:"Ha una forma sua: è solida (finché non la lasci al sole)."},
+    {t:"Il latte",i:"🥛",a:"liq",w:"Si versa e prende la forma della tazza: è un liquido."},
+    {t:"L'olio",i:"🫒",a:"liq",w:"Scorre e prende la forma della bottiglia: è un liquido."},
+    {t:"Il miele",i:"🍯",a:"liq",w:"Scorre piano piano, ma prende la forma del vasetto: è un liquido."},
+    {t:"Il succo di frutta",i:"🧃",a:"liq",w:"Si versa nel bicchiere e ne prende la forma: è un liquido."},
+    {t:"La goccia di pioggia",i:"💧",a:"liq",w:"La pioggia è acqua allo stato liquido."},
+    {t:"L'aria che respiriamo",i:"🌬️",a:"gas",w:"L'aria è un gas: non si vede e occupa tutto lo spazio."},
+    {t:"L'elio del palloncino che vola",i:"🎈",a:"gas",w:"Dentro il palloncino c'è un gas leggero, l'elio."},
+    {t:"Il vapore della pentola che bolle",i:"♨️",a:"gas",w:"L'acqua che bolle diventa vapore: è acqua allo stato gassoso."},
+    {t:"Le bollicine dell'acqua frizzante",i:"🫧",a:"gas",w:"Dentro le bollicine c'è un gas: per questo salgono in alto."},
+    {t:"Il profumo che si spande nella stanza",i:"🌸",a:"gas",w:"Il profumo diventa gas e riempie tutta la stanza: lo senti anche lontano."}]},
+  identikit:{t:"Identikit",d:"Di chi è questa carta d'identità?",ask:"Questa frase descrive un solido, un liquido o un gas?",emo:"🪪",c:"#F4E3C8",n:8,
+    move:"Mima la frase con il corpo: stretto e fermo se è un solido, scivoloso se è un liquido, libero e veloce se è un gas.",bins:[SOL,LIQ,GAS],items:[
+    {t:"Ha una forma propria e occupa uno spazio definito",i:"✏️",a:"sol",w:"Come la matita e il banco del libro: il solido ha la sua forma e il suo spazio."},
+    {t:"Si può afferrare con le mani",i:"✊",a:"sol",w:"Il solido si prende in mano. Il liquido e il gas invece no!"},
+    {t:"Le molecole hanno legami molto forti",i:"🔬",a:"sol",w:"Nel solido le molecole sono legate fortissimo: strette strette, vibrano sul posto."},
+    {t:"Indovinello: è fragile, rigido, compatto, duro",i:"❓",a:"sol",w:"Può essere un vaso di vetro o una tazza: è un solido."},
+    {t:"Non ha una forma propria: prende la forma del recipiente, ma non si può comprimere",i:"🥤",a:"liq",w:"Il liquido cambia forma con il bicchiere o la bottiglia, ma non si schiaccia."},
+    {t:"Non si può afferrare con le mani, ma si può versare",i:"🫗",a:"liq",w:"L'acqua del rubinetto scivola tra le dita: è un liquido."},
+    {t:"Le molecole hanno legami forti",i:"🔬",a:"liq",w:"Nel liquido i legami sono forti ma non fortissimi: le molecole restano vicine e scivolano una sull'altra."},
+    {t:"Indovinello: è bianco, profumato, saporito, opaco",i:"❓",a:"liq",w:"Può essere il latte: è un liquido."},
+    {t:"Occupa tutto lo spazio a disposizione",i:"🎈",a:"gas",w:"Il gas si allarga e riempie tutto il palloncino o la stanza."},
+    {t:"Si può comprimere",i:"💉",a:"gas",w:"Il gas si può schiacciare, come l'aria nel palloncino stretto tra le braccia o in una siringa."},
+    {t:"Le molecole hanno legami deboli",i:"🔬",a:"gas",w:"Nel gas i legami sono deboli: le molecole sono lontane e volano libere."},
+    {t:"Indovinello: è caldo, grigio, maleodorante, tossico",i:"❓",a:"gas",w:"Può essere il fumo di una ciminiera: è un gas."}]},
+  trasf:{t:"Le trasformazioni",d:"Fusione, solidificazione, evaporazione, condensazione",ask:"Che trasformazione sta succedendo?",emo:"🔄",c:"#E6DDF6",n:8,
+    move:"Fusione: da statua vi sciogliete fino a terra. Solidificazione: da terra vi alzate rigidi. Evaporazione: vi alzate sulle punte. Condensazione: vi stringete tutti vicini.",bins:[FUS,SOLI,EVA,CON],items:[
+    {t:"Il gelato al sole cola sul cono",i:"🍦",a:"fus",w:"Il caldo fa diventare liquido il gelato solido: è la fusione."},
+    {t:"Il burro nella padella calda",i:"🧈",a:"fus",w:"Il burro solido si scioglie e diventa liquido: fusione."},
+    {t:"Il pupazzo di neve a primavera",i:"⛄",a:"fus",w:"La neve è acqua solida: con il caldo fonde e diventa acqua liquida."},
+    {t:"L'acqua nelle formine del freezer",i:"🧊",a:"soli",w:"Il freddo trasforma l'acqua liquida in ghiaccio: solidificazione."},
+    {t:"Il cioccolato fuso nello stampo diventa una tavoletta",i:"🍫",a:"soli",w:"Raffreddandosi, il cioccolato liquido diventa solido: solidificazione."},
+    {t:"La cera sciolta della candela si indurisce sul tavolo",i:"🕯️",a:"soli",w:"La cera liquida si raffredda e torna solida: solidificazione."},
+    {t:"La pozzanghera sparisce al sole",i:"☀️",a:"eva",w:"Il sole scalda l'acqua, che diventa vapore e va nell'aria: evaporazione."},
+    {t:"I panni stesi si asciugano",i:"👕",a:"eva",w:"L'acqua dei panni diventa vapore: evaporazione."},
+    {t:"L'acqua della pentola bolle e cala",i:"🍲",a:"eva",w:"Bollendo, l'acqua diventa vapore molto in fretta: è l'evaporazione veloce, l'ebollizione."},
+    {t:"Lo specchio del bagno si appanna dopo la doccia",i:"🪞",a:"con",w:"Il vapore caldo tocca lo specchio freddo e torna goccioline: condensazione."},
+    {t:"Il bicchiere freddo si bagna fuori",i:"🥤",a:"con",w:"Il vapore dell'aria tocca il bicchiere freddo e diventa acqua liquida: condensazione."},
+    {t:"La rugiada sull'erba al mattino",i:"🌱",a:"con",w:"Di notte fa fresco: il vapore dell'aria diventa goccioline sull'erba."},
+    {t:"Il fiato sul vetro d'inverno",i:"🌫️",a:"con",w:"Nel fiato c'è vapore: sul vetro freddo diventa una nuvoletta d'acqua."}]}
+};
+
+/* ---------- simulatore ---------- */
+const ST={
+  sol:{n:"Solido",w:"ghiaccio",c:"--sol",forma:"Ha una forma propria",spazio:"Occupa uno spazio definito",aff:"Sì",comp:"No",part:"Legami molto forti: strette strette, vibrano sul posto.",es:"ghiaccio, roccia, matita"},
+  liq:{n:"Liquido",w:"acqua",c:"--liq",forma:"Non ha una forma propria: prende la forma del recipiente",spazio:"Occupa uno spazio",aff:"No",comp:"No",part:"Legami forti: vicine, scivolano una sull'altra.",es:"acqua, pioggia, latte, succo"},
+  gas:{n:"Gassoso",w:"vapore acqueo",c:"--gas",forma:"Non ha una forma propria: prende la forma del recipiente",spazio:"Occupa tutto lo spazio a disposizione",aff:"No",comp:"Sì",part:"Legami deboli: lontane, volano libere e velocissime.",es:"vapore, aria, fumo"}
+};
+const MIS=[["sol","Trasforma l'acqua in ghiaccio (stato solido)"],["liq","Trova l'acqua liquida"],["gas","Trasforma l'acqua in vapore (stato gassoso)"],["fus","Scopri la fusione: il ghiaccio diventa acqua"],["eva","Scopri l'evaporazione: l'acqua diventa vapore"],["con","Scopri la condensazione: il vapore torna acqua"],["soli","Scopri la solidificazione: l'acqua diventa ghiaccio"]];
+const TR={"sol>liq":["fus","Fusione!"],"liq>sol":["soli","Solidificazione!"],"liq>gas":["eva","Evaporazione!"],"gas>liq":["con","Condensazione!"],"sol>gas":["fus","Fusione ed evaporazione!"],"gas>sol":["con","Condensazione e solidificazione!"]};
+const N=42,COLS=7;
+let cv,ctx,W=520,H=400,P=[],T=-10,state="sol",raf=0,running=false,box;
+const stOf=t=>t<0?"sol":t<100?"liq":"gas";
+function layout(){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+  W=Math.max(260,Math.round(r.width||520));H=Math.round(W*0.76);
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+"px";ctx.setTransform(dpr,0,0,dpr,0,0);
+  const m=W*0.08;box={x0:m,x1:W-m,y0:H*0.1,y1:H-m*0.6};
+  const rad=Math.max(6,W/48);box.r=rad;
+  const gap=rad*2.25,rows=Math.ceil(N/COLS),gw=(COLS-1)*gap;
+  P.forEach((p,i)=>{const c=i%COLS,rw=Math.floor(i/COLS);p.hx=(box.x0+box.x1)/2-gw/2+c*gap+(rw%2?gap*0.25:0);p.hy=box.y1-rad-4-rw*gap*0.92});
+}
+function initParticles(){P=[];for(let i=0;i<N;i++)P.push({x:0,y:0,vx:0,vy:0,ph:Math.random()*6.28});layout();P.forEach(p=>{p.x=p.hx;p.y=p.hy})}
+function step(){
+  const r=box.r,s=state;
+  const heat=s==="sol"?0:s==="liq"?(T/100):(T-100)/30;
+  for(const p of P){
+    if(s==="sol"){
+      const a=0.6+(T+20)/20*2.4;p.ph+=0.35;
+      p.x+=(p.hx+Math.sin(p.ph)*a-p.x)*0.25;p.y+=(p.hy+Math.cos(p.ph*1.3)*a-p.y)*0.25;p.vx=p.vy=0;continue;
+    }
+    if(s==="liq"){
+      const k=0.25+heat*0.6;p.vx+=(Math.random()-.5)*k;p.vy+=(Math.random()-.5)*k+0.18;p.vx*=0.9;p.vy*=0.9;
+    }else{
+      const sp=3+heat*3,v=Math.hypot(p.vx,p.vy)||1;
+      p.vx+= (Math.random()-.5)*0.4;p.vy+=(Math.random()-.5)*0.4;
+      const f=sp/v;p.vx=p.vx*0.9+p.vx*f*0.1;p.vy=p.vy*0.9+p.vy*f*0.1;
+    }
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<box.x0+r){p.x=box.x0+r;p.vx=Math.abs(p.vx)}
+    if(p.x>box.x1-r){p.x=box.x1-r;p.vx=-Math.abs(p.vx)}
+    if(p.y<box.y0+r){p.y=box.y0+r;p.vy=Math.abs(p.vy)}
+    if(p.y>box.y1-r){p.y=box.y1-r;p.vy=-Math.abs(p.vy)*(s==="liq"?0.3:1)}
+  }
+  if(s!=="sol"){
+    const d0=r*2.05;
+    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+      const a=P[i],b=P[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
+      if(d>0&&d<d0){const o=(d0-d)/2,ux=dx/d,uy=dy/d;a.x-=ux*o;a.y-=uy*o;b.x+=ux*o;b.y+=uy*o;
+        if(s==="gas"){const t=a.vx;a.vx=b.vx;b.vx=t;const u=a.vy;a.vy=b.vy;b.vy=u}}
+    }
+  }
+}
+function draw(){
+  const cs=getComputedStyle(document.documentElement),col=cs.getPropertyValue(ST[state].c).trim()||"#2F7FD0",ink=cs.getPropertyValue("--ink").trim(),sf=cs.getPropertyValue("--surface").trim();
+  ctx.clearRect(0,0,W,H);ctx.fillStyle=sf;ctx.fillRect(0,0,W,H);
+  const r=box.r;
+  if(state==="liq"){const top=Math.min(...P.map(p=>p.y))-r;ctx.fillStyle=col+"22";ctx.fillRect(box.x0,top,box.x1-box.x0,box.y1-top)}
+  if(state==="sol"){ctx.strokeStyle=col;ctx.globalAlpha=.5;ctx.lineWidth=2;ctx.beginPath();
+    for(let i=0;i<N;i++){const p=P[i],c=i%COLS;if(c<COLS-1&&P[i+1]){ctx.moveTo(p.x,p.y);ctx.lineTo(P[i+1].x,P[i+1].y)}if(P[i+COLS]){ctx.moveTo(p.x,p.y);ctx.lineTo(P[i+COLS].x,P[i+COLS].y)}}
+    ctx.stroke();ctx.globalAlpha=1}
+  for(const p of P){ctx.beginPath();ctx.arc(p.x,p.y,r,0,6.283);ctx.fillStyle=col;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=ink;ctx.globalAlpha=.35;ctx.stroke();ctx.globalAlpha=1;
+    ctx.beginPath();ctx.arc(p.x-r*.3,p.y-r*.3,r*.28,0,6.283);ctx.fillStyle="rgba(255,255,255,.55)";ctx.fill()}
+  ctx.strokeStyle=ink;ctx.lineWidth=4;ctx.lineJoin="round";ctx.beginPath();
+  ctx.moveTo(box.x0-6,box.y0-10);ctx.lineTo(box.x0-6,box.y1+6);ctx.lineTo(box.x1+6,box.y1+6);ctx.lineTo(box.x1+6,box.y0-10);ctx.stroke();
+  if(state==="gas"){ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(box.x0-6,box.y0-6);ctx.lineTo(box.x1+6,box.y0-6);ctx.stroke();ctx.setLineDash([])}
+}
+function loop(){if(!running)return;step();draw();raf=requestAnimationFrame(loop)}
+function startSim(){if(running)return;running=true;layout();loop()}
+function stopSim(){running=false;cancelAnimationFrame(raf)}
+function setT(t){
+  T=Math.max(-20,Math.min(130,Math.round(t)));$("#temp").value=T;
+  $("#tv").textContent=(T<0?"−"+(-T):T)+" °C";
+  const ns=stOf(T);
+  if(ns!==state){
+    const tr=TR[state+">"+ns];const old=state;state=ns;
+    if(old==="sol")P.forEach(p=>{p.vx=(Math.random()-.5);p.vy=0});
+    if(ns==="gas")P.forEach(p=>{p.vx=(Math.random()-.5)*6;p.vy=(Math.random()-.5)*6});
+    if(tr){$("#flash").textContent=tr[1];L.ding();mission(tr[0]);if(tr[0]==="fus"&&ns==="gas")mission("eva");if(tr[0]==="con"&&ns==="sol")mission("soli")}
+    mission(ns);
+  }
+  paintState();
+}
+function mission(k){const S=L.state();if(S.vis[k])return;S.vis[k]=1;L.save();L.add(1);L.toast("Missione compiuta: "+MIS.find(m=>m[0]===k)[1].split(":")[0]+". Una stella!");paintMissions()}
+function paintState(){
+  const s=ST[state],v="var("+s.c+")";
+  $("#stage").style.setProperty("--sc",v);
+  $("#stname").style.setProperty("--sc",v);$("#idc").style.setProperty("--sc",v);$("#flash").style.setProperty("--sc",v);
+  $("#stname").innerHTML=`<b>${s.n}</b><span>l'acqua è ${s.w}</span>`;
+  $("#idc").innerHTML=`<p class="eyebrow">Carta d'identità</p><dl><dt>Forma</dt><dd>${s.forma}</dd><dt>Spazio</dt><dd>${s.spazio}</dd><dt>Si può afferrare?</dt><dd>${s.aff}</dd><dt>Si può comprimere?</dt><dd>${s.comp}</dd><dt>Le molecole</dt><dd>${s.part}</dd><dt>Esempi</dt><dd>${s.es}</dd></dl>`;
+}
+function paintMissions(){const S=L.state();$("#mlist").innerHTML=MIS.map(m=>`<li class="${S.vis[m[0]]?"ok":""}"><i>${S.vis[m[0]]?"✓":""}</i><span>${esc(m[1])}</span></li>`).join("")}
+function initSim(){
+  cv=$("#cv");ctx=cv.getContext("2d");initParticles();
+  $("#temp").addEventListener("input",e=>setT(+e.target.value));
+  $("#hot").addEventListener("click",()=>setT(T+10));
+  $("#cold").addEventListener("click",()=>setT(T-10));
+  window.addEventListener("resize",()=>{if(running){layout();if(state==="sol")P.forEach(p=>{p.x=p.hx;p.y=p.hy})}});
+}
+
+/* ---------- viaggio della goccia ---------- */
+const TRIP=[
+  {i:"☀️",t:"Evaporazione",d:"Il sole scalda il mare: l'acqua diventa vapore e sale in cielo."},
+  {i:"☁️",t:"Condensazione",d:"In alto fa freddo: il vapore torna goccioline e forma le nuvole."},
+  {i:"🌧️",t:"Precipitazione",d:"Le goccioline si uniscono, diventano pesanti e cadono: pioggia, neve o grandine."},
+  {i:"🏞️",t:"Scorrimento",d:"L'acqua scorre nei torrenti e nei fiumi e torna al mare. Il viaggio ricomincia!"}
+];
+let TP=null;
+function renderTrip(){
+  if(!TP)TP={done:[],pool:L.shuffle(TRIP.map((x,i)=>i)),err:0};
+  const S=L.state(),fin=TP.done.length===TRIP.length;
+  $("#trip").innerHTML=`<div class="fb info"><b class="t">🌊 Si parte dal mare</b></div>
+    ${TP.done.length?`<ol class="trip">${TP.done.map(i=>`<li><div><b>${TRIP[i].i} ${TRIP[i].t}</b><p>${esc(TRIP[i].d)}</p></div></li>`).join("")}</ol>`:""}
+    ${fin?L.fb("good","Il viaggio è completo!",["Gocciolina è tornata al mare: il ciclo dell'acqua non finisce mai.",TP.err?"Errori: "+TP.err+". Riprova per farlo senza errori!":"Nessun errore: bravissimo!"])+
+      `<div class="move"><b>Ora fai il viaggio con il corpo</b><span>Accovacciati e ondeggia (mare), alzati piano sulle punte (evaporazione), stringiti ai compagni a braccia unite (nuvola), scendi muovendo le dita (pioggia), corri leggero in fila (fiume).</span></div><div class="row"><button class="btn" type="button" id="trip-again">Rifai il viaggio</button></div>`
+     :`<p><b>Tappa ${TP.done.length+1}:</b> che cosa succede adesso?</p><div class="pool">${TP.pool.filter(i=>TP.done.indexOf(i)<0).map(i=>`<button class="tcard" type="button" data-t="${i}"><span class="emo" aria-hidden="true">${TRIP[i].i}</span><span><b>${TRIP[i].t}</b>${esc(TRIP[i].d)}</span></button>`).join("")}</div><div id="tfb"></div>`}`;
+  if(fin){$("#trip-again").addEventListener("click",()=>{TP=null;renderTrip()});return}
+  $$("[data-t]").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.t;
+    if(i===TP.done.length){TP.done.push(i);L.ding();
+      if(TP.done.length===TRIP.length){const S=L.state();if(!S.extra.goccia){S.extra.goccia=1;S.extra.gerr=TP.err;L.save();L.add(2);L.toast("Viaggio completato: due stelle!")}else L.checkBadges();L.fanfare()}
+      renderTrip();
+    }else{TP.err++;L.buzz();b.classList.add("wrong");
+      const S=L.state();S.err["Viaggio della goccia"]=(S.err["Viaggio della goccia"]||0)+1;L.save();
+      $("#tfb").innerHTML=L.fb("bad","Non ancora!",[TP.done.length===0?"Prima di tutto il sole deve scaldare l'acqua del mare.":"Pensa: dove si trova Gocciolina adesso? "+["","È vapore in cielo: che cosa le fa il freddo?","È in una nuvola: che cosa succede quando le gocce diventano pesanti?","È caduta a terra: dove va l'acqua della pioggia?"][TP.done.length]])}
+  }));
+}
+
+L.init({
+  key:"danza-particelle-v1",col:"stati",subj:"sci",src:"stati",title:"La Danza delle Particelle",
+  tabs:["lezione","particelle","indagini","goccia","valuta"],home:"particelle",sets:SETS,
+  badges:[
+    {id:"curiosa",n:"Particella curiosa",d:"Porta l'acqua nei tre stati",ok:S=>S.vis.sol&&S.vis.liq&&S.vis.gas},
+    {id:"mago",n:"Mago delle trasformazioni",d:"Scopri le quattro trasformazioni",ok:S=>S.vis.fus&&S.vis.soli&&S.vis.eva&&S.vis.con},
+    {id:"class",n:"Classificatore",d:"Almeno 7 su 8 in «Solido, liquido o gassoso?»",ok:S=>(S.best.stati||0)>=7},
+    {id:"identikit",n:"Identikit perfetto",d:"Almeno 7 su 8 nell'Identikit",ok:S=>(S.best.identikit||0)>=7},
+    {id:"viaggio",n:"Viaggiatore dell'acqua",d:"Completa il viaggio della goccia",ok:S=>!!S.extra.goccia},
+    {id:"riflessivo",n:"Scienziato riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So riconoscere se una cosa è solida, liquida o gassosa.","So spiegare come sono legate le molecole nei tre stati (legami molto forti, forti, deboli).","So che il caldo e il freddo fanno cambiare stato alla materia.","Conosco i nomi delle trasformazioni: fusione, solidificazione, evaporazione, condensazione.","So raccontare il viaggio della goccia d'acqua.","Ho collaborato con i compagni nella danza e nel laboratorio."],
+  likes:["Le particelle","Solido, liquido o gassoso?","Le trasformazioni","Il viaggio della goccia","La danza in palestra"],
+  imprevisti:[["Ondata di caldo!","Le particelle accelerano: per un minuto si risponde correndo sul posto."],["Gelata!","Tutti immobili come ghiaccio per 20 secondi: chi si muove si scioglie e salta un turno."],["Nebbia","Si risponde solo sussurrando, come particelle di vapore leggerissime."],["Goccia doppia","La prossima risposta giusta vale due timbri per la squadra."],["Il termometro impazzito","La maestra dice una temperatura (−5, 40, 110 gradi): le squadre mimano lo stato dell'acqua."],["Scambio di stato","Chi risponde giusto sceglie un compagno che spiega il perché con parole sue."]],
+  onEnter:()=>{TP=null;paintMissions();paintState()},
+  onLeave:()=>stopSim(),
+  onRoute:h=>{
+    if(h==="particelle"){paintMissions();paintState();startSim();mission(state)}else stopSim();
+    if(h==="indagini")L.sortChooser($("#sort"),["stati","identikit","trasf"]);
+    if(h==="goccia")renderTrip();
+  }
+});
+initSim();
+paintState();
+})();
+</script>
+</body></html>

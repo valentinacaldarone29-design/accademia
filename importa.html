@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accademia dei Talenti · Importa i dati</title>
+<style>
+body{margin:0;font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:#1B1540;color:#2A1E40;display:grid;place-items:center;min-height:100vh;padding:16px;box-sizing:border-box}
+.card{background:#FBF3E0;border:3px solid #D4AF37;border-radius:22px;padding:24px;max-width:560px;width:100%}
+h1{margin:0 0 6px;font:700 26px Georgia,serif;color:#4B3A8C}
+ol{padding-left:22px}li{margin:6px 0}
+input[type=file]{font-size:16px;margin:10px 0}
+button{min-height:48px;padding:10px 22px;border-radius:99px;border:0;background:#5B3A9E;color:#fff;font:700 17px system-ui;cursor:pointer}
+button:disabled{opacity:.5}
+.msg{margin-top:14px;padding:12px 14px;border-radius:12px;font-weight:700}
+.ok{background:#DDF1E3;color:#1E6B3A}.ko{background:#F8DCDC;color:#8E2525}.info{background:#E8E2F6;color:#3A2470}
+</style></head><body>
+<main class="card">
+  <h1>Importa i dati della classe</h1>
+  <p>Questa pagina serve una volta sola: porta nel Foglio Google il backup scaricato dall'Accademia dentro Claude.</p>
+  <ol>
+    <li>Nell'Accademia dentro Claude: Area maestra → <b>Backup</b> → <b>Scarica il backup sul dispositivo</b>.</li>
+    <li>Qui sotto scegli quel file e premi <b>Importa</b>.</li>
+  </ol>
+  <input type="file" id="f" accept=".json,application/json">
+  <div><button id="go" type="button" disabled>Importa</button></div>
+  <div id="m" class="msg info" role="status">Scegli il file del backup.</div>
+  <p style="margin-top:18px"><a href="index.html">← Vai all'Accademia</a></p>
+</main>
+<script src="config.js"></script>
+<script>
+(function(){
+  var f=document.getElementById("f"),go=document.getElementById("go"),m=document.getElementById("m"),data=null;
+  function say(t,k){m.textContent=t;m.className="msg "+(k||"info")}
+  if(!window.REGISTRO_URL){say("Manca l'indirizzo del Foglio Google nel file config.js.","ko");return}
+  f.addEventListener("change",function(){
+    data=null;go.disabled=true;var file=f.files[0];if(!file)return;
+    var r=new FileReader();r.onload=function(){
+      try{var p=JSON.parse(r.result);if(!p||p.app!=="Accademia dei Talenti"||!p.db)throw 0;
+        var out={},n=0;Object.keys(p.db).forEach(function(col){if(/^backup/.test(col))return;var m2=p.db[col]||{};Object.keys(m2).forEach(function(id){out[col+"/"+id]=m2[id];n++})});
+        data=out;go.disabled=false;say("File pronto: "+(p.n||0)+" alunni, "+n+" documenti. Premi Importa.","info");
+      }catch(e){say("Questo file non è un backup dell'Accademia dei Talenti.","ko")}
+    };r.readAsText(file);
+  });
+  go.addEventListener("click",function(){
+    if(!data)return;go.disabled=true;say("Sto importando, non chiudere la pagina…","info");
+    fetch(window.REGISTRO_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({import:data})})
+      .then(function(r){return r.json()}).then(function(o){
+        if(o.ok)say("Fatto! Importati "+o.imported+" documenti. Ora apri l'Accademia ed entra con il tuo PIN di sempre.","ok");
+        else{say(o.err||"Importazione non riuscita.","ko");go.disabled=false}
+      },function(){say("Non riesco a raggiungere il Foglio Google. Controlla l'indirizzo in config.js e che lo script sia pubblicato per «Chiunque».","ko");go.disabled=false});
+  });
+})();
+</script>
+</body></html>

@@ -1,0 +1,626 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nel labirinto dei quadri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* colori dell'arte: viola della tavolozza */
+:root{--mb:#8C6FC7;--mb-d:#5B3F99;--mb-soft:#F1ECFA}
+/* il labirinto: sentiero di 7 stanze */
+.path{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin:6px 0 16px}
+.room{appearance:none;position:relative;display:grid;gap:4px;justify-items:center;text-align:center;padding:12px 8px 10px;border-radius:16px;border:3px solid var(--rc,var(--mb));background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:132px}
+.room .fr{width:64px;height:48px;border-radius:4px;border:5px solid #C9A227;box-shadow:inset 0 0 0 2px #8A6D12;background:var(--rg)}
+.room b{font:600 17px/1.1 var(--font-display)}
+.room small{color:var(--muted);font-weight:700}
+.room .st{position:absolute;top:6px;right:8px;font-size:18px}
+.room[disabled]{opacity:.45;cursor:not-allowed;filter:grayscale(.7)}
+.room[aria-current="true"]{box-shadow:0 0 0 4px var(--mb)}
+.qcard{border-radius:20px;border:3px solid var(--rc);background:var(--surface);overflow:hidden}
+.qhead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:14px;background:linear-gradient(90deg,var(--rs),transparent)}
+.qhead .fr{width:110px;height:82px;border-radius:6px;border:8px solid #C9A227;box-shadow:inset 0 0 0 3px #8A6D12,2px 3px 0 rgba(0,0,0,.2);background:var(--rg)}
+.qhead h3{font-size:28px;margin:0}
+.qhead p{margin:2px 0 0;font-weight:700;color:var(--muted)}
+.qbody{padding:4px 16px 16px;display:grid;gap:12px}
+.qbody h4{margin:6px 0 2px;color:var(--mb-d);font:600 20px var(--font-display)}
+.sw{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sw i{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.15)}
+.look{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.look li{padding:8px 12px;border-radius:12px;background:var(--mb-soft);font-weight:700}
+.door{border-radius:16px;border:2px dashed var(--rc);padding:12px;background:var(--surface2)}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.opt{appearance:none;text-align:left;padding:12px 14px;border-radius:14px;border:2px solid var(--mb);background:var(--surface);color:var(--ink);font:700 17px/1.2 var(--font-body);cursor:pointer;min-height:56px}
+.opt.right{border-color:var(--good);background:var(--good-soft)}.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.real{font-weight:700;color:var(--mb-d)}
+.kids{display:flex;align-items:center;gap:8px;font-weight:700;margin:0 0 6px}
+.kids .bar{flex:1;height:12px;border-radius:99px;background:#E4DDF2;overflow:hidden}.kids .bar i{display:block;height:100%;background:var(--mb);border-radius:99px}
+/* atelier */
+.atel{display:grid;gap:14px;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr)}
+@media (max-width:860px){.atel{grid-template-columns:1fr}}
+.easel{user-select:none;-webkit-user-select:none;border-radius:18px;border:12px solid #C9A227;box-shadow:inset 0 0 0 3px #8A6D12;background:#fff;touch-action:none}
+.easel canvas{display:block;width:100%;height:auto;border-radius:4px;cursor:crosshair;touch-action:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.tools .pal{display:flex;gap:6px;flex-wrap:wrap}
+.tools .pal button{appearance:none;width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #B9AED3;cursor:pointer}
+.tools .pal button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--mb-d)}
+.tools .sz button,.tools .ac button{appearance:none;min-width:44px;min-height:40px;border-radius:12px;border:2px solid var(--mb);background:var(--surface);color:var(--mb-d);font:700 15px var(--font-body);cursor:pointer;padding:0 10px}
+.tools .sz button[aria-pressed="true"]{background:var(--mb);color:#fff}
+.tools .sz{display:flex;flex-wrap:wrap;gap:6px}.tools .sz button span{font-size:18px}
+.pick{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 4px}
+.pick button{appearance:none;border:2px solid var(--mb);background:var(--surface);color:var(--mb-d);border-radius:99px;padding:6px 12px;font:700 14px var(--font-body);cursor:pointer;min-height:38px}
+.pick button[aria-pressed="true"]{background:var(--mb);color:#fff}
+.sheet{border-radius:18px;background:var(--mb-soft);border:2px solid var(--mb);padding:14px;display:grid;gap:10px}
+.box{background:#fff;color:#2A2140;border-radius:12px;padding:12px;display:grid;gap:8px;border:2px solid transparent}
+.box.done{border-color:var(--good)}
+.box .bh{display:flex;align-items:center;gap:8px}
+.box .bt{font:400 24px/1 var(--font-hand);color:var(--mb-d)}
+.box .bi{margin-left:auto;font-size:22px}
+.box textarea,.box input{width:100%;border-radius:10px;border:2px solid #D6CCEB;padding:8px 10px;font:400 22px/1.3 var(--font-hand);color:#2A2140;background:#fff}
+.box textarea{min-height:80px;resize:vertical;background:repeating-linear-gradient(#fff 0 30px,#EEE8F8 30px 31px)}
+.starters{display:flex;flex-wrap:wrap;gap:6px}
+.starters button{appearance:none;border:1.5px solid var(--mb);background:var(--mb-soft);color:var(--mb-d);border-radius:99px;padding:6px 12px;font:700 14px/1.1 var(--font-body);cursor:pointer;min-height:36px}
+.prog{display:flex;gap:6px;align-items:center;font-weight:700}
+.prog i{width:26px;height:10px;border-radius:99px;background:#D6CCEB}.prog i.on{background:var(--good)}
+.arch{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.arch li{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:12px;background:var(--surface2);font-weight:700}
+.spick{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:6px 0 14px}
+.spick button{appearance:none;display:grid;gap:2px;justify-items:start;text-align:left;padding:10px 12px;border-radius:14px;border:2.5px solid var(--rc,var(--mb));background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:64px}
+.spick button b{font:600 16px/1.15 var(--font-display)}.spick button small{color:var(--muted);font-weight:700}
+.spick button[aria-current="true"]{box-shadow:0 0 0 4px var(--rc,var(--mb))}
+.spart{border-radius:16px;border:2px solid var(--rc,var(--mb));padding:12px 14px;margin:0 0 12px;background:var(--surface)}
+.spart h4{margin:0 0 8px;color:var(--mb-d);font:600 19px/1.2 var(--font-display)}
+.spart h4 .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--rc,var(--mb));color:#fff;font-size:15px;margin-right:6px}
+.spart.ok{border-color:var(--good)}
+.cl{display:grid;gap:6px}
+.cl .r{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 8px;border-radius:12px;background:var(--surface2)}
+.cl .r.right{background:var(--good-soft)}.cl .r.wrong{background:var(--bad-soft)}
+.cl .bt{display:flex;gap:6px}.cl .bt button{appearance:none;min-width:48px;min-height:42px;border-radius:12px;border:2px solid var(--mb);background:var(--surface);color:var(--mb-d);font:700 16px var(--font-body);cursor:pointer;padding:0 10px}
+.cl .bt button:disabled{opacity:.55;cursor:default}.cl .bt button.sel{background:var(--mb);color:#fff;opacity:1}
+.cl .why{grid-column:1/-1;font-size:14px;font-weight:700;color:var(--muted)}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
+.mt button{appearance:none;text-align:left;padding:10px 12px;border-radius:12px;border:2px solid var(--mb);background:var(--surface);color:var(--ink);font:700 15px/1.2 var(--font-body);cursor:pointer;min-height:48px}
+.mt button.sel{box-shadow:0 0 0 3px var(--mb-d)}.mt button.done{border-color:var(--good);background:var(--good-soft);cursor:default}.mt button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.wr textarea{width:100%;min-height:86px;border-radius:12px;border:2px solid #D6CCEB;padding:8px 10px;font:400 22px/1.3 var(--font-hand);color:#2A2140;background:repeating-linear-gradient(#fff 0 30px,#EEE8F8 30px 31px)}
+.sdots{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 8px}
+.sdots button{appearance:none;width:54px;height:54px;border-radius:50%;border:3px dashed #9B8FB8;cursor:pointer;background:#fff}
+.sdots button.sel{box-shadow:0 0 0 4px var(--mb-d)}
+.spal{display:flex;gap:6px;flex-wrap:wrap}.spal button{appearance:none;width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #B9AED3;cursor:pointer}
+.ordl{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px;counter-reset:o}
+.ordl li{counter-increment:o;padding:8px 12px;border-radius:12px;background:var(--good-soft);font-weight:700}
+.ordl li::before{content:counter(o)". ";color:var(--good)}
+.labs{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.lab{border-radius:16px;border:2px solid var(--rc);padding:12px 14px;background:var(--surface)}
+.lab h4{margin:0 0 4px;font:600 20px var(--font-display);color:var(--mb-d)}
+.lab p{margin:4px 0}
+.lab .tag{display:inline-block;font-size:13px;font-weight:700;border-radius:99px;padding:2px 10px;background:var(--rs);margin-right:4px}
+</style>
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <rect x="20" y="20" width="90" height="70" rx="4" fill="none" stroke="#C9A227" stroke-width="10"/>
+    <path d="M32 78l20-24 14 14 10-10 22 20" fill="none" stroke="#8C6FC7" stroke-width="5" stroke-linejoin="round"/>
+    <circle cx="88" cy="40" r="7" fill="#F2B705"/>
+    <path d="M130 120q20-50 50-30q-10 30 0 50q-30 10-50-20z" fill="#8C6FC7" opacity=".8"/>
+    <circle cx="148" cy="112" r="5" fill="#D2325F"/><circle cx="162" cy="102" r="5" fill="#F2B705"/><circle cx="166" cy="122" r="5" fill="#1BA7E1"/>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Arte · Classe terza</p>
+        <h1>Nel labirinto dei quadri</h1>
+        <p class="lead">Entra nei 7 quadri del libro e trova le porte magiche.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Artista: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#labirinto">Il labirinto</a>
+    <a href="#schede">Le schede</a>
+    <a href="#indagini">Giochi</a>
+    <a href="#atelier">Il mio quadro</a>
+    <a href="#valuta">Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE (solo maestra) -->
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Arte e immagine</p>
+    <h2>Nel labirinto dei quadri</h2>
+    <dl class="facts">
+      <div><dt>Il libro</dt><dd>«Nel labirinto dei quadri» di Stefano Bordiglioni (Scrittori di Classe). Durante una visita al museo, un custode-mago fa entrare Marco e Juliane in un quadro: per tornare a casa devono trovare una porta magica in ognuno dei sette dipinti.</dd></div>
+      <div><dt>Metodologia attiva</dt><dd>Gamification (il labirinto da attraversare, le porte da aprire, stelle e badge) con Cooperative Learning: squadre di 4 «guide del museo» con i ruoli di osservatore, lettore, disegnatore e portavoce.</dd></div>
+      <div><dt>Durata</dt><dd>Un percorso di 7 incontri, uno per quadro (circa 60 minuti ciascuno), più un incontro finale per la mostra di classe. Ogni incontro segue lo stesso schema, così i bambini sanno cosa aspettarsi.</dd></div>
+      <div><dt>Obiettivi</dt><dd>Osservare un'opera d'arte e descriverla (personaggi, colori, luce, movimento); riconoscere colori caldi e freddi; distinguere ritratto, paesaggio e natura morta; conoscere sette artisti e il loro stile; rielaborare un'opera in modo personale; ascoltare e comprendere un racconto.</dd></div>
+      <div><dt>I quadri</dt><dd>Monet, «Papaveri» · Turner, «Il naufragio del Minotauro» · Degas, «La lezione di danza» · Botero, «Gente del circo con elefante» · Van Gogh, «La notte stellata», «La camera ad Arles» e gli autoritratti · Escher, «Relatività» · Klimt, «L'albero della vita».</dd></div>
+      <div><dt>Collegamenti</dt><dd>Italiano (lettura del libro, descrizione), Musica (la mazurka di Degas, i suoni della tempesta), Scienze motorie (danza, equilibrio, staffette), Geografia (dove sono i musei e i paesi dei pittori), Matematica (simmetrie e spirali di Klimt, scale di Escher), Educazione civica (l'amicizia e il rispetto delle opere nei musei).</dd></div>
+      <div><dt>Nell'app</dt><dd>Il labirinto dei 7 quadri (da leggere e ascoltare, con le domande «Occhio da artista» e la porta da aprire), le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM.</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>La cornice vuota</h3>
+    <p>Sulla cattedra c'è una grande cornice di cartone vuota e un berretto blu da custode. La maestra lo indossa e dice con voce misteriosa: «I quadri non vi dicono niente? Ci penso io!» Chiama un bambino, lo fa passare dentro la cornice e lui si blocca come una statua. «Chi riesce a uscire dal quadro? Bisogna trovare la porta magica!» Oggi entriamo nel primo quadro del labirinto.</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step · uguale per ogni quadro</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Ascolto</span><h3>Leggiamo il capitolo</h3><p>La maestra legge i capitoli del quadro (oppure li ascoltano con il pulsante 🔊 nell'app). Ad ogni nuovo personaggio, i bambini alzano la mano: lo scrivono sul cartellone «Chi abita nel quadro?».</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Osservazione</span><h3>Occhio da artista</h3><p>Alla LIM si apre il quadro vero. Gioco del «Vedo, penso, mi chiedo»: ogni squadra dice una cosa che vede, una che pensa e una domanda. Poi si risponde insieme alle domande «Occhio da artista» dell'app.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Il quadro vivente</h3><p>Una squadra alla volta ricostruisce il quadro con il corpo e si blocca. Le altre squadre indovinano chi è chi. Al «Via!» del custode i personaggi si animano per 10 secondi, poi tornano immobili.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>15</b><small>min</small></div><div><span class="chip">Laboratorio</span><h3>Il laboratorio del quadro</h3><p>Si fa il laboratorio di quel pittore (li trovi qui sotto, uno per quadro). Chi finisce prima apre l'atelier dell'app e dipinge con i colori del pittore.</p><div class="row"><button class="btn ghost" type="button" data-timer="15">Timer <span>15 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Apri la porta!</h3><p>Alla LIM si risponde alla domanda della porta magica: la squadra che risponde giusto per prima attraversa la porta con un salto dentro la cornice di cartone e conquista la chiave del quadro (un timbro sul cartellone del labirinto).</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+    </ol>
+    <p><b>Chiusura (3 minuti).</b> «In quale quadro vorresti restare? Perché?» Un giro veloce di risposte, poi la scheda «Come è andata?» all'ultimo incontro.</p>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Possibili attività</p>
+    <h3>Un laboratorio per ogni quadro</h3>
+    <div class="labs" id="labs"></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Per tutto il percorso</p>
+    <h3>Altre attività</h3>
+    <ul class="tight">
+      <li><b>Il cartellone del labirinto:</b> un grande labirinto con 7 stanze vuote. Dopo ogni incontro si incolla la riproduzione del quadro e le firme dei bambini che hanno «attraversato la porta».</li>
+      <li><b>Il passaporto dell'artista:</b> un libretto con una pagina per pittore: nome, quadro, colori preferiti, il timbro della chiave.</li>
+      <li><b>Le nostre porte magiche:</b> ogni squadra inventa e disegna l'ottava porta magica, per un quadro scelto da loro (in classe o nell'atelier dell'app).</li>
+      <li><b>Il custode siamo noi:</b> si scrivono insieme le regole del museo (non si tocca, si parla piano…) e il perché di ogni regola. Collegamento con Educazione civica.</li>
+      <li><b>La mostra finale:</b> i quadri dei bambini appesi in corridoio con le cornici di cartone. Le squadre fanno da guide ai genitori o a un'altra classe, come la guida del museo nel libro.</li>
+      <li><b>Teatro:</b> si mettono in scena una o due porte magiche (la tempesta di Turner con un telo blu, la danza di Degas con la musica).</li>
+    </ul>
+  </div>
+
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, chiavi e badge</h3>
+      <ul class="tight">
+        <li><b>Il labirinto:</b> 2 stelle per ogni porta aperta al primo tentativo, 1 stella se serve un altro tentativo.</li>
+        <li><b>Occhio da artista:</b> chi risponde alle domande di osservazione prende 1 stella per quadro.</li>
+        <li><b>Giochi:</b> fino a 3 stelle ciascuno, migliorando il proprio record.</li>
+        <li><b>Il mio quadro:</b> una stella per ogni casella scritta e 3 stelle quando il quadro magico è completo.</li>
+        <li><b>Badge:</b> Primo quadro, Esploratore del labirinto, Fuori dal labirinto, Occhio da artista, Caldo e freddo, Pittore magico, Artista riflessivo.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta del custode</h3>
+      <div class="imp" id="imp"><b>Pronti a entrare nel quadro?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>Il labirinto in palestra</h3>
+      <ul class="tight">
+        <li><b>Il percorso delle 7 porte:</b> sette cerchi (o cerchi appesi) sono le porte. Davanti a ognuna c'è una prova: salire sul «ramo» (spalliera) di Monet, nuotare sul tappeto di Turner, fare una piroetta di Degas, rotolare come la palla di cannone del circo, saltare sulla «stella più bassa», camminare all'indietro sulle scale di Escher, saltare mano nella mano come in Klimt.</li>
+        <li><b>Statue al museo:</b> si cammina sulla musica; quando il custode dice un pittore, tutti si bloccano in un personaggio del suo quadro.</li>
+        <li><b>Caldo o freddo:</b> la maestra mostra un cartoncino colorato; se è un colore caldo si corre verso il sole disegnato, se è freddo verso la luna.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Attenzione a tutti</p><h3>Per sostenere chi ha bisogno</h3>
+      <ul class="tight">
+        <li>Ogni stanza del labirinto ha il pulsante 🔊 e la maestra-guida legge la sezione aperta.</li>
+        <li>Le porte si aprono una alla volta: il bambino lavora su un solo quadro per volta.</li>
+        <li>Nel «Mio quadro» ci sono inizi di frase da toccare; si può anche solo disegnare e dettare le frasi a un compagno.</li>
+        <li>Nei laboratori ogni squadra ha ruoli chiari, così tutti hanno un compito.</li>
+      </ul></div>
+  </div>
+  <div class="row"><a class="btn" href="#labirinto">Apri il labirinto</a><a class="btn ghost" href="#valuta">Scheda di autovalutazione</a></div>
+</section>
+
+<!-- IL LABIRINTO -->
+<section class="view" id="sec-labirinto" hidden>
+  <div class="panel">
+    <p class="eyebrow">Il libro</p>
+    <h2>Il labirinto dei 7 quadri</h2>
+    <p class="lead">Scegli il quadro. Leggi, guarda e apri la porta magica.</p>
+    <div class="kids" id="kids"></div>
+    <div class="path" id="path"></div>
+    <div id="room"></div>
+  </div>
+</section>
+
+<!-- GIOCHI -->
+<section class="view" id="sec-indagini" hidden>
+  <div class="panel">
+    <p class="eyebrow">I giochi</p>
+    <h2>Metti ogni carta nel gruppo giusto</h2>
+    <div id="sort"></div>
+  </div>
+</section>
+
+<!-- SCHEDE -->
+<section class="view" id="sec-schede" hidden>
+  <div class="panel">
+    <p class="eyebrow">Le schede del libro</p>
+    <h2>Le mie schede</h2>
+    <p class="lead">Scegli una scheda. Rispondi a una domanda alla volta.</p>
+    <div class="spick" id="spick"></div>
+    <div id="sbody"></div>
+  </div>
+</section>
+
+<!-- ATELIER -->
+<section class="view" id="sec-atelier" hidden>
+  <div class="panel">
+    <p class="eyebrow">L'atelier</p>
+    <h2>Il mio quadro magico</h2>
+    <p class="lead">Dipingi l'ottavo quadro del labirinto. Poi scrivi chi ci abita e dov'è la porta.</p>
+    <div id="atl"></div>
+  </div>
+</section>
+
+<!-- VALUTAZIONE -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andato il mio viaggio nei quadri?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Arte.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,$=L.$,$$=L.$$,esc=L.esc,CQ=window.Cuccioli;
+const IMG=q=>"https://www.google.com/search?tbm=isch&q="+encodeURIComponent(q);
+/* i 7 quadri del libro */
+const Q=[
+ {k:"monet",sh:"Monet",p:"Claude Monet",t:"Papaveri",y:"1873",cap:"Capitoli 1-3",c:"#D2325F",s:"#FBE3EA",g:"linear-gradient(#BFD9F0 0 40%,#9CC27A 40% 70%,#D2325F 70% 74%,#9CC27A 74%)",
+  col:["#D2325F","#7FAF5A","#BFD9F0","#F2E3A0","#FFFFFF"],
+  story:"Marco dice che i quadri non gli dicono niente. Il custode del museo, che è un mago, lo fa entrare nel quadro dei papaveri insieme a Juliane. Lì incontrano due signore con l'ombrellino e i bambini Emily e Thierry, che vogliono tenerli con loro per sempre. Per fortuna un albero amico li aiuta.",
+  art:"Monet dipingeva all'aperto, con piccole macchie di colore. Da vicino vedi solo macchie, da lontano vedi un prato pieno di fiori e di luce.",
+  look:["Che colore hanno i papaveri? Sono tanti o pochi?","Quante persone vedi? Che cosa fanno?","Com'è il cielo? Che stagione è secondo te?"],
+  q:"Dov'era la porta magica nel quadro di Monet?",o:["Tra i rami dell'albero","Sotto un papavero rosso","Dentro l'ombrellino","Dietro la casa"],w:"L'albero dice: «La porta è fra i miei rami». I bambini salgono e passano.",
+  lab:{t:"Il prato a macchie",tag:["Pittura","Colori caldi"],d:"Con le dita o con il cotton fioc si fanno solo macchioline: verdi per il prato, rosse per i papaveri, azzurre per il cielo. Poi si guarda il disegno da vicino e da lontano: che cosa cambia?",m:"Si prova a dipingere all'aperto, in cortile, guardando un pezzo di prato vero."}},
+ {k:"turner",sh:"Turner",p:"William Turner",t:"Il naufragio del Minotauro",y:"1810 circa",cap:"Capitoli 4-7",c:"#3F6E8C",s:"#E1ECF3",g:"radial-gradient(circle at 60% 40%,#F3E9C6 0 18%,transparent 40%),linear-gradient(160deg,#5E6E78,#2E4A5C 55%,#C9B98E)",
+  col:["#2E4A5C","#5E6E78","#F3E9C6","#C9B98E","#FFFFFF"],
+  story:"I bambini si ritrovano su una nave in mezzo alla tempesta. Il sottotenente Kidd li fa lavorare come mozzi, ma il cuoco Remora diventa loro amico e rivela il segreto della porta.",
+  art:"Turner amava dipingere la forza della natura: le onde, il vento, la tempesta. Le pennellate girano come un vortice e i colori sono scuri, con una luce bianca in mezzo.",
+  look:["Il mare è calmo o in tempesta? Da che cosa lo capisci?","Dove vedi la luce più forte?","Che rumori sentiresti dentro questo quadro?"],
+  q:"Qual era la porta magica nel quadro della tempesta?",o:["Il mare: bisogna saltare in acqua","La porta della cucina","La vela più grande","Una conchiglia sulla spiaggia"],w:"Il cuoco dice che la porta è azzurra: è il mare. Bisogna tuffarsi quando ricomincia la tempesta.",
+  lab:{t:"La tempesta in un vortice",tag:["Pittura","Movimento"],d:"Su un foglio grande si dipinge il mare in tempesta con pennellate che girano a spirale: blu, grigio e bianco. Si può usare il pennello largo o una spugna. Poi si incolla una piccola nave di carta in mezzo alle onde.",m:"Prima di dipingere, tutta la classe fa il mare con le braccia: onde piccole, onde grandi, la tempesta!"}},
+ {k:"degas",sh:"Degas",p:"Edgar Degas",t:"La lezione di danza",y:"1874",cap:"Capitoli 8-11",c:"#C9879A",s:"#F8E8EC",g:"linear-gradient(#E9D9B9 0 55%,#C29A6B 55%),radial-gradient(circle at 30% 60%,#fff 0 8%,transparent 9%)",
+  col:["#FFFFFF","#F4C6D0","#E9D9B9","#C29A6B","#3E7C6B"],
+  story:"Nel terzo quadro i bambini si trovano in una scuola di danza, vestiti con la calzamaglia rosa. Il maestro Jules batte il bastone a terra e le ballerine non sono gentili. Solo un cagnolino, che si chiama Briciola, diventa loro amico.",
+  art:"Degas dipingeva le ballerine mentre provano, si stancano e aspettano, come in una fotografia. Le ballerine sono messe in tanti punti diversi della sala.",
+  look:["Quante ballerine vedi? Che cosa fanno?","Dov'è il maestro? Che cosa tiene in mano?","Trovi il cagnolino?"],
+  q:"Come si apriva la porta magica nella scuola di danza?",o:["Ballando la musica del pianoforte","Battendo il bastone a terra","Accarezzando il cagnolino","Aprendo la finestra"],w:"Il cagnolino spiega che la porta è fatta di musica: bisogna danzare il pezzo che suona il maestro.",
+  lab:{t:"Ballerine in movimento",tag:["Disegno","Musica"],d:"Un bambino fa la ballerina e si ferma in una posa; gli altri lo disegnano velocemente in 1 minuto. Si cambia posa più volte. Alla fine ognuno colora la ballerina che preferisce con il tutù fatto di carta velina.",m:"Si ascolta una mazurka: tutti danzano liberi e allo stop della musica diventano statue di Degas."}},
+ {k:"botero",sh:"Botero",p:"Fernando Botero",t:"Gente del circo con elefante",y:"2007",cap:"Capitoli 12-16",c:"#E07A2E",s:"#FCEBDD",g:"linear-gradient(#2E8B57 0 30%,#F2C230 30% 60%,#E07A2E 60%)",
+  col:["#F2C230","#E07A2E","#2E8B57","#1BA7E1","#7A4FC4"],
+  story:"I bambini entrano in un circo. Ci sono l'elefante Piuma, la donna cannone, il pagliaccio Erro Raccio e la scimmia Lilli, che fa uno scherzo cattivo e separa Marco e Juliane. Marco torna indietro a cercare l'amica: gli amici veri si vedono nei momenti difficili.",
+  art:"Botero dipinge persone e animali tondi, gonfi e morbidi, con colori allegri e pieni. È il suo stile: lo riconosci subito.",
+  look:["Come sono le persone di questo quadro? Magre o rotonde?","Quali colori vedi di più?","Chi ti sembra il personaggio più importante?"],
+  q:"Come escono dal circo Marco e Juliane?",o:["Sparati dal cannone","Dalla gabbia del leone","Sulla proboscide dell'elefante","Dal tendone verde"],w:"L'elefante Piuma carica il cannone e i bambini volano nel quadro successivo. (La gabbia del leone era la porta sbagliata!)",
+  lab:{t:"Tutto tondo come Botero",tag:["Disegno","Forme"],d:"Si disegna un personaggio del circo usando solo cerchi e ovali: la testa, la pancia, le braccia, le gambe. Poi si colora con colori pieni, senza lasciare spazi bianchi.",m:"Il circo in palestra: l'equilibrista sulla riga, il giocoliere con le palline, l'elefante che cammina a quattro zampe."}},
+ {k:"vangogh",sh:"Van Gogh",p:"Vincent van Gogh",t:"La notte stellata e la camera ad Arles",y:"1888-1889",cap:"Capitoli 16-20",c:"#2F4FA2",s:"#E2E8F7",g:"radial-gradient(circle at 25% 30%,#F2C230 0 7%,transparent 8%),radial-gradient(circle at 70% 25%,#F2C230 0 6%,transparent 7%),linear-gradient(#2F4FA2 0 70%,#1D2D5C 70%)",
+  col:["#2F4FA2","#1D2D5C","#F2C230","#E07A2E","#7FAF5A"],
+  story:"Il cannone li porta sotto un cielo pieno di stelle rotonde. Entrano nella camera del pittore ad Arles, parlano con il suo autoritratto e con il postino Joseph Roulin. Vincent è triste perché gli manca il suo amico Paul Gauguin.",
+  art:"Van Gogh usa pennellate spesse, a virgola, che girano come il vento. Il cielo sembra muoversi. Ama i colori forti: il blu della notte e il giallo delle stelle.",
+  look:["Come sono le stelle? Ferme o in movimento?","Quali colori usa per la notte?","Nella camera, che oggetti vedi? Sono dritti o un po' storti?"],
+  q:"Dov'era la porta magica nel mondo di Van Gogh?",o:["La stella più bassa sull'orizzonte","Il letto della camera","La lettera del postino","Il cipresso"],w:"L'autoritratto rivela: la porta è la stella più bassa. Ma bisogna aspettare la notte per saltarci dentro.",
+  lab:{t:"Il cielo a virgole",tag:["Pittura","Colori freddi"],d:"Con la tempera densa e un pennello piccolo si dipinge un cielo notturno solo con virgole e spirali. Le stelle si fanno con il giallo e l'arancione. In basso, la sagoma nera del proprio paese.",m:"«La stella più bassa»: cerchi a terra a diverse altezze (sopra un tappeto, un gradino); la maestra dice «stella più bassa!» e tutti saltano nella più vicina a terra."}},
+ {k:"escher",sh:"Escher",p:"Maurits Cornelis Escher",t:"Relatività",y:"1953",cap:"Capitoli 20-24",c:"#5C5C5C",s:"#ECECEC",g:"repeating-linear-gradient(45deg,#DDD 0 8px,#9A9A9A 8px 10px),linear-gradient(#EEE,#BBB)",
+  col:["#000000","#5C5C5C","#9A9A9A","#DDDDDD","#FFFFFF"],
+  story:"Nel sesto quadro ci sono scale che vanno in tutte le direzioni: per qualcuno salgono, per altri scendono, alcune sono attaccate al muro. Ci vivono i signori Dummy, due manichini senza faccia che dicono sempre «Ci mancherebbe altro!».",
+  art:"Escher non usa i colori: disegna in bianco e nero. I suoi disegni sono rompicapi per gli occhi: costruzioni impossibili che sembrano vere.",
+  look:["Quante scale riesci a contare?","Le persone camminano tutte nello stesso verso?","Che colori ci sono? Perché secondo te?"],
+  q:"Dove si apre la porta magica nel quadro delle scale?",o:["Nel pavimento, dopo uno scivolo","In cima alla scala più alta","Nella finestra del giardino","Dentro una vetrina"],w:"I gradini della rampa diventano uno scivolo e la porta si apre nel pavimento. Proprio come in un quadro di Escher, tutto è al contrario!",
+  lab:{t:"Il disegno impossibile",tag:["Disegno","Geometria"],d:"Solo matita e pennarello nero: si disegna una scala che sale, poi la si gira e si continua a disegnare dall'altro lato. Alla fine si guarda il foglio in tutti i versi: dove va su? dove va giù?",m:"Si cammina sulle linee del pavimento della palestra «a testa in giù»: all'indietro, a quattro zampe, guardando il soffitto."}},
+ {k:"klimt",sh:"Klimt",p:"Gustav Klimt",t:"L'albero della vita",y:"1909",cap:"Capitoli 25-28",c:"#B8860B",s:"#F7EED6",g:"radial-gradient(circle at 50% 45%,#8A5A12 0 6%,transparent 7%),repeating-radial-gradient(circle at 50% 45%,#D9A72E 0 6px,#F2D27A 6px 12px)",
+  col:["#D9A72E","#F2D27A","#8A5A12","#2E8B57","#000000"],
+  story:"L'ultimo quadro è un albero gigante con i rami a spirale. Ci vive Teresa, triste perché il pittore l'ha messa lontana dal suo fidanzato. Un falco è minaccioso, ma un uccellino aiuta i bambini.",
+  art:"Klimt usava tanto oro e decorazioni: spirali, cerchi, occhi, triangoli. I suoi quadri sembrano gioielli.",
+  look:["Che forma hanno i rami dell'albero?","Quali decorazioni vedi sui vestiti?","Che colore è il più importante in questo quadro?"],
+  q:"Come si apre l'ultima porta, la porta dell'amicizia?",o:["Saltando insieme, mano nella mano","Arrampicandosi da soli","Aspettando il falco","Raccogliendo una foglia d'oro"],w:"L'uccellino dice: «L'ultima è la porta dell'amicizia: si apre solo se sei insieme a un buon amico». Marco e Juliane saltano mano nella mano.",
+  lab:{t:"L'albero dell'amicizia",tag:["Collage","Educazione civica"],d:"Su un grande foglio si disegna un albero con i rami a spirale. Ogni bambino ritaglia una foglia d'oro (carta gialla o dorata), ci scrive una qualità di un compagno e la incolla sui rami. Si decora con cerchi, spirali e triangoli.",m:"Il salto dell'amicizia: a coppie, mano nella mano, si salta insieme dentro i cerchi senza lasciarsi."}}
+];
+/* i giochi a carte */
+const QB=Q.map(x=>({k:x.k,t:x.sh,d:x.t,i:"🖼️",c:x.c}));
+const CALDO={k:"caldo",t:"Colore caldo",d:"come il sole e il fuoco",i:"☀️",c:"#E07A2E"},FREDDO={k:"freddo",t:"Colore freddo",d:"come l'acqua e la neve",i:"❄️",c:"#1BA7E1"};
+const RIT={k:"rit",t:"Ritratto",d:"una persona",i:"🧑",c:"#8C6FC7"},PAE={k:"pae",t:"Paesaggio",d:"un luogo all'aperto",i:"🏞️",c:"#2E8B57"},NAT={k:"nat",t:"Natura morta",d:"oggetti fermi",i:"🍎",c:"#D2325F"};
+const SETS={
+  quadro:{t:"Dentro quale quadro?",d:"Riconosci il quadro del libro",ask:"In quale quadro siamo?",emo:"🖼️",c:"#F1ECFA",n:8,
+    move:"Prima di rispondere, mettiti nella posa di un personaggio di quel quadro!",bins:QB,items:[
+    {t:"Due signore con l'ombrellino in un prato rosso di fiori.",i:"🌺",a:"monet",w:"Sono le signore dei Papaveri di Monet."},
+    {t:"Emily e Thierry giocano a volano nel prato.",i:"🏸",a:"monet",w:"Emily e Thierry sono i bambini del quadro di Monet."},
+    {t:"Il sottotenente Kidd mette i bambini a pulire il ponte.",i:"⚓",a:"turner",w:"Siamo sulla nave del Naufragio del Minotauro di Turner."},
+    {t:"Il cuoco Remora dice che la porta è azzurra.",i:"🌊",a:"turner",w:"La porta azzurra è il mare in tempesta di Turner."},
+    {t:"Il maestro Jules batte il bastone sul pavimento.",i:"🩰",a:"degas",w:"È il maestro della Lezione di danza di Degas."},
+    {t:"Un cagnolino di nome Briciola parla con Juliane.",i:"🐶",a:"degas",w:"Il cagnolino vive nella scuola di danza di Degas."},
+    {t:"L'elefante Piuma carica il cannone.",i:"🐘",a:"botero",w:"Piuma è l'elefante del circo di Botero."},
+    {t:"La scimmia Lilli fa uno scherzo cattivo.",i:"🐒",a:"botero",w:"La scimmia Lilli abita nel circo di Botero."},
+    {t:"Un autoritratto racconta del suo amico Gauguin.",i:"🧑‍🎨",a:"vangogh",w:"È l'autoritratto di Van Gogh."},
+    {t:"Bisogna saltare nella stella più bassa del cielo.",i:"⭐",a:"vangogh",w:"Le stelle rotonde sono di Van Gogh."},
+    {t:"Scale che salgono e scendono in tutte le direzioni.",i:"🪜",a:"escher",w:"Sono le scale impossibili di Relatività di Escher."},
+    {t:"I signori Dummy dicono: «Ci mancherebbe altro!».",i:"🎩",a:"escher",w:"I manichini Dummy vivono nel quadro di Escher."},
+    {t:"Un albero gigante con i rami a spirale tutti d'oro.",i:"🌳",a:"klimt",w:"È l'Albero della vita di Klimt."},
+    {t:"Teresa è triste perché è lontana dal suo fidanzato.",i:"💛",a:"klimt",w:"Teresa vive nell'Albero della vita di Klimt."}]},
+  colori:{t:"Caldo o freddo?",d:"Riconosci i colori caldi e freddi",ask:"Questo colore è caldo o freddo?",emo:"🎨",c:"#FCEBDD",n:8,
+    move:"Colore caldo: strofina le mani come davanti al fuoco. Colore freddo: abbracciati e trema!",bins:[CALDO,FREDDO],items:[
+    {t:"Il rosso dei papaveri di Monet",i:"🔴",a:"caldo",w:"Il rosso è il colore del fuoco: è caldo."},
+    {t:"Il giallo delle stelle di Van Gogh",i:"🟡",a:"caldo",w:"Il giallo è il colore del sole: è caldo."},
+    {t:"L'arancione del circo di Botero",i:"🟠",a:"caldo",w:"L'arancione è un colore caldo, come il fuoco."},
+    {t:"L'oro dell'albero di Klimt",i:"✨",a:"caldo",w:"L'oro è un giallo che brilla: un colore caldo."},
+    {t:"Il marrone della sabbia",i:"🟤",a:"caldo",w:"Il marrone della terra è un colore caldo."},
+    {t:"Il rosa del tutù delle ballerine",i:"🩷",a:"caldo",w:"Il rosa nasce dal rosso: è un colore caldo."},
+    {t:"Il blu del cielo notturno di Van Gogh",i:"🔵",a:"freddo",w:"Il blu è il colore dell'acqua e della notte: è freddo."},
+    {t:"L'azzurro del cielo di Monet",i:"🩵",a:"freddo",w:"L'azzurro ricorda l'acqua e il ghiaccio: è freddo."},
+    {t:"Il verde del prato",i:"🟢",a:"freddo",w:"Il verde è un colore freddo, come le foglie all'ombra."},
+    {t:"Il grigio blu del mare in tempesta di Turner",i:"🌊",a:"freddo",w:"Il grigio azzurro del mare è un colore freddo."},
+    {t:"Il viola della sera",i:"🟣",a:"freddo",w:"Il viola nasce dal blu: è un colore freddo."},
+    {t:"Il bianco della neve",i:"⚪",a:"freddo",w:"Il bianco della neve e del ghiaccio dà una sensazione di freddo."}]},
+  genere:{t:"Ritratto, paesaggio o natura morta?",d:"Che cosa ha dipinto il pittore?",ask:"Che genere di quadro è?",emo:"🖌️",c:"#E8F5EC",n:8,
+    move:"Ritratto: incornicia la tua faccia con le mani. Paesaggio: apri le braccia larghe. Natura morta: resta immobile come una mela!",bins:[RIT,PAE,NAT],items:[
+    {t:"Il pittore dipinge la sua faccia guardandosi allo specchio.",i:"🪞",a:"rit",w:"È un autoritratto: un ritratto di sé stesso, come quelli di Van Gogh."},
+    {t:"Il postino Joseph Roulin con la sua divisa e la barba.",i:"📮",a:"rit",w:"Una persona dipinta da vicino è un ritratto."},
+    {t:"La faccia della nonna che sorride.",i:"👵",a:"rit",w:"Il quadro mostra una persona: è un ritratto."},
+    {t:"Un prato di papaveri con il cielo azzurro.",i:"🌺",a:"pae",w:"Un luogo all'aperto è un paesaggio, come quello di Monet."},
+    {t:"Il mare in tempesta con le onde e le nuvole.",i:"🌊",a:"pae",w:"Il mare e il cielo sono un paesaggio (una marina)."},
+    {t:"Un paese con le case sotto un cielo di stelle.",i:"🌌",a:"pae",w:"Case, cielo e colline: è un paesaggio."},
+    {t:"Una montagna con un lago e gli alberi.",i:"🏔️",a:"pae",w:"La natura all'aperto è un paesaggio."},
+    {t:"Un vaso di girasoli sul tavolo.",i:"🌻",a:"nat",w:"Fiori in un vaso, fermi sul tavolo: è una natura morta. Anche Van Gogh ne ha dipinte!"},
+    {t:"Una ciotola di frutta e una brocca.",i:"🍎",a:"nat",w:"Oggetti fermi messi in posa: è una natura morta."},
+    {t:"Un pane, un coltello e un bicchiere.",i:"🍞",a:"nat",w:"Oggetti di tutti i giorni fermi: natura morta."},
+    {t:"Un paio di scarpe vecchie sul pavimento.",i:"👞",a:"nat",w:"Anche le scarpe possono essere una natura morta: Van Gogh le ha dipinte."}]}
+};
+
+/* ---------- il labirinto ---------- */
+let CUR=null;
+function lab(){const S=L.state();if(!S.extra.lab)S.extra.lab={open:{},look:{},tries:{}};return S.extra.lab}
+function unlocked(i){const b=lab();return i===0||!!b.open[Q[i-1].k]}
+function renderLab(){
+  const b=lab(),n=Q.filter(x=>b.open[x.k]).length;
+  if(CUR==null){CUR=Q.findIndex(x=>!b.open[x.k]);if(CUR<0)CUR=Q.length-1}
+  $("#kids").innerHTML=`<span aria-hidden="true">🧒👧</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
+  $("#path").innerHTML=Q.map((x,i)=>`<button class="room" type="button" data-r="${i}" style="--rc:${x.c};--rg:${x.g}"${unlocked(i)?"":" disabled"}${i===CUR?' aria-current="true"':""}><span class="st" aria-hidden="true">${b.open[x.k]?"🗝️":unlocked(i)?"🚪":"🔒"}</span><span class="fr" aria-hidden="true"></span><b>${i+1}. ${esc(x.sh)}</b><small>${esc(x.t)}</small></button>`).join("");
+  $$("[data-r]").forEach(r=>r.addEventListener("click",()=>{CUR=+r.dataset.r;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})}));
+  renderRoom();
+}
+function renderRoom(){
+  const x=Q[CUR],b=lab(),done=!!b.open[x.k];
+  let h=`<div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
+    <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Quadro ${CUR+1} · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
+    <div class="qbody">
+      <div><h4>Che cosa succede nel libro</h4><p class="lead">${esc(x.story)}</p></div>
+      <div><h4>Lo stile del pittore</h4><p class="lead">${esc(x.art)}</p><div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
+        <p><a class="real" href="${IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p></div>
+      <div><h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
+        <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button></div></div>
+      <div class="door"><h4>🚪 Apri la porta magica</h4><div id="dq"></div></div>
+    </div></div>`;
+  $("#room").innerHTML=h;
+  $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
+  const dq=$("#dq");
+  if(done){dq.innerHTML=L.fb("good","Porta aperta! 🗝️",[esc(x.w)])+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">Entra nel quadro ${CUR+2}</button></div>`:`<div class="row"><a class="btn" href="#atelier">Sei fuori dal labirinto! Dipingi il tuo quadro magico</a></div>`);
+    const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{CUR++;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})});return}
+  const opts=L.shuffle(x.o.map((t,i)=>({t,i})));
+  dq.innerHTML=`<p><b>${esc(x.q)}</b></p><div class="opts">${opts.map(o=>`<button class="opt" type="button" data-o="${o.i}">${esc(o.t)}</button>`).join("")}</div><div id="dfb"></div>`;
+  $$("[data-o]",dq).forEach(btn=>btn.addEventListener("click",()=>{
+    const b=lab(),i=+btn.dataset.o,S=L.state();
+    if(i===0){$$("[data-o]",dq).forEach(z=>z.disabled=true);btn.classList.add("right");b.open[x.k]=1;L.save();L.add(b.tries[x.k]?1:2);L.fanfare();
+      L.toast(b.tries[x.k]?"Porta aperta: una stella!":"Porta aperta al primo colpo: due stelle!");setTimeout(renderLab,900);
+    }else{btn.classList.add("wrong");btn.disabled=true;L.buzz();b.tries[x.k]=(b.tries[x.k]||0)+1;S.err["Porta: "+x.p]=(S.err["Porta: "+x.p]||0)+1;L.save();
+      $("#dfb").innerHTML=L.fb("bad","La porta resta chiusa.",["Rileggi «Che cosa succede nel libro» o ascolta il capitolo, poi riprova."])}
+  }));
+}
+
+/* ---------- l'atelier ---------- */
+const PALS={libera:{t:"I miei colori",c:["#D2325F","#E07A2E","#F2C230","#7FAF5A","#2E8B57","#1BA7E1","#2F4FA2","#7A4FC4","#8A5A12","#000000","#FFFFFF"]}};
+Q.forEach(x=>{PALS[x.k]={t:"Come "+x.sh,c:x.col}});
+const FIELDS=[
+  {k:"tit",n:"Il titolo del mio quadro",i:"🖼️",st:["Il mio quadro si chiama ","Il quadro "],one:1},
+  {k:"chi",n:"Chi abita nel mio quadro?",i:"🧑‍🎨",st:["Nel mio quadro abitano ","C'è un ","Ci sono "]},
+  {k:"por",n:"Dov'è la porta magica? Come si apre?",i:"🚪",st:["La porta magica è ","Per aprirla bisogna ","Si apre solo se "]}
+];
+const MINC=6,filled=v=>String(v||"").trim().length>=MINC;
+const TOOLS=[["✏️","Matita","Matita: tratto sottile per disegnare i contorni",3,"pen"],["🖌️","Pennello fine","Pennello fine",6,"brush"],["🖌️","Pennello medio","Pennello medio",12,"brush"],["🖌️","Pennello grosso","Pennello grosso per colorare",26,"brush"],["🧽","Gomma piccola","Gomma piccola per cancellare i dettagli",14,"er"],["🧽","Gomma grande","Gomma grande",40,"er"]];
+let CV=null,CTX=null,PEN={c:"#D2325F",t:2,pal:"libera",er:false},HIST=[];
+function setTool(n){PEN.t=n;PEN.er=TOOLS[n][4]==="er";$$("[data-tl]").forEach(z=>z.setAttribute("aria-pressed",String(+z.dataset.tl===n)));$$("[data-c]").forEach(z=>z.setAttribute("aria-pressed",String(!PEN.er&&z.dataset.c===PEN.c)));if(CV)CV.style.cursor=PEN.er?"cell":"crosshair"}
+function atl(){const S=L.state();if(!S.extra.atl)S.extra.atl={f:{},got:{},drew:0};return S.extra.atl}
+const DKEY=()=>"labirinto-disegno:"+(CQ.who()||"anon");
+function renderAtelier(){
+  const a=atl(),S=L.state(),n=FIELDS.filter(f=>filled(a.f[f.k])).length,arch=S.extra.arch||[];
+  let h=`<div class="atel"><div>
+      <div class="pick" aria-label="Tavolozza">${Object.keys(PALS).map(k=>`<button type="button" data-pal="${k}" aria-pressed="${PEN.pal===k}">${esc(PALS[k].t)}</button>`).join("")}</div>
+      <div class="tools"><div class="pal" id="pal"></div>
+        <div class="sz" aria-label="Strumenti">${TOOLS.map((z,n)=>`<button type="button" data-tl="${n}" aria-pressed="${PEN.t===n}" title="${esc(z[2])}"><span aria-hidden="true">${z[0]}</span> ${esc(z[1])}</button>`).join("")}</div>
+        <div class="ac"><button type="button" id="undo">↩︎ Indietro</button><button type="button" id="clr">Foglio nuovo</button></div></div>
+      <div class="easel"><canvas id="cv" width="900" height="640" aria-label="Il foglio da dipingere"></canvas></div>
+    </div>
+    <div class="sheet">${FIELDS.map(f=>`<div class="box${filled(a.f[f.k])?" done":""}" data-b="${f.k}"><div class="bh"><span class="bt">${esc(f.n)}</span><span class="bi" aria-hidden="true">${filled(a.f[f.k])?"✅":f.i}</span></div>
+        ${f.one?`<input type="text" data-f="${f.k}" maxlength="80" value="${esc(a.f[f.k]||"")}" aria-label="${esc(f.n)}">`:`<textarea data-f="${f.k}" maxlength="400" aria-label="${esc(f.n)}">${esc(a.f[f.k]||"")}</textarea>`}
+        <div class="starters">${f.st.map(s=>`<button type="button" data-st="${f.k}" data-v="${esc(s)}">${esc(s.trim())}…</button>`).join("")}</div></div>`).join("")}
+      <div class="prog">${FIELDS.map(f=>`<i class="${filled(a.f[f.k])?"on":""}"></i>`).join("")}<i class="${a.drew?"on":""}"></i><span>${n+(a.drew?1:0)} su 4</span></div>
+      <div class="row"><button class="btn" type="button" id="dl">Scarica il mio quadro</button><button class="btn ghost" type="button" id="nw">${a.done?"Dipingi un altro quadro":"Ricomincia"}</button></div>
+      <div id="nwc"></div><p class="note" id="dlm" style="text-align:left"></p>
+    </div></div>`;
+  if(arch.length)h+=`<p class="eyebrow" style="margin-top:18px">I miei quadri magici</p><ul class="arch">${arch.slice().reverse().map(x=>`<li><span>🖼️ ${esc(x.tit||"Quadro senza titolo")}</span><span>${new Date(x.t).toLocaleDateString("it-IT")}</span></li>`).join("")}</ul>`;
+  $("#atl").innerHTML=h;
+  drawPal();setupCanvas();
+  $$("[data-pal]").forEach(b=>b.addEventListener("click",()=>{PEN.pal=b.dataset.pal;PEN.c=PALS[PEN.pal].c[0];if(PEN.er)setTool(2);$$("[data-pal]").forEach(z=>z.setAttribute("aria-pressed",z===b));drawPal()}));
+  $$("[data-tl]").forEach(b=>b.addEventListener("click",()=>setTool(+b.dataset.tl)));
+  $("#undo").addEventListener("click",()=>{if(HIST.length){CTX.putImageData(HIST.pop(),0,0);store()}});
+  $("#clr").addEventListener("click",()=>{snap();blankCv();store()});
+  $$("[data-f]").forEach(t=>t.addEventListener("input",()=>{atl().f[t.dataset.f]=t.value;L.save();tick(t.dataset.f)}));
+  $$("[data-st]").forEach(b=>b.addEventListener("click",()=>{const t=$(`[data-f="${b.dataset.st}"]`);t.value=(t.value&&!/\s$/.test(t.value)?t.value+" ":t.value)+b.dataset.v;t.focus();atl().f[b.dataset.st]=t.value;L.save()}));
+  $("#dl").addEventListener("click",download);
+  $("#nw").addEventListener("click",()=>{const a=atl();
+    if(!a.done&&(a.drew||FIELDS.some(f=>filled(a.f[f.k])))&&!$("#nwc").innerHTML){$("#nwc").innerHTML=L.fb("info","Il quadro non è finito: vuoi davvero ricominciare?",[])+'<div class="row"><button class="btn" type="button" id="ny">Sì, foglio nuovo</button><button class="btn ghost" type="button" id="nn">No, continuo</button></div>';
+      $("#ny").addEventListener("click",fresh);$("#nn").addEventListener("click",()=>{$("#nwc").innerHTML=""});return}
+    fresh()});
+}
+function fresh(){const S=L.state();S.extra.atl={f:{},got:{},drew:0};L.save();try{localStorage.removeItem(DKEY())}catch(e){}HIST=[];renderAtelier()}
+function drawPal(){$("#pal").innerHTML=PALS[PEN.pal].c.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="Colore ${c}" aria-pressed="${c===PEN.c&&!PEN.er}"></button>`).join("");
+  $$("[data-c]").forEach(b=>b.addEventListener("click",()=>{PEN.c=b.dataset.c;if(PEN.er)setTool(2);$$("[data-c]").forEach(z=>z.setAttribute("aria-pressed",String(z===b)))}))}
+function blankCv(){CTX.fillStyle="#fff";CTX.fillRect(0,0,CV.width,CV.height)}
+function snap(){HIST.push(CTX.getImageData(0,0,CV.width,CV.height));if(HIST.length>15)HIST.shift()}
+function store(){try{localStorage.setItem(DKEY(),CV.toDataURL("image/jpeg",.8))}catch(e){}}
+function setupCanvas(){
+  CV=$("#cv");CTX=CV.getContext("2d");blankCv();
+  let saved=null;try{saved=localStorage.getItem(DKEY())}catch(e){}
+  if(saved){const im=new Image();im.onload=()=>CTX.drawImage(im,0,0);im.src=saved}
+  let down=false,last=null;
+  const pos=e=>{const r=CV.getBoundingClientRect();return{x:(e.clientX-r.left)*CV.width/r.width,y:(e.clientY-r.top)*CV.height/r.height}};
+  CV.addEventListener("pointerdown",e=>{down=true;CV.setPointerCapture(e.pointerId);snap();last=pos(e);line(last,last)});
+  CV.addEventListener("pointermove",e=>{if(!down)return;const p=pos(e);line(last,p);last=p});
+  const up=()=>{if(!down)return;down=false;store();const a=atl();if(!a.drew){a.drew=1;L.save();L.add(1);L.ding();L.toast("Hai cominciato il tuo quadro: una stella!");updProg();checkDone()}};
+  CV.addEventListener("pointerup",up);CV.addEventListener("pointercancel",up);
+}
+function line(a,b){const T=TOOLS[PEN.t],pen=T[4]==="pen";CTX.save();CTX.globalAlpha=pen?.85:1;CTX.strokeStyle=PEN.er?"#fff":PEN.c;CTX.lineWidth=T[3];CTX.lineCap="round";CTX.lineJoin="round";CTX.beginPath();CTX.moveTo(a.x,a.y);CTX.lineTo(b.x+.01,b.y);CTX.stroke();CTX.restore()}
+function updProg(){const a=atl(),bar=$$(".prog i");FIELDS.forEach((f,i)=>{if(bar[i])bar[i].classList.toggle("on",filled(a.f[f.k]))});if(bar[3])bar[3].classList.toggle("on",!!a.drew);const sp=$(".prog span");if(sp)sp.textContent=(FIELDS.filter(f=>filled(a.f[f.k])).length+(a.drew?1:0))+" su 4"}
+function tick(k){
+  const a=atl(),box=$(`[data-b="${k}"]`),ok=filled(a.f[k]);
+  if(box){box.classList.toggle("done",ok);$(".bi",box).textContent=ok?"✅":FIELDS.find(f=>f.k===k).i}
+  updProg();
+  if(ok&&!a.got[k]){a.got[k]=1;L.save();L.add(1);L.ding()}
+  checkDone();
+}
+function checkDone(){const a=atl(),S=L.state();
+  if(a.drew&&FIELDS.every(f=>filled(a.f[f.k]))&&!a.done){a.done=1;S.extra.arch=(S.extra.arch||[]).concat([{tit:a.f.tit||"",t:Date.now(),f:Object.assign({},a.f)}]).slice(-8);S.extra.quadri=(S.extra.quadri||0)+1;L.save();L.add(3);L.fanfare();L.toast("Il tuo quadro magico è pronto! Tre stelle!");const nb=$("#nw");if(nb)nb.textContent="Dipingi un altro quadro"}}
+async function download(){
+  const a=atl(),pid=CQ.who(),p=pid&&CQ.pupils[pid],msg=$("#dlm"),img=CV.toDataURL("image/png");
+  const html=`<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Il mio quadro magico</title><style>body{font-family:Arial,sans-serif;color:#2A2140;margin:24px;text-align:center}h1{color:#8C6FC7;margin:0 0 4px}.f{display:inline-block;border:16px solid #C9A227;box-shadow:inset 0 0 0 4px #8A6D12;margin:12px 0}.f img{display:block;max-width:100%}.t{text-align:left;max-width:760px;margin:0 auto}.t h2{color:#5B3F99;font-size:18px;margin:12px 0 2px}.t p{font-size:18px;margin:0;white-space:pre-wrap}</style></head><body><h1>${esc(a.f.tit||"Il mio quadro magico")}</h1><p>${esc(p?p.n:"")} · ${new Date().toLocaleDateString("it-IT")} · Nel labirinto dei quadri</p><div class="f"><img src="${img}" alt="Il mio quadro"></div><div class="t">${FIELDS.slice(1).map(f=>`<h2>${esc(f.n)}</h2><p>${esc(a.f[f.k]||"")}</p>`).join("")}</div></body></html>`;
+  const name="quadro-magico-"+((p&&p.n)||"artista").toLowerCase().replace(/[^a-z0-9]+/g,"-")+".html";
+  let d=null;try{d=await window.claude.use("downloads")}catch(e){}
+  try{if(d){await d.save({filename:name,data:html})}else{const el=document.createElement("a");el.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));el.download=name;document.body.appendChild(el);el.click();setTimeout(()=>el.remove(),500)}msg.textContent="Quadro scaricato: si apre nel browser e si può stampare."}catch(e){msg.textContent="Download annullato o non riuscito."}
+}
+
+/* ---------- le schede (dalle schede da stampare) ---------- */
+const VF={
+monet:[["Marco e Juliane entrano nel quadro per colpa del custode del museo.",1],["Le signore con l'ombrellino vogliono aiutare i bambini a uscire.",0,"No: vogliono tenerli con loro per sempre."],["Emily e Thierry giocano a volano.",1],["La porta magica è fra i rami dell'albero.",1]],
+turner:[["Nel quadro di Turner il mare è calmo e c'è il sole.",0,"No: c'è una tempesta."],["Il sottotenente Kidd fa lavorare i bambini come mozzi.",1],["Il cuoco Remora rivela il segreto della porta.",1],["La porta azzurra è il mare.",1]],
+degas:[["Nella scuola di danza i bambini indossano la calzamaglia rosa.",1],["Il maestro Jules è molto gentile.",0,"No: batte il bastone a terra."],["Il cagnolino si chiama Briciola, come il cane di Juliane.",1],["Per uscire bisogna dormire sul pavimento.",0,"No: bisogna danzare sulla musica."]],
+botero:[["Nel circo c'è un elefante che si chiama Piuma.",1],["La scimmia Lilli aiuta sempre i bambini.",0,"No: fa uno scherzo cattivo."],["Marco torna indietro a cercare Juliane.",1],["I bambini escono sparati dal cannone.",1]],
+vangogh:[["Le stelle di Van Gogh sono rotonde, gialle e arancioni.",1],["I bambini entrano nella camera del pittore ad Arles.",1],["Vincent è triste perché gli manca l'amico Paul Gauguin.",1],["La porta è il letto della camera.",0,"No: è la stella più bassa."]],
+escher:[["Il quadro di Escher è pieno di colori vivaci.",0,"No: è in bianco e nero."],["Le scale vanno in tutte le direzioni.",1],["I signori Dummy sono due manichini.",1],["La porta si apre nel pavimento, dopo uno scivolo.",1]],
+klimt:[["L'albero della vita ha i rami a spirale.",1],["Teresa è felice perché è vicina al suo fidanzato.",0,"No: è triste perché è lontana."],["Un uccellino aiuta i bambini.",1],["L'ultima porta si apre solo con un buon amico.",1]]};
+const ASK={monet:"Che cosa fanno le persone nel quadro? Dove si trovano?",turner:"Che rumori sentiresti dentro questo quadro?",degas:"Che cosa fanno le ballerine? Sono tutte uguali?",botero:"Come sono le persone di Botero? Descrivile.",vangogh:"Come sono le stelle e il cielo nel quadro di Van Gogh?",escher:"Perché le scale di Escher sono «impossibili»?",klimt:"Quali decorazioni vedi nell'albero e nei vestiti?"};
+const DRAW={monet:"Disegna il prato di papaveri usando solo macchioline di colore.",turner:"Disegna la nave nel mare in tempesta, con le onde che girano.",degas:"Disegna una ballerina che danza.",botero:"Disegna un personaggio del circo tutto rotondo.",vangogh:"Disegna un cielo di notte con le stelle a virgole.",escher:"Disegna una scala che sale e scende (solo matita e nero).",klimt:"Disegna un albero con i rami a spirale e decoralo d'oro."};
+const VFO=[[1,"V"],[0,"F"]],CFO=[["c","C"],["f","F"]],GNO=[["r","R"],["p","P"],["n","N"]];
+const SCH=[{k:"prima",t:"Prima di entrare",sub:"Capitoli 1-2",c:"#5B3F99",parts:[
+   {ty:"match",q:"Chi sono? Collega ogni personaggio alla sua frase.",pairs:[["Marco","Dice che i quadri non gli dicono niente."],["Juliane","È precisina, ha litigato con l'amica Emilia."],["Il custode","È un mago con il berretto blu e lavora al museo."],["Il cardellino","Ha il berrettino blu e dice di cercare le porte."]]},
+   {ty:"mcq",q:"Che cosa devono fare Marco e Juliane per tornare a casa?",o:["Trovare una porta magica in ogni quadro","Chiamare la maestra","Aspettare che il museo chiuda"]},
+   {ty:"write",q:"Le regole del museo: scrivi 3 regole e perché sono importanti.",st:["Non si tocca perché ","Si parla piano perché ","Non si corre perché "]},
+   {ty:"draw",q:"Se tu potessi entrare in un quadro, quale sceglieresti? Disegnalo nell'atelier.",pal:"libera"}]}]
+ .concat(Q.map((x,i)=>({k:x.k,t:(i+1)+". "+x.sh,sub:x.t,c:x.c,parts:[
+   {ty:"cls",q:"Ho letto. Vero o falso?",opts:VFO,items:VF[x.k].map(v=>({t:v[0],a:v[1],w:v[2]||""}))},
+   {ty:"mcq",q:x.q,o:x.o,w:x.w},
+   {ty:"write",q:"Occhio da artista. "+ASK[x.k],st:["Vedo ","Secondo me ","Mi colpisce "]},
+   {ty:"dots",q:"I colori del quadro: colora i pallini come i colori che usa "+x.sh+".",col:x.col},
+   {ty:"draw",q:DRAW[x.k],pal:x.k}]})))
+ .concat([
+  {k:"caldo",t:"Caldo o freddo",sub:"Il colore",c:"#E07A2E",parts:[
+   {ty:"cls",q:"È un colore caldo (C) o freddo (F)?",opts:CFO,items:[["Il rosso dei papaveri di Monet","c"],["Il blu della notte di Van Gogh","f"],["Il giallo delle stelle","c"],["Il verde del prato","f"],["L'arancione del circo di Botero","c"],["Il grigio azzurro del mare di Turner","f"],["L'oro di Klimt","c"],["Il viola della sera","f"]].map(v=>({t:v[0],a:v[1],w:""}))},
+   {ty:"write",q:"Che sensazione ti danno i colori caldi? E quelli freddi?",st:["I colori caldi mi fanno pensare a ","I colori freddi mi fanno pensare a "]},
+   {ty:"draw",q:"Disegna lo stesso paesaggio due volte: a sinistra con i colori caldi, a destra con i colori freddi.",pal:"libera"}]},
+  {k:"generi",t:"Ritratto, paesaggio, natura morta",sub:"I generi",c:"#2E8B57",parts:[
+   {ty:"cls",q:"Ritratto (R), paesaggio (P) o natura morta (N)?",opts:GNO,items:[["L'autoritratto di Van Gogh","r"],["Il prato di papaveri di Monet","p"],["Un vaso di girasoli sul tavolo","n"],["Il postino Joseph Roulin","r"],["Il mare in tempesta di Turner","p"],["Una ciotola di frutta e una brocca","n"]].map(v=>({t:v[0],a:v[1],w:""}))},
+   {ty:"draw",q:"Il mio autoritratto: guardati allo specchio e disegna il tuo viso.",pal:"libera"}]},
+  {k:"ripasso",t:"Il labirinto dei 7 quadri",sub:"Ripasso",c:"#8C6FC7",parts:[
+   {ty:"match",q:"Collega ogni pittore al suo quadro.",pairs:Q.map(x=>[x.sh,x.t])},
+   {ty:"order",q:"Metti in ordine i quadri del viaggio, dal primo all'ultimo.",items:Q.map(x=>x.t)},
+   {ty:"write",q:"Qual è la porta che ti è piaciuta di più? Perché?",st:["Mi è piaciuta la porta ","perché "]},
+   {ty:"write",q:"Che cosa hanno imparato Marco e Juliane alla fine del viaggio?",st:["Hanno imparato che "]}]}]);
+let SC=0,MSEL=null,DSEL=0,MSH={};
+function sst(k){const S=L.state();if(!S.extra.sch2)S.extra.sch2={};if(!S.extra.sch2[k])S.extra.sch2[k]={};return S.extra.sch2[k]}
+function partDone(sh,p,i){const st=sst(sh.k),v=st[i];if(p.ty==="cls")return !!v&&p.items.every((_,j)=>v[j]!=null);if(p.ty==="mcq")return v===0;if(p.ty==="write")return filled(v);
+  if(p.ty==="dots")return !!v&&p.col.every((_,j)=>v[j]);if(p.ty==="draw")return !!v;if(p.ty==="match")return !!v&&p.pairs.every((_,j)=>v[j]);if(p.ty==="order")return !!v&&v.length===p.items.length;return false}
+function shDone(sh){return sh.parts.every((p,i)=>partDone(sh,p,i))}
+function renderSchede(){
+  $("#spick").innerHTML=SCH.map((sh,i)=>`<button type="button" data-sc="${i}" style="--rc:${sh.c}"${i===SC?' aria-current="true"':""}><b>${shDone(sh)?"✅ ":""}${esc(sh.t)}</b><small>${esc(sh.sub)}</small></button>`).join("");
+  $$("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=+b.dataset.sc;MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})}));
+  const sh=SCH[SC];
+  $("#sbody").innerHTML=sh.parts.map((p,i)=>`<div class="spart${partDone(sh,p,i)?" ok":""}" style="--rc:${sh.c}" data-p="${i}"><h4><span class="n">${i+1}</span>${esc(p.q)}</h4><div class="pb"></div></div>`).join("")+
+    `<div class="row">${SC<SCH.length-1?`<button class="btn" type="button" id="snext">Scheda successiva</button>`:""}</div>`;
+  sh.parts.forEach((p,i)=>renderPart(sh,p,i,$(`[data-p="${i}"] .pb`)));
+  const nx=$("#snext");if(nx)nx.addEventListener("click",()=>{SC++;MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})});
+  CQ.addSayButtons&&CQ.addSayButtons($("#sbody"));
+}
+function mark(sh){
+  const S=L.state();$$("#sbody .spart").forEach((el,i)=>el.classList.toggle("ok",partDone(sh,sh.parts[i],i)));
+  const st=sst(sh.k);if(shDone(sh)&&!st._done){st._done=1;S.extra.schede=(S.extra.schede||0)+1;L.save();L.add(2);L.fanfare();L.toast("Scheda completata: due stelle!");
+    const b=$(`[data-sc="${SC}"] b`);if(b)b.textContent="✅ "+sh.t}
+}
+function renderPart(sh,p,i,h){
+  const st=sst(sh.k);
+  if(p.ty==="cls"){const v=st[i]||(st[i]={});
+    h.innerHTML=`<div class="cl">${p.items.map((it,j)=>{const a=v[j],ans=a!=null;return `<div class="r${ans?(a==it.a?" right":" wrong"):""}"><span>${esc(it.t)}</span><span class="bt">${p.opts.map(o=>`<button type="button" data-j="${j}" data-v="${o[0]}"${ans?" disabled":""} class="${ans&&String(a)===String(o[0])?"sel":""}">${o[1]}</button>`).join("")}</span>${ans?`<span class="why">${a==it.a?"Giusto!":"Era "+esc(p.opts.find(o=>o[0]==it.a)[1])+". "+esc(it.w||"")}</span>`:""}</div>`}).join("")}</div>`;
+    $$("[data-j]",h).forEach(b=>b.addEventListener("click",()=>{const j=+b.dataset.j,it=p.items[j],val=p.opts.find(o=>String(o[0])===b.dataset.v)[0];v[j]=val;if(val==it.a)L.ding();else{L.buzz();const S=L.state();S.err["Scheda "+sh.t]=(S.err["Scheda "+sh.t]||0)+1}L.save();renderPart(sh,p,i,h);mark(sh)}));return}
+  if(p.ty==="mcq"){const done=st[i]===0;const opts=done?p.o.map((t,k)=>({t,k})):L.shuffle(p.o.map((t,k)=>({t,k})));
+    h.innerHTML=`<div class="opts">${opts.map(o=>`<button class="opt${done&&o.k===0?" right":""}" type="button" data-k="${o.k}"${done?" disabled":""}>${esc(o.t)}</button>`).join("")}</div><div class="mf">${done&&p.w?L.fb("good","Giusto!",[esc(p.w)]):""}</div>`;
+    $$("[data-k]",h).forEach(b=>b.addEventListener("click",()=>{if(+b.dataset.k===0){st[i]=0;L.save();L.ding();renderPart(sh,p,i,h);mark(sh)}else{b.classList.add("wrong");b.disabled=true;L.buzz();$(".mf",h).innerHTML=L.fb("bad","Non è così. Riprova!",[])}}));return}
+  if(p.ty==="write"){h.innerHTML=`<div class="wr"><textarea maxlength="500" aria-label="${esc(p.q)}">${esc(st[i]||"")}</textarea><div class="starters">${(p.st||[]).map(x=>`<button type="button" data-s="${esc(x)}">${esc(x.trim())}…</button>`).join("")}</div></div>`;
+    const t=$("textarea",h);t.addEventListener("input",()=>{st[i]=t.value;L.save();mark(sh)});
+    $$("[data-s]",h).forEach(b=>b.addEventListener("click",()=>{t.value=(t.value&&!/\s$/.test(t.value)?t.value+" ":t.value)+b.dataset.s;t.focus();st[i]=t.value;L.save();mark(sh)}));return}
+  if(p.ty==="dots"){const v=st[i]||(st[i]=[]);const pal=PALS.libera.c.concat(["#BFD9F0","#F4C6D0","#C9B98E","#5C5C5C","#D9A72E","#F3E9C6"]);
+    h.innerHTML=`<p class="small">Tocca un pallino, poi scegli il colore.</p><div class="sdots">${p.col.map((_,j)=>`<button type="button" data-d="${j}" class="${j===DSEL?"sel":""}" style="${v[j]?"background:"+v[j]+";border-style:solid":""}" aria-label="Pallino ${j+1}"></button>`).join("")}</div><div class="spal">${pal.map(c=>`<button type="button" data-pc="${c}" style="background:${c}" aria-label="Colore ${c}"></button>`).join("")}</div>${p.col.every((_,j)=>v[j])?`<p class="small" style="margin-top:8px">Confronta con i colori del quadro:</p><div class="sw">${p.col.map(c=>`<i style="background:${c}"></i>`).join("")}</div>`:""}`;
+    $$("[data-d]",h).forEach(b=>b.addEventListener("click",()=>{DSEL=+b.dataset.d;renderPart(sh,p,i,h)}));
+    $$("[data-pc]",h).forEach(b=>b.addEventListener("click",()=>{v[DSEL]=b.dataset.pc;L.save();const nx=p.col.findIndex((_,j)=>!v[j]);DSEL=nx<0?DSEL:nx;renderPart(sh,p,i,h);mark(sh)}));return}
+  if(p.ty==="draw"){h.innerHTML=`<div class="row"><button class="btn" type="button" data-go>🎨 Disegna nell'atelier${p.pal!=="libera"?" con i colori di "+esc(PALS[p.pal].t.replace("Come ","")):""}</button><button class="btn ghost" type="button" data-fatto${st[i]?" disabled":""}>${st[i]?"✅ Fatto":"Ho finito il disegno"}</button></div>`;
+    $("[data-go]",h).addEventListener("click",()=>{PEN.pal=p.pal;PEN.c=PALS[p.pal].c[0];location.hash="#atelier";setTimeout(()=>L.toast(p.q),400)});
+    $("[data-fatto]",h).addEventListener("click",()=>{st[i]=1;L.save();renderPart(sh,p,i,h);mark(sh)});return}
+  if(p.ty==="match"){const v=st[i]||(st[i]={});if(!MSH[sh.k+i])MSH[sh.k+i]=L.shuffle(p.pairs.map((_,j)=>j));const R=MSH[sh.k+i];
+    h.innerHTML=`<div class="mt">${p.pairs.map((pr,j)=>`<button type="button" data-ml="${j}" class="${v[j]?"done":MSEL===j?"sel":""}"${v[j]?" disabled":""}>${esc(pr[0])}</button><button type="button" data-mr="${R[j]}" class="${v[R[j]]?"done":""}"${v[R[j]]?" disabled":""}>${esc(p.pairs[R[j]][1])}</button>`).join("")}</div><p class="small">Tocca un nome a sinistra, poi la risposta giusta a destra.</p>`;
+    $$("[data-ml]",h).forEach(b=>b.addEventListener("click",()=>{MSEL=+b.dataset.ml;renderPart(sh,p,i,h)}));
+    $$("[data-mr]",h).forEach(b=>b.addEventListener("click",()=>{if(MSEL==null){L.toast("Prima tocca a sinistra.");return}const r=+b.dataset.mr;if(r===MSEL){v[r]=1;MSEL=null;L.ding();L.save();renderPart(sh,p,i,h);mark(sh)}else{b.classList.add("wrong");L.buzz();setTimeout(()=>b.classList.remove("wrong"),700)}}));return}
+  if(p.ty==="order"){const v=st[i]||(st[i]=[]);if(!MSH["o"+sh.k])MSH["o"+sh.k]=L.shuffle(p.items.map((_,j)=>j));
+    h.innerHTML=(v.length?`<ol class="ordl">${v.map(j=>`<li>${esc(p.items[j])}</li>`).join("")}</ol>`:"")+(v.length<p.items.length?`<div class="opts">${MSH["o"+sh.k].filter(j=>v.indexOf(j)<0).map(j=>`<button class="opt" type="button" data-or="${j}">${esc(p.items[j])}</button>`).join("")}</div><div class="mf"></div>`:"");
+    $$("[data-or]",h).forEach(b=>b.addEventListener("click",()=>{const j=+b.dataset.or;if(j===v.length){v.push(j);L.ding();L.save();renderPart(sh,p,i,h);mark(sh)}else{b.classList.add("wrong");L.buzz();$(".mf",h).innerHTML=L.fb("bad","Non è questo. Quale quadro viene adesso nel viaggio?",[])}}));return}
+}
+
+/* ---------- laboratori (lezione) ---------- */
+function renderLabs(){const h=$("#labs");if(!h)return;h.innerHTML=Q.map((x,i)=>`<div class="lab" style="--rc:${x.c};--rs:${x.s}"><h4>${i+1}. ${esc(x.sh)}: ${esc(x.lab.t)}</h4><p>${x.lab.tag.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</p><p>${esc(x.lab.d)}</p><p><b>In movimento:</b> ${esc(x.lab.m)}</p></div>`).join("")}
+
+L.init({
+  key:"labirinto-quadri-v1",col:"labirinto",subj:"art",src:"labirinto",title:"Nel labirinto dei quadri",
+  tabs:["lezione","labirinto","schede","indagini","atelier","valuta"],home:"labirinto",sets:SETS,
+  badges:[
+    {id:"primo",n:"Primo quadro",d:"Apri la porta del quadro di Monet",ok:S=>!!(S.extra.lab&&S.extra.lab.open.monet)},
+    {id:"esploratore",n:"Esploratore del labirinto",d:"Apri 4 porte magiche",ok:S=>!!S.extra.lab&&Object.keys(S.extra.lab.open).length>=4},
+    {id:"fuori",n:"Fuori dal labirinto",d:"Apri tutte e 7 le porte",ok:S=>!!S.extra.lab&&Object.keys(S.extra.lab.open).length>=7},
+    {id:"quadro",n:"Occhio da artista",d:"Almeno 7 su 8 in «Dentro quale quadro?»",ok:S=>(S.best.quadro||0)>=7},
+    {id:"colori",n:"Caldo e freddo",d:"Almeno 7 su 8 in «Caldo o freddo?»",ok:S=>(S.best.colori||0)>=7},
+    {id:"schede",n:"Schede complete",d:"Completa 5 schede",ok:S=>(S.extra.schede||0)>=5},
+    {id:"pittore",n:"Pittore magico",d:"Completa il tuo quadro magico",ok:S=>(S.extra.quadri||0)>=1},
+    {id:"riflessivo",n:"Artista riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So raccontare la storia di Marco e Juliane nei quadri.","So osservare un quadro e dire che cosa vedo.","So riconoscere i colori caldi e i colori freddi.","So dire chi ha dipinto alcuni quadri del libro.","Ho dipinto un quadro mio con fantasia.","Ho collaborato con la mia squadra."],
+  likes:["Il labirinto","Le schede","Dentro quale quadro?","Caldo o freddo?","Ritratto o paesaggio?","Il mio quadro magico","Il quadro vivente in classe"],
+  imprevisti:[["Il custode ha chiuso la porta!","Per un minuto si parla solo sussurrando, come al museo."],["Statue!","Tutti si bloccano nella posa di un personaggio del quadro di oggi. Chi si muove perde il turno."],["Scambio di ruoli","L'osservatore diventa disegnatore e il portavoce diventa lettore."],["Occhio di falco","La prossima risposta giusta vale doppio, ma prima la squadra osserva il quadro in silenzio per 20 secondi."],["La tempesta di Turner","Tutte le squadre cambiano banco: si gira di un posto in senso orario."],["La porta dell'amicizia","Chi risponde giusto sceglie un compagno di un'altra squadra che spiega il perché."]],
+  onEnter:()=>{CUR=null;renderLabs()},
+  onRoute:h=>{
+    if(h==="lezione")renderLabs();
+    if(h==="labirinto")renderLab();
+    if(h==="schede")renderSchede();
+    if(h==="indagini")L.sortChooser($("#sort"),["quadro","colori","genere"]);
+    if(h==="atelier")renderAtelier();
+  }
+});
+renderLabs();
+})();
+</script>
+</body></html>

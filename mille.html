@@ -1,0 +1,1597 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Missione Mille</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="cuccioli.css">
+<style>
+:root{
+  /* Layout: banco da lavoro per la LIM e per il telefono. Testata con il 1000 a colori (uM, c, d, u),
+     tab fisse a pillola, un pannello per attività. I colori del valore posizionale tornano ovunque. */
+  --bg:#EBF0F7; --surface:#FFFFFF; --surface2:#F2F5FB; --ink:#14213D; --muted:#53617E; --line:#D2DBE8;
+  --accent:#1F2A44; --accent-ink:#FFFFFF; --accent-soft:#DDE3F0;
+  --m:#E8710A; --m-ink:#2A1400; --m2:#B0510A;
+  --c:#1E8A4C; --c-ink:#FFFFFF;
+  --d:#D23535; --d-ink:#FFFFFF;
+  --u:#2F5FD0; --u-ink:#FFFFFF;
+  --good:#17744A; --good-soft:#D8F0E3; --bad:#B03030; --bad-soft:#FADDDD; --warn-soft:#FFEFC8;
+  --font-display:'Fredoka',system-ui,sans-serif;
+  --font-body:'Atkinson Hyperlegible',system-ui,sans-serif;
+  --s:50px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1526; --surface:#162139; --surface2:#1C2A47; --ink:#EAF0FC; --muted:#A3B0CB; --line:#2B3A5C;
+    --accent:#EAF0FC; --accent-ink:#0D1526; --accent-soft:#2B3A5C;
+    --m:#FF9A3D; --m-ink:#2A1400; --m2:#C4701F;
+    --c:#46C47A; --c-ink:#0D1526;
+    --d:#FF6B6B; --d-ink:#0D1526;
+    --u:#6F9CFF; --u-ink:#0D1526;
+    --good:#4FD08F; --good-soft:#163B2B; --bad:#FF8A8A; --bad-soft:#40202A; --warn-soft:#3F3418;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1526; --surface:#162139; --surface2:#1C2A47; --ink:#EAF0FC; --muted:#A3B0CB; --line:#2B3A5C;
+  --accent:#EAF0FC; --accent-ink:#0D1526; --accent-soft:#2B3A5C;
+  --m:#FF9A3D; --m-ink:#2A1400; --m2:#C4701F;
+  --c:#46C47A; --c-ink:#0D1526;
+  --d:#FF6B6B; --d-ink:#0D1526;
+  --u:#6F9CFF; --u-ink:#0D1526;
+  --good:#4FD08F; --good-soft:#163B2B; --bad:#FF8A8A; --bad-soft:#40202A; --warn-soft:#3F3418;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--font-body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:clamp(30px,8vw,46px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(24px,5vw,30px);font-weight:600}
+h3{font-size:20px;font-weight:600}
+p{margin:0}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:17px;color:var(--muted);max-width:62ch}
+button,a{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* testata */
+header .wrap{display:grid;gap:14px;padding-block:18px 14px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.top > div:first-child{min-width:0}
+.sub{color:var(--muted);margin-top:6px}
+.big{display:flex;gap:6px}
+.big span{display:grid;place-items:center;width:46px;height:60px;border-radius:10px;font:700 38px/1 var(--font-display);background:var(--m);color:var(--m-ink)}
+.big span:nth-child(2){background:var(--c);color:var(--c-ink)}
+.big span:nth-child(3){background:var(--d);color:var(--d-ink)}
+.big span:nth-child(4){background:var(--u);color:var(--u-ink)}
+.board{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:stretch}
+.stars{display:grid;place-items:center;min-width:86px;padding:8px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-align:center}
+.stars b{font:700 30px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.stars small{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.badges{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.badge{display:grid;gap:1px;padding:7px 10px;border-radius:10px;border:1.5px dashed var(--line);color:var(--muted);min-width:0}
+.badge b{font:600 14px/1.2 var(--font-display)}
+.badge small{font-size:11.5px;line-height:1.25}
+.badge.got{border:1.5px solid var(--good);background:var(--good-soft);color:var(--ink)}
+.badge.got small{color:var(--good);font-weight:700}
+
+/* laboratorio dei numeri e missioni */
+.f-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font:600 22px var(--font-display)}
+.f-row .num{font:700 40px var(--font-display);font-variant-numeric:tabular-nums}
+.ibox{width:76px;min-height:56px;text-align:center;border-radius:12px;border:3px solid var(--bc,var(--line));background:var(--surface);color:var(--ink);font:700 26px var(--font-display);font-variant-numeric:tabular-nums;padding:0 4px}
+.ibox.r-m{--bc:var(--m)}.ibox.r-c{--bc:var(--c)}.ibox.r-d{--bc:var(--d)}.ibox.r-u{--bc:var(--u)}
+.ibox.wide{width:120px}
+.itxt{width:100%;min-height:56px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:600 22px var(--font-display)}
+.lbl{font:400 15px var(--font-body);color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pill{padding:8px 14px;border-radius:12px;font:700 22px var(--font-display);font-variant-numeric:tabular-nums}
+.p-c{background:var(--c);color:var(--c-ink)}.p-d{background:var(--d);color:var(--d-ink)}.p-u{background:var(--u);color:var(--u-ink)}
+.plus{font:700 22px var(--font-display);color:var(--muted)}
+.mis{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.mis li{display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2)}
+.mis li.done{border-color:var(--good);background:var(--good-soft)}
+.mis .ck{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:2px solid var(--line);font:700 16px var(--font-display);color:var(--bg)}
+.mis li.done .ck{background:var(--good);border-color:var(--good)}
+.mis b{font:600 18px var(--font-display)}
+.mis p{color:var(--muted)}
+.cmpsym{display:grid;place-items:center;min-width:64px;height:64px;border-radius:14px;background:var(--surface2);border:2px dashed var(--line);font:700 36px var(--font-display)}
+.cmpsym.ok{border-style:solid;border-color:var(--good);background:var(--good-soft)}
+.seq{min-height:1.5em;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700}
+
+/* accesso e registro */
+.gate{padding-block:24px}
+.gate .panel{max-width:560px;margin:0 auto}
+.nameline{display:grid;gap:10px}
+.nameline label{font-weight:700}
+.nameline input{width:100%;min-height:54px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:600 22px var(--font-display)}
+.names{display:flex;flex-wrap:wrap;gap:8px}
+.names .btn{min-height:44px;font-size:16px;padding:0 16px}
+.err{min-height:1.4em;color:var(--bad);font-weight:700}
+.who{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:14px;color:var(--muted)}
+.who b{color:var(--ink);font:600 20px var(--font-display)}
+.who .ok{color:var(--good)}
+.who .bad{color:var(--bad)}
+
+/* navigazione */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-block:1px solid var(--line)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;font:600 16px var(--font-display)}
+.tabs a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+main{display:block;padding-block:18px 28px}
+section.view{display:grid;gap:16px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px;min-width:0}
+.cols{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:720px){
+  .cols{grid-template-columns:1fr 1fr}
+  .badges{grid-template-columns:repeat(5,minmax(0,1fr))}
+  :root{--s:62px}
+}
+
+/* bottoni */
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:12px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:600 17px var(--font-display);cursor:pointer;text-decoration:none}
+.btn.ghost{background:var(--surface2);color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+
+/* scheda lezione */
+.facts{display:grid;gap:10px;margin:0}
+.facts div{display:grid;gap:2px;min-width:0}
+.facts dt{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:0}
+@media(min-width:720px){.facts{grid-template-columns:1fr 1fr;gap:14px 24px}}
+.safe{display:flex;gap:8px}
+.slot{display:grid;place-items:center;width:56px;height:72px;border-radius:12px;background:var(--surface2);border:2px solid var(--line);font:700 40px var(--font-display);color:var(--muted)}
+.slot.on{border-color:transparent;animation:pop .5s both}
+.slot.k0{background:var(--m);color:var(--m-ink)}
+.slot.k1{background:var(--c);color:var(--c-ink)}
+.slot.k2{background:var(--d);color:var(--d-ink)}
+.slot.k3{background:var(--u);color:var(--u-ink)}
+.steps{list-style:none;margin:0;padding:0;display:grid}
+.step{display:grid;grid-template-columns:58px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+.step:first-child{border-top:0;padding-top:4px}
+.mins{display:grid;align-content:start;justify-items:center;padding:8px 0;border-radius:12px;background:var(--surface2);height:max-content}
+.mins b{font:700 26px/1 var(--font-display)}
+.mins small{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.step > div{display:grid;gap:8px;min-width:0}
+.chip{--cc:var(--muted);display:inline-flex;align-items:center;gap:7px;justify-self:start;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px 3px 8px;border-radius:999px;border:1.5px solid var(--cc)}
+.chip::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--cc)}
+.step .row .btn{min-height:44px;font-size:15px;padding:0 16px}
+ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
+.imp{padding:14px;border-radius:12px;background:var(--warn-soft);display:grid;gap:4px}
+.imp b{font:600 18px var(--font-display)}
+
+/* fabbrica */
+.readout{display:grid;gap:2px}
+.bignum{font:700 clamp(56px,16vw,84px)/1 var(--font-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.words{font:600 20px var(--font-display);color:var(--accent)}
+.decomp{color:var(--muted);font-variant-numeric:tabular-nums}
+.bench{display:grid;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface2)}
+.lane{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);min-height:calc(var(--s) + 28px)}
+.lane:first-child{border-top:0}
+.lab{display:grid;gap:1px;align-content:center}
+.lab b{font:600 15px var(--font-display)}
+.lab small{font-size:12px;color:var(--muted);line-height:1.2}
+.blks{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;min-width:0}
+.blks:empty::after{content:"vuoto";font-size:13px;color:var(--muted)}
+.blk{display:block;flex:0 0 auto;border-radius:3px}
+.blk.u{width:calc(var(--s)/5);height:calc(var(--s)/5);background:var(--u)}
+.blk.d{width:calc(var(--s)/5);height:var(--s);background-color:var(--d);background-image:linear-gradient(rgba(0,0,0,.28) 1.5px,transparent 1.5px);background-size:100% calc(var(--s)/10)}
+.blk.c{width:var(--s);height:var(--s);background-color:var(--c);background-image:linear-gradient(rgba(0,0,0,.25) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(0,0,0,.25) 1.5px,transparent 1.5px);background-size:calc(var(--s)/10) calc(var(--s)/10)}
+.blk.m{width:var(--s);height:var(--s);margin:8px 10px 0 0;background-color:var(--m);background-image:linear-gradient(rgba(0,0,0,.2) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(0,0,0,.2) 1.5px,transparent 1.5px);background-size:calc(var(--s)/10) calc(var(--s)/10);box-shadow:5px -5px 0 var(--m2),10px -10px 0 var(--m2)}
+.pop{animation:pop .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+.cambio{min-height:3.1em;padding:10px 14px;border-radius:12px;background:var(--surface2);font-weight:700}
+.cambio.flash{animation:flash 1.2s ease-out}
+@keyframes flash{0%{background:var(--warn-soft)}100%{background:var(--surface2)}}
+.ctrls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.p-m{background:var(--m);color:var(--m-ink)}
+.lvl{display:flex;flex-wrap:wrap;gap:8px}
+.lvl button{appearance:none;min-height:48px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);font:600 17px var(--font-display);cursor:pointer}
+.lvl button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.bigonly[hidden]{display:none!important}
+.ctrls button{appearance:none;display:grid;gap:0;justify-items:center;align-content:center;min-height:64px;padding:6px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.ctrls button b{font:700 24px/1.1 var(--font-display)}
+.ctrls button small{font-size:12px;color:var(--muted)}
+.ctrls button.add{border-color:var(--accent)}
+.ctrls button:active{transform:translateY(1px)}
+.pv{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center}
+.pvc{display:grid;gap:6px;justify-items:center;min-width:0}
+.pvc small{font-size:12px;color:var(--muted);line-height:1.2;min-height:2.4em}
+.pvc b{font:700 15px var(--font-display)}
+.tile{display:grid;place-items:center;width:100%;max-width:92px;aspect-ratio:3/4;border-radius:12px;font:700 clamp(36px,10vw,56px) var(--font-display);background:var(--m);color:var(--m-ink);font-variant-numeric:tabular-nums}
+.tile.t-c{background:var(--c);color:var(--c-ink)}.tile.t-d{background:var(--d);color:var(--d-ink)}.tile.t-u{background:var(--u);color:var(--u-ink)}
+
+/* abaco */
+.abaco{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.rod{display:grid;gap:8px;justify-items:center;align-content:start;min-width:0;padding:10px 6px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
+.rod h3{font-size:15px;text-align:center}
+.rod small{font-size:12px;color:var(--muted);text-align:center;line-height:1.2;min-height:2.4em}
+.rhead{display:grid;place-items:center;width:100%;max-width:92px;height:46px;border-radius:10px;font:700 26px var(--font-display);font-variant-numeric:tabular-nums}
+.rhead.r-m{background:var(--m);color:var(--m-ink)}
+.rhead.r-c{background:var(--c);color:var(--c-ink)}
+.rhead.r-d{background:var(--d);color:var(--d-ink)}
+.rhead.r-u{background:var(--u);color:var(--u-ink)}
+.post{position:relative;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;width:100%;min-height:290px;padding:8px 0}
+.post::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:8px;margin-left:-4px;border-radius:4px;background:var(--line)}
+.bead{position:relative;display:block;width:min(86%,60px);height:26px;border-radius:999px;background:var(--bc);box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),inset 0 3px 0 rgba(255,255,255,.28)}
+.bead.r-m{--bc:var(--m)}.bead.r-c{--bc:var(--c)}.bead.r-d{--bc:var(--d)}.bead.r-u{--bc:var(--u)}
+.rbtns{display:grid;gap:6px;width:100%;max-width:64px}
+.rbtns button{appearance:none;min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:700 24px var(--font-display);cursor:pointer}
+.rbtns button:first-child{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.rbtns button:disabled{opacity:.35;cursor:default}
+.rbtns button:active:not(:disabled){transform:translateY(1px)}
+
+/* salti */
+.track{position:relative;height:112px;margin:6px 22px 0}
+.line{position:absolute;left:0;right:0;top:64px;height:6px;border-radius:3px;background:var(--line)}
+.tick{position:absolute;top:57px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.tick i{display:block;width:2px;height:20px;background:var(--muted)}
+.tick b{margin-top:4px;font:700 11px var(--font-body);color:var(--muted);font-variant-numeric:tabular-nums}
+.arc{position:absolute;top:30px;height:30px;border:3px solid var(--accent);border-bottom:0;border-radius:999px 999px 0 0;opacity:.8}
+.hop{position:absolute;top:52px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--u);border:3px solid var(--ink);transition:left .45s cubic-bezier(.3,1.4,.5,1)}
+.sstat{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline}
+.sstat b{font:700 44px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.trail{color:var(--muted);word-break:break-word;font-variant-numeric:tabular-nums}
+.q{font:600 20px/1.3 var(--font-display)}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opt{appearance:none;min-height:56px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);font:700 24px var(--font-display);cursor:pointer;font-variant-numeric:tabular-nums}
+.opt.good{background:var(--good-soft);border-color:var(--good)}
+.opt.bad{background:var(--bad-soft);border-color:var(--bad);opacity:.8}
+.fb{min-height:1.6em;font-weight:700}
+.fb.good{color:var(--good)}.fb.bad{color:var(--bad)}
+
+/* banconote */
+.meter{height:18px;border-radius:9px;background:var(--surface2);border:1px solid var(--line);overflow:hidden}
+.meter span{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.meter.ok span{background:var(--good)}
+.meter.over span{background:var(--bad)}
+.total{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.total b{font:700 44px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.status{font-weight:700}
+.status.ok{color:var(--good)}.status.over{color:var(--bad)}
+.notes{display:grid;gap:8px}
+.nrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.note{width:104px;height:50px;border-radius:6px;display:grid;place-items:center;font:700 22px var(--font-display);color:#1B2236;border:2px solid rgba(0,0,0,.2);background:var(--nc)}
+.stepper{display:flex;align-items:center;justify-content:center;gap:10px}
+.stepper button{appearance:none;width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:700 24px var(--font-display);cursor:pointer}
+.stepper b{min-width:32px;text-align:center;font:700 24px var(--font-display);font-variant-numeric:tabular-nums}
+.sub-t{min-width:72px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.found{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.found li{padding:6px 12px;border-radius:999px;background:var(--good-soft);border:1.5px solid var(--good);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* valutazione */
+.item{border:0;margin:0;padding:14px 0;border-top:1px solid var(--line);display:grid;gap:10px;min-width:0}
+.item:first-of-type{border-top:0}
+.item legend{padding:0;font:600 19px/1.3 var(--font-display)}
+.lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lv input{position:absolute;opacity:0;width:1px;height:1px}
+.lv label{display:grid;justify-items:center;gap:4px;padding:10px 6px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);cursor:pointer;text-align:center;font-size:14px;line-height:1.2;min-height:76px;align-content:center}
+.lv label svg{width:34px;height:26px}
+.lv input:checked + label{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.lv input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
+.likes{display:flex;flex-wrap:wrap;gap:8px}
+.likes input{position:absolute;opacity:0;width:1px;height:1px}
+.likes label{padding:10px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface2);cursor:pointer;font-weight:700}
+.likes input:checked + label{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.likes input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
+.summary{padding:14px;border-radius:12px;background:var(--good-soft);display:grid;gap:4px}
+.foot{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;color:var(--muted);font-size:14px;padding-block:8px 40px}
+.link{appearance:none;background:none;border:0;padding:8px 0;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer}
+
+
+/* tablet e touch */
+html{-webkit-text-size-adjust:100%}
+button,a,input,select,label,summary,[role=button],[data-act]{touch-action:manipulation}
+button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+@media (min-width:700px) and (hover:none){.tabs a{min-height:52px;padding:0 22px;font-size:18px}.btn{min-height:54px}.rbtns button{min-height:54px}.stepper button{width:54px;height:54px}}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translate(-50%,24px);max-width:min(92vw,440px);padding:12px 18px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:40;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Matematica · Classe terza</p>
+        <h1>Missione Mille</h1>
+        <p class="sub">Costruire, contare, scrivere e giocare con il numero 1000 e oltre.</p>
+      </div>
+      <div class="big" aria-hidden="true"><span>1</span><span>0</span><span>0</span><span>0</span></div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge della classe"></ul>
+    </div>
+    <div class="who" id="who" hidden>
+      <span>Alunno: <b id="who-name"></b></span>
+      <button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a>
+      <span id="rec-st"></span>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="tbar" hidden><span id="t-txt"></span><button class="link" id="tswitch" type="button"></button></div>
+  </div>
+</header>
+
+<section class="gate wrap" id="gate" hidden>
+  <div class="panel">
+    <p class="eyebrow">Prima di cominciare</p>
+    <h2>Chi sta giocando?</h2>
+    <p class="lead">Scrivi il tuo nome. Le stelle e i badge che conquisti vengono registrati per la tua maestra.</p>
+    <form class="nameline" id="gate-form" autocomplete="off">
+      <label for="pname">Il mio nome</label>
+      <input id="pname" name="pname" type="text" maxlength="40" autocomplete="off" placeholder="Per esempio: Giulia R.">
+      <p class="err" id="gate-err" role="alert"></p>
+      <div class="row"><button class="btn" type="submit">Inizia la missione</button></div>
+    </form>
+    <div id="gate-recent" hidden>
+      <p class="eyebrow">Già giocato da questo dispositivo</p>
+      <div class="names" id="gate-names"></div>
+    </div>
+    <div class="row" id="gate-teacher-row" hidden><button class="btn ghost" id="gate-teacher" type="button">Entra come insegnante, senza registrare</button></div>
+  </div>
+</section>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap">
+    <div class="tabs">
+      <a href="#lezione" data-teacher hidden>Lezione</a>
+      <a href="#fabbrica">Fabbrica</a>
+      <a href="#abaco">Abaco</a>
+      <a href="#numeri">Numeri</a>
+      <a href="#salti">Salti</a>
+      <a href="#banco">Banco</a>
+      <a href="#valuta">Valuta</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE -->
+<section class="view" id="sec-lezione">
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Numeri entro il 1000</p>
+    <h2>Gli Esploratori del Gran Cambio</h2>
+    <dl class="facts">
+      <div><dt>Metodologia attiva</dt><dd>Gamification con Cooperative Learning: squadre di 3 o 4 bambini che raccolgono stelle e badge.</dd></div>
+      <div><dt>Durata</dt><dd>3 minuti di aggancio, 5 micro-step e 3 minuti di chiusura. In tutto circa 55 minuti.</dd></div>
+      <div><dt>Materiali</dt><dd>Materiale multibase o quadretti, 10 cartelli da 100 a 1000, banconote didattiche, mini lavagne e la LIM con questa app.</dd></div>
+      <div><dt>Codice colori</dt><dd>Arancione per le migliaia, verde per le centinaia, rosso per le decine e blu per le unità. Lo stesso su cartellini, abaco e app.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Scienze motorie (percorso a salti), Arte (disegno del cubo del mille), Geografia (1000 m di quota sulle carte), Tecnologia (uso della LIM).</dd></div>
+    </dl>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>La scatola dal codice misterioso</h3>
+    <p>Sulla cattedra c'è una scatola chiusa con un biglietto: «Il codice per aprirmi è il numero che viene subito dopo 999». Ogni squadra scrive la sua ipotesi sulla mini lavagna e la mostra al tre. Poi si svela il codice con un suono di campanello.</p>
+    <div class="safe" id="safe" aria-live="polite">
+      <span class="slot">?</span><span class="slot">?</span><span class="slot">?</span><span class="slot">?</span>
+    </div>
+    <div class="row"><button class="btn" id="reveal" type="button">Svela il codice</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step</p>
+    <h3>Cinque tappe, alternando mente e movimento</h3>
+    <ol class="steps">
+      <li class="step">
+        <div class="mins"><b>10</b><small>min</small></div>
+        <div>
+          <span class="chip">Azione</span>
+          <h3>La fabbrica del cambio</h3>
+          <p>Ogni squadra costruisce 999 con il materiale multibase, poi aggiunge 1 unità. Che cosa succede quando arrivano 10 pezzi uguali? Si cambiano, fino al cubo del mille. Alla LIM si ripete la stessa costruzione con la fabbrica dell'app.</p>
+          <div class="row"><a class="btn ghost" href="#fabbrica">Apri la fabbrica</a><a class="btn ghost" href="#abaco">Apri l'abaco</a><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="mins"><b>10</b><small>min</small></div>
+        <div>
+          <span class="chip mov">Movimento</span>
+          <h3>Salti da cento</h3>
+          <p>Sul pavimento ci sono i cartelli da 100 a 1000. I bambini saltano di cartello in cartello dicendo il numero, in avanti e indietro. Poi la classe verifica alla LIM con la linea dei numeri.</p>
+          <div class="row"><a class="btn ghost" href="#salti">Apri i salti</a><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="mins"><b>12</b><small>min</small></div>
+        <div>
+          <span class="chip man">Manuale</span>
+          <h3>Il Banco del Mille</h3>
+          <p>Gioco di ruolo con tre ruoli a rotazione: cassiere, cliente e controllore. Ogni squadra paga 1000 euro con le banconote didattiche e scrive ogni modo trovato su un cartellino. Vince la squadra con più modi diversi.</p>
+          <div class="row"><a class="btn ghost" href="#banco">Apri il banco</a><button class="btn ghost" type="button" data-timer="12">Timer <span>12 min</span></button></div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="mins"><b>8</b><small>min</small></div>
+        <div>
+          <span class="chip man">Manuale</span>
+          <h3>Scomporre e comporre con i colori</h3>
+          <p>A coppie, con i cartellini colorati: una coppia scomponi un numero (347 = 300 + 40 + 7), l'altra lo ricompone e lo scrive. Poi si scambiano i ruoli e si confrontano due numeri con i simboli <, > e =. Alla LIM si ripete con il laboratorio dei numeri.</p>
+          <div class="row"><a class="btn ghost" href="#numeri">Apri i numeri</a><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="mins"><b>8</b><small>min</small></div>
+        <div>
+          <span class="chip rif">Riflessione</span>
+          <h3>Mille in cifre e in lettere</h3>
+          <p>In silenzio, sulle mini lavagne: scrivere 1000, mille, poi 1001, 1010 e 1100. Si guarda la tabella del valore posizionale per capire quale cifra cambia posto. Chi ha bisogno può rispondere mostrando i cartellini.</p>
+          <div class="row"><a class="btn ghost" href="#fabbrica">Apri la tabella</a><a class="btn ghost" href="#numeri">Scrivi in lettere</a><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <p class="eyebrow">Gamification</p>
+      <h3>Stelle, badge e missioni</h3>
+      <ul class="tight">
+        <li><b>Punteggi:</b> 1 stella per ogni risposta giusta, 2 per ogni nuovo modo di fare 1000, 3 per il cubo costruito per primi.</li>
+        <li><b>Badge:</b> Cambiatore, Saltatore, Banchiere, Abachista e Maestro del Mille. Compaiono in alto in questa pagina.</li>
+        <li><b>Missione Cubo:</b> la prima squadra che costruisce il cubo con 10 piastre da 100 prende il badge.</li>
+        <li><b>Missioni dell'abaco:</b> sei missioni nell'app. Chi le completa tutte prende il badge Abachista.</li>
+        <li><b>Missione Detective:</b> trovare in aula tre cose che misurano o pesano 1000, come 1 m = 1000 mm e 1 kg = 1000 g.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <p class="eyebrow">Imprevisti</p>
+      <h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <p class="eyebrow">Variante di movimento</p>
+      <h3>Tre modi per far muovere la classe</h3>
+      <ul class="tight">
+        <li><b>Il percorso del mille:</b> 10 cerchi a terra con i cartelli da 100 a 1000. Salto, dico il numero, poi torno indietro.</li>
+        <li><b>La palla da cento:</b> in cerchio, chi riceve la palla dice il numero successivo (100, 200, 300). Arrivati a 1000, tutti saltano.</li>
+        <li><b>La staffetta del cambio:</b> le squadre corrono alla banca in fondo alla palestra a cambiare 10 cartellini da 10 con uno da 100.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <p class="eyebrow">Attenzione a tutti</p>
+      <h3>Per sostenere chi ha bisogno</h3>
+      <ul class="tight">
+        <li>Coppie di aiuto a rotazione, così chiedere aiuto diventa un gioco di squadra.</li>
+        <li>Cartellini di risposta da alzare, per chi si sente più sicuro senza parlare davanti a tutti.</li>
+        <li>Cartellino illustrato con il numero e la parola «mille» per chi sta consolidando l'italiano.</li>
+        <li>Ripetere sempre il gesto: dieci pezzi uguali, un pezzo nuovo.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Estensione · Oltre il mille</p>
+    <h3>E dopo il 1000?</h3>
+    <p>Per chi è pronto: nella fabbrica e nell'abaco si continua fino a 9999 con il cubo del mille; nel laboratorio dei numeri si sceglie «Oltre il mille»; nei salti si passa ai salti da 1000. In movimento: dieci cerchi a terra da 1000 a 10000, si salta dicendo «mille, duemila, tremila…».</p>
+    <div class="row"><a class="btn ghost" href="#numeri">Apri i numeri</a><a class="btn ghost" href="#salti">Apri i salti</a></div>
+  </div>
+  <div class="row"><a class="btn" href="#valuta">Vai alla scheda di autovalutazione</a></div>
+</section>
+
+<!-- FABBRICA -->
+<section class="view" id="sec-fabbrica" hidden>
+  <div class="panel">
+    <p class="eyebrow">Attività 1 · Azione</p>
+    <h2>La fabbrica del cambio</h2>
+    <p class="lead">Aggiungi o togli pezzi. Con 10 pezzi uguali scatta il cambio.</p>
+    <div class="readout">
+      <div class="bignum" id="f-num">0</div>
+      <div class="words" id="f-words">zero</div>
+      <div class="decomp" id="f-decomp">0</div>
+    </div>
+    <div class="bench">
+      <div class="lane"><div class="lab"><b>Migliaia</b><small>1 cubo vale 1000</small></div><div class="blks" id="l-m"></div></div>
+      <div class="lane"><div class="lab"><b>Centinaia</b><small>1 piastra vale 100</small></div><div class="blks" id="l-c"></div></div>
+      <div class="lane"><div class="lab"><b>Decine</b><small>1 barra vale 10</small></div><div class="blks" id="l-d"></div></div>
+      <div class="lane"><div class="lab"><b>Unità</b><small>1 cubetto vale 1</small></div><div class="blks" id="l-u"></div></div>
+    </div>
+    <p class="cambio" id="cambio" role="status" aria-live="polite">Tocca un pulsante per aggiungere pezzi.</p>
+    <div class="ctrls" id="ctrls">
+      <button class="add" type="button" data-d="1"><b>+ 1</b><small>unità</small></button>
+      <button class="add" type="button" data-d="10"><b>+ 10</b><small>una decina</small></button>
+      <button class="add" type="button" data-d="100"><b>+ 100</b><small>un centinaio</small></button>
+      <button class="add" type="button" data-d="1000"><b>+ 1000</b><small>un migliaio</small></button>
+      <button type="button" data-d="-1"><b>− 1</b><small>unità</small></button>
+      <button type="button" data-d="-10"><b>− 10</b><small>una decina</small></button>
+      <button type="button" data-d="-100"><b>− 100</b><small>un centinaio</small></button>
+      <button type="button" data-d="-1000"><b>− 1000</b><small>un migliaio</small></button>
+    </div>
+    <div class="row">
+      <button class="btn" id="f-999" type="button">Porta a 999</button>
+      <button class="btn ghost" id="f-1999" type="button">Porta a 1999</button>
+      <button class="btn ghost" id="f-reset" type="button">Azzera</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Tabella del valore posizionale</h3>
+    <p class="lead">Guarda quale colonna si accende quando scatta il cambio.</p>
+    <div class="pv" id="pv"></div>
+  </div>
+</section>
+
+<!-- ABACO -->
+<section class="view" id="sec-abaco" hidden>
+  <div class="panel">
+    <p class="eyebrow">Strumento · Valore posizionale</p>
+    <h2>L'abaco del cambio</h2>
+    <p class="lead">10 perle su un'asta diventano 1 perla sull'asta a sinistra.</p>
+    <div class="readout">
+      <div class="bignum" id="ab-num">0</div>
+      <div class="words" id="ab-words-now">zero</div>
+      <div class="decomp" id="ab-decomp">0</div>
+    </div>
+    <div class="abaco" id="abaco"></div>
+    <p class="cambio" id="ab-msg" role="status" aria-live="polite">Tocca + per aggiungere una perla. Quando arrivano 10, scatta il cambio.</p>
+    <div class="row">
+      <button class="btn" id="ab-999" type="button">Porta a 999</button>
+      <button class="btn ghost" id="ab-reset" type="button">Azzera</button>
+    </div>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Mini sfida</p>
+    <p class="q" id="ab-q"></p>
+    <p class="decomp" id="ab-words"></p>
+    <div class="row">
+      <button class="btn" id="ab-check" type="button">Controlla</button>
+      <button class="btn ghost" id="ab-next" type="button">Altro numero</button>
+    </div>
+    <p class="fb" id="ab-fb" role="status" aria-live="polite"></p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Missioni dell'abaco</p>
+    <h3>Completate: <span id="ms-n">0</span> su <span id="ms-tot">8</span></h3>
+    <ul class="mis" id="mis"></ul>
+  </div>
+</section>
+
+<!-- NUMERI -->
+<section class="view" id="sec-numeri" hidden>
+  <div class="panel">
+    <p class="eyebrow">Laboratorio dei numeri</p>
+    <h2>Scomponi, componi, scrivi e confronta</h2>
+    <p class="lead">Ogni cifra ha un colore: migliaia arancione, centinaia verde, decine rosso, unità blu.</p>
+    <div class="lvl" id="lvl" role="group" aria-label="Livello"><button type="button" data-l="0" aria-pressed="true">Fino a 999</button><button type="button" data-l="1" aria-pressed="false">Oltre il mille (fino a 9999)</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Scomposizione</p>
+    <p class="q">Scomponi il numero in due modi.</p>
+    <div class="f-row"><span class="num" id="sc-n"></span><span>=</span>
+      <span class="bigonly" hidden><input class="ibox r-m wide" id="sc-a-m" type="text" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Valore delle migliaia"><span class="plus">+</span></span>
+      <input class="ibox r-c" id="sc-a-c" type="text" inputmode="numeric" maxlength="3" autocomplete="off" aria-label="Valore delle centinaia"><span class="plus">+</span>
+      <input class="ibox r-d" id="sc-a-d" type="text" inputmode="numeric" maxlength="3" autocomplete="off" aria-label="Valore delle decine"><span class="plus">+</span>
+      <input class="ibox r-u" id="sc-a-u" type="text" inputmode="numeric" maxlength="3" autocomplete="off" aria-label="Valore delle unità"></div>
+    <div class="f-row"><span class="num" id="sc-n2"></span><span>=</span>
+      <span class="bigonly" hidden><input class="ibox r-m" id="sc-g-m" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Numero di migliaia"><span class="lbl">migliaia</span></span>
+      <input class="ibox r-c" id="sc-g-c" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Numero di centinaia"><span class="lbl">centinaia</span>
+      <input class="ibox r-d" id="sc-g-d" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Numero di decine"><span class="lbl">decine</span>
+      <input class="ibox r-u" id="sc-g-u" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Numero di unità"><span class="lbl">unità</span></div>
+    <p class="fb" id="sc-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="sc-check" type="button">Controlla</button><button class="btn ghost" id="sc-next" type="button">Altro numero</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Composizione</p>
+    <p class="q">Metti insieme i pezzi e scrivi il numero.</p>
+    <div class="pills" id="co-pieces"></div>
+    <div class="f-row"><span>Il numero è</span><input class="ibox wide" id="co-in" type="text" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Il numero composto"></div>
+    <p class="fb" id="co-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="co-check" type="button">Controlla</button><button class="btn ghost" id="co-next" type="button">Altro numero</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Scrittura in lettere</p>
+    <p class="q">Scrivi in lettere il numero <b id="le-n"></b></p>
+    <input class="itxt" id="le-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Il numero scritto in lettere">
+    <p class="lbl" id="le-hint"></p>
+    <p class="fb" id="le-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="le-check" type="button">Controlla</button><button class="btn ghost" id="le-tip" type="button">Suggerimento</button><button class="btn ghost" id="le-next" type="button">Altro numero</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Lettura</p>
+    <p class="q">Quale numero è questo?</p>
+    <p class="words" id="rd-w"></p>
+    <div class="opts" id="rd-opts"></div>
+    <p class="fb" id="rd-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn ghost" id="rd-next" type="button">Altro numero</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Confronto</p>
+    <p class="q">Quale segno va tra i due numeri?</p>
+    <div class="f-row"><span class="num" id="cp-a"></span><span class="cmpsym" id="cp-sym">?</span><span class="num" id="cp-b"></span></div>
+    <div class="opts" id="cp-opts">
+      <button class="opt" type="button" data-s="&lt;" aria-label="minore">&lt;</button>
+      <button class="opt" type="button" data-s="=" aria-label="uguale">=</button>
+      <button class="opt" type="button" data-s="&gt;" aria-label="maggiore">&gt;</button>
+    </div>
+    <p class="lbl">&lt; vuol dire minore, &gt; vuol dire maggiore, = vuol dire uguale. Parti dalla cifra più a sinistra: prima le migliaia, poi le centinaia, le decine e le unità.</p>
+    <p class="fb" id="cp-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn ghost" id="cp-next" type="button">Altro confronto</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Ordine</p>
+    <p class="q" id="od-q"></p>
+    <div class="opts" id="od-opts"></div>
+    <p class="seq" id="od-seq"></p>
+    <p class="fb" id="od-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn ghost" id="od-next" type="button">Altri numeri</button></div>
+  </div>
+</section>
+
+<!-- SALTI -->
+<section class="view" id="sec-salti" hidden>
+  <div class="panel">
+    <p class="eyebrow">Attività 2 · Movimento</p>
+    <h2>Salti da cento</h2>
+    <p class="lead" id="s-lead">Fai saltare il pallino sulla linea. Ogni salto vale 100.</p>
+    <div class="lvl" id="s-lvl" role="group" aria-label="Grandezza del salto"><button type="button" data-s="100" aria-pressed="true">Salti da 100</button><button type="button" data-s="1000" aria-pressed="false">Salti da 1000</button></div>
+    <div class="track" id="track"><div class="line"></div><div id="arcs"></div><div class="hop" id="hop" style="left:0%"></div></div>
+    <div class="sstat"><span>Sei sul numero <b id="s-pos">0</b></span><span>Salti fatti <b id="s-count">0</b></span></div>
+    <p class="trail" id="s-trail">0</p>
+    <div class="row">
+      <button class="btn" id="s-fwd" type="button">Salta avanti + <span class="s-st">100</span></button>
+      <button class="btn ghost" id="s-back" type="button">Salta indietro − <span class="s-st">100</span></button>
+      <button class="btn ghost" id="s-reset" type="button">Ricomincia</button>
+    </div>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Mini sfida</p>
+    <p class="q" id="q-text"></p>
+    <div class="opts" id="q-opts"></div>
+    <p class="fb" id="q-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn ghost" id="q-next" type="button">Altra sfida</button></div>
+  </div>
+</section>
+
+<!-- BANCO -->
+<section class="view" id="sec-banco" hidden>
+  <div class="panel">
+    <p class="eyebrow">Attività 3 · Gioco di ruolo</p>
+    <h2>Il Banco del Mille</h2>
+    <p class="lead">Metti insieme le banconote fino a 1000 euro. Quanti modi diversi trovi?</p>
+    <div class="total"><b id="b-sum">0</b><span>euro su 1000</span></div>
+    <div class="meter" id="b-meter"><span></span></div>
+    <p class="status" id="b-status" role="status" aria-live="polite">Mancano 1000 euro.</p>
+    <div class="notes" id="notes"></div>
+    <div class="row"><button class="btn ghost" id="b-reset" type="button">Svuota il banco</button></div>
+  </div>
+  <div class="panel">
+    <h3>Modi trovati: <span id="b-n">0</span></h3>
+    <ul class="found" id="b-found"></ul>
+    <p class="lead" id="b-empty">Trova 3 modi diversi e vinci il badge Banchiere.</p>
+  </div>
+</section>
+
+<!-- VALUTA -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come me la sono cavata?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item">
+        <legend>Che cosa mi è piaciuto di più?</legend>
+        <div class="likes" id="vlikes"></div>
+      </fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+  <div class="panel" data-teacher hidden>
+    <h3>Per l'insegnante</h3>
+    <p>Leggi le frasi ad alta voce e lascia che i bambini rispondano da soli. Le frasi con un solo gradino indicano che cosa riprendere nella prossima lezione. Il riepilogo qui sopra le elenca.</p>
+  </div>
+</section>
+
+<div class="foot">
+  <span>I progressi di ogni alunno restano su questo dispositivo e nel registro della classe.</span>
+  <button class="link" id="wipe" type="button" hidden>Ricomincia da zero</button>
+</div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js"></script>
+<script>
+(function(){
+'use strict';
+var CQ=window.Cuccioli,chipCtl=null;
+function gain(n){if(pupil.id&&CQ.pupils[pupil.id])CQ.award(pupil.id,'mat',n,'mille');}
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var KEYP='missione-mille-v2:';
+var pupil={name:'',id:'',sessions:1,first:''};
+function freshS(){return {stars:0,badges:{},found:[],quiz:0,abaco:0,scomp:0,comp:0,lett:0,leggi:0,conf:0,ord:0,missioni:{},valuta:{a:{},like:'',done:false}};}
+var S=freshS();
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function slug(s){return String(s).trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);}
+function mergeS(p){
+  var s=freshS();
+  if(p&&typeof p==='object'){s=Object.assign(s,p);}
+  s.valuta=Object.assign({a:{},like:'',done:false},s.valuta||{});
+  return s;
+}
+function loadS(id){S=freshS();try{var raw=localStorage.getItem(KEYP+id);if(raw)S=mergeS(JSON.parse(raw));}catch(e){}}
+
+/* registro della classe: un documento per alunno nel database della pagina */
+var dbh=null,syncT=null,dirty=false,chain=Promise.resolve();
+function setRec(txt,cls){var el=document.getElementById('rec-st');if(el){el.textContent=txt;el.className=cls||'';}}
+function record(){
+  return {
+    nome:pupil.name,
+    stelle:S.stars,
+    badge:Object.keys(S.badges).filter(function(k){return S.badges[k]}),
+    modiBanco:S.found.length,
+    saltiGiusti:S.quiz,
+    sfideAbaco:S.abaco||0,
+    missioniAbaco:Object.keys(S.missioni||{}).length,
+    scomposizioni:S.scomp||0,
+    composizioni:S.comp||0,
+    lettere:(S.lett||0)+(S.leggi||0),
+    confronti:(S.conf||0)+(S.ord||0),
+    autovalutazione:!!S.valuta.done,
+    preferito:S.valuta.like||'',
+    sessioni:pupil.sessions,
+    primoAccesso:pupil.first,
+    ultimoAccesso:new Date().toISOString(),
+    stato:S
+  };
+}
+function flush(){
+  if(!dirty||!dbh||!pupil.id)return chain;
+  dirty=false;
+  var ref='alunni/'+pupil.id,rec=record();
+  chain=chain.then(function(){return dbh.doc(ref).set(rec)}).then(function(){setRec('Registrato nel registro della classe.','ok')},function(){dirty=true;setRec('Registrazione non riuscita. Riprovo al prossimo punto.','bad')});
+  return chain;
+}
+function queueSync(){
+  if(!dbh||!pupil.id)return;
+  dirty=true;clearTimeout(syncT);syncT=setTimeout(flush,1200);
+}
+function save(){
+  if(!pupil.id)return;
+  try{localStorage.setItem(KEYP+pupil.id,JSON.stringify(S));}catch(e){}
+  queueSync();
+}
+document.addEventListener('visibilitychange',function(){if(document.hidden)flush();});
+
+/* ---------- toast e suoni ---------- */
+var toastEl=$('#toast'),tt;
+function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove('show')},3400);}
+var ac;
+function tone(seq){
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    var t=ac.currentTime;
+    seq.forEach(function(x){
+      var o=ac.createOscillator(),g=ac.createGain();
+      o.type='sine';o.frequency.value=x[0];
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.25,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+x[1]);
+      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+x[1]+0.03);
+      t+=x[1];
+    });
+  }catch(e){}
+}
+
+/* ---------- bacheca ---------- */
+var BADGES=[
+  {id:'cambiatore',name:'Cambiatore',how:'Porta la fabbrica a 1000'},
+  {id:'saltatore',name:'Saltatore',how:'3 salti indovinati'},
+  {id:'banchiere',name:'Banchiere',how:'3 modi di fare 1000 euro'},
+  {id:'abachista',name:'Abachista',how:'Tutte le missioni abaco'},
+  {id:'maestro',name:'Maestro del Mille',how:'Tutti i badge e la scheda'}
+];
+function renderBoard(){
+  $('#stars').textContent=S.stars;
+  $('#badges').innerHTML=BADGES.map(function(b){
+    var got=!!S.badges[b.id];
+    return '<li class="badge'+(got?' got':'')+'"><b>'+b.name+'</b><small>'+(got?'Conquistato':b.how)+'</small></li>';
+  }).join('');
+}
+function addStars(n){S.stars+=n;save();renderBoard();gain(n);}
+function award(id){
+  if(S.badges[id])return;
+  S.badges[id]=true;S.stars+=2;save();renderBoard();gain(2);
+  var b=BADGES.filter(function(x){return x.id===id})[0];
+  toast('Nuovo badge: '+b.name+'. Due stelle in più!');
+  tone([[523,.12],[659,.12],[784,.22]]);
+  checkMaestro();
+}
+function checkMaestro(){
+  if(S.badges.cambiatore&&S.badges.saltatore&&S.badges.banchiere&&S.valuta.done&&!S.badges.maestro)award('maestro');
+}
+
+/* ---------- navigazione ---------- */
+var TABS=['lezione','fabbrica','abaco','numeri','salti','banco','valuta'];
+var firstRoute=true;
+function route(){
+  var h=location.hash.slice(1);
+  var home=teacherOn()?'lezione':'fabbrica';
+  if(TABS.indexOf(h)<0)h=home;
+  if(h==='lezione'&&!teacherOn())h=home;
+  TABS.forEach(function(t){$('#sec-'+t).hidden=(t!==h)});
+  $$('.tabs a').forEach(function(a){
+    var on=a.getAttribute('href')==='#'+h;
+    a.classList.toggle('on',on);
+    if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+    if(on&&a.scrollIntoView){try{a.scrollIntoView({block:'nearest',inline:'center'})}catch(e){}}
+  });
+  if(!firstRoute){var hh=$('header').offsetHeight;if(window.scrollY>hh)window.scrollTo(0,hh);}
+  firstRoute=false;
+}
+window.addEventListener('hashchange',route);
+
+/* ---------- parole dei numeri ---------- */
+var U=['zero','uno','due','tre','quattro','cinque','sei','sette','otto','nove','dieci','undici','dodici','tredici','quattordici','quindici','sedici','diciassette','diciotto','diciannove'];
+var T=['','','venti','trenta','quaranta','cinquanta','sessanta','settanta','ottanta','novanta'];
+function sub100(n){
+  if(n<20)return U[n];
+  var t=Math.floor(n/10),u=n%10,w=T[t];
+  if(u===0)return w;
+  if(u===1||u===8)w=w.slice(0,-1);
+  return w+(u===3?'tré':U[u]);
+}
+function sub1000(n){
+  var h=Math.floor(n/100),r=n%100,w='';
+  if(h>0)w=(h===1)?'cento':U[h]+'cento';
+  if(r>0){
+    var s=(h>0&&r===3)?'tré':sub100(r);
+    if(h>0&&s.charAt(0)==='o')w=w.slice(0,-1);
+    w+=s;
+  }
+  return w;
+}
+function parole(n){
+  if(n===0)return 'zero';
+  var k=Math.floor(n/1000),r=n%1000,w='';
+  if(k>0)w=(k===1)?'mille':(k<10?U[k]:sub1000(k))+'mila';
+  if(r>0)w+=(k>0&&r===3)?'tré':sub1000(r);
+  return w;
+}
+
+/* ---------- lezione: codice, timer, imprevisti ---------- */
+var revealed=false;
+$('#reveal').addEventListener('click',function(){
+  var slots=$$('.slot');
+  revealed=!revealed;
+  var digs=['1','0','0','0'];
+  slots.forEach(function(s,i){
+    s.className='slot'+(revealed?' on k'+i:'');
+    s.textContent=revealed?digs[i]:'?';
+  });
+  this.textContent=revealed?'Nascondi di nuovo':'Svela il codice';
+  if(revealed){tone([[880,.25],[660,.35]]);toast('1000: dieci centinaia fanno un migliaio.');}
+});
+
+var timer=null;
+function fmt(s){return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+(s%60)).slice(-2)}
+function stopTimer(){
+  if(!timer)return;
+  clearInterval(timer.id);
+  timer.btn.querySelector('span').textContent=timer.btn.getAttribute('data-timer')+' min';
+  timer=null;
+}
+$$('[data-timer]').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(timer&&timer.btn===b){stopTimer();return;}
+    stopTimer();
+    var left=(+b.getAttribute('data-timer'))*60,span=b.querySelector('span');
+    span.textContent=fmt(left);
+    timer={btn:b,id:setInterval(function(){
+      left--;
+      if(left<=0){stopTimer();toast('Tempo scaduto. Si passa al prossimo micro-step.');tone([[660,.15],[660,.15],[880,.3]]);return;}
+      span.textContent=fmt(left);
+    },1000)};
+  });
+});
+
+var IMPREVISTI=[
+  ['Colpo di vento','Il vento porta via 1 centinaio dalla tua squadra. Quanto vi resta? Dite il numero tutti insieme.'],
+  ['Sfida lampo','60 secondi per contare di 100 in 100 fino a 1000, a turno, senza sbagliare.'],
+  ['Bonus doppio','La prossima risposta giusta vale il doppio delle stelle.'],
+  ['Numero muto','Mostrate il numero che viene subito prima di 1000 con i cartellini, senza parlare.'],
+  ['Controllo incrociato','Una squadra controlla il lavoro di un\'altra. Ogni errore trovato vale una stella.'],
+  ['Mancano 50','Siete a 950. Quanto serve per arrivare a 1000? Trovatelo con le banconote.']
+];
+var lastImp=-1;
+$('#draw').addEventListener('click',function(){
+  var i;do{i=Math.floor(Math.random()*IMPREVISTI.length)}while(i===lastImp);
+  lastImp=i;
+  $('#imp').innerHTML='<b>'+IMPREVISTI[i][0]+'</b><span>'+IMPREVISTI[i][1]+'</span>';
+});
+
+/* ---------- fabbrica ---------- */
+var n=0;
+var MAXN=9999;
+function dig(v){return {m:Math.floor(v/1000)%10,c:Math.floor(v/100)%10,d:Math.floor(v/10)%10,u:v%10}}
+function decomp(v){if(v===1000)return '1000 = 10 centinaia = 1 migliaio';var d=dig(v);return [d.m*1000,d.c*100,d.d*10,d.u].filter(function(x){return x>0}).join(' + ')||'0';}
+function blocks(cls,count,pop){
+  var h='';
+  for(var i=0;i<count;i++)h+='<span class="blk '+cls+(pop&&i===count-1?' pop':'')+'"></span>';
+  return h;
+}
+var DEFAULT_MSG='Tocca un pulsante per aggiungere o togliere pezzi.';
+function renderF(prevN){
+  var d=dig(n),pd=dig(prevN);
+  ['m','c','d','u'].forEach(function(k){
+    $('#l-'+k).innerHTML=blocks(k,d[k],d[k]>pd[k]);
+  });
+  $('#f-num').textContent=n;
+  $('#f-words').textContent=parole(n);
+  $('#f-decomp').textContent=decomp(n);
+  var cols=[['m','uM','unità di migliaia'],['c','c','centinaia'],['d','d','decine'],['u','u','unità']];
+  $('#pv').innerHTML=cols.map(function(c){
+    return '<div class="pvc"><small>'+c[2]+'</small><div class="tile t-'+c[0]+'"><span>'+d[c[0]]+'</span></div><b>'+c[1]+'</b></div>';
+  }).join('');
+}
+function cambioMsg(prev,next,delta){
+  var el=$('#cambio'),ad=Math.abs(delta),msg='';
+  var P=[[1000,'10 centinaia fanno 1 migliaio.','1 migliaio si cambia in 10 centinaia.'],[100,'10 decine fanno 1 centinaio.','1 centinaio si cambia in 10 decine.'],[10,'10 unità fanno 1 decina.','1 decina si cambia in 10 unità.']];
+  for(var i=0;i<P.length;i++){
+    if(P[i][0]>ad&&Math.floor(prev/P[i][0])!==Math.floor(next/P[i][0])){msg=delta>0?P[i][1]:P[i][2];break;}
+  }
+  el.textContent=msg?'Cambio! '+msg:DEFAULT_MSG;
+  el.classList.remove('flash');void el.offsetWidth;if(msg)el.classList.add('flash');
+}
+function setN(v,delta){
+  v=Math.max(0,Math.min(MAXN,v));
+  var prev=n;n=v;
+  renderF(prev);
+  if(delta)cambioMsg(prev,v,delta);
+  if(n===1000&&prev!==1000){tone([[523,.12],[659,.12],[784,.12],[1047,.3]]);award('cambiatore');}
+}
+$('#ctrls').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  var d=+b.getAttribute('data-d');
+  setN(n+d,d);
+});
+$('#f-999').addEventListener('click',function(){
+  var prev=n;n=999;renderF(prev);
+  $('#cambio').textContent='Siamo a 999. Aggiungi 1 unità e guarda che cosa succede.';
+});
+$('#f-1999').addEventListener('click',function(){
+  var prev=n;n=1999;renderF(prev);
+  $('#cambio').textContent='Siamo a 1999. Aggiungi 1 unità: quanti cambi scattano?';
+});
+$('#f-reset').addEventListener('click',function(){
+  var prev=n;n=0;renderF(prev);$('#cambio').textContent=DEFAULT_MSG;
+});
+
+/* ---------- salti ---------- */
+var pos=0,trail=[0],STEP=100;
+function buildTrack(){
+  $$('#track .tick').forEach(function(t){t.remove()});
+  var h='';
+  for(var i=0;i<=10;i++)h+='<span class="tick" style="left:'+(i*10)+'%"><i></i><b>'+(i*STEP)+'</b></span>';
+  $('#track').insertAdjacentHTML('afterbegin',h);
+}
+buildTrack();
+$('#s-lvl').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  STEP=+b.getAttribute('data-s');
+  $$('#s-lvl button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  $$('.s-st').forEach(function(x){x.textContent=STEP});
+  $('#s-lead').textContent='Fai saltare il pallino sulla linea. Ogni salto vale '+STEP+'.';
+  buildTrack();pos=0;trail=[0];renderS();newQ();
+});
+function renderS(){
+  var MX=STEP*10;
+  $('#hop').style.left=(pos/MX*100)+'%';
+  $('#s-pos').textContent=pos;
+  $('#s-count').textContent=trail.length-1;
+  $('#s-trail').textContent=trail.join(' → ');
+  var a='';
+  for(var i=1;i<trail.length;i++){
+    var x=trail[i-1],y=trail[i];
+    a+='<span class="arc" style="left:'+(Math.min(x,y)/MX*100)+'%;width:'+(Math.abs(y-x)/MX*100)+'%"></span>';
+  }
+  $('#arcs').innerHTML=a;
+  $('#s-fwd').disabled=pos>=MX;
+  $('#s-back').disabled=pos<=0;
+}
+function jump(d){
+  var np=pos+d;if(np<0||np>STEP*10)return;
+  pos=np;trail.push(pos);renderS();
+  if(pos===STEP*10)toast(STEP===100?'1000! Dieci salti da 100: 10 × 100 = 1000.':'10000! Dieci salti da 1000: 10 × 1000 = diecimila.');
+}
+$('#s-fwd').addEventListener('click',function(){jump(STEP)});
+$('#s-back').addEventListener('click',function(){jump(-STEP)});
+$('#s-reset').addEventListener('click',function(){pos=0;trail=[0];renderS()});
+
+var q=null,answered=false;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function newQ(){
+  var dir=Math.random()<0.65?1:-1,k=2+Math.floor(Math.random()*3),s;
+  if(dir>0)s=STEP*Math.floor(Math.random()*(10-k+1));
+  else s=STEP*(k+Math.floor(Math.random()*(10-k+1)));
+  var ans=s+dir*STEP*k;
+  var pool=[ans-2*STEP,ans-STEP,ans+STEP,ans+2*STEP].filter(function(v){return v>=0&&v<=STEP*10});
+  shuffle(pool);
+  var opts=shuffle([ans].concat(pool.slice(0,2)));
+  q={s:s,k:k,dir:dir,ans:ans,opts:opts};
+  answered=false;
+  $('#q-text').textContent='Parti da '+s+'. Fai '+k+' salti da '+STEP+' '+(dir>0?'in avanti':'indietro')+'. Dove arrivi?';
+  $('#q-opts').innerHTML=opts.map(function(o){return '<button class="opt" type="button" data-v="'+o+'">'+o+'</button>'}).join('');
+  var fb=$('#q-fb');fb.textContent='';fb.className='fb';
+}
+$('#q-opts').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b||answered||b.disabled)return;
+  var v=+b.getAttribute('data-v'),fb=$('#q-fb');
+  if(v===q.ans){
+    answered=true;b.classList.add('good');
+    fb.className='fb good';
+    fb.textContent='Esatto! '+q.s+(q.dir>0?' + ':' − ')+q.k+' × '+STEP+' = '+q.ans+'. Una stella in più.';
+    S.quiz++;addStars(1);
+    if(S.quiz>=3)award('saltatore');
+  }else{
+    b.classList.add('bad');b.disabled=true;
+    fb.className='fb bad';
+    fb.textContent='Non ancora. Prova a contare i salti sulla linea.';
+  }
+});
+$('#q-next').addEventListener('click',newQ);
+
+/* ---------- banco ---------- */
+var DEN=[500,200,100,50,20,10];
+var NC={500:'#C5A9DC',200:'#F0DE80',100:'#A2D69E',50:'#F6B576',20:'#93C3EA',10:'#F2A6A1'};
+var cnt={};DEN.forEach(function(d){cnt[d]=0});
+function sum(){return DEN.reduce(function(a,d){return a+d*cnt[d]},0)}
+function renderNotes(){
+  $('#notes').innerHTML=DEN.map(function(d){
+    return '<div class="nrow"><div class="note" style="--nc:'+NC[d]+'">'+d+' €</div>'+
+      '<div class="stepper"><button type="button" data-d="'+d+'" data-a="-1" aria-label="Togli una banconota da '+d+' euro">−</button>'+
+      '<b id="c'+d+'">'+cnt[d]+'</b>'+
+      '<button type="button" data-d="'+d+'" data-a="1" aria-label="Aggiungi una banconota da '+d+' euro">+</button></div>'+
+      '<span class="sub-t" id="t'+d+'">'+(cnt[d]*d)+' €</span></div>';
+  }).join('');
+}
+function renderB(){
+  var s=sum();
+  DEN.forEach(function(d){$('#c'+d).textContent=cnt[d];$('#t'+d).textContent=(cnt[d]*d)+' €'});
+  $('#b-sum').textContent=s;
+  var m=$('#b-meter');m.className='meter'+(s===1000?' ok':(s>1000?' over':''));
+  m.firstElementChild.style.width=Math.min(100,s/10)+'%';
+  var st=$('#b-status');
+  if(s===1000){st.className='status ok';st.textContent='Esatto: 1000 euro.';}
+  else if(s>1000){st.className='status over';st.textContent='Sono troppi: togli '+(s-1000)+' euro.';}
+  else{st.className='status';st.textContent='Mancano '+(1000-s)+' euro.';}
+}
+function renderFound(){
+  $('#b-n').textContent=S.found.length;
+  $('#b-found').innerHTML=S.found.map(function(f){return '<li>'+f+'</li>'}).join('');
+  $('#b-empty').hidden=S.found.length>0;
+}
+function comboKey(){return DEN.filter(function(d){return cnt[d]>0}).map(function(d){return cnt[d]+'×'+d}).join(' + ')}
+$('#notes').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  var d=+b.getAttribute('data-d'),a=+b.getAttribute('data-a');
+  cnt[d]=Math.max(0,Math.min(100,cnt[d]+a));
+  renderB();
+  if(sum()===1000){
+    var k=comboKey();
+    if(S.found.indexOf(k)>=0){toast('Già trovato. Cerca un altro modo.');}
+    else{
+      S.found.push(k);save();renderFound();addStars(2);
+      toast('Nuovo modo trovato: '+k+'. Due stelle!');
+      tone([[659,.1],[880,.2]]);
+      if(S.found.length>=3)award('banchiere');
+    }
+  }
+});
+$('#b-reset').addEventListener('click',function(){DEN.forEach(function(d){cnt[d]=0});renderB()});
+
+/* ---------- autovalutazione ---------- */
+var VQ=[
+  ['q1','So costruire 1000 con 10 centinaia.'],
+  ['q2','So contare di 100 in 100, avanti e indietro.'],
+  ['q3','So scrivere 1000 in cifre e in lettere.'],
+  ['q4','Ho lavorato bene con la mia squadra.']
+];
+var LV=[[1,'Ci provo ancora'],[2,'Ci sono quasi'],[3,'Ci sono!']];
+var LIKES=['Il gioco','Il movimento','Le banconote','La squadra'];
+function stairs(v){
+  var h='<svg viewBox="0 0 34 26" aria-hidden="true">';
+  for(var i=1;i<=3;i++){
+    var ht=6+i*6;
+    h+='<rect x="'+((i-1)*12)+'" y="'+(26-ht)+'" width="10" height="'+ht+'" rx="2" fill="currentColor" opacity="'+(i<=v?'1':'.22')+'"/>';
+  }
+  return h+'</svg>';
+}
+function buildV(){
+  $('#vitems').innerHTML=VQ.map(function(it){
+    return '<fieldset class="item"><legend>'+it[1]+'</legend><div class="lv">'+
+      LV.map(function(l){
+        var id=it[0]+'-'+l[0];
+        return '<input type="radio" name="'+it[0]+'" id="'+id+'" value="'+l[0]+'"'+(S.valuta.a[it[0]]===l[0]?' checked':'')+'>'+
+               '<label for="'+id+'">'+stairs(l[0])+'<span>'+l[1]+'</span></label>';
+      }).join('')+'</div></fieldset>';
+  }).join('');
+  $('#vlikes').innerHTML=LIKES.map(function(t,i){
+    return '<input type="radio" name="like" id="like'+i+'" value="'+t+'"'+(S.valuta.like===t?' checked':'')+'><label for="like'+i+'">'+t+'</label>';
+  }).join('');
+  updateDone();
+  if(S.valuta.done)showSummary();
+}
+function updateDone(){
+  var ok=VQ.every(function(it){return S.valuta.a[it[0]]});
+  $('#v-done').disabled=!ok;
+}
+$('#vform').addEventListener('change',function(e){
+  var t=e.target;if(!t||t.type!=='radio')return;
+  if(t.name==='like')S.valuta.like=t.value;
+  else S.valuta.a[t.name]=+t.value;
+  S.valuta.done=false;
+  $('#v-sum').hidden=true;
+  save();updateDone();
+});
+function showSummary(){
+  var a=S.valuta.a,top=0,low=[];
+  VQ.forEach(function(it){
+    if(a[it[0]]===3)top++;
+    if(a[it[0]]===1)low.push(it[1].replace(/\.$/,''));
+  });
+  var box=$('#v-sum');
+  box.innerHTML='<b>'+top+' frasi su 4 con «Ci sono!»</b>'+
+    (low.length?'<span>Da riprendere: '+low.join('; ')+'.</span>':'<span>Nessuna frase da riprendere. Ottimo lavoro.</span>')+
+    (S.valuta.like?'<span>Mi è piaciuto di più: '+S.valuta.like.toLowerCase()+'.</span>':'');
+  box.hidden=false;
+}
+$('#v-done').addEventListener('click',function(){
+  var first=!S.valuta.done;
+  S.valuta.done=true;save();showSummary();
+  if(first){addStars(2);toast('Scheda completata. Due stelle!');}
+  checkMaestro();
+});
+
+/* ---------- abaco ---------- */
+var ab=0,abTarget=0,abSolved=false;
+var ABR=[['m','Migliaia','1 perla vale 1000',1000],['c','Centinaia','1 perla vale 100',100],['d','Decine','1 perla vale 10',10],['u','Unità','1 perla vale 1',1]];
+var AB_DEF='Tocca + per aggiungere una perla. Quando arrivano 10, scatta il cambio.';
+function buildAbaco(){
+  $('#abaco').innerHTML=ABR.map(function(r){
+    var k=r[0];
+    return '<div class="rod"><div class="rhead r-'+k+'" id="ab-c-'+k+'">0</div><h3>'+r[1]+'</h3><small>'+r[2]+'</small>'+
+      '<div class="post" id="ab-post-'+k+'"></div>'+
+      '<div class="rbtns"><button type="button" data-k="'+k+'" data-s="1" aria-label="Aggiungi una perla alle '+r[1].toLowerCase()+'">+</button>'+
+      '<button type="button" data-k="'+k+'" data-s="-1" aria-label="Togli una perla dalle '+r[1].toLowerCase()+'">−</button></div></div>';
+  }).join('');
+}
+function exchangeText(prev,next,delta){
+  var ad=Math.abs(delta);
+  var P=[[1000,'10 centinaia fanno 1 migliaio.','1 migliaio si cambia in 10 centinaia.'],[100,'10 decine fanno 1 centinaio.','1 centinaio si cambia in 10 decine.'],[10,'10 unità fanno 1 decina.','1 decina si cambia in 10 unità.']];
+  for(var i=0;i<P.length;i++){
+    if(P[i][0]>ad&&Math.floor(prev/P[i][0])!==Math.floor(next/P[i][0]))return 'Cambio! '+(delta>0?P[i][1]:P[i][2]);
+  }
+  return '';
+}
+function renderAb(prev){
+  var d=dig(ab),p=dig(prev);
+  ABR.forEach(function(r){
+    var k=r[0],h='',i;
+    for(i=0;i<d[k];i++)h+='<span class="bead r-'+k+(d[k]>p[k]&&i===d[k]-1?' pop':'')+'"></span>';
+    $('#ab-post-'+k).innerHTML=h;
+    $('#ab-c-'+k).textContent=d[k];
+    $('[data-k="'+k+'"][data-s="1"]',$('#abaco')).disabled=(ab+r[3]>MAXN);
+    $('[data-k="'+k+'"][data-s="-1"]',$('#abaco')).disabled=(ab-r[3]<0);
+  });
+  $('#ab-num').textContent=ab;
+  $('#ab-words-now').textContent=parole(ab);
+  $('#ab-decomp').textContent=decomp(ab);
+}
+function abSay(txt){
+  var el=$('#ab-msg');
+  el.textContent=txt||AB_DEF;
+  el.classList.remove('flash');void el.offsetWidth;if(txt)el.classList.add('flash');
+}
+$('#abaco').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b||b.disabled)return;
+  var val={m:1000,c:100,d:10,u:1}[b.getAttribute('data-k')];
+  var delta=(+b.getAttribute('data-s'))*val,prev=ab;
+  if(prev+delta<0||prev+delta>MAXN)return;
+  ab=prev+delta;renderAb(prev);
+  abSay(exchangeText(prev,ab,delta));
+  if(ab===1000&&prev!==1000)tone([[523,.12],[659,.12],[784,.12],[1047,.3]]);
+  checkMissions(prev);
+});
+$('#ab-999').addEventListener('click',function(){var prev=ab;ab=999;renderAb(prev);abSay('Siamo a 999. Aggiungi 1 unità e guarda che cosa succede.');});
+$('#ab-reset').addEventListener('click',function(){var prev=ab;ab=0;renderAb(prev);abSay('');});
+function newTarget(){
+  var t;do{t=Math.random()<0.5?101+Math.floor(Math.random()*899):1001+Math.floor(Math.random()*8999)}while(t===abTarget);
+  abTarget=t;abSolved=false;
+  $('#ab-q').innerHTML='Forma il numero <b>'+t+'</b> sull\'abaco.';
+  $('#ab-words').textContent='Si legge: '+parole(t)+'.';
+  $('#ab-check').disabled=false;
+  var fb=$('#ab-fb');fb.textContent='';fb.className='fb';
+}
+$('#ab-check').addEventListener('click',function(){
+  if(abSolved)return;
+  var fb=$('#ab-fb');
+  if(ab===abTarget){
+    abSolved=true;this.disabled=true;
+    fb.className='fb good';fb.textContent='Esatto! '+abTarget+' si legge '+parole(abTarget)+'. Una stella in più.';
+    S.abaco=(S.abaco||0)+1;addStars(1);tone([[659,.1],[880,.2]]);
+  }else{
+    var d=dig(ab),t=dig(abTarget),names={m:'le migliaia',c:'le centinaia',d:'le decine',u:'le unità'},bad=null;
+    ['m','c','d','u'].forEach(function(k){if(bad===null&&d[k]!==t[k])bad=k;});
+    fb.className='fb bad';fb.textContent='Non ancora. Controlla '+names[bad]+'.';
+  }
+});
+$('#ab-next').addEventListener('click',newTarget);
+
+/* ---------- vista insegnante ---------- */
+var isOwner=false,teacherPref=true;
+try{teacherPref=localStorage.getItem('missione-mille-docente')!=='0';}catch(e){}
+function teacherOn(){return CQ.teacher()&&teacherPref;}
+function applyTeacher(){
+  $$('[data-teacher]').forEach(function(el){el.hidden=!teacherOn();});
+  $('#tbar').hidden=!CQ.teacher();
+  $('#gate-teacher-row').hidden=true;
+  $('#wipe').hidden=!CQ.teacher();
+  $('#t-txt').textContent=teacherOn()?'Vista insegnante: la lezione è visibile solo a te.':'La lezione è nascosta.';
+  $('#tswitch').textContent=teacherOn()?'Nascondi la lezione':'Mostra la lezione';
+  route();
+}
+function startTeacher(){
+  pupil={name:'',id:'',sessions:1,first:''};
+  S=freshS();
+  $('#gate').hidden=true;$('nav').hidden=false;$('main').hidden=false;$('#who').hidden=false;
+  applyTeacher();
+  $('#who-name').textContent='modalità insegnante';
+  $('#cq-chip').hidden=true;
+  setRec('Nessuna registrazione in modalità insegnante.','');
+  resetActivities();renderAll();
+  location.hash=teacherOn()?'#lezione':'#fabbrica';route();window.scrollTo(0,0);
+}
+
+/* ---------- laboratorio dei numeri ---------- */
+function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function intOf(sel){var v=$(sel).value.trim();return /^\d{1,4}$/.test(v)?parseInt(v,10):null;}
+function norm(s){return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]/g,'');}
+function fbSet(sel,txt,cls){var el=$(sel);el.textContent=txt;el.className='fb'+(cls?' '+cls:'');}
+function ne1000(n){
+  var h=Math.floor(n/100),r=n%100,w=h?(h===1?'cento':U[h]+'cento'):'';
+  if(r){
+    var s;
+    if(r<20)s=U[r];
+    else{var t=Math.floor(r/10),u=r%10;s=T[t]+(u?(u===3?'tré':U[u]):'');}
+    w+=s;
+  }
+  return w;
+}
+function paroleNE(n){
+  var k=Math.floor(n/1000),r=n%1000;
+  return (k?(k===1?'mille':U[k]+'mila'):'')+ne1000(r);
+}
+var BIG=false;
+function lo(){return BIG?1001:101}
+function hi(){return BIG?9999:999}
+function pickNew(prev){var t;do{t=rnd(lo(),hi())}while(t===prev);return t;}
+$('#lvl').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  BIG=b.getAttribute('data-l')==='1';
+  $$('#lvl button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  $$('.bigonly').forEach(function(x){x.hidden=!BIG});
+  newSc();newCo();newLe();newRd();newCp();newOd();
+});
+
+var sc={n:0,done:false};
+function newSc(){
+  sc.n=pickNew(sc.n);sc.done=false;
+  $('#sc-n').textContent=sc.n;$('#sc-n2').textContent=sc.n;
+  ['#sc-a-m','#sc-a-c','#sc-a-d','#sc-a-u','#sc-g-m','#sc-g-c','#sc-g-d','#sc-g-u'].forEach(function(id){$(id).value='';});
+  $('#sc-check').disabled=false;fbSet('#sc-fb','','');
+}
+$('#sc-check').addEventListener('click',function(){
+  if(sc.done)return;
+  var d=dig(sc.n);
+  var a=[intOf('#sc-a-c'),intOf('#sc-a-d'),intOf('#sc-a-u')],g=[intOf('#sc-g-c'),intOf('#sc-g-d'),intOf('#sc-g-u')];
+  var am=BIG?intOf('#sc-a-m'):0,gm=BIG?intOf('#sc-g-m'):0;
+  if(a.concat(g,[am,gm]).some(function(x){return x===null})){fbSet('#sc-fb','Riempi tutte le caselle con dei numeri.','bad');return;}
+  var okA=am===d.m*1000&&a[0]===d.c*100&&a[1]===d.d*10&&a[2]===d.u;
+  var okG=gm===d.m&&g[0]===d.c&&g[1]===d.d&&g[2]===d.u;
+  if(okA&&okG){
+    sc.done=true;this.disabled=true;S.scomp=(S.scomp||0)+1;
+    fbSet('#sc-fb','Esatto! '+sc.n+' = '+(BIG?d.m*1000+' + ':'')+d.c*100+' + '+d.d*10+' + '+d.u+'. Una stella in più.','good');
+    addStars(1);tone([[659,.1],[880,.2]]);
+  }else if(!okA&&!okG){fbSet('#sc-fb','Non ancora. Ogni cifra vale quanto il suo posto: guarda i colori.','bad');}
+  else if(!okA){fbSet('#sc-fb','Controlla la somma: ogni cifra vale quanto il suo posto.','bad');}
+  else{fbSet('#sc-fb','Controlla quante '+(BIG?'migliaia, ':'')+'centinaia, decine e unità ci sono.','bad');}
+});
+$('#sc-next').addEventListener('click',newSc);
+
+var co={n:0,done:false};
+function newCo(){
+  co.n=pickNew(co.n);co.done=false;
+  var d=dig(co.n),h='';
+  if(Math.random()<0.5){
+    h=(BIG?'<span class="pill p-m">'+d.m+' migliaia</span><span class="plus">+</span>':'')+'<span class="pill p-c">'+d.c+' centinaia</span><span class="plus">+</span><span class="pill p-d">'+d.d+' decine</span><span class="plus">+</span><span class="pill p-u">'+d.u+' unità</span>';
+  }else{
+    var parts=shuffle([[d.m*1000,'m'],[d.c*100,'c'],[d.d*10,'d'],[d.u,'u']].filter(function(x){return x[0]>0}));
+    h=parts.map(function(x){return '<span class="pill p-'+x[1]+'">'+x[0]+'</span>'}).join('<span class="plus">+</span>');
+  }
+  $('#co-pieces').innerHTML=h;$('#co-in').value='';
+  $('#co-check').disabled=false;fbSet('#co-fb','','');
+}
+$('#co-check').addEventListener('click',function(){
+  if(co.done)return;
+  var v=intOf('#co-in');
+  if(v===null){fbSet('#co-fb','Scrivi il numero con le cifre.','bad');return;}
+  if(v===co.n){
+    co.done=true;this.disabled=true;S.comp=(S.comp||0)+1;
+    fbSet('#co-fb','Esatto! Il numero è '+co.n+'. Una stella in più.','good');
+    addStars(1);tone([[659,.1],[880,.2]]);
+  }
+  else{fbSet('#co-fb','Non ancora. Metti ogni pezzo nel suo posto: '+(BIG?'migliaia, ':'')+'centinaia, decine, unità.','bad');}
+});
+$('#co-next').addEventListener('click',newCo);
+
+var le={n:0,done:false};
+function newLe(){
+  le.n=pickNew(le.n);le.done=false;
+  $('#le-n').textContent=le.n;$('#le-in').value='';$('#le-hint').textContent='';
+  $('#le-check').disabled=false;fbSet('#le-fb','','');
+}
+function checkLe(){
+  if(le.done)return;
+  var w=norm($('#le-in').value);
+  if(!w){fbSet('#le-fb','Scrivi il numero in lettere.','bad');return;}
+  if(w===norm(parole(le.n))||w===norm(paroleNE(le.n))){
+    le.done=true;$('#le-check').disabled=true;S.lett=(S.lett||0)+1;
+    fbSet('#le-fb','Esatto! '+le.n+' si scrive '+parole(le.n)+'. Una stella in più.','good');
+    addStars(1);tone([[659,.1],[880,.2]]);
+  }else{fbSet('#le-fb','Non ancora. Controlla le centinaia, le decine e le unità, una alla volta.','bad');}
+}
+$('#le-check').addEventListener('click',checkLe);
+$('#le-in').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();checkLe();}});
+$('#le-tip').addEventListener('click',function(){$('#le-hint').textContent='Comincia con «'+parole(le.n).slice(0,5)+'…»';});
+$('#le-next').addEventListener('click',newLe);
+
+var rd={n:0,done:false};
+function newRd(){
+  rd.n=pickNew(rd.n);rd.done=false;
+  var t=rd.n,d=dig(t);
+  var M=d.m*1000;
+  var cand=[M+d.c*100+d.u*10+d.d,M+d.d*100+d.c*10+d.u,M+d.u*100+d.d*10+d.c,d.c*1000+d.m*100+d.d*10+d.u,t+10,t-10,t+100,t-100,t+1,t-1,t+1000,t-1000].filter(function(v,i,a){return v>=lo()&&v<=hi()&&v!==t&&a.indexOf(v)===i});
+  var opts=shuffle([t].concat(shuffle(cand).slice(0,2)));
+  $('#rd-w').textContent=parole(t);
+  $('#rd-opts').innerHTML=opts.map(function(o){return '<button class="opt" type="button" data-v="'+o+'">'+o+'</button>'}).join('');
+  fbSet('#rd-fb','','');
+}
+$('#rd-opts').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b||rd.done||b.disabled)return;
+  var v=+b.getAttribute('data-v');
+  if(v===rd.n){
+    rd.done=true;b.classList.add('good');S.leggi=(S.leggi||0)+1;
+    fbSet('#rd-fb','Esatto! '+parole(rd.n)+' è '+rd.n+'. Una stella in più.','good');
+    addStars(1);tone([[659,.1],[880,.2]]);
+  }else{b.classList.add('bad');b.disabled=true;fbSet('#rd-fb','Non ancora. Leggi con calma '+(BIG?'le migliaia':'le centinaia')+', poi il resto.','bad');}
+});
+$('#rd-next').addEventListener('click',newRd);
+
+/* confronto e ordine */
+var cp={a:0,b:0,ans:'=',done:false};
+var CPW={'<':'minore di','>':'maggiore di','=':'uguale a'};
+function newCp(){
+  var r=Math.random(),a,b;
+  if(BIG){
+    if(r<0.2){a=rnd(1000,9999);b=a;}
+    else if(r<0.6){a=rnd(1100,9800);var st=[1000,100,10,1][rnd(0,3)];b=a+(Math.random()<0.5?-1:1)*rnd(1,9)*st;if(b<1000||b>9999)b=a+5;}
+    else{a=rnd(1000,9999);b=rnd(1000,9999);}
+  }
+  else if(r<0.2){a=rnd(100,1000);b=a;}
+  else if(r<0.35){a=1000;b=rnd(900,999);if(Math.random()<0.5){var t=a;a=b;b=t;}}
+  else if(r<0.7){
+    a=rnd(110,990);
+    b=a+(Math.random()<0.5?-1:1)*rnd(1,9)*(Math.random()<0.5?10:1);
+    if(b<100||b>1000)b=a+5;
+  }else{a=rnd(100,999);b=rnd(100,999);}
+  cp.a=a;cp.b=b;cp.ans=a<b?'<':(a>b?'>':'=');cp.done=false;
+  $('#cp-a').textContent=a;$('#cp-b').textContent=b;
+  var s=$('#cp-sym');s.textContent='?';s.className='cmpsym';
+  $$('#cp-opts .opt').forEach(function(o){o.disabled=false;o.classList.remove('good','bad');});
+  fbSet('#cp-fb','','');
+}
+$('#cp-opts').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b||cp.done||b.disabled)return;
+  var s=b.getAttribute('data-s');
+  if(s===cp.ans){
+    cp.done=true;b.classList.add('good');
+    var sy=$('#cp-sym');sy.textContent=s;sy.className='cmpsym ok';
+    S.conf=(S.conf||0)+1;
+    fbSet('#cp-fb','Esatto! '+cp.a+' è '+CPW[s]+' '+cp.b+'. Una stella in più.','good');
+    addStars(1);tone([[659,.1],[880,.2]]);
+  }else{
+    b.classList.add('bad');b.disabled=true;
+    fbSet('#cp-fb','Non ancora. Guarda prima la cifra '+(BIG?'delle migliaia':'delle centinaia')+'.','bad');
+  }
+});
+$('#cp-next').addEventListener('click',newCp);
+
+var od={sorted:[],asc:true,k:0,done:false};
+function newOd(){
+  var arr=[],seen={},same=Math.random()<0.5,h=BIG?rnd(1,8)*1000:rnd(1,8)*100,v;
+  while(arr.length<3){
+    v=BIG?(same?h+rnd(0,999):rnd(1000,9999)):(same?h+rnd(0,99):rnd(100,999));
+    if(!seen[v]){seen[v]=1;arr.push(v);}
+  }
+  od.asc=Math.random()<0.6;od.k=0;od.done=false;
+  od.sorted=arr.slice().sort(function(x,y){return od.asc?x-y:y-x;});
+  $('#od-q').textContent=od.asc?'Tocca i numeri dal più piccolo al più grande.':'Tocca i numeri dal più grande al più piccolo.';
+  $('#od-opts').innerHTML=shuffle(arr.slice()).map(function(o){return '<button class="opt" type="button" data-v="'+o+'">'+o+'</button>'}).join('');
+  $('#od-seq').textContent='';fbSet('#od-fb','','');
+}
+$('#od-opts').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b||od.done||b.disabled)return;
+  var v=+b.getAttribute('data-v');
+  if(v===od.sorted[od.k]){
+    b.classList.add('good');b.disabled=true;od.k++;
+    $('#od-seq').textContent=od.sorted.slice(0,od.k).join(od.asc?' < ':' > ');
+    if(od.k===od.sorted.length){
+      od.done=true;S.ord=(S.ord||0)+1;
+      fbSet('#od-fb','Ordine giusto! Una stella in più.','good');
+      addStars(1);tone([[659,.1],[880,.2]]);
+    }else{fbSet('#od-fb','','');}
+  }else{
+    fbSet('#od-fb',od.asc?'Non è il prossimo. Cerca il numero più piccolo tra quelli rimasti.':'Non è il prossimo. Cerca il numero più grande tra quelli rimasti.','bad');
+  }
+});
+$('#od-next').addEventListener('click',newOd);
+
+/* ---------- missioni dell'abaco ---------- */
+var MISSIONS=[
+  {id:'m1',t:'Scatta il mille',x:'Porta l’abaco a 999, poi aggiungi 1 unità. Che cosa succede?',ok:function(p,a){return p===999&&a===1000;}},
+  {id:'m2',t:'Solo centinaia',x:'Forma 700 con le perle verdi delle centinaia e nessun’altra perla.',ok:function(p,a){return a===700;}},
+  {id:'m3',t:'Lo zero in mezzo',x:'Forma un numero con lo zero al centro, per esempio 305.',ok:function(p,a){var d=dig(a);return a>100&&a<1000&&d.c>0&&d.d===0&&d.u>0;}},
+  {id:'m4',t:'Cifre gemelle',x:'Forma un numero con tre cifre uguali, per esempio 444.',ok:function(p,a){return a>=111&&a<=999&&a%111===0;}},
+  {id:'m5',t:'Cambio all’indietro',x:'Parti da 1000 e togli 1 unità. Guarda come cambiano le aste.',ok:function(p,a){return p===1000&&a===999;}},
+  {id:'m6',t:'Nasce una decina',x:'Porta le unità a 9 e aggiungi una perla: 10 unità si cambiano in 1 decina.',ok:function(p,a){return a===p+1&&p%10===9;}},
+  {id:'m7',t:'Milleuno',x:'Forma il numero 1001: mille e un\'unità, con due zeri in mezzo.',ok:function(p,a){return a===1001;}},
+  {id:'m8',t:'Il grande cambio',x:'Forma 1999 e aggiungi 1 unità: scattano tre cambi insieme e arrivi a 2000.',ok:function(p,a){return p===1999&&a===2000;}}
+];
+function renderMissions(){
+  var m0=S.missioni||{};
+  var done=MISSIONS.filter(function(m){return m0[m.id]}).length;
+  $('#ms-n').textContent=done;$('#ms-tot').textContent=MISSIONS.length;
+  $('#mis').innerHTML=MISSIONS.map(function(m){
+    var ok=!!m0[m.id];
+    return '<li'+(ok?' class="done"':'')+'><span class="ck" aria-hidden="true">'+(ok?'✓':'')+'</span><div><b>'+m.t+'</b><p>'+m.x+(ok?' <span class="lbl">Fatta!</span>':'')+'</p></div></li>';
+  }).join('');
+}
+function checkMissions(prev){
+  if(!S.missioni)S.missioni={};
+  var got=false;
+  MISSIONS.forEach(function(m){
+    if(!S.missioni[m.id]&&m.ok(prev,ab)){
+      S.missioni[m.id]=true;got=true;
+      addStars(2);toast('Missione compiuta: '+m.t+'. Due stelle!');
+      tone([[523,.12],[659,.12],[784,.22]]);
+    }
+  });
+  if(got){
+    renderMissions();
+    if(MISSIONS.every(function(m){return S.missioni[m.id]}))award('abachista');
+  }
+}
+
+/* ---------- accesso con il nome ---------- */
+var NAMES_KEY='missione-mille-nomi';
+function getNames(){try{var a=JSON.parse(localStorage.getItem(NAMES_KEY)||'[]');return Array.isArray(a)?a.filter(function(x){return typeof x==='string'}).slice(0,12):[];}catch(e){return [];}}
+function rememberName(nm){var a=getNames().filter(function(x){return slug(x)!==slug(nm)});a.unshift(nm);try{localStorage.setItem(NAMES_KEY,JSON.stringify(a.slice(0,12)));}catch(e){}}
+function renderGate(){
+  var a=getNames();
+  $('#gate-names').innerHTML=a.map(function(x,i){return '<button type="button" class="btn ghost" data-i="'+i+'">'+esc(x)+'</button>'}).join('');
+  $('#gate-recent').hidden=a.length===0;
+}
+function resetActivities(){
+  stopTimer();
+  var prev=n;n=0;renderF(prev);$('#cambio').textContent=DEFAULT_MSG;
+  DEN.forEach(function(d){cnt[d]=0});renderB();
+  pos=0;trail=[0];renderS();newQ();
+  var ap=ab;ab=0;renderAb(ap);abSay('');newTarget();
+  newSc();newCo();newLe();newRd();newCp();newOd();
+}
+function renderAll(){renderBoard();renderFound();renderMissions();$('#v-sum').hidden=true;buildV();}
+async function startSession(pid){
+  var cp=CQ.pupils[pid];if(!cp){openGate();return;}
+  var name=cp.n,id=pid;
+  pupil={name:name,id:id,sessions:1,first:new Date().toISOString()};
+  var hadLocal=false;try{hadLocal=localStorage.getItem(KEYP+id)!==null;}catch(e){}
+  loadS(id);
+  if(!chipCtl)chipCtl=CQ.chip($('#cq-chip'),id,'mat',{onLogout:leave});else chipCtl.setId(id);
+  $('#cq-chip').hidden=false;
+  $('#gate').hidden=true;$('nav').hidden=false;$('main').hidden=false;$('#who').hidden=false;
+  applyTeacher();
+  $('#who-name').textContent=name;
+  setRec(dbh?'Il registro della classe è attivo.':'Registro non disponibile: i progressi restano solo su questo dispositivo.',dbh?'ok':'bad');
+  resetActivities();renderAll();
+  location.hash=teacherOn()?'#lezione':'#fabbrica';route();window.scrollTo(0,0);
+  if(dbh){
+    try{
+      var snap=await dbh.doc('alunni/'+id).get();
+      if(pupil.id===id&&snap.exists){
+        var dta=snap.data()||{};
+        pupil.sessions=(+dta.sessioni||0)+1;
+        if(dta.primoAccesso)pupil.first=dta.primoAccesso;
+        if(!hadLocal&&dta.stato&&typeof dta.stato==='object'){S=mergeS(dta.stato);renderAll();}
+      }
+    }catch(e){}
+  }
+  if(pupil.id===id)save();
+}
+function initGate(){
+  $('#switch').addEventListener('click',function(){CQ.logout();CQ.setTeacher(false,true);leave();});
+  $('#tswitch').addEventListener('click',function(){
+    teacherPref=!teacherPref;
+    try{localStorage.setItem('missione-mille-docente',teacherPref?'1':'0');}catch(e){}
+    applyTeacher();
+  });
+  if(window.claude&&window.claude.use){
+    window.claude.use('user').then(function(u){return u?u.isOwner():false}).then(function(o){isOwner=!!o;applyTeacher();}).catch(function(){});
+    window.claude.use('db').then(function(d){
+      dbh=d||null;
+      setRec(dbh?'Il registro della classe è attivo.':'Registro non disponibile: i progressi restano solo su questo dispositivo.',dbh?'ok':'bad');
+    }).catch(function(){setRec('Registro non disponibile: i progressi restano solo su questo dispositivo.','bad');});
+  }else{
+    setRec('Registro non disponibile: i progressi restano solo su questo dispositivo.','bad');
+  }
+  openGate();
+}
+function openGate(){
+  CQ.gate({title:'Missione Mille',subj:'mat'}).then(function(r){
+    if(r&&r.teacher)startTeacher();else if(r&&r.id)startSession(r.id);
+  });
+}
+async function leave(){
+  clearTimeout(syncT);await flush();stopTimer();
+  pupil={name:'',id:'',sessions:1,first:''};
+  $('nav').hidden=true;$('main').hidden=true;$('#who').hidden=true;$('#cq-chip').hidden=true;$('#tbar').hidden=true;
+  window.scrollTo(0,0);openGate();
+}
+
+/* ---------- ricomincia ---------- */
+var wipeArmed=false,wipeT;
+$('#wipe').addEventListener('click',function(){
+  var b=this;
+  if(!wipeArmed){
+    wipeArmed=true;b.textContent='Tocca ancora per azzerare stelle e badge';
+    wipeT=setTimeout(function(){wipeArmed=false;b.textContent='Ricomincia da zero'},4000);
+    return;
+  }
+  clearTimeout(wipeT);wipeArmed=false;b.textContent='Ricomincia da zero';
+  S=freshS();save();
+  DEN.forEach(function(d){cnt[d]=0});
+  renderBoard();renderFound();renderB();buildV();$('#v-sum').hidden=true;
+  var prev=n;n=0;renderF(prev);$('#cambio').textContent=DEFAULT_MSG;
+  pos=0;trail=[0];renderS();newQ();
+  var abPrev=ab;ab=0;renderAb(abPrev);abSay('');newTarget();
+  toast('Tutto pronto per una nuova squadra.');
+});
+
+/* ---------- avvio ---------- */
+renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV();newQ();buildAbaco();renderAb(0);newTarget();newSc();newCo();newLe();newRd();newCp();newOd();renderMissions();route();initGate();
+})();
+</script>
+
+</body></html>
