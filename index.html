@@ -562,7 +562,7 @@ function setupPanel(){
   var own=takenSet(null);
   return '<div class="panel"><h3>Nomi della classe</h3><p class="note" style="text-align:left;margin:6px 0 14px">Scrivi il nome di ogni bambino sotto la sua caricatura. A ogni nuovo nome l\'app crea anche il suo codice d\'accesso.</p><div class="sgrid">'+C.CHARS.map(function(c,i){
     var v=ST.setupVals[c.k];if(v===undefined)v=own[c.k]?own[c.k].n:"";
-    return '<div class="sc"><img src="img/'+c.k+'.webp" alt="Caricatura '+(i+1)+'"><label class="l" for="nm_'+c.k+'">Caricatura '+(i+1)+'</label><input type="text" id="nm_'+c.k+'" data-k="'+c.k+'" maxlength="30" autocomplete="off" value="'+esc(v)+'"></div>';
+    return '<div class="sc"><img src="img/'+c.k+'.webp?v=3d1" alt="Caricatura '+(i+1)+'"><label class="l" for="nm_'+c.k+'">Caricatura '+(i+1)+'</label><input type="text" id="nm_'+c.k+'" data-k="'+c.k+'" maxlength="30" autocomplete="off" value="'+esc(v)+'"></div>';
   }).join("")+'</div><div class="row" style="margin-top:16px"><button class="btn pri" data-act="setupsave">Salva i nomi</button></div></div>';
 }
 /* ---------- pagine per materia ---------- */

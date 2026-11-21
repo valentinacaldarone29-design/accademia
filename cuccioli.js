@@ -5,7 +5,7 @@
 var C={};window.Cuccioli=C;
 
 /* ---------- dati fissi ---------- */
-C.CHARS=[{k:"c01",w:183,h:460,hx:0.545},{k:"c02",w:195,h:460,hx:0.537},{k:"c03",w:192,h:460,hx:0.579},{k:"c04",w:196,h:460,hx:0.574},{k:"c05",w:154,h:460,hx:0.484},{k:"c06",w:196,h:460,hx:0.488},{k:"c07",w:174,h:460,hx:0.492},{k:"c08",w:179,h:460,hx:0.497},{k:"c09",w:150,h:460,hx:0.527},{k:"c10",w:149,h:460,hx:0.401},{k:"c11",w:186,h:460,hx:0.454},{k:"c12",w:145,h:460,hx:0.487},{k:"c13",w:195,h:460,hx:0.504},{k:"c14",w:190,h:460,hx:0.531},{k:"c15",w:153,h:460,hx:0.502}];
+C.CHARS=[{k:"c01",w:166,h:460,hx:0.58},{k:"c02",w:192,h:460,hx:0.518},{k:"c03",w:168,h:460,hx:0.517},{k:"c04",w:172,h:460,hx:0.563},{k:"c05",w:148,h:460,hx:0.498},{k:"c06",w:176,h:460,hx:0.5},{k:"c07",w:148,h:460,hx:0.46},{k:"c08",w:164,h:460,hx:0.491},{k:"c09",w:142,h:460,hx:0.535},{k:"c10",w:136,h:460,hx:0.415},{k:"c11",w:160,h:460,hx:0.437},{k:"c12",w:138,h:460,hx:0.482},{k:"c13",w:178,h:460,hx:0.542},{k:"c14",w:156,h:460,hx:0.569},{k:"c15",w:163,h:460,hx:0.494}];
 C.CH={};C.CHARS.forEach(function(c){C.CH[c.k]=c});
 C.COLORS=[{k:"teal",h:"#4B97AB"},{k:"pink",h:"#D2325F"},{k:"orange",h:"#DD9433"},{k:"green",h:"#6FB67F"},{k:"purple",h:"#8C6FC7"},{k:"yellow",h:"#E6B929"}];
 C.STAGES=["Sagoma","Apprendista","Esploratore","Campione","Leggenda"];
@@ -116,7 +116,7 @@ function capeSvg(c){return '<svg viewBox="0 0 60 80" preserveAspectRatio="none" 
 function wingsSvg(c){var w='<path d="M58 30C40 4 12 0 2 8C14 14 10 26 22 30C10 36 18 50 34 46C42 44 52 38 58 30Z" fill="'+c+'" stroke="#fff" stroke-width="2" opacity=".85"/><path d="M50 30C38 18 24 14 14 16M48 32C38 34 30 38 24 42" fill="none" stroke="#fff" stroke-width="1.5" opacity=".7"/>';return '<svg viewBox="0 0 120 60" aria-hidden="true">'+w+'<g transform="translate(120 0) scale(-1 1)">'+w+'</g></svg>'}
 function pct(v){return (Math.round(v*10)/10)+"%"}
 function box(l,t,w,h){return "left:"+pct(l)+";top:"+pct(t)+";width:"+pct(w)+(h!=null?";height:"+pct(h):"")}
-C.img=function(sp){return (C.base||"")+"img/"+sp+".webp"};
+C.img=function(sp){return (C.base||"")+"img/"+sp+".webp"+(/^c\d\d$/.test(sp)?"?v=3d1":"")};
 
 /* opts: stage, subj (costume; null = nessun costume; se assente usa l'ultima materia), powers (false per spegnerli) */
 /* ritratti in costume per materia, per singolo alunno (caricatura: {materia:[file, larghezza, centro testa, scena]}) */
