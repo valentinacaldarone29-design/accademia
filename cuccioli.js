@@ -122,7 +122,7 @@ C.img=function(sp){return (C.base||"")+"img/"+sp+".webp"+(/^c\d\d$/.test(sp)?"?v
 /* ritratti in costume per materia, per singolo alunno (caricatura: {materia:[file, larghezza, centro testa, scena]}) */
 C.KIDOF={};
 /* evoluzione maghetto: img/cXX-e1..e5.webp per le 5 tappe */
-C.EVO={c05:{w:228,hx:.508,v:"1"},c06:{w:255,hx:.544,v:"1"}};
+C.EVO={c05:{w:228,hx:.508,v:"1"},c08:{w:265,hx:.508,v:"1"},c06:{w:255,hx:.544,v:"1"}};
 C.avatar=function(p,o){
   o=o||{};
   var rc=C.colorHex(p.co),c=C.CH[p.sp];
