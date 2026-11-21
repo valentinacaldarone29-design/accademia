@@ -116,7 +116,7 @@ function capeSvg(c){return '<svg viewBox="0 0 60 80" preserveAspectRatio="none" 
 function wingsSvg(c){var w='<path d="M58 30C40 4 12 0 2 8C14 14 10 26 22 30C10 36 18 50 34 46C42 44 52 38 58 30Z" fill="'+c+'" stroke="#fff" stroke-width="2" opacity=".85"/><path d="M50 30C38 18 24 14 14 16M48 32C38 34 30 38 24 42" fill="none" stroke="#fff" stroke-width="1.5" opacity=".7"/>';return '<svg viewBox="0 0 120 60" aria-hidden="true">'+w+'<g transform="translate(120 0) scale(-1 1)">'+w+'</g></svg>'}
 function pct(v){return (Math.round(v*10)/10)+"%"}
 function box(l,t,w,h){return "left:"+pct(l)+";top:"+pct(t)+";width:"+pct(w)+(h!=null?";height:"+pct(h):"")}
-C.img=function(sp){return (C.base||"")+"img/"+sp+".webp"+(/^c\d\d$/.test(sp)?"?v=3d2":"")};
+C.img=function(sp){return (C.base||"")+"img/"+sp+".webp"+(/^c\d\d$/.test(sp)?"?v=3d3":"")};
 
 /* opts: stage, subj (costume; null = nessun costume; se assente usa l'ultima materia), powers (false per spegnerli) */
 /* ritratti in costume per materia, per singolo alunno (caricatura: {materia:[file, larghezza, centro testa, scena]}) */
