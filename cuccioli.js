@@ -395,7 +395,7 @@ C.who=function(){
 var TK="cuccioli-maestra",RK="cuccioli-maestra-ricordata";
 /* ===== più maestre: ognuna con il suo PIN personale, le sue materie e le sue app ===== */
 C.PAGE=(location.pathname.split("/").pop()||"").replace(/\.html$/,"");
-C.T1={id:"t1",n:"Valentina",img:"img/maestra-valentina.webp?v=3d4",subj:["mat","geo","sci","mot","art","mus","tec","civ"]};
+C.T1={id:"t1",n:"Valentina",img:"img/maestra-valentina.webp?v=3d5",subj:["mat","geo","sci","mot","art","mus","tec","civ"]};
 C.teachers=function(){
   var t=C.settings.teachers;
   if(t&&t.length)return t;
@@ -422,7 +422,7 @@ C.tFigure=function(t,mode,opts){
   opts=opts||{};
   if(!t||!t.img)return C.tAvatar(t,"big");
   /* ritratti già in costume: maga e materie (t.outfits = {maga:[img,rapporto], sci:[img,rapporto]…}) */
-  var OF=t.outfits||(t.id==="t1"?{maga:["img/maestra-valentina-maga.webp?v=3d2",2.457],sci:["img/maestra-valentina-sci3e.webp",2.959],geo:["img/maestra-valentina-geo.webp?v=3d2",2.747],mus:["img/maestra-valentina-mus.webp?v=3d2",3.03],mat:["img/maestra-valentina-mat.webp?v=3d2",3.058],mot:["img/maestra-valentina-mot.webp?v=3d2",2.959],art:["img/maestra-valentina-art.webp?v=3d2",2.415],tec:["img/maestra-valentina-tec.webp?v=3d2",2.439]}:{});
+  var OF=t.outfits||(t.id==="t1"?{maga:["img/maestra-valentina-maga.webp?v=3d2",2.457],sci:["img/maestra-valentina-sci3f.webp",3.03],geo:["img/maestra-valentina-geo.webp?v=3d2",2.747],mus:["img/maestra-valentina-mus.webp?v=3d2",3.03],mat:["img/maestra-valentina-mat.webp?v=3d2",3.058],mot:["img/maestra-valentina-mot.webp?v=3d2",2.959],art:["img/maestra-valentina-art.webp?v=3d2",2.415],tec:["img/maestra-valentina-tec.webp?v=3d2",2.439]}:{});
   if(mode&&OF[mode]){
     var fx0=opts.fx!==false?'<span class="cq-glow"></span><i class="cq-sp s1">✦</i><i class="cq-sp s2">✧</i><i class="cq-sp s3">✦</i><i class="cq-sp s4">·</i><i class="cq-sp s5">✦</i>':'';
     var sd0=mode==="maga"?null:C.subjOf(mode);
@@ -510,7 +510,7 @@ C.dock=function(){var d=document.getElementById("cq-dock");if(!d){d=document.cre
 C.guide=function(){
   var g=C.GAMES.filter(function(x){return x.k===C.PAGE})[0];if(!g||document.getElementById("cq-gbtn"))return;
   var t=C.tById(g.by||"t1");if(!t)return;
-  var OF=t.outfits||(t.id==="t1"?{sci:["img/maestra-valentina-sci3e.webp"],geo:["img/maestra-valentina-geo.webp?v=3d2"],mat:["img/maestra-valentina-mat.webp?v=3d2"],mus:["img/maestra-valentina-mus.webp?v=3d2"],mot:["img/maestra-valentina-mot.webp?v=3d2"],art:["img/maestra-valentina-art.webp?v=3d2"],tec:["img/maestra-valentina-tec.webp?v=3d2"]}:{});
+  var OF=t.outfits||(t.id==="t1"?{sci:["img/maestra-valentina-sci3f.webp"],geo:["img/maestra-valentina-geo.webp?v=3d2"],mat:["img/maestra-valentina-mat.webp?v=3d2"],mus:["img/maestra-valentina-mus.webp?v=3d2"],mot:["img/maestra-valentina-mot.webp?v=3d2"],art:["img/maestra-valentina-art.webp?v=3d2"],tec:["img/maestra-valentina-tec.webp?v=3d2"]}:{});
   var face=OF[g.s]?Object.assign({},t,{img:OF[g.s][0]}):t;
   var btn=document.createElement("button");btn.type="button";btn.id="cq-gbtn";btn.className="cq-gbtn";btn.setAttribute("aria-label","La "+C.tName(t)+" ti legge le istruzioni");btn.setAttribute("aria-expanded","false");
   btn.innerHTML=C.tAvatar(face)+'<span class="cq-gbadge" aria-hidden="true">🔊</span>';
