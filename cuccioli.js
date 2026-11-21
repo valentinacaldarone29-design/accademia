@@ -52,7 +52,7 @@ C.colorHex=function(k){for(var i=0;i<C.COLORS.length;i++)if(C.COLORS[i].k===k)re
 C.pace=10;
 C.thr=function(){return C.BASE.map(function(v){return Math.round(v*C.pace)})};
 /* evoluzione maghetto: 7 livelli = grigio, bianco e nero, poi le 5 figure */
-C.evoThr=function(){var t=C.thr(),L=t[4];return [0,Math.round(L*.025),Math.round(L*.05),t[1],t[2],t[3],t[4]]};
+C.evoThr=function(){var L=C.thr()[4];return [0,.05,.12,.22,.38,.62,1].map(function(f){return Math.round(L*f)})};
 C.evoLv=function(xp){var t=C.evoThr(),s=0;for(var i=0;i<t.length;i++){if(xp>=t[i])s=i}return s};
 C.stageOf=function(xp){var t=C.thr(),s=0;for(var i=0;i<t.length;i++){if(xp>=t[i])s=i}return s};
 C.accOf=function(p){return C.SUBJ.filter(function(s){return s.a&&((p.sj||{})[s.k]||0)>=C.UNLOCK}).map(function(s){return s.k})};
