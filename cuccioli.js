@@ -49,7 +49,7 @@ C.esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){ret
 C.clone=function(o){return JSON.parse(JSON.stringify(o))};
 C.subjOf=function(k){for(var i=0;i<C.SUBJ.length;i++)if(C.SUBJ[i].k===k)return C.SUBJ[i];return null};
 C.colorHex=function(k){for(var i=0;i<C.COLORS.length;i++)if(C.COLORS[i].k===k)return C.COLORS[i].h;return C.COLORS[0].h};
-C.pace=1;
+C.pace=10;
 C.thr=function(){return C.BASE.map(function(v){return Math.round(v*C.pace)})};
 C.stageOf=function(xp){var t=C.thr(),s=0;for(var i=0;i<t.length;i++){if(xp>=t[i])s=i}return s};
 C.accOf=function(p){return C.SUBJ.filter(function(s){return s.a&&((p.sj||{})[s.k]||0)>=C.UNLOCK}).map(function(s){return s.k})};
@@ -183,10 +183,10 @@ C.boot=function(){
     if(!db){
       C.mode="local";C.isOwner=true;
       try{var raw=JSON.parse(localStorage.getItem(LS));if(raw){C.pupils=raw.pupils||{};C.settings=raw.settings||{}}}catch(e){}
-      C.pace=+C.settings.pace||1;C.loaded=true;notify();setTimeout(C.bkAuto,3000);return C;
+      C.pace=+C.settings.pace||10;C.loaded=true;notify();setTimeout(C.bkAuto,3000);return C;
     }
     C.mode="db";
-    db.doc("meta/settings").onSnapshot(function(s){var d=s.exists?s.data():null;C.settings=d||{};C.pace=d&&d.pace?+d.pace:1;notify()},function(){});
+    db.doc("meta/settings").onSnapshot(function(s){var d=s.exists?s.data():null;C.settings=d||{};C.pace=d&&d.pace?+d.pace:10;notify()},function(){});
     await new Promise(function(res){
       var done=false,t=setTimeout(function(){if(!done){done=true;res()}},10000);
       db.collection("pupils").onSnapshot(function(snap){
@@ -212,7 +212,7 @@ C.remove=function(id){
   return enqueue(id,function(){return C.db.doc("pupils/"+id).delete()});
 };
 C.saveSettings=function(patch){
-  C.settings=Object.assign({},C.settings,patch);C.pace=+C.settings.pace||1;saveLocal();notify();
+  C.settings=Object.assign({},C.settings,patch);C.pace=+C.settings.pace||10;saveLocal();notify();
   if(!C.db)return Promise.resolve();
   var d=C.clone(C.settings);return enqueue("meta",function(){return C.db.doc("meta/settings").set(d)});
 };
