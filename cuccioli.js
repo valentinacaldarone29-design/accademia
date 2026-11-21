@@ -125,7 +125,7 @@ C.img=function(sp){return (C.base||"")+"img/"+sp+".webp"+(/^c\d\d$/.test(sp)?"?v
 /* ritratti in costume per materia, per singolo alunno (caricatura: {materia:[file, larghezza, centro testa, scena]}) */
 C.KIDOF={};
 /* evoluzione maghetto: img/cXX-e1..e5.webp per le 5 tappe */
-C.EVO={c02:{w:238,hx:.543,v:"1"},c01:{w:234,hx:.523,v:"1"},c15:{w:256,hx:.502,v:"1"},c03:{w:259,hx:.47,v:"1"},c07:{w:284,hx:.485,v:"1"},c11:{w:243,hx:.5,v:"1"},c05:{w:228,hx:.508,v:"1"},c08:{w:265,hx:.508,v:"1"},c06:{w:255,hx:.544,v:"1"}};
+C.EVO={c14:{w:235,hx:.568,v:"1"},c10:{w:256,hx:.506,v:"1"},c12:{w:265,hx:.5,v:"1"},c02:{w:238,hx:.543,v:"1"},c01:{w:234,hx:.523,v:"1"},c15:{w:256,hx:.502,v:"1"},c03:{w:259,hx:.47,v:"1"},c07:{w:284,hx:.485,v:"1"},c11:{w:243,hx:.5,v:"1"},c05:{w:228,hx:.508,v:"1"},c08:{w:265,hx:.508,v:"1"},c06:{w:255,hx:.544,v:"1"}};
 C.avatar=function(p,o){
   o=o||{};
   var rc=C.colorHex(p.co),c=C.CH[p.sp];
