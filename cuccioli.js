@@ -762,7 +762,7 @@ C.otherTeacherHere=function(){var id=C.teacherId();return !!id&&!C.teacher()};
 C.remembered=function(){var r=null;try{r=JSON.parse(localStorage.getItem(RK)||"null")}catch(e){}if(!r||!r.id)return null;var t=C.tById(r.id);return t&&t.pin&&t.pin===r.pin?r.id:null};
 C.remember=function(id){var t=C.tById(id);if(!t||!t.pin)return;try{localStorage.setItem(RK,JSON.stringify({id:id,pin:t.pin}))}catch(e){}};
 C.forget=function(){try{localStorage.removeItem(RK)}catch(e){}};
-C.rememberBox=function(){return '<label class="cq-keep"><input type="checkbox" name="keep"> <span><b>Resta collegata su questo dispositivo</b><small>Il PIN viene salvato: la prossima volta entri senza scriverlo. Non usarlo sulla LIM o su computer condivisi.</small></span></label>'};
+C.rememberBox=function(){return '<label class="cq-keep"><input type="checkbox" name="keep" checked> <span><b>Resta collegata su questo dispositivo</b><small>Il PIN viene salvato: la prossima volta entri senza scriverlo. Non usarlo sulla LIM o su computer condivisi.</small></span></label>'};
 C.setTeacher=function(v,silent){if(v===true)v=C.pinTeacher||"t1";if(!v&&window.Registro&&window.Registro.kind()==="t")window.Registro.logout();try{if(v)sessionStorage.setItem(TK,v);else sessionStorage.setItem(TK,"off")}catch(e){}if(v)setTimeout(C.bkAuto,500);if(!silent)notify()};
 /* il PIN dice chi è la maestra. newFor: id della maestra che sceglie il suo primo PIN */
 C.checkPin=function(pin,newFor){
@@ -780,7 +780,7 @@ C.checkPin=function(pin,newFor){
 C.newTeachers=function(){return C.teachers().filter(function(t){return !t.pin&&!t.hp})};
 /* keep: resta collegato su questo dispositivo (localStorage); altrimenti solo finché la scheda è aperta */
 C.setWho=function(id,keep){memWho=id;C.setTeacher(false,true);try{sessionStorage.setItem(WHO,id)}catch(e){}try{if(keep===false)localStorage.removeItem(WHO);else localStorage.setItem(WHO,id)}catch(e){}notify()};
-C.keepKidBox=function(){return '<label class="cq-keep"><input type="checkbox" name="keepkid"> <span><b>Resta collegato su questo dispositivo</b><small>La prossima volta entri senza scrivere il codice. Togli la spunta se il tablet o il computer lo usano anche i compagni.</small></span></label>'};
+C.keepKidBox=function(){return '<label class="cq-keep"><input type="checkbox" name="keepkid" checked> <span><b>Resta collegato su questo dispositivo</b><small>La prossima volta entri senza scrivere il codice. Togli la spunta se il tablet o il computer lo usano anche i compagni.</small></span></label>'};
 C.logout=function(){if(window.Registro&&window.Registro.kind()==="p")window.Registro.logout();memWho=null;try{sessionStorage.removeItem(WHO)}catch(e){}try{localStorage.removeItem(WHO)}catch(e){}notify()};
 
 /* ---------- interfaccia condivisa ---------- */
