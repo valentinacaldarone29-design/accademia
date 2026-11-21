@@ -174,7 +174,7 @@ textarea{min-height:110px;resize:vertical}
 .sk .bar{height:8px;margin:6px 0 4px}
 .sk .bar i{background:var(--c)}
 .sk small{font-size:13px;color:var(--muted);font-weight:700}
-.path{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.path{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.path.p7{grid-template-columns:repeat(7,1fr)}@media (max-width:640px){.path.p7{grid-template-columns:repeat(4,1fr)}}
 .path div{text-align:center;min-width:0}
 .path .av{max-width:96px;margin:0 auto}
 .path .lk .av{filter:brightness(0);opacity:.22}
@@ -462,7 +462,7 @@ details.fold>.fbody{padding:14px 18px 18px}
 </div>
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1121k"></script>
+<script src="cuccioli.js?v=1121l"></script>
 <script src="stagioni.js"></script>
 <script>
 (function(){
@@ -476,7 +476,7 @@ function totalXp(){var t=0;Object.keys(C.pupils).forEach(function(i){t+=C.pupils
 function setTeacher(v){C.setTeacher(v,true);if(v)C.logout()}
 function hash(){return location.hash.replace("#","")}
 function go(h){if(hash()===h)render();else location.hash=h}
-function bar(p){var s=C.stageOf(p.xp||0),t=C.thr();return s>=4?100:Math.round(100*((p.xp||0)-t[s])/(t[s+1]-t[s]))}
+function bar(p){return C.lvInfo(p).pc}
 
 /* ---------- accesso alunno ---------- */
 function viewLogin(){
@@ -493,9 +493,9 @@ function viewMe(id){
   var p=C.pupils[id],s=C.stageOf(p.xp||0),t=C.thr(),col=C.colorHex(p.co);
   var wd=ST.wd===null||ST.wd===undefined?(p.ls||"none"):ST.wd;
   var subj=wd==="none"?null:wd;
-  var need=s>=4?"Sei una Leggenda!":"Mancano "+(t[s+1]-(p.xp||0))+" stelle per diventare "+C.STAGES[s+1];
+  var LI=C.lvInfo(p),need=LI.max?"Sei un "+LI.name+"!":"Mancano "+LI.need+" stelle per la tappa «"+LI.next+"»";
   var h='<div class="hello"><b>Ciao '+esc(p.n)+'!</b><button class="btn sm" data-act="logout">Non sono io / Esci</button></div>';
-  h+='<div class="me-grid"><div class="me-l"><div class="mp" style="--mc:'+col+'"><div class="mband"><h2>'+esc(p.n)+'</h2><span class="stg">'+C.STAGES[s]+(subj?' · '+esc(C.subjOf(subj).cos):'')+'</span></div><div class="mbody">'+
+  h+='<div class="me-grid"><div class="me-l"><div class="mp" style="--mc:'+col+'"><div class="mband"><h2>'+esc(p.n)+'</h2><span class="stg">'+LI.name+(subj?' · '+esc(C.subjOf(subj).cos):'')+'</span></div><div class="mbody">'+
     '<div class="big">'+C.avatar(p,{subj:subj})+'</div><div class="xpline">'+(p.xp||0)+' ★</div><div class="bar"><i style="width:'+bar(p)+'%"></i></div><p class="need">'+need+'</p></div></div></div><div class="me-r">';
   h+='<div class="panel"><p class="sec">Le mie materie</p><p style="color:var(--muted);margin:0 0 10px">Scegli una materia per vedere i suoi giochi.</p>'+subjTiles(kidGames(),"m-",p)+'</div>';
   var pws=C.powers(p,s);
@@ -547,7 +547,7 @@ function goalHTML(ids){
 function card(id,p){
   var s=C.stageOf(p.xp||0),t=C.thr(),sel=!!ST.sel[id];
   return '<button class="pc" data-act="'+(ST.selMode?"pick":"open")+'" data-id="'+id+'"'+(ST.selMode?' aria-pressed="'+sel+'"':'')+'>'+
-    '<div class="avw">'+C.avatar(p)+'</div><strong>'+esc(p.n)+'</strong><span class="stg">'+(C.CH[p.sp]?C.STAGES[s]:'Scegli la caricatura')+'</span><span class="code">'+esc(C.fmtCode(p.code||"—"))+'</span>'+
+    '<div class="avw">'+C.avatar(p)+'</div><strong>'+esc(p.n)+'</strong><span class="stg">'+(C.CH[p.sp]?C.lvInfo(p).name:'Scegli la caricatura')+'</span><span class="code">'+esc(C.fmtCode(p.code||"—"))+'</span>'+
     '<div class="bar"><i style="width:'+bar(p)+'%"></i></div><small>'+(p.xp||0)+' ★'+(s<4?' · prossima a '+t[s+1]:'')+'</small></button>';
 }
 function subjOptions(sel){return C.SUBJ.map(function(s){return '<option value="'+s.k+'"'+(s.k===sel?" selected":"")+'>'+s.n+'</option>'}).join("")}
@@ -667,8 +667,8 @@ function viewCodes(){
 }
 function viewPupil(id){
   var p=C.pupils[id],s=C.stageOf(p.xp||0),t=C.thr(),col=C.colorHex(p.co);
-  var need=s>=4?"Stadio massimo raggiunto":"Mancano "+(t[s+1]-(p.xp||0))+" punti per diventare "+C.STAGES[s+1];
-  var h=tbar()+'<a class="back" href="#alunni">← Gli alunni</a><div class="mp" style="--mc:'+col+'"><div class="mband"><h2>'+esc(p.n)+'</h2><span class="stg">'+(C.CH[p.sp]?C.STAGES[s]:'Scegli la caricatura')+' · codice '+esc(C.fmtCode(p.code||"—"))+'</span></div><div class="mbody">'+
+  var LI=C.lvInfo(p),need=LI.max?"Tappa finale raggiunta":"Mancano "+LI.need+" punti per la tappa «"+LI.next+"»";
+  var h=tbar()+'<a class="back" href="#alunni">← Gli alunni</a><div class="mp" style="--mc:'+col+'"><div class="mband"><h2>'+esc(p.n)+'</h2><span class="stg">'+(C.CH[p.sp]?LI.name:'Scegli la caricatura')+' · codice '+esc(C.fmtCode(p.code||"—"))+'</span></div><div class="mbody">'+
     '<div class="big">'+C.avatar(p)+'</div><div class="xpline">'+(p.xp||0)+' ★</div><div class="bar"><i style="width:'+bar(p)+'%"></i></div><p class="need">'+need+'</p></div></div>';
   if(C.canWrite){
     h+='<div class="panel"><p class="sec">Assegna punti</p><div class="subj">'+C.SUBJ.map(function(x){return '<button class="sj" style="--c:'+x.c+'" data-act="subj" data-v="'+x.k+'" aria-pressed="'+(ST.subj===x.k)+'"><i></i>'+x.n+'</button>'}).join("")+'</div>'+
@@ -679,8 +679,8 @@ function viewPupil(id){
   var pws=C.powers(p,s);
   h+='<div class="panel"><p class="sec">Poteri magici</p>'+(pws.length?'<div class="pows">'+pws.map(function(w){return '<div class="pw" style="--c:'+w.c+'"><i>'+C.icon(w.el)+'</i><div><b>'+esc(w.name)+'</b><small>In classe: '+esc(w.perk)+'</small></div></div>'}).join("")+'</div>':'<p style="color:var(--muted)">Il primo potere arriva con lo stadio Apprendista.</p>')+'</div>';
   h+='<div class="panel"><p class="sec">Materie e medaglie</p>'+skills(p)+'</div>';
-  h+='<div class="panel"><p class="sec">Le tappe dell\'evoluzione</p><div class="path">'+C.STAGES.map(function(nm,i){
-    return '<div class="'+(i>s?"lk":i===s?"cur":"")+'">'+C.avatar(p,{stage:i})+'<small>'+nm+'<br>'+t[i]+' ★</small></div>';
+  h+='<div class="panel"><p class="sec">Le tappe dell\'evoluzione</p><div class="path'+(LI.evo?' p7':'')+'">'+LI.names.map(function(nm,i){
+    return '<div class="'+(i>LI.lv?"lk":i===LI.lv?"cur":"")+'">'+C.avatar(p,LI.evo?{stage:0,evo:i}:{stage:i})+'<small>'+nm+'<br>'+LI.thr[i]+' ★</small></div>';
   }).join("")+'</div></div>';
   h+=logPanel(p);
   if(C.canWrite){
@@ -762,7 +762,7 @@ function sheetDef(app){
     cols=[{k:"n",h:"Alunno"},{k:"code",h:"Codice"},{k:"stage",h:"Stadio"},{k:"xp",h:"Stelle totali",num:1}]
       .concat(C.SUBJ.map(function(s){return {k:"s_"+s.k,h:s.n,num:1}}))
       .concat([{k:"last",h:"Ultima stella"}]);
-    rows=ids.map(function(id){var p=P(id),r={n:p.n,code:C.fmtCode(p.code||""),stage:C.STAGES[C.stageOf(p.xp||0)],xp:p.xp||0};C.SUBJ.forEach(function(s){r["s_"+s.k]=(p.sj||{})[s.k]||0});var lg=(p.log||[]);r.last=lg.length?fmtDate(lg[lg.length-1].t):"";r._t=lg.length?lg[lg.length-1].t:0;return r});
+    rows=ids.map(function(id){var p=P(id),r={n:p.n,code:C.fmtCode(p.code||""),stage:C.lvInfo(p).name,xp:p.xp||0};C.SUBJ.forEach(function(s){r["s_"+s.k]=(p.sj||{})[s.k]||0});var lg=(p.log||[]);r.last=lg.length?fmtDate(lg[lg.length-1].t):"";r._t=lg.length?lg[lg.length-1].t:0;return r});
   }else if(app==="mille"){
     title="Missione Mille";
     cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"badge",h:"Badge"},{k:"scomp",h:"Scomposizioni",num:1},{k:"comp",h:"Composizioni",num:1},{k:"lett",h:"Lettere e lettura",num:1},{k:"conf",h:"Confronti e ordine",num:1},{k:"abaco",h:"Sfide abaco",num:1},{k:"mis",h:"Missioni abaco",num:1},{k:"salti",h:"Salti giusti",num:1},{k:"banco",h:"Modi di fare 1000 €",num:1}]

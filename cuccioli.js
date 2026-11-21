@@ -82,6 +82,10 @@ C.evoScan=function(root){
 if(typeof MutationObserver!=="undefined"&&typeof document!=="undefined"){
   var evoT=null;new MutationObserver(function(){clearTimeout(evoT);evoT=setTimeout(function(){C.evoScan()},60)}).observe(document.documentElement,{childList:true,subtree:true});
 }
+C.LVN=["Ombra","In bianco e nero","Bambino","Primi dettagli magici","Apprendista mago","Maghetto","Maghetto completo"];
+C.lvInfo=function(p){var xp=(p&&p.xp)||0;
+  if(p&&C.EVO[p.sp]){var t=C.evoThr(),l=C.evoLv(xp),mx=l>=t.length-1;return {lv:l,name:C.LVN[l],next:mx?null:C.LVN[l+1],at:mx?null:t[l+1],need:mx?0:t[l+1]-xp,pc:mx?100:Math.round(100*(xp-t[l])/(t[l+1]-t[l])),max:mx,names:C.LVN,thr:t,evo:true}}
+  var t2=C.thr(),s=C.stageOf(xp),m2=s>=4;return {lv:s,name:C.STAGES[s],next:m2?null:C.STAGES[s+1],at:m2?null:t2[s+1],need:m2?0:t2[s+1]-xp,pc:m2?100:Math.round(100*(xp-t2[s])/(t2[s+1]-t2[s])),max:m2,names:C.STAGES,thr:t2,evo:false}};
 C.stageOf=function(xp){var t=C.thr(),s=0;for(var i=0;i<t.length;i++){if(xp>=t[i])s=i}return s};
 C.accOf=function(p){return C.SUBJ.filter(function(s){return s.a&&((p.sj||{})[s.k]||0)>=C.UNLOCK}).map(function(s){return s.k})};
 C.dominant=function(p){var best=null,bv=0,sj=p.sj||{};C.SUBJ.forEach(function(s){if((sj[s.k]||0)>bv){bv=sj[s.k];best=s.k}});return best};
@@ -400,7 +404,8 @@ C.award=function(ids,subj,pts,src,opts){
     q.log=q.log.concat([le]).slice(-40);
     var s0=C.stageOf(old.xp||0),s1=C.stageOf(q.xp);
     for(var s=s0+1;s<=s1;s++){if(s>=1&&!q.pw[s])q.pw[s]=C.dominant(q)||subj}
-    if(s1>s0)evo.push({n:q.n,from:C.avatar(old,{stage:s0,subj:subj}),to:C.avatar(q,{stage:s1,subj:subj}),stage:C.STAGES[s1],pows:C.powers(q,s1).slice(s0)});
+    var i0=C.lvInfo(old),i1=C.lvInfo(q);
+    if(i1.evo?i1.lv>i0.lv:s1>s0)evo.push({n:q.n,from:C.avatar(old,{stage:s0,evo:i0.lv,subj:subj}),to:C.avatar(q,{stage:s1,evo:i1.lv,subj:subj}),stage:i1.name,pows:C.powers(q,s1).slice(s0)});
     var sd=C.subjOf(subj);
     if(sd&&sd.a&&((old.sj||{})[subj]||0)<C.UNLOCK&&q.sj[subj]>=C.UNLOCK)acc.push(q.n+": medaglia "+sd.a+" e "+sd.item);
     else if(sd&&((old.sj||{})[subj]||0)<C.TIER3&&q.sj[subj]>=C.TIER3)acc.push(q.n+": mantello da "+sd.cos);
@@ -858,10 +863,10 @@ C.chip=function(host,id,subj,opts){
   function draw(){
     var p=id&&C.pupils[id];if(!p){host.innerHTML="";return}
     var st=C.stageOf(p.xp||0),t=C.thr(),xp=p.xp||0;
-    var pc=st>=4?100:Math.round(100*(xp-t[st])/(t[st+1]-t[st]));
+    var LI=C.lvInfo(p),pc=LI.pc;
     var v=(p.sj||{})[subj]||0,sd=C.subjOf(subj);
     host.innerHTML='<div class="cq-chip'+(lastXp!=null&&xp>lastXp?' up':'')+'"><div class="cq-chav">'+C.avatar(p,{subj:subj,medals:false})+'</div>'+
-      '<div class="cq-chtx"><b>'+C.esc(p.n)+'</b><span>'+C.STAGES[st]+' · '+xp+' ★</span><span class="cq-chbar"><i style="width:'+pc+'%"></i></span><small>'+C.esc(sd?sd.cos:"")+': '+v+' ★ in '+C.esc(sd?sd.n:"")+(st<4?' · prossima evoluzione a '+t[st+1]+' ★':' · Leggenda!')+'</small></div>'+
+      '<div class="cq-chtx"><b>'+C.esc(p.n)+'</b><span>'+LI.name+' · '+xp+' ★</span><span class="cq-chbar"><i style="width:'+pc+'%"></i></span><small>'+C.esc(sd?sd.cos:"")+': '+v+' ★ in '+C.esc(sd?sd.n:"")+(!LI.max?' · prossima evoluzione a '+LI.at+' ★':' · '+LI.name+'!')+'</small></div>'+
       '<div class="cq-chbt"><a class="cq-btn sm" href="index.html">Il mio avatar</a><button class="cq-btn sm" type="button" data-cq="out">Esci</button><button class="cq-btn sm cq-fs" type="button" hidden>Schermo intero</button></div></div>';
     lastXp=xp;
     C.fsButton(host.querySelector(".cq-fs"));
