@@ -54,6 +54,34 @@ C.thr=function(){return C.BASE.map(function(v){return Math.round(v*C.pace)})};
 /* evoluzione maghetto: 7 livelli = grigio, bianco e nero, poi le 5 figure */
 C.evoThr=function(){var L=C.thr()[4];return [0,.05,.12,.22,.38,.62,1].map(function(f){return Math.round(L*f)})};
 C.evoLv=function(xp){var t=C.evoThr(),s=0;for(var i=0;i<t.length;i++){if(xp>=t[i])s=i}return s};
+/* trasformazione magica quando un bambino passa a un livello nuovo */
+C.evoSrc=function(sp,lv){var EV=C.EVO[sp];return (C.base||"")+"img/"+sp+"-e"+Math.max(1,lv-1)+".webp?v="+(EV?EV.v:"1")};
+C.evoFilter=function(lv){return lv===0?"brightness(0) opacity(.3)":lv===1?"grayscale(1)":"none"};
+C.evoPlay=function(el,from){
+  if(!el||el.querySelector(".cq-magic"))return;
+  var lv=+el.getAttribute("data-lv"),sp=el.getAttribute("data-evo"),fig=el.querySelector(".cq-fig");if(!fig)return;
+  var old=fig.cloneNode();old.className="cq-fig cq-old";old.src=C.evoSrc(sp,from);old.style.filter=C.evoFilter(from);
+  var m=document.createElement("div");m.className="cq-magic";
+  var st="";for(var i=0;i<14;i++){var an=i*360/14,dl=(i%4)*.07;st+='<i style="--a:'+an+'deg;--d:'+dl+'s"></i>'}
+  m.innerHTML='<b class="cq-flash"></b><b class="cq-ringm"></b><b class="cq-ringm r2"></b>'+st;
+  fig.parentNode.insertBefore(old,fig);el.appendChild(m);el.classList.add("cq-evolving");
+  setTimeout(function(){old.remove();m.remove();el.classList.remove("cq-evolving")},2600);
+};
+C.evoScan=function(root){
+  var force=/[?&]evoprova/.test(location.search),me=C.who&&C.who();
+  [].forEach.call((root||document).querySelectorAll(".cq-evo[data-live]"),function(el){
+    if(el.getAttribute("data-seen"))return;el.setAttribute("data-seen","1");
+    var lv=+el.getAttribute("data-lv"),pid=el.getAttribute("data-pid");
+    if(force){if(lv>0)setTimeout(function(){C.evoPlay(el,lv-1)},400);return}
+    if(!pid||pid!==me)return;
+    var k="cq-evo-visto-"+pid,seen=null;try{seen=localStorage.getItem(k)}catch(e){}
+    try{localStorage.setItem(k,String(lv))}catch(e){}
+    if(seen!==null&&lv>+seen)setTimeout(function(){C.evoPlay(el,+seen)},500);
+  });
+};
+if(typeof MutationObserver!=="undefined"&&typeof document!=="undefined"){
+  var evoT=null;new MutationObserver(function(){clearTimeout(evoT);evoT=setTimeout(function(){C.evoScan()},60)}).observe(document.documentElement,{childList:true,subtree:true});
+}
 C.stageOf=function(xp){var t=C.thr(),s=0;for(var i=0;i<t.length;i++){if(xp>=t[i])s=i}return s};
 C.accOf=function(p){return C.SUBJ.filter(function(s){return s.a&&((p.sj||{})[s.k]||0)>=C.UNLOCK}).map(function(s){return s.k})};
 C.dominant=function(p){var best=null,bv=0,sj=p.sj||{};C.SUBJ.forEach(function(s){if((sj[s.k]||0)>bv){bv=sj[s.k];best=s.k}});return best};
@@ -141,7 +169,7 @@ C.avatar=function(p,o){
   var subj=o.subj===undefined?(p.ls||null):o.subj;
   if(subj&&!HATS[subj])subj=null;
   var tier=subj?C.tierOf(p,subj):0,pw=!EV&&o.powers!==false&&st>=1;
-  var h='<div class="cq-av cq-s'+st+'" style="--rc:'+rc+'">';
+  var h='<div class="cq-av cq-s'+st+(EV?' cq-evo cq-l'+lv:'')+'" style="--rc:'+rc+'"'+(EV?' data-evo="'+p.sp+'" data-lv="'+lv+'"'+(function(){var w=C.who&&C.who();return w&&C.pupils&&C.pupils[w]===p?' data-pid="'+w+'"':''})()+(o.stage==null?' data-live="1"':''):'')+'>';
   if(pw&&st===4)h+='<div class="cq-rays" style="--ec:'+C.subjOf(C.powerEl(p,4)).c+'"></div>';
   h+='<div class="cq-bub"></div>';
   if(pw&&st>=2)h+='<div class="cq-aura" style="'+box(cx-dW*.95,top-dH*.04,dW*1.9,dH*1.02)+';--ec:'+C.subjOf(C.powerEl(p,2)).c+'"></div>';
@@ -149,6 +177,7 @@ C.avatar=function(p,o){
   if(false){var cw=Math.max(dW*1.05,dH*.34);h+='<div class="cq-cape" style="'+box(cx-cw/2,top+dH*.2,cw,dH*.66)+'">'+capeSvg(C.subjOf(subj).c)+'</div>'}
   h+='<img class="cq-fig'+(of&&of[3]?' scene':'')+'" src="'+(of?(C.base||"")+of[0]:EV?(C.base||"")+"img/"+p.sp+"-e"+Math.max(1,lv-1)+".webp?v="+EV.v:C.img(p.sp))+'" alt="" draggable="false" style="transform:scale('+SC+');filter:'+FL+'">';
   if(EV?lv===0:st===0)h+='<span class="cq-qm">?</span>';
+  if(EV&&lv>=3)h+='<span class="cq-es e1"></span><span class="cq-es e2"></span><span class="cq-es e3"></span>'+(lv>=5?'<span class="cq-es e4"></span>':'');
   if(false){
     var H=HATS[subj],hw=headW*H.w,hh=hw*40/48;
     h+='<div class="cq-hat'+(st===4?' gold':'')+'" style="'+box(cx-hw/2,top+H.dy*dH-hh,hw,hh)+'"><svg viewBox="0 0 48 40" aria-hidden="true">'+H.svg+'</svg></div>';
