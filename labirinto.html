@@ -94,6 +94,40 @@
 .lab h4{margin:0 0 4px;font:600 20px var(--font-display);color:var(--mb-d)}
 .lab p{margin:4px 0}
 .lab .tag{display:inline-block;font-size:13px;font-weight:700;border-radius:99px;padding:2px 10px;background:var(--rs);margin-right:4px}
+
+/* escape room */
+.mission{border-radius:14px;background:var(--warn-soft);padding:10px 14px;font-size:17px}
+.mission b:first-child{display:block;font:600 19px var(--font-display)}
+details.story{border:2px solid var(--line);border-radius:14px;padding:8px 12px;background:var(--surface)}
+details.story summary{cursor:pointer;font:600 18px var(--font-display);min-height:36px;display:flex;align-items:center}
+.enigmi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.enigma{appearance:none;display:grid;justify-items:center;gap:2px;text-align:center;padding:12px 8px;border-radius:16px;border:3px solid var(--rc);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:120px}
+.enigma .ei{font-size:30px;line-height:1}
+.enigma b{font:600 18px var(--font-display)}
+.enigma small{color:var(--muted)}
+.enigma .piece{margin-top:4px;font:600 15px var(--font-body);background:var(--surface2);border-radius:99px;padding:2px 10px}
+.enigma.got{background:var(--good-soft);border-color:var(--good)}
+.enigma[aria-expanded="true"]{box-shadow:0 0 0 4px var(--gold)}
+.enigma:focus-visible,.pwin:focus-visible{outline:4px solid var(--gold);outline-offset:2px}
+.cpanel{border:2px solid var(--rc);border-radius:16px;padding:12px 14px;background:var(--rs,var(--surface2))}
+.cq{font:600 19px/1.4 var(--font-body)}
+.code{display:block;font-size:34px;letter-spacing:10px;margin:8px 0;text-align:center}
+.key{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0 10px}
+.key b{background:var(--surface);border:2px solid var(--line);border-radius:10px;padding:4px 10px;font:600 20px var(--font-body)}
+.slots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.slot{position:relative;min-width:70px;padding:14px 10px 8px;border-radius:12px;border:3px dashed var(--rc);background:var(--surface);text-align:center;font:700 26px var(--font-display);color:var(--muted)}
+.slot small{position:absolute;top:2px;left:8px;font:600 12px var(--font-body)}
+.slot.on{border-style:solid;color:var(--ink);background:var(--good-soft)}
+.lockf{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;justify-content:center}
+.lockf .l{width:100%;text-align:center}
+.pwin{font:700 26px var(--font-display);letter-spacing:4px;text-transform:uppercase;padding:10px 14px;border-radius:14px;border:3px solid var(--rc);width:min(320px,100%);text-align:center;background:var(--surface);color:var(--ink)}
+.pwin:disabled{opacity:.5}
+.lockbox.shake{animation:lkShake .45s}
+@keyframes lkShake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.dooropen{width:90px;height:120px;margin:4px auto 10px;border-radius:10px 10px 0 0;background:radial-gradient(circle at 50% 40%,#FFF6C8,#F2C230 60%,#E07A2E);perspective:400px;box-shadow:0 0 30px #F2C230}
+.dooropen .leaf{display:block;width:100%;height:100%;border-radius:10px 10px 0 0;background:linear-gradient(90deg,#8A5A12,#B07A2A);transform-origin:left center;animation:dOpen 1.4s ease forwards;box-shadow:inset -6px 0 0 #5E3D0A}
+@keyframes dOpen{to{transform:rotateY(-105deg)}}
+@media (prefers-reduced-motion:reduce){.lockbox.shake{animation:none}.dooropen .leaf{animation:none;transform:rotateY(-105deg)}}
 </style>
 </head><body>
 
@@ -110,7 +144,7 @@
       <div>
         <p class="eyebrow">Arte · Classe terza</p>
         <h1>Nel labirinto dei quadri</h1>
-        <p class="lead">Entra nei 7 quadri del libro e trova le porte magiche.</p>
+        <p class="lead">Escape room: entra nei 7 quadri del libro, risolvi gli enigmi e scopri le password per uscire.</p>
       </div>
     </div>
     <div class="board">
@@ -147,7 +181,7 @@
       <div><dt>Obiettivi</dt><dd>Osservare un'opera d'arte e descriverla (personaggi, colori, luce, movimento); riconoscere colori caldi e freddi; distinguere ritratto, paesaggio e natura morta; conoscere sette artisti e il loro stile; rielaborare un'opera in modo personale; ascoltare e comprendere un racconto.</dd></div>
       <div><dt>I quadri</dt><dd>Monet, «Papaveri» · Turner, «Il naufragio del Minotauro» · Degas, «La lezione di danza» · Botero, «Gente del circo con elefante» · Van Gogh, «La notte stellata», «La camera ad Arles» e gli autoritratti · Escher, «Relatività» · Klimt, «L'albero della vita».</dd></div>
       <div><dt>Collegamenti</dt><dd>Italiano (lettura del libro, descrizione), Musica (la mazurka di Degas, i suoni della tempesta), Scienze motorie (danza, equilibrio, staffette), Geografia (dove sono i musei e i paesi dei pittori), Matematica (simmetrie e spirali di Klimt, scale di Escher), Educazione civica (l'amicizia e il rispetto delle opere nei musei).</dd></div>
-      <div><dt>Nell'app</dt><dd>Il labirinto dei 7 quadri (da leggere e ascoltare, con le domande «Occhio da artista» e la porta da aprire), le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM.</dd></div>
+      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM.</dd></div>
     </dl>
   </div>
   <div class="panel">
@@ -162,7 +196,7 @@
       <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Osservazione</span><h3>Occhio da artista</h3><p>Alla LIM si apre il quadro vero. Gioco del «Vedo, penso, mi chiedo»: ogni squadra dice una cosa che vede, una che pensa e una domanda. Poi si risponde insieme alle domande «Occhio da artista» dell'app.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
       <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Il quadro vivente</h3><p>Una squadra alla volta ricostruisce il quadro con il corpo e si blocca. Le altre squadre indovinano chi è chi. Al «Via!» del custode i personaggi si animano per 10 secondi, poi tornano immobili.</p><div class="row"><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
       <li class="lstep"><div class="mins"><b>15</b><small>min</small></div><div><span class="chip">Laboratorio</span><h3>Il laboratorio del quadro</h3><p>Si fa il laboratorio di quel pittore (li trovi qui sotto, uno per quadro). Chi finisce prima apre l'atelier dell'app e dipinge con i colori del pittore.</p><div class="row"><button class="btn ghost" type="button" data-timer="15">Timer <span>15 min</span></button></div></div></li>
-      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Apri la porta!</h3><p>Alla LIM si risponde alla domanda della porta magica: la squadra che risponde giusto per prima attraversa la porta con un salto dentro la cornice di cartone e conquista la chiave del quadro (un timbro sul cartellone del labirinto).</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Gioco</span><h3>Fuga dalla stanza!</h3><p>Escape room alla LIM: ogni squadra risolve uno dei 4 enigmi della stanza (la storia, lo stile, il codice del custode, chi abita qui?) e conquista un pezzo della password. Quando i 4 pezzi sono sul cartellone, la classe li mette in ordine, scrive la password nel lucchetto e attraversa la porta con un salto dentro la cornice di cartone.</p><div class="row"><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
     </ol>
     <p><b>Chiusura (3 minuti).</b> «In quale quadro vorresti restare? Perché?» Un giro veloce di risposte, poi la scheda «Come è andata?» all'ultimo incontro.</p>
   </div>
@@ -189,11 +223,11 @@
   <div class="cols">
     <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, chiavi e badge</h3>
       <ul class="tight">
-        <li><b>Il labirinto:</b> 2 stelle per ogni porta aperta al primo tentativo, 1 stella se serve un altro tentativo.</li>
+        <li><b>L'escape room:</b> 1 stella per ogni enigma risolto al primo colpo (4 per stanza), 2 stelle per la password giusta al primo tentativo, 1 stella se serve un altro tentativo. L'app segna anche il tempo di fuga da ogni stanza.</li>
         <li><b>Occhio da artista:</b> chi risponde alle domande di osservazione prende 1 stella per quadro.</li>
         <li><b>Giochi:</b> fino a 3 stelle ciascuno, migliorando il proprio record.</li>
         <li><b>Il mio quadro:</b> una stella per ogni casella scritta e 3 stelle quando il quadro magico è completo.</li>
-        <li><b>Badge:</b> Primo quadro, Esploratore del labirinto, Fuori dal labirinto, Occhio da artista, Caldo e freddo, Pittore magico, Artista riflessivo.</li>
+        <li><b>Badge:</b> Prima porta, Scassinatore di lucchetti, Fuga riuscita, Occhio da artista, Caldo e freddo, Pittore magico, Artista riflessivo.</li>
       </ul></div>
     <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta del custode</h3>
       <div class="imp" id="imp"><b>Pronti a entrare nel quadro?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
@@ -220,9 +254,9 @@
 <!-- IL LABIRINTO -->
 <section class="view" id="sec-labirinto" hidden>
   <div class="panel">
-    <p class="eyebrow">Il libro</p>
-    <h2>Il labirinto dei 7 quadri</h2>
-    <p class="lead">Scegli il quadro. Leggi, guarda e apri la porta magica.</p>
+    <p class="eyebrow">Escape room</p>
+    <h2>Fuga dal labirinto dei 7 quadri</h2>
+    <p class="lead">Sei chiuso nel labirinto del custode-mago! In ogni stanza risolvi 4 enigmi, scopri la password e apri la porta per passare alla stanza dopo.</p>
     <div class="kids" id="kids"></div>
     <div class="path" id="path"></div>
     <div id="room"></div>
@@ -388,44 +422,114 @@ const SETS={
     {t:"Un paio di scarpe vecchie sul pavimento.",i:"👞",a:"nat",w:"Anche le scarpe possono essere una natura morta: Van Gogh le ha dipinte."}]}
 };
 
-/* ---------- il labirinto ---------- */
-let CUR=null;
-function lab(){const S=L.state();if(!S.extra.lab)S.extra.lab={open:{},look:{},tries:{}};return S.extra.lab}
+/* ---------- l'escape room: 7 porte, ognuna con la sua password ---------- */
+const ESC={
+ monet:{pw:["PA","PA","VE","RI"],sq:"Come dipingeva Monet?",so:["A piccole macchie di colore, all'aperto","Solo in bianco e nero","Con persone tonde e gonfie","Con tanto oro e spirali"]},
+ turner:{pw:["TEM","PE","S","TA"],sq:"Che cosa amava dipingere Turner?",so:["La forza della natura: onde, vento e tempesta","Ballerine che provano la danza","Scale impossibili","Persone tonde e allegre"]},
+ degas:{pw:["BAL","LE","RI","NA"],sq:"Come dipingeva le ballerine Degas?",so:["Mentre provano e si stancano, come in una fotografia","Ferme in fila, tutte uguali","Tonde e gonfie","Solo con il colore oro"]},
+ botero:{pw:["E","LE","FAN","TE"],sq:"Com'è lo stile di Botero?",so:["Persone e animali tondi, gonfi e morbidi","Disegni in bianco e nero","Tante macchioline di colore","Pennellate scure a vortice"]},
+ vangogh:{pw:["GI","RA","SO","LE"],sq:"Come sono le pennellate di Van Gogh?",so:["Spesse, a virgola, girano come il vento","Sottili e tutte dritte","Solo puntini neri","Fatte con la matita"]},
+ escher:{pw:["LA","BI","RIN","TO"],sq:"Perché i disegni di Escher sono speciali?",so:["Sono costruzioni impossibili in bianco e nero","Sono pieni di oro","Hanno tanti papaveri rossi","Mostrano un circo colorato"]},
+ klimt:{pw:["A","MI","CI","ZIA"],sq:"Che cosa usava tanto Klimt nei suoi quadri?",so:["L'oro e le decorazioni a spirale","Solo il grigio","Le onde del mare","Il rosa delle ballerine"]}
+};
+const PW=k=>ESC[k].pw.join("");
+const norm=v=>String(v||"").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Z]/g,"");
+const SYM=["★","●","▲","■","♥","♣","☀","☾","♦","✿","☂","♪","⚑","✚","◆","☘","⚓","✈","☁","⬟","✦","⌘","♠","✱","❖","☎"];
+let CUR=null,CLUE=null;
+function lab(){const S=L.state();if(!S.extra.lab)S.extra.lab={open:{},look:{},tries:{}};const b=S.extra.lab;b.clue=b.clue||{};b.miss=b.miss||{};b.t0=b.t0||{};b.time=b.time||{};return b}
 function unlocked(i){const b=lab();return i===0||!!b.open[Q[i-1].k]}
+function clues(x){
+  const e=ESC[x.k],own=SETS.quadro.items.filter(it=>it.a===x.k),oth=L.shuffle(SETS.quadro.items.filter(it=>it.a!==x.k));
+  const pc=e.pw[2];
+  // il codice del custode: ogni lettera è un simbolo
+  const letters=[...new Set(pc.split(""))],extra=L.shuffle("AEIOURSTLNMC".split("").filter(c=>letters.indexOf(c)<0)).slice(0,3),keyL=L.shuffle(letters.concat(extra));
+  const map={};keyL.forEach((c,i)=>map[c]=SYM[(i*7+x.k.length)%SYM.length]);
+  const wrong=new Set();const alts=Object.keys(ESC).map(k=>ESC[k].pw[2]).filter(v=>v!==pc);
+  L.shuffle(alts).forEach(v=>{if(wrong.size<2)wrong.add(v)});
+  wrong.add(pc.split("").reverse().join("")!==pc?pc.split("").reverse().join(""):pc+"A");
+  return [
+    {n:1,t:"La storia",i:"📖",q:x.q,o:x.o.map((t,j)=>({t,ok:j===0})),w:x.w},
+    {n:2,t:"Lo stile",i:"🎨",q:e.sq,o:e.so.map((t,j)=>({t,ok:j===0})),w:x.art},
+    {n:3,t:"Il codice del custode",i:"🔐",q:`Il custode ha scritto il pezzo 3 in codice: <span class="code">${pc.split("").map(c=>map[c]).join(" ")}</span><span class="key">${keyL.map(c=>`<b>${map[c]} = ${c}</b>`).join("")}</span>Che cosa c'è scritto?`,html:1,o:[{t:pc,ok:true}].concat([...wrong].slice(0,3).map(t=>({t,ok:false}))),w:`Ogni simbolo è una lettera: ${pc.split("").map(c=>map[c]+" = "+c).join(", ")}.`},
+    {n:4,t:"Chi abita qui?",i:"🔎",q:"Quale di queste scene succede proprio in questo quadro?",o:[{t:own[(x.k.length)%own.length].t,ok:true}].concat(oth.slice(0,3).map(it=>({t:it.t,ok:false}))),w:"Rileggi «Che cosa succede nel libro»."}
+  ];
+}
+function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`}
 function renderLab(){
   const b=lab(),n=Q.filter(x=>b.open[x.k]).length;
   if(CUR==null){CUR=Q.findIndex(x=>!b.open[x.k]);if(CUR<0)CUR=Q.length-1}
   $("#kids").innerHTML=`<span aria-hidden="true">🧒👧</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
-  $("#path").innerHTML=Q.map((x,i)=>`<button class="room" type="button" data-r="${i}" style="--rc:${x.c};--rg:${x.g}"${unlocked(i)?"":" disabled"}${i===CUR?' aria-current="true"':""}><span class="st" aria-hidden="true">${b.open[x.k]?"🗝️":unlocked(i)?"🚪":"🔒"}</span><span class="fr" aria-hidden="true"></span><b>${i+1}. ${esc(x.sh)}</b><small>${esc(x.t)}</small></button>`).join("");
-  $$("[data-r]").forEach(r=>r.addEventListener("click",()=>{CUR=+r.dataset.r;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})}));
+  $("#path").innerHTML=Q.map((x,i)=>`<button class="room" type="button" data-r="${i}" style="--rc:${x.c};--rg:${x.g}"${unlocked(i)?"":" disabled"}${i===CUR?' aria-current="true"':""}><span class="st" aria-hidden="true">${b.open[x.k]?"🗝️":unlocked(i)?"🚪":"🔒"}</span><span class="fr" aria-hidden="true"></span><b>Porta ${i+1} · ${esc(x.sh)}</b><small>${b.open[x.k]?"aperta: "+PW(x.k):unlocked(i)?esc(x.t):"chiusa a chiave"}</small></button>`).join("");
+  $$("[data-r]").forEach(r=>r.addEventListener("click",()=>{CUR=+r.dataset.r;CLUE=null;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})}));
   renderRoom();
 }
 function renderRoom(){
-  const x=Q[CUR],b=lab(),done=!!b.open[x.k];
+  const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k];
+  if(!done&&!b.t0[x.k]){b.t0[x.k]=Date.now();L.save()}
+  if(!CLUE||CLUE.k!==x.k)CLUE={k:x.k,list:clues(x),open:null};
+  const got=b.clue[x.k]||[];
   let h=`<div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
-    <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Quadro ${CUR+1} · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
+    <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
     <div class="qbody">
-      <div><h4>Che cosa succede nel libro</h4><p class="lead">${esc(x.story)}</p></div>
-      <div><h4>Lo stile del pittore</h4><p class="lead">${esc(x.art)}</p><div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
-        <p><a class="real" href="${IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p></div>
-      <div><h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
-        <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button></div></div>
-      <div class="door"><h4>🚪 Apri la porta magica</h4><div id="dq"></div></div>
+      <div class="mission"><b>🗝️ Missione</b> Per uscire da questa stanza serve la <b>password</b>. Risolvi i 4 enigmi: ognuno ti dà un pezzo. Poi metti i pezzi in ordine e scrivila nel lucchetto.</div>
+      <details class="story"${done?"":" open"}><summary>📖 Che cosa succede nel libro · lo stile del pittore</summary>
+        <p class="lead">${esc(x.story)}</p><p class="lead">${esc(x.art)}</p>
+        <div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
+        <p><a class="real" href="${IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p>
+        <h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
+        <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button></div>
+      </details>
+      <div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div>
+      <div id="cbox"></div>
+      <div class="door lockbox" id="lockbox"></div>
     </div></div>`;
   $("#room").innerHTML=h;
   $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
-  const dq=$("#dq");
-  if(done){dq.innerHTML=L.fb("good","Porta aperta! 🗝️",[esc(x.w)])+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">Entra nel quadro ${CUR+2}</button></div>`:`<div class="row"><a class="btn" href="#atelier">Sei fuori dal labirinto! Dipingi il tuo quadro magico</a></div>`);
-    const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{CUR++;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})});return}
-  const opts=L.shuffle(x.o.map((t,i)=>({t,i})));
-  dq.innerHTML=`<p><b>${esc(x.q)}</b></p><div class="opts">${opts.map(o=>`<button class="opt" type="button" data-o="${o.i}">${esc(o.t)}</button>`).join("")}</div><div id="dfb"></div>`;
-  $$("[data-o]",dq).forEach(btn=>btn.addEventListener("click",()=>{
-    const b=lab(),i=+btn.dataset.o,S=L.state();
-    if(i===0){$$("[data-o]",dq).forEach(z=>z.disabled=true);btn.classList.add("right");b.open[x.k]=1;L.save();L.add(b.tries[x.k]?1:2);L.fanfare();
-      L.toast(b.tries[x.k]?"Porta aperta: una stella!":"Porta aperta al primo colpo: due stelle!");setTimeout(renderLab,900);
-    }else{btn.classList.add("wrong");btn.disabled=true;L.buzz();b.tries[x.k]=(b.tries[x.k]||0)+1;S.err["Porta: "+x.p]=(S.err["Porta: "+x.p]||0)+1;L.save();
-      $("#dfb").innerHTML=L.fb("bad","La porta resta chiusa.",["Rileggi «Che cosa succede nel libro» o ascolta il capitolo, poi riprova."])}
+  $$("[data-cl]").forEach(bt=>bt.addEventListener("click",()=>{const j=+bt.dataset.cl;CLUE.open=CLUE.open===j?null:j;renderRoom();const cb=$("#cbox");if(cb&&CLUE.open!=null)cb.scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  renderClue();renderLock();
+}
+function renderClue(){
+  const x=Q[CUR],b=lab(),host=$("#cbox");if(CLUE.open==null){host.innerHTML="";return}
+  const j=CLUE.open,c=CLUE.list[j],got=b.clue[x.k]||[];
+  if(got[j]){host.innerHTML=L.fb("good",`Enigma ${c.n} risolto: il pezzo ${c.n} è «${ESC[x.k].pw[j]}».`,[]);return}
+  if(!c.order)c.order=L.shuffle(c.o.map((o,i)=>i));
+  host.innerHTML=`<div class="cpanel"><p class="eyebrow">${c.i} Enigma ${c.n} · ${esc(c.t)}</p><p class="cq">${c.html?c.q:esc(c.q)}</p><div class="opts">${c.order.map(i=>`<button class="opt" type="button" data-co="${i}">${esc(c.o[i].t)}</button>`).join("")}</div><div id="cfb"></div></div>`;
+  $$("[data-co]",host).forEach(bt=>bt.addEventListener("click",()=>{
+    const o=c.o[+bt.dataset.co],b=lab(),S=L.state();
+    if(o.ok){
+      bt.classList.add("right");$$("[data-co]",host).forEach(z=>z.disabled=true);
+      const g=b.clue[x.k]=b.clue[x.k]||[];g[j]=1;const first=!(b.miss[x.k+j]);L.save();if(first)L.add(1);L.ding();
+      L.toast(`Pezzo ${c.n}: «${ESC[x.k].pw[j]}»`+(first?" · una stella!":""));
+      setTimeout(()=>{CLUE.open=null;renderRoom()},1100);
+    }else{
+      bt.classList.add("wrong");bt.disabled=true;L.buzz();b.miss[x.k+j]=(b.miss[x.k+j]||0)+1;S.err["Enigma: "+x.p]=(S.err["Enigma: "+x.p]||0)+1;L.save();
+      $("#cfb").innerHTML=L.fb("bad","Non è questo.",[c.w?esc(c.w):""].filter(Boolean));
+    }
   }));
+}
+function renderLock(){
+  const x=Q[CUR],b=lab(),e=ESC[x.k],got=b.clue[x.k]||[],n=got.filter(Boolean).length,host=$("#lockbox");
+  if(b.open[x.k]){
+    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">Entra nella stanza ${CUR+2}</button></div>`:`<div class="row"><a class="btn" href="#atelier">Sei fuori dal labirinto! Dipingi il tuo quadro magico</a></div>`);
+    const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{CUR++;CLUE=null;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})});return}
+  const tries=b.tries[x.k]||0;
+  host.innerHTML=`<h4>🔒 Il lucchetto della porta ${CUR+1}</h4>
+    <div class="slots" aria-label="I pezzi trovati">${e.pw.map((p,i)=>`<span class="slot${got[i]?" on":""}"><small>${i+1}</small>${got[i]?p:"?"}</span>`).join("")}</div>
+    <p class="hint">${n<4?`Hai trovato ${n} pezzi su 4. Risolvi gli enigmi che mancano.`:"Hai tutti i pezzi! Mettili in ordine, 1-2-3-4, e scrivi la password."}</p>
+    <form class="lockf" id="lockf" autocomplete="off"><label class="l" for="pwin">Password</label><input id="pwin" class="pwin" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" maxlength="20" placeholder="scrivi qui" ${n<4?"disabled":""}><button class="btn" type="submit" ${n<4?"disabled":""}>Apri la porta</button></form>
+    <div id="lfb"></div>`;
+  $("#lockf").addEventListener("submit",ev=>{
+    ev.preventDefault();const v=norm($("#pwin").value),b=lab(),S=L.state();if(!v)return;
+    if(v===PW(x.k)){
+      b.open[x.k]=1;if(b.t0[x.k])b.time[x.k]=Math.round((Date.now()-b.t0[x.k])/1000);L.save();
+      const st=b.tries[x.k]?1:2;L.add(st);L.fanfare();L.toast(st===2?"Porta aperta al primo colpo: due stelle!":"Porta aperta: una stella!");
+      renderLock();setTimeout(renderLab,2400);
+    }else{
+      b.tries[x.k]=(b.tries[x.k]||0)+1;S.err["Porta: "+x.p]=(S.err["Porta: "+x.p]||0)+1;L.save();L.buzz();
+      const lb=$("#lockbox");lb.classList.remove("shake");void lb.offsetWidth;lb.classList.add("shake");
+      $("#lfb").innerHTML=L.fb("bad","La porta resta chiusa.",[b.tries[x.k]>=2?`Aiuto: scrivi uno dopo l'altro i pezzi ${e.pw.map((p,i)=>i+1).join(" + ")}, senza spazi.`:"Controlla l'ordine dei pezzi: 1, 2, 3, 4."]);
+    }
+  });
 }
 
 /* ---------- l'atelier ---------- */
@@ -599,9 +703,9 @@ L.init({
   key:"labirinto-quadri-v1",col:"labirinto",subj:"art",src:"labirinto",title:"Nel labirinto dei quadri",
   tabs:["lezione","labirinto","schede","indagini","atelier","valuta"],home:"labirinto",sets:SETS,
   badges:[
-    {id:"primo",n:"Primo quadro",d:"Apri la porta del quadro di Monet",ok:S=>!!(S.extra.lab&&S.extra.lab.open.monet)},
-    {id:"esploratore",n:"Esploratore del labirinto",d:"Apri 4 porte magiche",ok:S=>!!S.extra.lab&&Object.keys(S.extra.lab.open).length>=4},
-    {id:"fuori",n:"Fuori dal labirinto",d:"Apri tutte e 7 le porte",ok:S=>!!S.extra.lab&&Object.keys(S.extra.lab.open).length>=7},
+    {id:"primo",n:"Prima porta",d:"Scopri la password della stanza di Monet",ok:S=>!!(S.extra.lab&&S.extra.lab.open.monet)},
+    {id:"esploratore",n:"Scassinatore di lucchetti",d:"Apri 4 porte con la password",ok:S=>!!S.extra.lab&&Object.keys(S.extra.lab.open).length>=4},
+    {id:"fuori",n:"Fuga riuscita",d:"Esci dall'escape room: apri tutte e 7 le porte",ok:S=>!!S.extra.lab&&Object.keys(S.extra.lab.open).length>=7},
     {id:"quadro",n:"Occhio da artista",d:"Almeno 7 su 8 in «Dentro quale quadro?»",ok:S=>(S.best.quadro||0)>=7},
     {id:"colori",n:"Caldo e freddo",d:"Almeno 7 su 8 in «Caldo o freddo?»",ok:S=>(S.best.colori||0)>=7},
     {id:"schede",n:"Schede complete",d:"Completa 5 schede",ok:S=>(S.extra.schede||0)>=5},
