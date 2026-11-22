@@ -1,0 +1,127 @@
+/* Grafica «da videogioco» per i giochi delle app dell'Accademia.
+   Tessere colorate e spesse, pulsanti a caramella che si schiacciano, carte che saltano,
+   premi che esplodono in stelline. Si carica dopo lab.css e sovrascrive solo l'aspetto. */
+:root{
+  --g-sky1:#BDE8FF;--g-sky2:#FFF4C9;--g-ink:#22304A;--g-shadow:rgba(34,48,74,.22);
+  --g-yellow:#FFC93C;--g-orange:#FF8A3D;--g-pink:#FF5D8F;--g-green:#3CCB7F;--g-blue:#3DA5FF;--g-purple:#8C6CF2;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--g-sky1:#16324A;--g-sky2:#2A2440;--g-ink:#EAF2FF;--g-shadow:rgba(0,0,0,.45)}}
+
+/* ---------- scelta del gioco: tessere da mondo dei giochi ---------- */
+.sets{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.set{position:relative;overflow:hidden;border:4px solid #fff!important;border-radius:28px!important;padding:18px 16px 16px!important;
+  background:linear-gradient(165deg,var(--sc,#F1ECFA) 0%,#fff 120%)!important;color:var(--g-ink)!important;
+  box-shadow:0 8px 0 var(--g-shadow),0 14px 24px var(--g-shadow)!important;transition:transform .15s,box-shadow .15s;text-align:center!important;
+  display:grid!important;justify-items:center;gap:6px}
+.set::before{content:"";position:absolute;inset:-40% -40% auto auto;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.55)}
+.set .emo{font-size:56px!important;line-height:1;filter:drop-shadow(0 4px 0 rgba(0,0,0,.12));animation:gFloat 3s ease-in-out infinite}
+.set:nth-child(2) .emo{animation-delay:.5s}.set:nth-child(3) .emo{animation-delay:1s}
+.set b{font:700 22px var(--font-display)!important}
+.set small{display:inline-block;background:#fff;border-radius:99px;padding:4px 12px;font-weight:700;color:#B7791F;box-shadow:0 2px 0 var(--g-shadow)}
+.set:hover{transform:translateY(-4px) rotate(-1deg)}
+.set:active{transform:translateY(4px);box-shadow:0 3px 0 var(--g-shadow)!important}
+
+/* ---------- partita ---------- */
+.dots{display:flex;gap:6px;justify-content:center;margin:10px 0!important}
+.dots i{width:22px!important;height:22px!important;border-radius:50%;background:#fff!important;border:3px solid var(--line);position:relative}
+.dots i.now{border-color:var(--g-blue)!important;transform:scale(1.25);box-shadow:0 0 0 4px rgba(61,165,255,.25)}
+.dots i.ok{background:var(--g-yellow)!important;border-color:#E3A400!important}
+.dots i.ok::after{content:"★";position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:#8A5A00}
+.dots i.ko{background:#FFD6D6!important;border-color:var(--g-pink)!important}
+
+.scard{border:5px solid #fff!important;border-radius:30px!important;background:radial-gradient(circle at 30% 20%,#fff,var(--g-sky2))!important;
+  box-shadow:0 10px 0 var(--g-shadow),0 18px 30px var(--g-shadow)!important;padding:22px!important;margin:14px auto!important;max-width:560px}
+.scard .emo{font-size:72px!important;filter:drop-shadow(0 5px 0 rgba(0,0,0,.12))}
+.scard b{font:700 24px/1.3 var(--font-display)!important;color:var(--g-ink)}
+.scard.pop{animation:gCardIn .55s cubic-bezier(.3,1.6,.5,1) both}
+
+.bins{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px!important}
+.bin{border:4px solid #fff!important;border-radius:24px!important;background:var(--bc,var(--g-blue))!important;color:#fff!important;
+  box-shadow:0 7px 0 rgba(0,0,0,.25),0 12px 18px var(--g-shadow)!important;min-height:96px;padding:12px!important;
+  font:700 19px var(--font-display)!important;text-shadow:0 2px 0 rgba(0,0,0,.2);transition:transform .12s,box-shadow .12s}
+.bin b,.bin strong{color:#fff!important;font:700 24px/1.1 var(--font-display)!important}
+.bin small{color:rgba(255,255,255,.92)!important;font:600 14px var(--font-body)!important;text-shadow:none}
+.bin .bi{font-size:36px!important;text-shadow:none}
+.bin:hover:not(:disabled){transform:translateY(-3px)}
+.bin:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 rgba(0,0,0,.25)!important}
+.bin.right{animation:gWin .6s ease;box-shadow:0 0 0 6px var(--g-yellow),0 7px 0 rgba(0,0,0,.25)!important}
+.bin.wrong{animation:gShake .45s;filter:grayscale(.6) brightness(.9)}
+.bin:disabled:not(.right):not(.wrong){opacity:.55}
+
+/* pulsanti risposta */
+.opt{border:4px solid #fff!important;border-radius:22px!important;background:linear-gradient(#fff,#F1F6FF)!important;color:var(--g-ink)!important;
+  box-shadow:0 6px 0 #B9C9E6,0 10px 16px var(--g-shadow)!important;font-weight:700!important;transition:transform .12s,box-shadow .12s}
+.opt:hover:not(:disabled){transform:translateY(-2px)}
+.opt:active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 #B9C9E6!important}
+.opt.right{background:linear-gradient(#E2FFF0,#B8F3D3)!important;box-shadow:0 6px 0 #3CCB7F,0 0 0 5px rgba(60,203,127,.35)!important;animation:gWin .6s ease}
+.opt.wrong{background:linear-gradient(#FFF0F3,#FFD3DD)!important;box-shadow:0 6px 0 #FF5D8F!important;animation:gShake .45s}
+
+/* pulsanti principali a caramella */
+.btn:not(.ghost):not(.link){border:0!important;border-radius:99px!important;background:linear-gradient(#FFB648,#FF8A3D)!important;color:#fff!important;
+  font:700 18px var(--font-display)!important;padding:12px 24px!important;box-shadow:0 6px 0 #D2602A,0 10px 16px var(--g-shadow)!important;
+  text-shadow:0 2px 0 rgba(0,0,0,.18);transition:transform .12s,box-shadow .12s}
+.btn:not(.ghost):not(.link):hover:not(:disabled){transform:translateY(-2px)}
+.btn:not(.ghost):not(.link):active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 #D2602A!important}
+.btn:not(.ghost):not(.link):disabled{filter:grayscale(.7);opacity:.6}
+.btn.ghost{border-radius:99px!important;border:3px solid var(--line)!important;box-shadow:0 4px 0 var(--line)!important}
+
+/* messaggi di risposta */
+.fb{border-radius:22px!important;border:4px solid #fff!important;box-shadow:0 6px 0 var(--g-shadow)!important;position:relative;overflow:visible}
+.fb.good{background:linear-gradient(#E9FFF3,#C9F5DD)!important;animation:gPop .45s cubic-bezier(.3,1.6,.5,1)}
+.fb.good::before{content:"🎉";position:absolute;right:12px;top:-22px;font-size:40px;animation:gFloat 1.6s ease-in-out infinite}
+.fb.bad{background:linear-gradient(#FFF4F6,#FFDDE5)!important}
+.fb.bad::before{content:"🤔";position:absolute;right:12px;top:-22px;font-size:36px}
+
+/* pausa movimento */
+.move{border-radius:22px!important;border:4px dashed var(--g-purple)!important;background:linear-gradient(#F4EEFF,#fff)!important;position:relative;padding-left:62px!important}
+.move::before{content:"🤸";position:absolute;left:14px;top:50%;translate:0 -50%;font-size:36px;animation:gFloat 2.2s ease-in-out infinite}
+
+/* contatore stelle */
+.board .stars{background:linear-gradient(#FFE27A,#FFC93C)!important;border:4px solid #fff!important;border-radius:24px!important;box-shadow:0 6px 0 #D9A400,0 10px 18px var(--g-shadow)!important;color:#5A3A00!important}
+.board .stars b{font-family:var(--font-display)!important}
+.badge.got{animation:gPop .5s cubic-bezier(.3,1.6,.5,1)}
+
+/* ---------- Palestra del Cervello ---------- */
+.game{border:4px solid #fff!important;border-radius:28px!important;background:linear-gradient(170deg,var(--pc-soft,#EEE8FB),#fff 90%)!important;box-shadow:0 8px 0 var(--g-shadow),0 14px 24px var(--g-shadow)!important}
+.game:nth-child(6n+1){background:linear-gradient(170deg,#DDF2FF,#fff 90%)!important}
+.game:nth-child(6n+2){background:linear-gradient(170deg,#FFE9D6,#fff 90%)!important}
+.game:nth-child(6n+3){background:linear-gradient(170deg,#E6FAEE,#fff 90%)!important}
+.game:nth-child(6n+4){background:linear-gradient(170deg,#F1EAFF,#fff 90%)!important}
+.game:nth-child(6n+5){background:linear-gradient(170deg,#FFF4C9,#fff 90%)!important}
+.game:nth-child(6n+6){background:linear-gradient(170deg,#FFE3EC,#fff 90%)!important}
+.game .ic{background:#fff!important;box-shadow:0 5px 0 var(--g-shadow);font-size:44px!important;animation:gFloat 3.2s ease-in-out infinite}
+.lvb{border:3px solid #fff!important;box-shadow:0 5px 0 var(--g-shadow)!important;border-radius:18px!important;transition:transform .12s,box-shadow .12s}
+.lvb:nth-child(1){background:#E2FFF0!important}.lvb:nth-child(2){background:#FFF4C9!important}.lvb:nth-child(3){background:#FFE3EC!important}
+.lvb:active{transform:translateY(4px);box-shadow:0 1px 0 var(--g-shadow)!important}
+.lvb.won{outline:3px solid var(--g-green);outline-offset:-3px}
+.card{border:4px solid #fff!important;border-radius:18px!important;background:linear-gradient(#fff,#EAF4FF)!important;box-shadow:0 6px 0 #B9C9E6!important}
+.card[aria-pressed="true"]{background:linear-gradient(#8C6CF2,#6A4BC4)!important;box-shadow:0 6px 0 #43298F!important}
+.res .big{animation:gPop .6s cubic-bezier(.3,1.6,.5,1)}
+.res .stars{animation:gWin 1s ease 2}
+
+/* ---------- escape room del labirinto ---------- */
+.enigma{border-width:4px!important;border-radius:22px!important;box-shadow:0 6px 0 var(--g-shadow)!important;transition:transform .12s,box-shadow .12s}
+.enigma:hover{transform:translateY(-3px) rotate(-1deg)}
+.enigma.got{animation:gPop .5s cubic-bezier(.3,1.6,.5,1)}
+.enigma .ei{font-size:38px!important;animation:gFloat 3s ease-in-out infinite}
+.slot{box-shadow:0 5px 0 var(--g-shadow)}
+.slot.on{animation:gPop .4s cubic-bezier(.3,1.6,.5,1)}
+.pwin{box-shadow:inset 0 4px 0 rgba(0,0,0,.06),0 5px 0 var(--g-shadow)}
+
+.room{border-width:4px!important;border-radius:22px!important;box-shadow:0 6px 0 var(--g-shadow),0 10px 16px var(--g-shadow)!important;transition:transform .12s,box-shadow .12s}
+.room:not(:disabled):hover{transform:translateY(-3px) rotate(-1deg)}
+.room:not(:disabled):active{transform:translateY(4px);box-shadow:0 1px 0 var(--g-shadow)!important}
+.room[aria-current="true"],.room.cur{animation:gPop .5s cubic-bezier(.3,1.6,.5,1)}
+.door{border-style:solid!important;border-width:4px!important;border-radius:24px!important;box-shadow:0 6px 0 var(--g-shadow)!important}
+
+/* ---------- animazioni ---------- */
+@keyframes gFloat{0%,100%{translate:0 0}50%{translate:0 -6px}}
+@keyframes gCardIn{0%{opacity:0;transform:scale(.6) rotate(-6deg)}100%{opacity:1;transform:none}}
+@keyframes gPop{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes gWin{0%,100%{transform:scale(1)}30%{transform:scale(1.1) rotate(-2deg)}60%{transform:scale(1.04) rotate(2deg)}}
+@keyframes gShake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@media (prefers-reduced-motion:reduce){
+  .set .emo,.game .ic,.enigma .ei,.move::before,.fb.good::before{animation:none}
+  .scard.pop,.bin.right,.bin.wrong,.opt.right,.opt.wrong,.fb.good,.res .big,.res .stars,.enigma.got,.slot.on,.badge.got{animation:none}
+  .set:hover,.enigma:hover{transform:none}
+}

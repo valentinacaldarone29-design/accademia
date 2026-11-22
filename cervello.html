@@ -81,6 +81,7 @@
 @media (max-width:420px){.opt{font-size:26px;min-height:66px}.pyr .b{width:64px}.sc,.pad button{width:56px;height:56px}.sud{grid-template-columns:repeat(4,56px)}}
 @media (prefers-reduced-motion:reduce){.card[aria-pressed="true"]{transform:none}}
 </style>
+<link rel="stylesheet" href="gioco.css?v=1">
 </head><body>
 
 <header>
@@ -447,7 +448,7 @@ function draw(){
 function answer(ok,why,btns){
   P.res[P.i]=ok;
   if(ok){L.ding()}else{L.buzz();const s=L.state();s.err[P.g.k]=(s.err[P.g.k]||0)+1}
-  $("#fb").innerHTML=L.fb(ok?"ok":"no",ok?"Giusto!":"Non ancora",ok?[]:[why])+`<div class="row"><button class="btn" type="button" data-x="next">${P.i<N-1?"Avanti":"Vedi il risultato"}</button></div>`;
+  $("#fb").innerHTML=L.fb(ok?"good":"bad",ok?"Giusto!":"Non ancora",ok?[]:[why])+`<div class="row"><button class="btn" type="button" data-x="next">${P.i<N-1?"Avanti":"Vedi il risultato"}</button></div>`;
   const nb=$('[data-x="next"]');if(nb)nb.focus();
 }
 function drawBer(it){
@@ -515,7 +516,7 @@ document.addEventListener("click",ev=>{
     if(!empty&&!bad.length){P.score=Math.max(0,N+1-P.checks);L.ding();finish();return}
     L.buzz();const s=L.state();s.err.sud=(s.err.sud||0)+1;
     drawSud(it);bad.forEach(i=>{const b=document.querySelector(`.sc[data-s="${i}"]`);if(b)b.classList.add("err")});
-    $("#fb").innerHTML=L.fb("no","Non ancora",[bad.length?`Le caselle rosse non vanno bene (${bad.length}). Guarda la riga, la colonna e il quadrato.`:"Controlla bene: ci sono ancora caselle vuote.",empty&&bad.length?`Caselle vuote: ${empty}.`:""].filter(Boolean));
+    $("#fb").innerHTML=L.fb("bad","Non ancora",[bad.length?`Le caselle rosse non vanno bene (${bad.length}). Guarda la riga, la colonna e il quadrato.`:"Controlla bene: ci sono ancora caselle vuote.",empty&&bad.length?`Caselle vuote: ${empty}.`:""].filter(Boolean));
     return;
   }
 });
