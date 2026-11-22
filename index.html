@@ -264,7 +264,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 .rtab tr.none td{color:var(--muted);font-style:italic}
 .rtab tfoot td{background:var(--sea-soft);border-bottom:0}
 </style>
-<link rel="stylesheet" href="cuccioli.css?v=1121k">
+<link rel="stylesheet" href="cuccioli.css?v=1122a">
 <style id="magia">
 /* ===== Tema "scuola di magia": cielo notturno, pergamena, oro ===== */
 :root:not(#_){
@@ -462,7 +462,7 @@ details.fold>.fbody{padding:14px 18px 18px}
 </div>
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1121l"></script>
+<script src="cuccioli.js?v=1122a"></script>
 <script src="stagioni.js"></script>
 <script>
 (function(){
@@ -517,7 +517,7 @@ function skills(p){
   }).join("")+'</div>';
 }
 function logPanel(p){
-  var lg=(p.log||[]).slice(-8).reverse(),GN={mille:"Missione Mille",mondo:"Io nel mondo",calcolo:"Officina dei Calcoli",tabelline:"Arcipelago delle Tabelline",materia:"Detective della Materia",stati:"Danza delle Particelle",metodo:"Scienziati in 6 mosse",labirinto:"Nel labirinto dei quadri",suoni:"Suoni e Silenzi",maestra:"dalla maestra"};
+  var lg=(p.log||[]).slice(-8).reverse(),GN={mille:"Missione Mille",mondo:"Io nel mondo",calcolo:"Officina dei Calcoli",tabelline:"Arcipelago delle Tabelline",materia:"Detective della Materia",stati:"Danza delle Particelle",metodo:"Scienziati in 6 mosse",labirinto:"Nel labirinto dei quadri",suoni:"Suoni e Silenzi",cervello:"Palestra del Cervello",maestra:"dalla maestra"};
   return '<div class="panel"><p class="sec">Ultime stelle</p>'+(lg.length?'<ul class="log">'+lg.map(function(l){var sd=C.subjOf(l.s);var at=l.a&&C.attOf(l.a),tm=l.m&&C.tById(l.m),dm=tm?'dalla '+C.tName(tm):'dalla maestra';if(at)return '<li><span>'+at.i+' '+esc(at.n)+' · '+esc(dm)+'</span><b>+'+(l.ap||l.p)+'</b></li>';return '<li><span>'+(sd?sd.n:"")+(l.g&&GN[l.g]?' · '+GN[l.g]:'')+'</span><b>+'+l.p+'</b></li>'}).join("")+'</ul>':'<p style="color:var(--muted)">Ancora nessuna stella. Gioca per cominciare!</p>')+'</div>';
 }
 
@@ -721,7 +721,7 @@ function attPeriod(k){
 }
 
 /* ---------- fogli dei risultati ---------- */
-var RES={loaded:false,alunni:{},mondo:{},calcolo:{},tabelline:{},materia:{},stati:{},metodo:{},labirinto:{},suoni:{}},RS={app:"accademia",key:"n",dir:1};
+var RES={loaded:false,alunni:{},mondo:{},calcolo:{},tabelline:{},materia:{},stati:{},metodo:{},labirinto:{},suoni:{},cervello:{}},RS={app:"accademia",key:"n",dir:1};
 var ERRL={riporto:"Dimentica il riporto",riportoprima:"Riporto prima di moltiplicare",inverso:"Inverte la sottrazione",cambio:"Dimentica il cambio",riportoscritto:"Scrive il riporto nel risultato",tabellina:"Tabelline",mancante:"Caselle vuote",quoziente:"Divisione: quante volte ci sta",calcolo:"Errori di calcolo",strategia:"Passaggi delle strategie",proprieta:"Proprietà"};
 var QM=["So costruire 1000 con 10 centinaia","So contare di 100 in 100, avanti e indietro","So scrivere 1000 in cifre e in lettere","Ho lavorato bene con la mia squadra"];
 var QW=["So dire in ordine i cerchi, da Io fino al pianeta","So distinguere la destra dalla sinistra","Ho collaborato con i miei compagni","Ho ascoltato quando parlava un compagno","Ho provato anche quando era difficile"];
@@ -742,10 +742,11 @@ function loadResults(){
       var me=rd("metodo-scientifico-v1:"+id);if(me)RES.metodo[id]=me;
       var lb=rd("labirinto-quadri-v1:"+id);if(lb)RES.labirinto[id]=lb;
       var su=rd("suoni-silenzi-v1:"+id);if(su)RES.suoni[id]=su;
+      var cv=rd("palestra-cervello-v1:"+id);if(cv)RES.cervello[id]=cv;
     });return;
   }
   if(RES.loaded)return;RES.loaded=true;
-  ["alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni"].forEach(function(col){
+  ["alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello"].forEach(function(col){
     C.db.collection(col).onSnapshot(function(snap){var m={};snap.docs.forEach(function(d){m[d.id]=d.data()});RES[col]=m;if(hash()==="risultati")render()},function(){RES.err=true;if(hash()==="risultati")render()});
   });
 }
@@ -829,6 +830,19 @@ function sheetDef(app){
       r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
       QLB.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
     legend=QLB;
+  }else if(app==="cervello"){
+    var QCV=["Scopro la regola di una sequenza","Calcolo a mente","Ragiono per esclusione","Scelgo un livello adatto","Leggo la spiegazione e riprovo","Non disturbo chi lavora"],GCV=[["seq","Sequenze"],["pyr","Piramide"],["bil","Bilance"],["chi","Chi sono?"],["sud","Sudoku"],["ber","Bersaglio"]],LCV=["F","M","D"];
+    title="La Palestra del Cervello";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"sfide",h:"Sfide giocate",num:1},{k:"min",h:"Minuti oggi",num:1}];
+    GCV.forEach(function(g){LCV.forEach(function(l,i){cols.push({k:g[0]+i,h:g[1]+" "+l+" (su 6)",num:1})})});
+    cols=cols.concat([{k:"badge",h:"Badge",num:1},{k:"errs",h:"Errori per gioco",wide:1}]).concat(QCV.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.cervello[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},va=(s.valuta||{}).a||{},e=s.err||{},rd2=s.rounds||{},tm=(s.extra||{}).tm||{},dd=new Date(),td=dd.getFullYear()+"-"+(dd.getMonth()+1)+"-"+dd.getDate();
+      r.stelle=s.stars||0;r.sfide=Object.keys(rd2).reduce(function(a,k){return a+(rd2[k]||0)},0);r.min=tm.d===td?Math.round((tm.s||0)/60):0;
+      GCV.forEach(function(g){[0,1,2].forEach(function(i){var v=b[g[0]+i];r[g[0]+i]=v!=null?v:""})});
+      r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errs=GCV.filter(function(g){return e[g[0]]}).sort(function(a,c){return e[c[0]]-e[a[0]]}).map(function(g){return g[1]+" ("+e[g[0]]+")"}).join(", ");
+      QCV.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QCV;
   }else if(app==="suoni"){
     var QSU=["Distinguo suono e silenzio","Leggo i simboli","Suono a tempo con il corpo","Riconosco forte e piano","Scrivo un ritmo di 4 tempi","Suono insieme ai compagni"];
     title="Suoni e Silenzi";
@@ -891,7 +905,7 @@ function sortedRows(def){
 }
 function viewResults(){
   loadResults();
-  var myId=C.teacherId()||"t1",apps=[["accademia","Accademia"]].concat([["mille","Missione Mille"],["mondo","Io nel mondo"],["calcolo","Officina dei Calcoli"],["tabelline","Arcipelago delle Tabelline"],["materia","Detective della Materia"],["stati","Danza delle Particelle"],["metodo","Scienziati in 6 mosse"],["labirinto","Nel labirinto dei quadri"],["suoni","Suoni e Silenzi"]].filter(function(a){return C.appOwner(a[0])===myId})).concat([["atteggiamenti","Atteggiamenti"]]);
+  var myId=C.teacherId()||"t1",apps=[["accademia","Accademia"]].concat([["mille","Missione Mille"],["mondo","Io nel mondo"],["calcolo","Officina dei Calcoli"],["tabelline","Arcipelago delle Tabelline"],["materia","Detective della Materia"],["stati","Danza delle Particelle"],["metodo","Scienziati in 6 mosse"],["labirinto","Nel labirinto dei quadri"],["suoni","Suoni e Silenzi"],["cervello","La Palestra del Cervello"]].filter(function(a){return C.appOwner(a[0])===myId})).concat([["atteggiamenti","Atteggiamenti"]]);
   if(!apps.some(function(a){return a[0]===RS.app}))RS.app="accademia";
   var def=sheetDef(RS.app),rows=sortedRows(def),played=def.rows.filter(function(r){return !r._none});
   var h=tbar()+'<div class="panel"><h3>Fogli dei risultati</h3><p style="color:var(--muted);margin:6px 0 12px">Un foglio per ogni app. Si aggiorna da solo quando i bambini giocano. Tocca il titolo di una colonna per ordinare.</p>'+
@@ -997,7 +1011,7 @@ async function bkRestoreFlow(payload){
 /* ---------- instradamento ---------- */
 function route(){
   var h=hash();
-  if(h==="gioca-mille"||h==="gioca-mondo"||h==="gioca-calcolo"||h==="gioca-tabelline"||h==="gioca-materia"||h==="gioca-stati"||h==="gioca-metodo"||h==="gioca-labirinto"||h==="gioca-suoni"){location.href=({"gioca-mille":"mille.html","gioca-mondo":"mondo.html","gioca-calcolo":"calcolo.html","gioca-tabelline":"tabelline.html","gioca-materia":"materia.html","gioca-stati":"stati.html","gioca-metodo":"metodo.html","gioca-labirinto":"labirinto.html","gioca-suoni":"ritmo.html"})[h];return}
+  if(h==="gioca-mille"||h==="gioca-mondo"||h==="gioca-calcolo"||h==="gioca-tabelline"||h==="gioca-materia"||h==="gioca-stati"||h==="gioca-metodo"||h==="gioca-labirinto"||h==="gioca-suoni"||h==="gioca-cervello"){location.href=({"gioca-mille":"mille.html","gioca-mondo":"mondo.html","gioca-calcolo":"calcolo.html","gioca-tabelline":"tabelline.html","gioca-materia":"materia.html","gioca-stati":"stati.html","gioca-metodo":"metodo.html","gioca-labirinto":"labirinto.html","gioca-suoni":"ritmo.html","gioca-cervello":"cervello.html"})[h];return}
   if(!C.loaded){app.innerHTML='<div class="empty"><h3>Sto caricando la classe</h3><p>Un attimo.</p></div>';return}
   var tz=h==="maestra"||h==="codici"||h==="risultati"||h==="backup"||h==="maestre"||h.indexOf("a-")===0||h.indexOf("am-")===0||h.indexOf("cm-")===0||h==="alunni";
   if(tz){

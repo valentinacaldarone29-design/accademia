@@ -40,6 +40,7 @@ C.GAMES=[
   {k:"metodo",by:"t1",t:"Scienziati in 6 mosse",s:"sci",href:"metodo.html",d:"Il metodo scientifico: fenomeno, domande, ipotesi, esperimento, analisi e conclusione."},
   {k:"labirinto",by:"t1",t:"Nel labirinto dei quadri",s:"art",href:"labirinto.html",d:"Il libro di Bordiglioni: entra nei 7 quadri, trova le porte magiche e dipingi il tuo quadro."},
   {k:"suoni",by:"t1",t:"Suoni e Silenzi",s:"mus",href:"ritmo.html",d:"Il libro di Maestro Libero: leggi PA, SH, PO-O, TITTI e TEKETEKE, suona a tempo con il corpo e componi i tuoi ritmi."},
+  {k:"cervello",by:"t1",t:"La Palestra del Cervello",s:"mat",href:"cervello.html",d:"Hai finito prima? Sei sfide di numeri e logica a tre livelli: sequenze, piramidi, bilance magiche, indovinelli, Sudoku e bersagli."},
   {k:"stati",by:"t1",t:"La Danza delle Particelle",s:"sci",href:"stati.html",d:"Solido, liquido, gassoso: scalda, raffredda e scopri le trasformazioni."}
 ];
 var WORDS=["LUPO","ORSO","GATTO","VOLPE","TIGRE","PANDA","KOALA","DRAGO","FALCO","LEONE","ZEBRA","RICCIO","CERVO","FOCA","GUFO","TASSO","PUMA","LINCE","MERLO","PONY","DELFINO","AQUILA","CIGNO","LONTRA"];
@@ -259,7 +260,7 @@ C.saveSettings=function(patch){
 C.newId=function(){return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)};
 
 /* ===== backup: copia di tutti i dati della classe e di tutte le app ===== */
-var BKCOLS=["pupils","meta","alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni"],BKLS="accademia-backup-v1",BKCHUNK=200000,BKKEEP=25,BKEVERY=20*60*1000;
+var BKCOLS=["pupils","meta","alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello"],BKLS="accademia-backup-v1",BKCHUNK=200000,BKKEEP=25,BKEVERY=20*60*1000;
 C.BK_EVERY_MIN=BKEVERY/60000;C.BK_KEEP=BKKEEP;
 function colDocs(col){
   return new Promise(function(res,rej){
