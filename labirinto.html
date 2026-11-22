@@ -155,14 +155,16 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
 .walker.flip .wi{transform:scaleX(-1)}
 .walker.walking{animation:mHop .32s ease-in-out infinite}
 .walker::after{content:"";position:absolute;left:20%;right:20%;bottom:-10%;height:12%;border-radius:50%;background:rgba(0,0,0,.25);z-index:-1}
-.maze .gate{position:absolute;transform:translate(-50%,-92%);font-size:clamp(22px,5vw,46px);z-index:1;text-align:center;line-height:1}
+.maze .gate{border:0;background:none;padding:0;cursor:pointer;font-family:inherit;position:absolute;transform:translate(-50%,-92%);font-size:clamp(22px,5vw,46px);z-index:1;text-align:center;line-height:1}
 .maze .gate small{display:block;font:700 clamp(10px,1.5vw,14px) var(--font-display);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.maze .gate:disabled{cursor:not-allowed;filter:grayscale(.5)}
 .maze .gate.win{animation:mGlowT 1.4s ease-in-out infinite}
 .mztip{text-align:center;margin:-6px auto 16px;width:fit-content;max-width:100%;background:#FFF8E1;border:3px solid #F2C230;border-radius:99px;padding:6px 16px;font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.12)}
 .room-in{animation:mEnter .7s cubic-bezier(.3,1.3,.5,1) both}
 .backmaze{margin:0 0 12px}
 .stations{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:14px 0}
-@media (max-width:640px){.stations{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stations.s4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:640px){.stations,.stations.s4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .stn{position:relative;display:grid;justify-items:center;gap:2px;padding:12px 6px 10px;border-radius:22px;border:4px solid #fff;background:var(--rs);box-shadow:0 6px 0 rgba(34,48,74,.2);cursor:pointer;font:inherit;color:var(--ink);transition:transform .12s,box-shadow .12s}
 .stn .si{font-size:34px;line-height:1}
 .stn b{font:700 16px/1.1 var(--font-display)}
@@ -210,10 +212,6 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
   <div class="wrap"><div class="tabs">
     <a href="#lezione" data-teacher hidden>Lezione</a>
     <a href="#labirinto">Il labirinto</a>
-    <a href="#schede">Le schede</a>
-    <a href="#indagini">Giochi</a>
-    <a href="#atelier">Il mio quadro</a>
-    <a href="#valuta">Come è andata?</a>
   </div></div>
 </nav>
 
@@ -231,7 +229,7 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
       <div><dt>Obiettivi</dt><dd>Osservare un'opera d'arte e descriverla (personaggi, colori, luce, movimento); riconoscere colori caldi e freddi; distinguere ritratto, paesaggio e natura morta; conoscere sette artisti e il loro stile; rielaborare un'opera in modo personale; ascoltare e comprendere un racconto.</dd></div>
       <div><dt>I quadri</dt><dd>Monet, «Papaveri» · Turner, «Il naufragio del Minotauro» · Degas, «La lezione di danza» · Botero, «Gente del circo con elefante» · Van Gogh, «La notte stellata», «La camera ad Arles» e gli autoritratti · Escher, «Relatività» · Klimt, «L'albero della vita».</dd></div>
       <div><dt>Collegamenti</dt><dd>Italiano (lettura del libro, descrizione), Musica (la mazurka di Degas, i suoni della tempesta), Scienze motorie (danza, equilibrio, staffette), Geografia (dove sono i musei e i paesi dei pittori), Matematica (simmetrie e spirali di Klimt, scale di Escher), Educazione civica (l'amicizia e il rispetto delle opere nei musei).</dd></div>
-      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM. Schede e giochi seguono il percorso: in ogni stanza il bambino vede solo quelli di quel quadro; le schede e i giochi di ripasso con tutti i pittori si aprono all'uscita dal labirinto. Il labirinto è una mappa: il bambino tocca la porta che brilla, il suo avatar ci cammina davanti, la porta si apre ed entra nel quadro; dentro ci sono cinque tappe (storia, enigmi, scheda, giochi, lucchetto).</dd></div>
+      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM. Schede e giochi seguono il percorso: in ogni stanza il bambino vede solo quelli di quel quadro; le schede e i giochi di ripasso con tutti i pittori si aprono all'uscita dal labirinto. Il labirinto è una mappa: il bambino tocca la porta che brilla, il suo avatar ci cammina davanti, la porta si apre ed entra nel quadro; dentro ci sono cinque tappe (storia, enigmi, scheda, giochi, lucchetto). Non ci sono altre linguette: tutte le schede, i giochi e il disegno sono dentro le porte. Dopo la porta 7 si entra nella sala dell'uscita con il quadro magico, il ripasso con tutti i pittori e l'autovalutazione.</dd></div>
     </dl>
   </div>
   <div class="panel">
@@ -298,7 +296,7 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
         <li>Nei laboratori ogni squadra ha ruoli chiari, così tutti hanno un compito.</li>
       </ul></div>
   </div>
-  <div class="row"><a class="btn" href="#labirinto">Apri il labirinto</a><a class="btn ghost" href="#valuta">Scheda di autovalutazione</a></div>
+  <div class="row"><a class="btn" href="#labirinto">Apri il labirinto</a></div>
 </section>
 
 <!-- IL LABIRINTO -->
@@ -593,7 +591,7 @@ function renderMaze(){
     d.disabled=!canEnter(i);d.setAttribute("aria-label",`Porta ${i+1}: ${x.sh}, ${x.t}. `+(st==="done"?"Già aperta: rientra nella stanza.":st==="ready"?"Tocca per entrare.":"Chiusa a chiave."));
     d.innerHTML=`<span class="arch"></span><span class="pic"></span><span class="leaf"></span><span class="sign">${i+1} · ${esc(x.sh)}</span><span class="ico" aria-hidden="true">${st==="done"?"🗝️":st==="locked"?"🔒":""}</span>`;
     d.addEventListener("click",()=>goDoor(i));host.appendChild(d)});
-  const ep=mazePt(7),g=document.createElement("div");g.className="gate"+(end?" win":"");g.style.cssText=`left:${ep.x/10-1.5}%;top:${ep.y/7.05}%`;g.innerHTML=`${end?"🏆":"🚧"}<small>Uscita</small>`;host.appendChild(g);
+  const ep=mazePt(7),g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${ep.x/10-1.5}%;top:${ep.y/7.05}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=`${end?"🏆":"🚧"}<small>Uscita</small>`;g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
   const w=document.createElement("div");w.className="walker";w.id="walker";w.innerHTML=`<div class="wi">${walkerHTML()}</div>`;host.appendChild(w);placeWalker(mazePt(b.pos));
   const nx=Q.findIndex((x,i)=>!b.open[x.k]&&canEnter(i)),tip=document.createElement("div");tip.className="mztip";
   tip.textContent=end?"🏆 Sei uscito dal labirinto! Puoi rientrare in ogni quadro.":nx>=0?`✨ Tocca la porta ${nx+1} che brilla per entrare nel quadro di ${Q[nx].sh}`:"Tocca una porta aperta per rientrare";host.after(tip);
@@ -601,9 +599,9 @@ function renderMaze(){
 function goDoor(i){
   if(WALKING||!canEnter(i))return;const b=lab(),from=b.pos==null?-1:b.pos;
   const w=$("#walker"),door=$(`[data-md="${i}"]`),a=mazeLen(from),z=mazeLen(i),P=$("#mzp");
-  const fin=()=>{WALKING=false;w.classList.remove("walking");b.pos=i;CUR=i;b.cur=i;L.save();
+  const fin=()=>{WALKING=false;w.classList.remove("walking");b.pos=i;if(i<7){CUR=i;b.cur=i}L.save();
     door.classList.remove("ready");door.classList.add("opening");L.ding();
-    setTimeout(()=>{INROOM=true;STN=null;CLUE=null;renderLab();const r=$("#room");r.classList.remove("room-in");void r.offsetWidth;r.classList.add("room-in");r.scrollIntoView({behavior:"smooth",block:"start"})},matchMedia("(prefers-reduced-motion: reduce)").matches?150:1000)};
+    setTimeout(()=>{INROOM=i===7?"exit":true;STN=null;CLUE=null;renderLab();const r=$("#room");r.classList.remove("room-in");void r.offsetWidth;r.classList.add("room-in");r.scrollIntoView({behavior:"smooth",block:"start"})},matchMedia("(prefers-reduced-motion: reduce)").matches?150:1000)};
   if(Math.abs(z-a)<1||matchMedia("(prefers-reduced-motion: reduce)").matches){placeWalker(mazePt(i));fin();return}
   WALKING=true;w.classList.add("walking");const dur=Math.min(4200,400+Math.abs(z-a)*1.6),t0=performance.now();let lastX=P.getPointAtLength(a).x;
   (function step(t){const k=Math.min(1,(t-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,pt=P.getPointAtLength(a+(z-a)*e);
@@ -615,11 +613,14 @@ function renderLab(){
   curRoom();
   $("#kids").innerHTML=`<span aria-hidden="true">🗝️</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
   $("#maze").hidden=INROOM;if(INROOM)$$(".mztip").forEach(t=>t.remove());$("#room").hidden=!INROOM;
-  if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
+  if(INROOM==="exit")renderExit();else if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
 }
 function leaveRoom(){INROOM=false;STN=null;homeSchede();renderLab();$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
 /* le schede possono vivere anche dentro la stanza: spostiamo i loro contenitori */
-function homeSchede(){SCHROOM=false;const pn=$("#sec-schede .panel");if(pn&&$("#sbody")&&$("#sbody").parentNode!==pn)pn.append($("#snote"),$("#spick"),$("#sbody"))}
+function homePanels(){["atelier","valuta"].forEach(k=>{const pn=PANELS[k];if(pn&&pn.parentNode!==$("#sec-"+k))$("#sec-"+k).append(pn)})}
+let PANELS={},BACKSTN=null;
+function mountPanel(k,host){if(!PANELS[k])PANELS[k]=$("#sec-"+k+" .panel");host.append(PANELS[k])}
+function homeSchede(){homePanels();SCHROOM=false;const pn=$("#sec-schede .panel");if(pn&&$("#sbody")&&$("#sbody").parentNode!==pn)pn.append($("#snote"),$("#spick"),$("#sbody"))}
 function stState(x){const b=lab(),sh=SCH.find(s=>s.k===x.k),S=L.state(),bv=S.best["vf_"+x.k],bc=S.best["col_"+x.k],nc=(b.clue[x.k]||[]).filter(Boolean).length;
   return{storia:!!b.look[x.k],enigmi:nc,scheda:sh&&shDone(sh),giochi:(bv!=null?1:0)+(bc!=null?1:0),porta:!!b.open[x.k]}}
 function renderRoom(){
@@ -645,21 +646,46 @@ function renderRoom(){
       <div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
       <p><a class="real" href="${REAL[x.k]||IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p>
       <h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
-      <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button><button class="btn" type="button" data-go="enigmi">Ora gli enigmi 🧩</button></div></div>`;
+      <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button><button class="btn" type="button" data-gost="enigmi">Ora gli enigmi 🧩</button></div></div>`;
     $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
   }else if(STN==="enigmi"){
     const got=b.clue[x.k]||[];
-    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4&&!done?`<div class="row"><button class="btn" type="button" data-go="porta">Hai tutti i pezzi: vai al lucchetto 🔒</button></div>`:"");
+    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4&&!done?`<div class="row"><button class="btn" type="button" data-gost="porta">Hai tutti i pezzi: vai al lucchetto 🔒</button></div>`:"");
     $$("[data-cl]").forEach(bt=>bt.addEventListener("click",()=>{const j=+bt.dataset.cl;CLUE.open=CLUE.open===j?null:j;renderRoom();const cb=$("#cbox");if(cb&&CLUE.open!=null)cb.scrollIntoView({behavior:"smooth",block:"nearest"})}));
     renderClue();
   }else if(STN==="scheda"){
     h.append($("#spick"),$("#sbody"));SCHROOM=true;renderSchede();
+  }else if(STN==="disegno"){
+    h.innerHTML=`<div class="row"><button class="btn ghost" type="button" data-gost="${BACKSTN||"scheda"}">⬅ Torna alla scheda</button></div><div id="ratl"></div>`;mountPanel("atelier",$("#ratl"));renderAtelier();
   }else if(STN==="giochi"){
     h.innerHTML=`<div id="rgames"></div>`;L.sortChooser($("#rgames"),["vf_"+x.k,"col_"+x.k]);
   }else{
     h.innerHTML=`<div class="door lockbox" id="lockbox"></div>`;renderLock();
   }
-  $$("[data-go]",h).forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.go;renderRoom();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  $$("[data-gost]",h).forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.gost;renderRoom();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  CQ.addSayButtons&&CQ.addSayButtons(h);
+}
+
+/* la sala dell'uscita: il quadro magico, il grande ripasso e l'autovalutazione */
+function renderExit(){
+  homeSchede();const S=L.state(),gen=SCH.filter(sh=>GEN.includes(sh.k)),gd=gen.filter(shDone).length,gg=["quadro","colori","genere"].filter(k=>S.best[k]!=null).length,a=atl();
+  if(!STN)STN="x_atelier";
+  const T=[["x_atelier","🎨","Il mio quadro magico",a.done?"pronto!":"l'ottavo quadro",!!a.done],["x_schede","📝","Le schede del ripasso",gd+" su "+gen.length,gd===gen.length],["x_giochi","🎮","I giochi del ripasso",gg+" su 3",gg===3],["x_valuta","🪞","Come è andata?",S.valuta.done?"fatto":"da fare",!!S.valuta.done]];
+  $("#room").innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button></div>
+  <div class="qcard" style="--rc:#C9A227;--rs:#FFF4C9;--rg:linear-gradient(135deg,#FFE27A,#F2C230 50%,#E07A2E)">
+    <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>🏆 Sei uscito dal labirinto!</p><h3>La sala dell'uscita</h3><p>Il custode-mago ti aspetta con l'ultima missione</p></div></div>
+    <div class="qbody">
+      <div class="mission"><b>🗝️ Ultima missione</b> Dipingi l'ottavo quadro del labirinto, ripassa tutti i pittori con le schede e i giochi e racconta com'è andato il tuo viaggio.</div>
+      <div class="stations s4">${T.map((t,j)=>`<button class="stn${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}"><span class="n">${j+1}</span><span class="si" aria-hidden="true">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div>
+      <div class="stp" id="stp"></div>
+    </div></div>`;
+  $("#bk").addEventListener("click",leaveRoom);
+  $$("[data-stn]").forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.stn;renderExit();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  const h=$("#stp");
+  if(STN==="x_atelier"){mountPanel("atelier",h);renderAtelier()}
+  else if(STN==="x_schede"){h.append($("#spick"),$("#sbody"));SCHROOM="exit";renderSchede()}
+  else if(STN==="x_giochi"){h.innerHTML=`<div id="rgames"></div>`;L.sortChooser($("#rgames"),["quadro","colori","genere"])}
+  else{mountPanel("valuta",h)}
   CQ.addSayButtons&&CQ.addSayButtons(h);
 }
 function renderClue(){
@@ -684,8 +710,8 @@ function renderClue(){
 function renderLock(){
   const x=Q[CUR],b=lab(),e=ESC[x.k],got=b.clue[x.k]||[],n=got.filter(Boolean).length,host=$("#lockbox");
   if(b.open[x.k]){
-    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">🏃 Corri alla porta ${CUR+2}</button><button class="btn ghost" type="button" data-go="scheda">Prima finisco scheda e giochi</button></div>`:`<div class="row"><button class="btn" type="button" id="nx2">🏆 Corri all'uscita!</button><a class="btn ghost" href="#atelier">Dipingi il tuo quadro magico</a></div>`);
-    const n2=$("#nx2");if(n2)n2.addEventListener("click",()=>{leaveRoom();setTimeout(()=>{const b=lab(),w=$("#walker"),P=$("#mzp");if(!w||!P)return;const a=mazeLen(b.pos),z=mazeLen(7),t0=performance.now();w.classList.add("walking");(function st(t){const k=Math.min(1,(t-t0)/1500),pt=P.getPointAtLength(a+(z-a)*k);placeWalker(pt);if(k<1)requestAnimationFrame(st);else{w.classList.remove("walking");L.fanfare();L.toast("Sei fuori dal labirinto! 🏆")}})(t0)},500)});
+    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">🏃 Corri alla porta ${CUR+2}</button><button class="btn ghost" type="button" data-gost="scheda">Prima finisco scheda e giochi</button></div>`:`<div class="row"><button class="btn" type="button" id="nx2">🏆 Corri all'uscita!</button></div>`);
+    const n2=$("#nx2");if(n2)n2.addEventListener("click",()=>{leaveRoom();setTimeout(()=>goDoor(7),500)});
     const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{const t=CUR+1;leaveRoom();setTimeout(()=>goDoor(t),500)});return}
   const tries=b.tries[x.k]||0;
   host.innerHTML=`<h4>🔒 Il lucchetto della porta ${CUR+1}</h4>
@@ -830,7 +856,7 @@ function partDone(sh,p,i){const st=sst(sh.k),v=st[i];if(p.ty==="cls")return !!v&
   if(p.ty==="dots")return !!v&&p.col.every((_,j)=>v[j]);if(p.ty==="draw")return !!v;if(p.ty==="match")return !!v&&p.pairs.every((_,j)=>v[j]);if(p.ty==="order")return !!v&&v.length===p.items.length;return false}
 function shDone(sh){return sh.parts.every((p,i)=>partDone(sh,p,i))}
 const GEN=["caldo","generi","ripasso"];
-function visSch(){if(SCHROOM){const r=SCH.findIndex(sh=>sh.k===Q[CUR].k);return CUR===0?[0,r]:[r]}if(isMaestra())return SCH.map((_,i)=>i);const x=curRoom(),end=escaped();
+function visSch(){if(SCHROOM==="exit")return SCH.map((sh,i)=>GEN.includes(sh.k)?i:-1).filter(i=>i>=0);if(SCHROOM){const r=SCH.findIndex(sh=>sh.k===Q[CUR].k);return CUR===0?[0,r]:[r]}if(isMaestra())return SCH.map((_,i)=>i);const x=curRoom(),end=escaped();
   return SCH.map((sh,i)=>({sh,i})).filter(o=>o.sh.k==="prima"||o.sh.k===x.k||(end&&GEN.includes(o.sh.k))).map(o=>o.i)}
 function renderSchede(){
   const VIS=visSch();if(!VIS.includes(SC)){const r=SCH.findIndex(sh=>sh.k===curRoom().k);SC=VIS.includes(r)?r:VIS[0];MSEL=null;DSEL=0}
@@ -865,7 +891,7 @@ function renderPart(sh,p,i,h){
     $$("[data-d]",h).forEach(b=>b.addEventListener("click",()=>{DSEL=+b.dataset.d;renderPart(sh,p,i,h)}));
     $$("[data-pc]",h).forEach(b=>b.addEventListener("click",()=>{v[DSEL]=b.dataset.pc;L.save();const nx=p.col.findIndex((_,j)=>!v[j]);DSEL=nx<0?DSEL:nx;renderPart(sh,p,i,h);mark(sh)}));return}
   if(p.ty==="draw"){h.innerHTML=`<div class="row"><button class="btn" type="button" data-go>🎨 Disegna nell'atelier${p.pal!=="libera"?" con i colori di "+esc(PALS[p.pal].t.replace("Come ","")):""}</button><button class="btn ghost" type="button" data-fatto${st[i]?" disabled":""}>${st[i]?"✅ Fatto":"Ho finito il disegno"}</button></div>`;
-    $("[data-go]",h).addEventListener("click",()=>{PEN.pal=p.pal;PEN.c=PALS[p.pal].c[0];location.hash="#atelier";setTimeout(()=>L.toast(p.q),400)});
+    $("[data-go]",h).addEventListener("click",()=>{PEN.pal=p.pal;PEN.c=PALS[p.pal].c[0];if(INROOM){BACKSTN=STN;STN="disegno";renderLab();$("#stp").scrollIntoView({behavior:"smooth",block:"start"})}else location.hash="#atelier";setTimeout(()=>L.toast(p.q),400)});
     $("[data-fatto]",h).addEventListener("click",()=>{st[i]=1;L.save();renderPart(sh,p,i,h);mark(sh)});return}
   if(p.ty==="match"){const v=st[i]||(st[i]={});if(!MSH[sh.k+i])MSH[sh.k+i]=L.shuffle(p.pairs.map((_,j)=>j));const R=MSH[sh.k+i];
     h.innerHTML=`<div class="mt">${p.pairs.map((pr,j)=>`<button type="button" data-ml="${j}" class="${v[j]?"done":MSEL===j?"sel":""}"${v[j]?" disabled":""}>${esc(pr[0])}</button><button type="button" data-mr="${R[j]}" class="${v[R[j]]?"done":""}"${v[R[j]]?" disabled":""}>${esc(p.pairs[R[j]][1])}</button>`).join("")}</div><p class="small">Tocca un nome a sinistra, poi la risposta giusta a destra.</p>`;
@@ -898,6 +924,7 @@ L.init({
   onEnter:()=>{CUR=null;INROOM=false;renderLabs()},
   onRoute:h=>{
     if(h==="lezione")renderLabs();
+    if(["schede","indagini","atelier","valuta"].includes(h)){location.replace("#labirinto");return}
     if(h==="labirinto")renderLab();
     if(h==="schede"){homeSchede();renderSchede()}
     if(h==="indagini"){roomNote("gnote","i giochi");const all=isMaestra(),x=curRoom();
