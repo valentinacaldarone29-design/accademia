@@ -50,7 +50,9 @@ C.esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){ret
 C.clone=function(o){return JSON.parse(JSON.stringify(o))};
 C.subjOf=function(k){for(var i=0;i<C.SUBJ.length;i++)if(C.SUBJ[i].k===k)return C.SUBJ[i];return null};
 C.colorHex=function(k){for(var i=0;i<C.COLORS.length;i++)if(C.COLORS[i].k===k)return C.COLORS[i].h;return C.COLORS[0].h};
-C.paceOf=function(v){v=+v||99.99;return v===10?99.99:v};C.pace=99.99;
+C.RITMI=[["veloce",10,"Veloce"],["normale",25,"Normale"],["lento",50,"Lento"],["moltolento",75,"Molto lento"],["anno",99.99,"Tutto l'anno"]];
+C.ritmoKey=function(st){st=st||C.settings||{};if(C.RITMI.some(function(r){return r[0]===st.ritmo}))return st.ritmo;var v=+st.pace;return v===0.5?"veloce":v===1?"normale":v===2?"lento":v===4?"moltolento":"anno"};
+C.paceOf=function(st){var k=C.ritmoKey(st);return C.RITMI.filter(function(r){return r[0]===k})[0][1]};C.pace=99.99;
 C.thr=function(){return C.BASE.map(function(v){return Math.round(v*C.pace)})};
 /* evoluzione maghetto: 7 livelli = grigio, bianco e nero, poi le 5 figure */
 C.evoThr=function(){var L=C.thr()[4];return [0,.05,.12,.22,.38,.62,1].map(function(f){return Math.round(L*f)})};
@@ -224,10 +226,10 @@ C.boot=function(){
     if(!db){
       C.mode="local";C.isOwner=true;
       try{var raw=JSON.parse(localStorage.getItem(LS));if(raw){C.pupils=raw.pupils||{};C.settings=raw.settings||{}}}catch(e){}
-      C.pace=C.paceOf(C.settings.pace);C.loaded=true;notify();setTimeout(C.bkAuto,3000);return C;
+      C.pace=C.paceOf(C.settings);C.loaded=true;notify();setTimeout(C.bkAuto,3000);return C;
     }
     C.mode="db";
-    db.doc("meta/settings").onSnapshot(function(s){var d=s.exists?s.data():null;C.settings=d||{};C.pace=C.paceOf(d&&d.pace);notify()},function(){});
+    db.doc("meta/settings").onSnapshot(function(s){var d=s.exists?s.data():null;C.settings=d||{};C.pace=C.paceOf(C.settings);notify()},function(){});
     await new Promise(function(res){
       var done=false,t=setTimeout(function(){if(!done){done=true;res()}},10000);
       db.collection("pupils").onSnapshot(function(snap){
@@ -253,7 +255,7 @@ C.remove=function(id){
   return enqueue(id,function(){return C.db.doc("pupils/"+id).delete()});
 };
 C.saveSettings=function(patch){
-  C.settings=Object.assign({},C.settings,patch);C.pace=C.paceOf(C.settings.pace);saveLocal();notify();
+  C.settings=Object.assign({},C.settings,patch);C.pace=C.paceOf(C.settings);saveLocal();notify();
   if(!C.db)return Promise.resolve();
   var d=C.clone(C.settings);return enqueue("meta",function(){return C.db.doc("meta/settings").set(d)});
 };
