@@ -21,6 +21,7 @@
 .cpc .cbt{display:flex;gap:6px;margin-top:4px}
 .spav .ic,.stile .ic{display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:var(--c);color:#fff}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px}.sc{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.sc img{height:170px;width:auto;max-width:100%;object-fit:contain;display:block}.sc input{width:100%}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tlim{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.tlim label{display:grid;gap:4px;font-weight:700}
 </style></head><body>
 <title>Accademia dei Talenti</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -264,7 +265,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 .rtab tr.none td{color:var(--muted);font-style:italic}
 .rtab tfoot td{background:var(--sea-soft);border-bottom:0}
 </style>
-<link rel="stylesheet" href="cuccioli.css?v=1122a">
+<link rel="stylesheet" href="cuccioli.css?v=1122b">
 <style id="magia">
 /* ===== Tema "scuola di magia": cielo notturno, pergamena, oro ===== */
 :root:not(#_){
@@ -462,7 +463,7 @@ details.fold>.fbody{padding:14px 18px 18px}
 </div>
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1122a"></script>
+<script src="cuccioli.js?v=1122b"></script>
 <script src="stagioni.js"></script>
 <script>
 (function(){
@@ -652,7 +653,7 @@ function viewClass(){
   h+=appsH;
   h+='<div style="margin-top:22px"></div><details class="teacher"><summary>Costumi e poteri magici: come funzionano</summary><div><p>Il costume segue la materia: nelle app l\'avatar indossa quello della materia del gioco, nel portale quello dell\'ultima materia in cui ha preso stelle. Con '+C.UNLOCK+' stelle in una materia arriva l\'oggetto magico, con '+C.TIER3+' il mantello.</p><p>A ogni evoluzione l\'alunno conquista un potere: Scintilla (Apprendista), Aura (Esploratore), Ali (Campione), Stella (Leggenda). Il colore e il nome del potere vengono dalla materia in cui ha più stelle in quel momento, così ogni avatar è diverso. Ogni potere ha un piccolo privilegio da usare in classe, se vuoi.</p></div></details>';
   h+='<details class="teacher"><summary>Variante in movimento: il rito dell\'evoluzione</summary><div><p>Quando un alunno evolve la classe si ferma e fa il rito: tutti si accovacciano come semi, il compagno che evolve conta fino a tre, poi tutti si alzano insieme con le braccia aperte.</p><p>Per lo stadio Campione si può aggiungere un\'andatura speciale fino alla porta, per la Leggenda un giro d\'onore dell\'aula con applauso a ritmo.</p></div></details>';
-  h+='<details class="teacher"><summary>Impostazioni e consigli</summary><div><label class="l" for="pace">Ritmo di evoluzione</label><select id="pace"><option value="0.5"'+(C.pace===0.5?" selected":"")+'>Veloce: Apprendista a 5 punti, Leggenda a 50</option><option value="1"'+(C.pace===1?" selected":"")+'>Normale: Apprendista a 10 punti, Leggenda a 100</option><option value="2"'+(C.pace===2?" selected":"")+'>Lento: Apprendista a 20 punti, Leggenda a 200</option><option value="4"'+(C.pace===4?" selected":"")+'>Molto lento: Apprendista a 40 punti, Leggenda a 400</option><option value="10"'+(C.pace===10?" selected":"")+'>Tutto l\'anno: Apprendista a 100 punti, Leggenda a 1000</option></select>'+
+  h+='<details class="teacher"><summary>Impostazioni e consigli</summary><div><label class="l" for="pace">Ritmo di evoluzione</label><select id="pace"><option value="0.5"'+(C.pace===0.5?" selected":"")+'>Veloce: Apprendista a 5 punti, Leggenda a 50</option><option value="1"'+(C.pace===1?" selected":"")+'>Normale: Apprendista a 10 punti, Leggenda a 100</option><option value="2"'+(C.pace===2?" selected":"")+'>Lento: Apprendista a 20 punti, Leggenda a 200</option><option value="4"'+(C.pace===4?" selected":"")+'>Molto lento: Apprendista a 40 punti, Leggenda a 400</option><option value="99.99"'+(C.pace===99.99?" selected":"")+'>Tutto l\'anno: Apprendista a 1000 punti, Leggenda a 9999</option></select>'+'<p class="l" style="margin-top:14px">Limite di tempo per ogni bambino (tutte le app)</p><div class="tlim"><label>Al giorno<select id="tDay">'+[0,20,30,40,45,60,90].map(function(v){return '<option value="'+v+'"'+(C.timeLim().day===v?' selected':'')+'>'+(v?v+' minuti':'nessun limite')+'</option>'}).join('')+'</select></label><label>Per volta, poi pausa<select id="tTurn">'+[0,10,15,20,25,30].map(function(v){return '<option value="'+v+'"'+(C.timeLim().turn===v?' selected':'')+'>'+(v?v+' minuti':'nessun limite')+'</option>'}).join('')+'</select></label><label>Durata della pausa<select id="tRest">'+[5,10,15,20,30,60].map(function(v){return '<option value="'+v+'"'+(C.timeLim().rest===v?' selected':'')+'>'+(v?v+' minuti':'nessun limite')+'</option>'}).join('')+'</select></label></div><p class="small">Il tempo conta solo mentre il bambino usa un\'app; quando finisce compare la pausa con un esercizio di movimento. Voi maestre potete sbloccare con il PIN. La Palestra del Cervello ha in più i suoi limiti.</p>'+
     '<p style="margin-top:12px">Ogni stella vinta nei giochi vale 1 punto. Se la classe evolve troppo in fretta, scegli un ritmo più lento.</p><p>Usa solo i nomi di battesimo e premia soprattutto impegno e progressi personali, non il confronto tra compagni.</p><p>Le caricature sono i volti dei bambini: tieni il link della pagina privato e condividilo solo con chi ne ha titolo, dopo aver verificato i consensi delle famiglie.</p>'+
     '<div class="row" style="margin-top:12px"><button class="btn sm" data-act="pinreset">Cambia il PIN</button></div></div></details>';
   app.innerHTML=h;
@@ -1186,6 +1187,7 @@ document.addEventListener("change",function(e){
   var t=e.target;
   if(t.id==="selSubj")ST.selSubj=t.value;
   if(t.id==="pace")C.saveSettings({pace:+t.value});
+  if(t.id==="tDay"||t.id==="tTurn"||t.id==="tRest"){var pt={};pt[t.id]=+t.value;C.saveSettings(pt)}
   if(t.id==="attxp")C.saveSettings({attXp:!!t.checked});
   if(t.id==="rn"){var id=curId(),p=C.pupils[id],v=t.value.trim().slice(0,30);if(p&&v&&v!==p.n){var q=C.clone(p);q.n=v;C.put(id,q)}}
 });

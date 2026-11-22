@@ -317,3 +317,21 @@ html.cq-app:not(.cq-teach) .move,html.cq-app:not(.cq-teach) .movebox,html.cq-app
 .cq-magic i:nth-child(even){background:radial-gradient(circle,#fff 0 20%,#B98CFF 35%,rgba(185,140,255,0) 70%)}
 @keyframes cqEvoStar{0%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(.4)}70%{opacity:1}100%{opacity:0;transform:rotate(var(--a)) translateY(-420%) scale(1.3)}}
 @media (prefers-reduced-motion:reduce){.cq-evo .cq-fig,.cq-es{animation:none}.cq-es{opacity:.8}.cq-evolving .cq-fig:not(.cq-old){animation:none}.cq-fig.cq-old{animation:cqEvoOut .6s forwards}.cq-magic i,.cq-ringm{display:none}}
+/* limite di tempo */
+.cq-tchip{align-self:center;background:#fff;color:#22304A;border:3px solid #FFC93C;border-radius:99px;padding:4px 12px;font:700 16px/1.2 system-ui,sans-serif;box-shadow:0 3px 0 rgba(0,0,0,.18);white-space:nowrap}
+.cq-tchip.low{border-color:#FF5D8F;background:#FFF0F3;animation:cqTPulse 1s ease-in-out infinite}
+@keyframes cqTPulse{50%{transform:scale(1.08)}}
+.cq-tlock{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 50% 30%,rgba(60,40,110,.92),rgba(20,14,40,.97))}
+.cq-tlock[hidden]{display:none}
+html.cq-tlocked body{overflow:hidden}
+.cq-tcard{max-width:460px;width:100%;background:#FFFDF6;border-radius:28px;border:5px solid #FFC93C;padding:22px;text-align:center;color:#22304A;box-shadow:0 20px 50px rgba(0,0,0,.4);display:grid;gap:10px;justify-items:center}
+.cq-tcard h2{margin:0;font-size:30px}
+.cq-tcard p{margin:0;font-size:18px;line-height:1.4}
+.cq-tav{width:120px}
+.cq-tbig{font:800 54px/1 system-ui,sans-serif!important;color:#6A4BC4;letter-spacing:2px}
+.cq-tmove{background:#EEE8FB;border-radius:16px;padding:10px 14px}
+.cq-tcard [data-t="pinbox"]{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.cq-tcard [data-t="pinbox"][hidden]{display:none}
+.cq-tcard input{font-size:18px;padding:8px 12px;border-radius:12px;border:2px solid #CFC6E6;width:170px}
+.cq-tcard small{color:#C0304F;width:100%}
+@media (prefers-reduced-motion:reduce){.cq-tchip.low{animation:none}}

@@ -50,7 +50,7 @@ C.esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){ret
 C.clone=function(o){return JSON.parse(JSON.stringify(o))};
 C.subjOf=function(k){for(var i=0;i<C.SUBJ.length;i++)if(C.SUBJ[i].k===k)return C.SUBJ[i];return null};
 C.colorHex=function(k){for(var i=0;i<C.COLORS.length;i++)if(C.COLORS[i].k===k)return C.COLORS[i].h;return C.COLORS[0].h};
-C.pace=10;
+C.paceOf=function(v){v=+v||99.99;return v===10?99.99:v};C.pace=99.99;
 C.thr=function(){return C.BASE.map(function(v){return Math.round(v*C.pace)})};
 /* evoluzione maghetto: 7 livelli = grigio, bianco e nero, poi le 5 figure */
 C.evoThr=function(){var L=C.thr()[4];return [0,.05,.12,.22,.38,.62,1].map(function(f){return Math.round(L*f)})};
@@ -224,10 +224,10 @@ C.boot=function(){
     if(!db){
       C.mode="local";C.isOwner=true;
       try{var raw=JSON.parse(localStorage.getItem(LS));if(raw){C.pupils=raw.pupils||{};C.settings=raw.settings||{}}}catch(e){}
-      C.pace=+C.settings.pace||10;C.loaded=true;notify();setTimeout(C.bkAuto,3000);return C;
+      C.pace=C.paceOf(C.settings.pace);C.loaded=true;notify();setTimeout(C.bkAuto,3000);return C;
     }
     C.mode="db";
-    db.doc("meta/settings").onSnapshot(function(s){var d=s.exists?s.data():null;C.settings=d||{};C.pace=d&&d.pace?+d.pace:10;notify()},function(){});
+    db.doc("meta/settings").onSnapshot(function(s){var d=s.exists?s.data():null;C.settings=d||{};C.pace=C.paceOf(d&&d.pace);notify()},function(){});
     await new Promise(function(res){
       var done=false,t=setTimeout(function(){if(!done){done=true;res()}},10000);
       db.collection("pupils").onSnapshot(function(snap){
@@ -253,7 +253,7 @@ C.remove=function(id){
   return enqueue(id,function(){return C.db.doc("pupils/"+id).delete()});
 };
 C.saveSettings=function(patch){
-  C.settings=Object.assign({},C.settings,patch);C.pace=+C.settings.pace||10;saveLocal();notify();
+  C.settings=Object.assign({},C.settings,patch);C.pace=C.paceOf(C.settings.pace);saveLocal();notify();
   if(!C.db)return Promise.resolve();
   var d=C.clone(C.settings);return enqueue("meta",function(){return C.db.doc("meta/settings").set(d)});
 };
@@ -979,4 +979,59 @@ C.cardsHTML=function(){
     return '<div class="c" style="border-color:'+col+'"><div class="t" style="background:'+col+'">Accademia dei Talenti</div><div class="n">'+C.esc(p.n)+'</div><div class="k">'+C.esc(C.fmtCode(p.code||""))+'</div><div class="h">Il mio codice segreto: lo scrivo per entrare nelle app della classe.</div></div>'}).join("");
   return '<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><title>Codici della classe</title><style>body{font-family:Arial,sans-serif;margin:16px;color:#1F3A56}h1{font-size:20px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.c{border:3px solid;border-radius:14px;overflow:hidden;text-align:center;break-inside:avoid;padding-bottom:10px}.t{color:#fff;font-weight:700;padding:6px;font-size:13px}.n{font-size:22px;font-weight:700;margin-top:8px}.k{font-size:30px;font-weight:800;letter-spacing:2px;margin:6px 0;font-family:"Courier New",monospace}.h{font-size:11px;padding:0 10px;color:#546B82}@media print{body{margin:0}}</style></head><body><h1>Codici d\'accesso della classe</h1><div class="g">'+cards+'</div></body></html>';
 };
+/* ===== limite di tempo per ogni bambino in tutta l'Accademia =====
+   impostazioni (minuti, 0 = nessun limite): tDay al giorno, tTurn per volta, tRest pausa prima di rientrare.
+   Il tempo conta solo nelle app, solo per gli alunni, solo se la pagina è aperta e il bambino la sta usando. */
+C.timeLim=function(){var s=C.settings||{};function v(k,d){return s[k]!=null&&s[k]!==""?+s[k]:d}return{day:v("tDay",40),turn:v("tTurn",20),rest:v("tRest",15)}};
+(function(){
+  var TICK=5,lastAct=Date.now(),dirty=0,box=null,chip=null,warned=false;
+  function today(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+  function isApp(){return C.GAMES&&C.GAMES.some(function(g){return g.k===C.PAGE})}
+  function kid(){if(!isApp()||(C.teacher&&C.teacher()))return null;var id=C.who&&C.who();return id&&C.pupils[id]?id:null}
+  function st(id){var p=C.pupils[id],t=Object.assign({d:"",s:0,ss:0,last:0,lock:0},p.tm||{});if(t.d!==today()){t.d=today();t.s=0;t.ss=0;t.lock=0;t.ok=0}return t}
+  function save(id,t,force){var p=C.pupils[id];if(!p)return;var q=C.clone(p);q.tm=t;if(force||++dirty>=6){dirty=0;C.put(id,q)}else{C.pupils[id]=q}}
+  function mm(sec){sec=Math.max(0,Math.ceil(sec));var m=Math.floor(sec/60),s=sec%60;return m+":"+("0"+s).slice(-2)}
+  ["pointerdown","keydown","wheel","touchstart"].forEach(function(e){window.addEventListener(e,function(){lastAct=Date.now()},{passive:true,capture:true})});
+  function ensure(){
+    if(!chip){chip=document.createElement("div");chip.className="cq-tchip";chip.setAttribute("role","timer");chip.hidden=true;try{C.dock().appendChild(chip)}catch(e){document.body.appendChild(chip)}}
+    if(!box){box=document.createElement("div");box.className="cq-tlock";box.hidden=true;box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");document.body.appendChild(box)}
+  }
+  function showLock(id,t,L,kind){
+    ensure();var p=C.pupils[id],left=kind==="day"?0:(t.lock-Date.now())/1000;
+    var moves=["Fai 10 saltelli sul posto","Allunga le braccia verso il cielo e poi tocca le punte dei piedi","Cammina come un robot fino alla finestra e torna","Fai 5 respiri lenti, come un palloncino che si gonfia","Disegna nell'aria il tuo nome con il gomito"];
+    box.innerHTML='<div class="cq-tcard"><div class="cq-tav">'+C.avatar(p,{medals:false})+'</div>'+
+      (kind==="day"?'<h2>Per oggi basta schermo! 🌙</h2><p>Hai usato tutti i tuoi '+L.day+' minuti di oggi, '+C.esc(p.n)+'. Le app ti aspettano domani!</p>'
+        :'<h2>Pausa! ⏸️</h2><p>Hai giocato '+L.turn+' minuti di fila, '+C.esc(p.n)+'. Riposa gli occhi e muoviti un po\'.</p><p class="cq-tbig" data-cd>'+mm(left)+'</p><p class="cq-tmove">🤸 '+moves[Math.floor(Math.random()*moves.length)]+'</p>')+
+      '<div class="cq-row"><button type="button" class="cq-btn ghost" data-t="out">Cambia alunno</button><button type="button" class="cq-btn ghost" data-t="pin">Sblocca (maestra)</button></div><div data-t="pinbox" hidden><input type="password" inputmode="numeric" maxlength="8" placeholder="PIN della maestra" aria-label="PIN della maestra"><button type="button" class="cq-btn pri" data-t="ok">Sblocca</button><small data-t="err"></small></div></div>';
+    box.hidden=false;document.documentElement.classList.add("cq-tlocked");
+    box.querySelector('[data-t="out"]').onclick=function(){box.hidden=true;document.documentElement.classList.remove("cq-tlocked");C.logout();location.reload()};
+    box.querySelector('[data-t="pin"]').onclick=function(){var pb=box.querySelector('[data-t="pinbox"]');pb.hidden=false;pb.querySelector("input").focus()};
+    box.querySelector('[data-t="ok"]').onclick=function(){var v=box.querySelector('[data-t="pinbox"] input').value,list=C.teachers();
+      if(!list.some(function(x){return x.pin})||C.checkPin(v)!==""){box.querySelector('[data-t="err"]').textContent="PIN sbagliato.";return}
+      var t2=st(id);t2.lock=0;t2.ss=0;t2.ok=(t2.ok||0)+1;if(kind==="day")t2.s=Math.max(0,L.day*60-L.turn*60);save(id,t2,true);hideLock();C.toast("Sbloccato dalla maestra: buon lavoro!")};
+  }
+  function hideLock(){if(box){box.hidden=true;document.documentElement.classList.remove("cq-tlocked")}}
+  function tick(){
+    var id=kid();ensure();
+    if(!id){chip.hidden=true;hideLock();return}
+    var L=C.timeLim(),t=st(id),now=Date.now();
+    if(!L.day&&!L.turn){chip.hidden=true;hideLock();return}
+    if(t.last&&now-t.last>L.rest*60000){t.ss=0}
+    if(t.lock&&now>=t.lock){t.lock=0;t.ss=0;warned=false;save(id,t,true);hideLock()}
+    if(L.day&&t.s>=L.day*60){showLock(id,t,L,"day");chip.hidden=true;return}
+    if(t.lock){if(!box||box.hidden)showLock(id,t,L,"turn");var cd=box.querySelector("[data-cd]");if(cd)cd.textContent=mm((t.lock-now)/1000);chip.hidden=true;return}
+    hideLock();
+    var active=!document.hidden&&now-lastAct<90000;
+    if(active){t.s+=TICK;t.ss+=TICK;t.last=now}
+    var leftTurn=L.turn?L.turn*60-t.ss:1e9,leftDay=L.day?L.day*60-t.s:1e9,left=Math.min(leftTurn,leftDay);
+    chip.hidden=false;chip.textContent="⏱️ "+mm(left);chip.title="Tempo che ti resta "+(leftTurn<leftDay?"prima della pausa":"per oggi");chip.classList.toggle("low",left<=120);
+    if(left<=120&&!warned){warned=true;C.toast(leftTurn<leftDay?"Tra 2 minuti c'è la pausa: finisci quello che stai facendo!":"Tra 2 minuti finisce il tempo di oggi.")}
+    if(L.turn&&t.ss>=L.turn*60){t.lock=now+L.rest*60000;t.ss=0;save(id,t,true);showLock(id,t,L,"turn");return}
+    if(L.day&&t.s>=L.day*60){save(id,t,true);showLock(id,t,L,"day");return}
+    if(active)save(id,t,false);
+  }
+  document.addEventListener("visibilitychange",function(){var id=kid();if(document.hidden&&id&&C.pupils[id]&&C.pupils[id].tm)save(id,st(id),true)});
+  setInterval(function(){if(C.loaded!==false)try{tick()}catch(e){}},TICK*1000);
+  C.on&&C.on(function(){try{var id=kid();if(!id)hideLock()}catch(e){}});
+})();
 })();
