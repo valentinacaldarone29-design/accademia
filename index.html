@@ -818,13 +818,13 @@ function sheetDef(app){
     var QLB=["So raccontare la storia","So osservare un quadro","So riconoscere caldi e freddi","So dire chi ha dipinto i quadri","Ho dipinto con fantasia","Ho collaborato con la squadra"];
     var PN={monet:"Monet",turner:"Turner",degas:"Degas",botero:"Botero",vangogh:"Van Gogh",escher:"Escher",klimt:"Klimt"};
     title="Nel labirinto dei quadri";
-    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"porte",h:"Porte aperte (su 7)",num:1},{k:"quali",h:"Ultima porta aperta"},{k:"oss",h:"Quadri osservati",num:1},{k:"b_quadro",h:"Record Dentro quale quadro? (su 8)",num:1},{k:"b_colori",h:"Record Caldo o freddo? (su 8)",num:1},{k:"b_genere",h:"Record Ritratto o paesaggio? (su 8)",num:1},{k:"sc",h:"Schede completate (su 11)",num:1},{k:"qm",h:"Quadri magici",num:1},{k:"tit",h:"Titolo del quadro",wide:1},{k:"chi",h:"Chi ci abita",wide:1},{k:"por",h:"La porta magica",wide:1},{k:"badge",h:"Badge",num:1},{k:"errs",h:"Più difficili",wide:1}]
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"porte",h:"Porte aperte (su 7)",num:1},{k:"quali",h:"Ultima porta aperta"},{k:"oss",h:"Quadri osservati",num:1},{k:"gst",h:"Giochi delle stanze superati (su 14)",num:1},{k:"b_quadro",h:"Record Dentro quale quadro? (su 8)",num:1},{k:"b_colori",h:"Record Caldo o freddo? (su 8)",num:1},{k:"b_genere",h:"Record Ritratto o paesaggio? (su 8)",num:1},{k:"sc",h:"Schede completate (su 11)",num:1},{k:"qm",h:"Quadri magici",num:1},{k:"tit",h:"Titolo del quadro",wide:1},{k:"chi",h:"Chi ci abita",wide:1},{k:"por",h:"La porta magica",wide:1},{k:"badge",h:"Badge",num:1},{k:"errs",h:"Più difficili",wide:1}]
       .concat(QLB.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
     rows=ids.map(function(id){var s=RES.labirinto[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},x=s.extra||{},lb=x.lab||{open:{},look:{}},va=(s.valuta||{}).a||{},e=s.err||{};
       var at=x.atl&&Object.keys(x.atl.f||{}).length?x.atl:((x.arch||[]).slice(-1)[0]||{f:{}});var f=at.f||{};
       var op=Object.keys(PN).filter(function(k){return (lb.open||{})[k]});
       r.stelle=s.stars||0;r.porte=op.length;r.quali=op.length?PN[op[op.length-1]]:"";r.oss=Object.keys(lb.look||{}).length;
-      r.b_quadro=b.quadro!=null?b.quadro:"";r.b_colori=b.colori!=null?b.colori:"";r.b_genere=b.genere!=null?b.genere:"";r.qm=x.quadri||0;r.sc=Object.keys(x.sch2||{}).filter(function(k){return x.sch2[k]._done}).length;
+      r.gst=Object.keys(b).filter(function(k){return /^(vf|col)_/.test(k)&&b[k]>=(/^vf_/.test(k)?6:3)}).length;r.b_quadro=b.quadro!=null?b.quadro:"";r.b_colori=b.colori!=null?b.colori:"";r.b_genere=b.genere!=null?b.genere:"";r.qm=x.quadri||0;r.sc=Object.keys(x.sch2||{}).filter(function(k){return x.sch2[k]._done}).length;
       r.tit=String(f.tit||"").trim();r.chi=String(f.chi||"").trim();r.por=String(f.por||"").trim();
       r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
       r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");

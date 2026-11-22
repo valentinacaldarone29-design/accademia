@@ -128,6 +128,10 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
 .dooropen .leaf{display:block;width:100%;height:100%;border-radius:10px 10px 0 0;background:linear-gradient(90deg,#8A5A12,#B07A2A);transform-origin:left center;animation:dOpen 1.4s ease forwards;box-shadow:inset -6px 0 0 #5E3D0A}
 @keyframes dOpen{to{transform:rotateY(-105deg)}}
 @media (prefers-reduced-motion:reduce){.lockbox.shake{animation:none}.dooropen .leaf{animation:none;transform:rotateY(-105deg)}}
+.roomnote{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 14px;padding:10px 14px;border-radius:18px;border:3px solid var(--rc,var(--line));background:var(--rs,var(--surface2))}
+.roomnote .rf{width:46px;height:36px;border-radius:6px;border:4px solid #C9A227;box-shadow:inset 0 0 0 2px #8A6D12;flex:none}
+.roomnote p{margin:0;flex:1;min-width:200px}
+.roomnote a{font-weight:700}
 </style>
 <link rel="stylesheet" href="gioco.css?v=1">
 </head><body>
@@ -182,7 +186,7 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
       <div><dt>Obiettivi</dt><dd>Osservare un'opera d'arte e descriverla (personaggi, colori, luce, movimento); riconoscere colori caldi e freddi; distinguere ritratto, paesaggio e natura morta; conoscere sette artisti e il loro stile; rielaborare un'opera in modo personale; ascoltare e comprendere un racconto.</dd></div>
       <div><dt>I quadri</dt><dd>Monet, «Papaveri» · Turner, «Il naufragio del Minotauro» · Degas, «La lezione di danza» · Botero, «Gente del circo con elefante» · Van Gogh, «La notte stellata», «La camera ad Arles» e gli autoritratti · Escher, «Relatività» · Klimt, «L'albero della vita».</dd></div>
       <div><dt>Collegamenti</dt><dd>Italiano (lettura del libro, descrizione), Musica (la mazurka di Degas, i suoni della tempesta), Scienze motorie (danza, equilibrio, staffette), Geografia (dove sono i musei e i paesi dei pittori), Matematica (simmetrie e spirali di Klimt, scale di Escher), Educazione civica (l'amicizia e il rispetto delle opere nei musei).</dd></div>
-      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM.</dd></div>
+      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM. Schede e giochi seguono il percorso: in ogni stanza il bambino vede solo quelli di quel quadro; le schede e i giochi di ripasso con tutti i pittori si aprono all'uscita dal labirinto.</dd></div>
     </dl>
   </div>
   <div class="panel">
@@ -269,6 +273,7 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
   <div class="panel">
     <p class="eyebrow">I giochi</p>
     <h2>Metti ogni carta nel gruppo giusto</h2>
+    <div class="roomnote" id="gnote"></div>
     <div id="sort"></div>
   </div>
 </section>
@@ -279,6 +284,7 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
     <p class="eyebrow">Le schede del libro</p>
     <h2>Le mie schede</h2>
     <p class="lead">Scegli una scheda. Rispondi a una domanda alla volta.</p>
+    <div class="roomnote" id="snote"></div>
     <div class="spick" id="spick"></div>
     <div id="sbody"></div>
   </div>
@@ -434,6 +440,43 @@ const SETS={
     {t:"Un paio di scarpe vecchie sul pavimento.",i:"👞",a:"nat",w:"Anche le scarpe possono essere una natura morta: Van Gogh le ha dipinte."}]}
 };
 
+/* giochi di ogni stanza: si vedono solo quelli del quadro in cui ci si trova */
+const VB=[{k:"v",t:"Vero",i:"✅",c:"#2E8B57"},{k:"f",t:"Falso",i:"❌",c:"#D2325F"}];
+const CHIARO={k:"chiaro",t:"Chiaro",d:"vicino al bianco",i:"🤍",c:"#9A9A9A"},SCURO={k:"scuro",t:"Scuro",d:"vicino al nero",i:"🖤",c:"#333"};
+const RVF={
+ monet:[["Nel quadro c'è un prato pieno di papaveri rossi.","v"],["Monet dipingeva all'aperto, a piccole macchie di colore.","v"],["Due signore passeggiano con l'ombrellino.","v"],["Emily e Thierry giocano a volano.","v"],
+  ["Il quadro di Monet è tutto in bianco e nero.","f","No: è pieno di colori, come il rosso, il verde e l'azzurro."],["Le signore con l'ombrellino aiutano i bambini a uscire.","f","No: vogliono tenerli con loro per sempre."],["La porta magica è in fondo al fiume.","f","No: è fra i rami dell'albero."],["Monet dipingeva con linee precise e senza macchie.","f","No: usava tante macchioline di colore."]],
+ turner:[["Nel quadro di Turner il mare è in tempesta.","v"],["Turner amava dipingere la forza della natura: onde e vento.","v"],["Il sottotenente Kidd fa lavorare i bambini come mozzi.","v"],["Il cuoco Remora rivela che la porta è azzurra.","v"],
+  ["Sulla nave splende il sole e il mare è calmo.","f","No: c'è una tempesta con onde enormi."],["I bambini viaggiano comodi come passeggeri.","f","No: devono pulire il ponte come mozzi."],["La porta per uscire è una botola nella nave.","f","No: la porta azzurra è il mare."],["Turner dipingeva soprattutto vasi di fiori.","f","No: dipingeva il mare, il cielo e la tempesta."]],
+ degas:[["Nella scuola di danza le ballerine provano i passi.","v"],["Degas dipingeva le ballerine mentre provano e si stancano.","v"],["Il maestro Jules batte il bastone sul pavimento.","v"],["Il cagnolino Briciola parla con Juliane.","v"],
+  ["Il maestro Jules è dolce e non sgrida mai.","f","No: è severo e batte il bastone."],["Le ballerine di Degas sono tutte ferme in fila e uguali.","f","No: ognuna fa una cosa diversa, come in una fotografia."],["Per uscire bisogna dormire sul pavimento.","f","No: bisogna danzare sulla musica."],["Nel quadro di Degas i bambini sono su una nave.","f","No: sono in una scuola di danza."]],
+ botero:[["Nel circo di Botero persone e animali sono tondi e morbidi.","v"],["L'elefante Piuma carica il cannone.","v"],["Marco torna indietro a cercare Juliane.","v"],["I bambini escono sparati dal cannone.","v"],
+  ["La scimmia Lilli aiuta sempre i bambini.","f","No: fa uno scherzo cattivo."],["Botero dipingeva persone magre e appuntite.","f","No: le dipingeva tonde e gonfie."],["Il circo di Botero è in bianco e nero.","f","No: è pieno di colori vivaci."],["L'elefante del circo si chiama Pallino.","f","No: si chiama Piuma."]],
+ vangogh:[["Nel cielo di Van Gogh le stelle sono gialle e arancioni.","v"],["Le pennellate di Van Gogh sono spesse e girano come il vento.","v"],["I bambini entrano nella camera del pittore ad Arles.","v"],["Per uscire bisogna saltare nella stella più bassa.","v"],
+  ["Le pennellate di Van Gogh sono sottili e tutte dritte.","f","No: sono spesse, a virgola, e girano."],["Vincent è triste perché ha perso il pennello.","f","No: gli manca l'amico Paul Gauguin."],["La porta è il letto della camera.","f","No: è la stella più bassa."],["Il cielo di Van Gogh sembra fermo e piatto.","f","No: sembra muoversi a vortici."]],
+ escher:[["Il disegno di Escher è in bianco e nero.","v"],["Le scale vanno in tutte le direzioni.","v"],["I signori Dummy sono due manichini.","v"],["La porta si apre nel pavimento, dopo uno scivolo.","v"],
+  ["Escher usa tanti colori vivaci.","f","No: usa solo il bianco, il nero e il grigio."],["Nel quadro di Escher tutti camminano nello stesso verso.","f","No: c'è chi cammina sui muri e chi a testa in giù."],["Le costruzioni di Escher si possono costruire davvero.","f","No: sono costruzioni impossibili."],["I signori Dummy sono due pagliacci.","f","No: sono due manichini."]],
+ klimt:[["L'albero della vita ha i rami a spirale.","v"],["Klimt usava tanto oro e tante decorazioni.","v"],["Un uccellino aiuta i bambini.","v"],["L'ultima porta si apre solo con un buon amico.","v"],
+  ["Teresa è felice perché il fidanzato è vicino.","f","No: è triste perché è lontano."],["L'albero di Klimt è grigio e senza decorazioni.","f","No: è d'oro e pieno di decorazioni."],["I rami dell'albero sono dritti come bastoni.","f","No: girano a spirale."],["Per uscire basta correre più veloce di tutti.","f","No: serve un buon amico, come dice la password."]]};
+const RCOL={
+ monet:[["Il rosso dei papaveri","🔴","caldo"],["Il verde del prato","🟢","freddo"],["L'azzurro del cielo","🩵","freddo"],["Il giallo chiaro della luce del sole","🟡","caldo"],["Il bianco delle nuvole","⚪","freddo"]],
+ turner:[["Il blu scuro delle onde","🔵","freddo"],["Il grigio azzurro del cielo in tempesta","🌫️","freddo"],["Il giallo della luce tra le nuvole","🟡","caldo"],["Il marrone del legno della nave","🟤","caldo"],["Il bianco della schiuma","⚪","freddo"]],
+ degas:[["Il rosa dei fiocchi delle ballerine","🩷","caldo"],["Il bianco dei tutù","⚪","freddo"],["Il marrone del pavimento di legno","🟤","caldo"],["Il beige caldo delle pareti","🟫","caldo"],["Il verde scuro della parete","🟢","freddo"]],
+ botero:[["Il giallo del tendone del circo","🟡","caldo"],["L'arancione dei costumi","🟠","caldo"],["Il verde dei vestiti","🟢","freddo"],["L'azzurro del cielo","🩵","freddo"],["Il viola dei mantelli","🟣","freddo"]],
+ vangogh:[["Il blu della notte","🔵","freddo"],["Il blu scuro delle colline","🌌","freddo"],["Il giallo delle stelle","🟡","caldo"],["L'arancione della luna","🟠","caldo"],["Il verde scuro del cipresso","🟢","freddo"]],
+ klimt:[["L'oro dei rami","✨","caldo"],["Il giallo delle decorazioni","🟡","caldo"],["Il marrone del tronco","🟤","caldo"],["Il verde del prato fiorito","🟢","freddo"]],
+ escher:[["Il nero delle linee","⚫","scuro"],["Il grigio scuro delle ombre","🌑","scuro"],["Il grigio chiaro delle pareti","🌫️","chiaro"],["Il bianco dei pavimenti","⚪","chiaro"]]};
+Q.forEach(x=>{
+  SETS["vf_"+x.k]={t:"Vero o falso nel quadro di "+x.sh,d:x.t+": ricordi bene la stanza?",ask:"È vero o falso?",emo:"🔍",c:x.s,n:8,
+    move:"Vero: salta a braccia in alto! Falso: accovacciati!",bins:VB,
+    items:RVF[x.k].map(v=>({t:v[0],i:v[1]==="v"?"🖼️":"🤨",a:v[1],w:v[2]||"Giusto: è proprio così nel quadro di "+x.sh+"."}))};
+  const bw=x.k==="escher";
+  SETS["col_"+x.k]={t:bw?"Chiaro o scuro?":"I colori di "+x.sh,d:bw?"Escher disegna senza colori: scopri le sfumature":"Caldo o freddo? I colori di «"+x.t+"»",ask:bw?"È chiaro o scuro?":"Questo colore è caldo o freddo?",emo:bw?"🔳":"🎨",c:x.s,n:8,
+    move:bw?"Chiaro: alzati in punta di piedi. Scuro: rannicchiati!":"Colore caldo: strofina le mani come davanti al fuoco. Colore freddo: abbracciati e trema!",
+    bins:bw?[CHIARO,SCURO]:[CALDO,FREDDO],
+    items:RCOL[x.k].map(v=>({t:v[0],i:v[1],a:v[2],w:bw?(v[2]==="chiaro"?"È vicino al bianco: è chiaro.":"È vicino al nero: è scuro."):(v[2]==="caldo"?"Ricorda il sole e il fuoco: è un colore caldo.":"Ricorda l'acqua, il cielo o l'ombra: è un colore freddo.")}))};
+});
+
 /* ---------- l'escape room: 7 porte, ognuna con la sua password ---------- */
 const ESC={
  monet:{pw:["PA","PA","VE","RI"],sq:"Come dipingeva Monet?",so:["A piccole macchie di colore, all'aperto","Solo in bianco e nero","Con persone tonde e gonfie","Con tanto oro e spirali"]},
@@ -448,6 +491,13 @@ const PW=k=>ESC[k].pw.join("");
 const norm=v=>String(v||"").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Z]/g,"");
 const SYM=["★","●","▲","■","♥","♣","☀","☾","♦","✿","☂","♪","⚑","✚","◆","☘","⚓","✈","☁","⬟","✦","⌘","♠","✱","❖","☎"];
 let CUR=null,CLUE=null;
+function curRoom(){const b=lab();if(CUR==null&&b.cur!=null&&Q[b.cur]&&(b.cur===0||b.open[Q[b.cur-1].k]))CUR=b.cur;if(CUR==null){CUR=Q.findIndex(x=>!b.open[x.k]);if(CUR<0)CUR=Q.length-1}return Q[CUR]}
+function escaped(){const b=lab();return Q.every(x=>b.open[x.k])}
+const isMaestra=()=>!!(CQ.teacher&&CQ.teacher());
+function roomNote(id,what){const h=$("#"+id);if(!h)return;const x=curRoom(),i=CUR;
+  if(isMaestra()){h.removeAttribute("style");h.innerHTML=`<p>👩‍🏫 <b>Modalità maestra:</b> vedi ${what} di tutte le stanze. I bambini vedono solo quelli della stanza in cui si trovano; quelli del ripasso finale si aprono quando escono dal labirinto.</p>`;return}
+  h.style.cssText=`--rc:${x.c};--rs:${x.s}`;
+  h.innerHTML=`<span class="rf" style="background:${x.g}"></span><p>Sei nella <b>stanza ${i+1}: ${esc(x.sh)}, «${esc(x.t)}»</b>. Qui trovi ${what} di questo quadro${escaped()?", più quelli del grande ripasso":""}.</p><a href="#labirinto">🚪 Cambia stanza</a>`}
 function lab(){const S=L.state();if(!S.extra.lab)S.extra.lab={open:{},look:{},tries:{}};const b=S.extra.lab;b.clue=b.clue||{};b.miss=b.miss||{};b.t0=b.t0||{};b.time=b.time||{};return b}
 function unlocked(i){const b=lab();return i===0||!!b.open[Q[i-1].k]}
 function clues(x){
@@ -469,10 +519,10 @@ function clues(x){
 function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`}
 function renderLab(){
   const b=lab(),n=Q.filter(x=>b.open[x.k]).length;
-  if(CUR==null){CUR=Q.findIndex(x=>!b.open[x.k]);if(CUR<0)CUR=Q.length-1}
+  curRoom();
   $("#kids").innerHTML=`<span aria-hidden="true">🧒👧</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
   $("#path").innerHTML=Q.map((x,i)=>`<button class="room" type="button" data-r="${i}" style="--rc:${x.c};--rg:${x.g}"${unlocked(i)?"":" disabled"}${i===CUR?' aria-current="true"':""}><span class="st" aria-hidden="true">${b.open[x.k]?"🗝️":unlocked(i)?"🚪":"🔒"}</span><span class="fr" aria-hidden="true"></span><b>Porta ${i+1} · ${esc(x.sh)}</b><small>${b.open[x.k]?"aperta: "+PW(x.k):unlocked(i)?esc(x.t):"chiusa a chiave"}</small></button>`).join("");
-  $$("[data-r]").forEach(r=>r.addEventListener("click",()=>{CUR=+r.dataset.r;CLUE=null;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})}));
+  $$("[data-r]").forEach(r=>r.addEventListener("click",()=>{CUR=+r.dataset.r;lab().cur=CUR;L.save();CLUE=null;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})}));
   renderRoom();
 }
 function renderRoom(){
@@ -666,14 +716,19 @@ function sst(k){const S=L.state();if(!S.extra.sch2)S.extra.sch2={};if(!S.extra.s
 function partDone(sh,p,i){const st=sst(sh.k),v=st[i];if(p.ty==="cls")return !!v&&p.items.every((_,j)=>v[j]!=null);if(p.ty==="mcq")return v===0;if(p.ty==="write")return filled(v);
   if(p.ty==="dots")return !!v&&p.col.every((_,j)=>v[j]);if(p.ty==="draw")return !!v;if(p.ty==="match")return !!v&&p.pairs.every((_,j)=>v[j]);if(p.ty==="order")return !!v&&v.length===p.items.length;return false}
 function shDone(sh){return sh.parts.every((p,i)=>partDone(sh,p,i))}
+const GEN=["caldo","generi","ripasso"];
+function visSch(){if(isMaestra())return SCH.map((_,i)=>i);const x=curRoom(),end=escaped();
+  return SCH.map((sh,i)=>({sh,i})).filter(o=>o.sh.k==="prima"||o.sh.k===x.k||(end&&GEN.includes(o.sh.k))).map(o=>o.i)}
 function renderSchede(){
-  $("#spick").innerHTML=SCH.map((sh,i)=>`<button type="button" data-sc="${i}" style="--rc:${sh.c}"${i===SC?' aria-current="true"':""}><b>${shDone(sh)?"✅ ":""}${esc(sh.t)}</b><small>${esc(sh.sub)}</small></button>`).join("");
+  const VIS=visSch();if(!VIS.includes(SC)){const r=SCH.findIndex(sh=>sh.k===curRoom().k);SC=VIS.includes(r)?r:VIS[0];MSEL=null;DSEL=0}
+  roomNote("snote","le schede");
+  $("#spick").innerHTML=VIS.map(i=>[SCH[i],i]).map(([sh,i])=>`<button type="button" data-sc="${i}" style="--rc:${sh.c}"${i===SC?' aria-current="true"':""}><b>${shDone(sh)?"✅ ":""}${esc(sh.t)}</b><small>${esc(sh.sub)}</small></button>`).join("");
   $$("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=+b.dataset.sc;MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})}));
   const sh=SCH[SC];
   $("#sbody").innerHTML=sh.parts.map((p,i)=>`<div class="spart${partDone(sh,p,i)?" ok":""}" style="--rc:${sh.c}" data-p="${i}"><h4><span class="n">${i+1}</span>${esc(p.q)}</h4><div class="pb"></div></div>`).join("")+
-    `<div class="row">${SC<SCH.length-1?`<button class="btn" type="button" id="snext">Scheda successiva</button>`:""}</div>`;
+    `<div class="row">${VIS.indexOf(SC)<VIS.length-1?`<button class="btn" type="button" id="snext">Scheda successiva</button>`:""}</div>`+(!isMaestra()&&!escaped()?`<p class="small">🔒 Le schede «Caldo o freddo», «Ritratto, paesaggio, natura morta» e il ripasso finale si aprono quando esci dal labirinto.</p>`:"");
   sh.parts.forEach((p,i)=>renderPart(sh,p,i,$(`[data-p="${i}"] .pb`)));
-  const nx=$("#snext");if(nx)nx.addEventListener("click",()=>{SC++;MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})});
+  const nx=$("#snext");if(nx)nx.addEventListener("click",()=>{SC=VIS[VIS.indexOf(SC)+1];MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})});
   CQ.addSayButtons&&CQ.addSayButtons($("#sbody"));
 }
 function mark(sh){
@@ -732,7 +787,10 @@ L.init({
     if(h==="lezione")renderLabs();
     if(h==="labirinto")renderLab();
     if(h==="schede")renderSchede();
-    if(h==="indagini")L.sortChooser($("#sort"),["quadro","colori","genere"]);
+    if(h==="indagini"){roomNote("gnote","i giochi");const all=isMaestra(),x=curRoom();
+      const keys=all?Q.flatMap(q=>["vf_"+q.k,"col_"+q.k]).concat(["quadro","colori","genere"]):["vf_"+x.k,"col_"+x.k].concat(escaped()?["quadro","colori","genere"]:[]);
+      L.sortChooser($("#sort"),keys);
+      if(!all&&!escaped()){const t=document.createElement("p");t.className="small";t.textContent="🔒 I giochi del grande ripasso, con tutti i quadri, si aprono quando esci dal labirinto.";$("#sort").appendChild(t)}}
     if(h==="atelier")renderAtelier();
   }
 });
