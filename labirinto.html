@@ -132,6 +132,51 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
 .roomnote .rf{width:46px;height:36px;border-radius:6px;border:4px solid #C9A227;box-shadow:inset 0 0 0 2px #8A6D12;flex:none}
 .roomnote p{margin:0;flex:1;min-width:200px}
 .roomnote a{font-weight:700}
+/* ---------- il labirinto interattivo ---------- */
+.maze{position:relative;margin:8px 0 18px;border-radius:28px;overflow:hidden;border:5px solid #fff;box-shadow:0 8px 0 rgba(34,48,74,.2),0 14px 26px rgba(34,48,74,.18);background:#6DBA6F;user-select:none}
+.maze svg{display:block;width:100%;height:auto}
+.maze .md{position:absolute;transform:translate(-50%,-100%);width:9.5%;aspect-ratio:10/14;padding:0;border:0;background:none;cursor:pointer;perspective:500px;z-index:2}
+.maze .md:disabled{cursor:not-allowed}
+.md .arch{position:absolute;inset:0;border-radius:48% 48% 6px 6px/34% 34% 6px 6px;background:#5B4636;box-shadow:inset 0 0 0 5px #3A2B20,0 5px 0 rgba(0,0,0,.25)}
+.md .pic{position:absolute;inset:9% 10% 0;border-radius:44% 44% 3px 3px/30% 30% 3px 3px;background:var(--rg);box-shadow:inset 0 0 18px rgba(255,240,180,.9)}
+.md .leaf{position:absolute;inset:9% 10% 0;border-radius:44% 44% 3px 3px/30% 30% 3px 3px;background:repeating-linear-gradient(90deg,#9A6A2E 0 22%,#86592A 22% 25%),#9A6A2E;box-shadow:inset 0 0 0 4px #6E4A1E;transform-origin:left center;transition:transform .9s cubic-bezier(.4,1.4,.5,1)}
+.md .leaf::after{content:"";position:absolute;right:14%;top:55%;width:12%;aspect-ratio:1;border-radius:50%;background:#F2C230;box-shadow:0 1px 0 #8A5A12}
+.md .sign{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);white-space:nowrap;background:#FFF8E1;border:3px solid #C9A227;border-radius:10px;padding:1px 8px;font:700 clamp(8px,1.6vw,15px)/1.2 var(--font-display);color:#5A3A00;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.md .ico{position:absolute;right:-12%;top:-6%;font-size:clamp(14px,2.6vw,24px);filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
+.md.done .leaf,.md.opening .leaf{transform:rotateY(-108deg)}
+.md.locked .arch,.md.locked .leaf{filter:grayscale(1) brightness(.75)}
+.md.locked .sign{filter:grayscale(1);opacity:.75}
+.md.ready .arch{animation:mGlow 1.6s ease-in-out infinite}
+.md.ready:hover .leaf{transform:rotateY(-25deg)}
+.md:focus-visible{outline:4px solid #fff;outline-offset:4px;border-radius:12px}
+.maze .walker{position:absolute;width:11%;aspect-ratio:1;transform:translate(-50%,-78%);z-index:3;pointer-events:none;transition:none}
+.walker .wi{width:100%;height:100%;border-radius:50%;background:#fff;box-shadow:0 0 0 4px #fff,0 6px 0 rgba(0,0,0,.25);overflow:hidden;display:grid;place-items:center;font-size:clamp(22px,5vw,48px)}
+.walker .wi>*{width:100%;height:100%}
+.walker.flip .wi{transform:scaleX(-1)}
+.walker.walking{animation:mHop .32s ease-in-out infinite}
+.walker::after{content:"";position:absolute;left:20%;right:20%;bottom:-10%;height:12%;border-radius:50%;background:rgba(0,0,0,.25);z-index:-1}
+.maze .gate{position:absolute;transform:translate(-50%,-92%);font-size:clamp(22px,5vw,46px);z-index:1;text-align:center;line-height:1}
+.maze .gate small{display:block;font:700 clamp(10px,1.5vw,14px) var(--font-display);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.maze .gate.win{animation:mGlowT 1.4s ease-in-out infinite}
+.mztip{text-align:center;margin:-6px auto 16px;width:fit-content;max-width:100%;background:#FFF8E1;border:3px solid #F2C230;border-radius:99px;padding:6px 16px;font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.room-in{animation:mEnter .7s cubic-bezier(.3,1.3,.5,1) both}
+.backmaze{margin:0 0 12px}
+.stations{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:14px 0}
+@media (max-width:640px){.stations{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stn{position:relative;display:grid;justify-items:center;gap:2px;padding:12px 6px 10px;border-radius:22px;border:4px solid #fff;background:var(--rs);box-shadow:0 6px 0 rgba(34,48,74,.2);cursor:pointer;font:inherit;color:var(--ink);transition:transform .12s,box-shadow .12s}
+.stn .si{font-size:34px;line-height:1}
+.stn b{font:700 16px/1.1 var(--font-display)}
+.stn small{font-weight:700;color:var(--muted)}
+.stn .n{position:absolute;left:8px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--rc);color:#fff;font:700 13px/22px var(--font-body)}
+.stn.ok::after{content:"✅";position:absolute;right:6px;top:4px}
+.stn[aria-pressed="true"]{border-color:var(--rc);transform:translateY(-3px);box-shadow:0 9px 0 rgba(34,48,74,.2)}
+.stn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(34,48,74,.2)}
+.stp{animation:gCardIn .4s ease both}
+@keyframes mGlow{0%,100%{box-shadow:inset 0 0 0 5px #3A2B20,0 0 0 0 rgba(255,220,90,.0),0 5px 0 rgba(0,0,0,.25)}50%{box-shadow:inset 0 0 0 5px #3A2B20,0 0 0 8px rgba(255,220,90,.85),0 5px 0 rgba(0,0,0,.25)}}
+@keyframes mGlowT{0%,100%{filter:drop-shadow(0 0 0 #FFE27A)}50%{filter:drop-shadow(0 0 14px #FFE27A)}}
+@keyframes mHop{0%,100%{margin-top:0}50%{margin-top:-1.6%}}
+@keyframes mEnter{0%{opacity:0;transform:scale(.4);filter:blur(6px)}100%{opacity:1;transform:none;filter:none}}
+@media (prefers-reduced-motion:reduce){.md.ready .arch,.walker.walking,.maze .gate.win,.room-in{animation:none}.md .leaf{transition:none}}
 </style>
 <link rel="stylesheet" href="gioco.css?v=1">
 </head><body>
@@ -186,7 +231,7 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
       <div><dt>Obiettivi</dt><dd>Osservare un'opera d'arte e descriverla (personaggi, colori, luce, movimento); riconoscere colori caldi e freddi; distinguere ritratto, paesaggio e natura morta; conoscere sette artisti e il loro stile; rielaborare un'opera in modo personale; ascoltare e comprendere un racconto.</dd></div>
       <div><dt>I quadri</dt><dd>Monet, «Papaveri» · Turner, «Il naufragio del Minotauro» · Degas, «La lezione di danza» · Botero, «Gente del circo con elefante» · Van Gogh, «La notte stellata», «La camera ad Arles» e gli autoritratti · Escher, «Relatività» · Klimt, «L'albero della vita».</dd></div>
       <div><dt>Collegamenti</dt><dd>Italiano (lettura del libro, descrizione), Musica (la mazurka di Degas, i suoni della tempesta), Scienze motorie (danza, equilibrio, staffette), Geografia (dove sono i musei e i paesi dei pittori), Matematica (simmetrie e spirali di Klimt, scale di Escher), Educazione civica (l'amicizia e il rispetto delle opere nei musei).</dd></div>
-      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM. Schede e giochi seguono il percorso: in ogni stanza il bambino vede solo quelli di quel quadro; le schede e i giochi di ripasso con tutti i pittori si aprono all'uscita dal labirinto.</dd></div>
+      <div><dt>Nell'app</dt><dd>L'escape room «Fuga dal labirinto dei 7 quadri»: sette stanze, una per quadro, ognuna chiusa da una porta con la password (PAPAVERI, TEMPESTA, BALLERINA, ELEFANTE, GIRASOLE, LABIRINTO, AMICIZIA). In ogni stanza si legge la storia, si osserva il quadro e si risolvono 4 enigmi che danno i 4 pezzi della password; la porta successiva si apre solo scrivendo la password giusta. Poi le schede del libro da fare sul tablet (le stesse del PDF da stampare), tre giochi a carte, l'atelier per dipingere il proprio quadro magico e l'autovalutazione. Le stelle fanno crescere l'avatar in Arte. Il pulsante «Guarda il quadro vero» apre le immagini dell'opera da mostrare alla LIM. Schede e giochi seguono il percorso: in ogni stanza il bambino vede solo quelli di quel quadro; le schede e i giochi di ripasso con tutti i pittori si aprono all'uscita dal labirinto. Il labirinto è una mappa: il bambino tocca la porta che brilla, il suo avatar ci cammina davanti, la porta si apre ed entra nel quadro; dentro ci sono cinque tappe (storia, enigmi, scheda, giochi, lucchetto).</dd></div>
     </dl>
   </div>
   <div class="panel">
@@ -261,9 +306,9 @@ details.story summary{cursor:pointer;font:600 18px var(--font-display);min-heigh
   <div class="panel">
     <p class="eyebrow">Escape room</p>
     <h2>Fuga dal labirinto dei 7 quadri</h2>
-    <p class="lead">Sei chiuso nel labirinto del custode-mago! In ogni stanza risolvi 4 enigmi, scopri la password e apri la porta per passare alla stanza dopo.</p>
+    <p class="lead">Sei chiuso nel labirinto del custode-mago! Tocca la porta che brilla: il tuo avatar ci cammina davanti, la porta si apre ed entri nel quadro. Dentro trovi la storia, gli enigmi, la scheda e i giochi di quel pittore. Scopri la password per aprire la porta dopo.</p>
     <div class="kids" id="kids"></div>
-    <div class="path" id="path"></div>
+    <div class="maze" id="maze"></div>
     <div id="room"></div>
   </div>
 </section>
@@ -497,7 +542,7 @@ const isMaestra=()=>!!(CQ.teacher&&CQ.teacher());
 function roomNote(id,what){const h=$("#"+id);if(!h)return;const x=curRoom(),i=CUR;
   if(isMaestra()){h.removeAttribute("style");h.innerHTML=`<p>👩‍🏫 <b>Modalità maestra:</b> vedi ${what} di tutte le stanze. I bambini vedono solo quelli della stanza in cui si trovano; quelli del ripasso finale si aprono quando escono dal labirinto.</p>`;return}
   h.style.cssText=`--rc:${x.c};--rs:${x.s}`;
-  h.innerHTML=`<span class="rf" style="background:${x.g}"></span><p>Sei nella <b>stanza ${i+1}: ${esc(x.sh)}, «${esc(x.t)}»</b>. Qui trovi ${what} di questo quadro${escaped()?", più quelli del grande ripasso":""}.</p><a href="#labirinto">🚪 Cambia stanza</a>`}
+  h.innerHTML=`<span class="rf" style="background:${x.g}"></span><p>Sei nella <b>stanza ${i+1}: ${esc(x.sh)}, «${esc(x.t)}»</b>. Qui trovi ${what} di questo quadro${escaped()?", più quelli del grande ripasso":""}.</p><a href="#labirinto" onclick="INROOM=false">🚪 Torna nel labirinto</a>`}
 function lab(){const S=L.state();if(!S.extra.lab)S.extra.lab={open:{},look:{},tries:{}};const b=S.extra.lab;b.clue=b.clue||{};b.miss=b.miss||{};b.t0=b.t0||{};b.time=b.time||{};return b}
 function unlocked(i){const b=lab();return i===0||!!b.open[Q[i-1].k]}
 function clues(x){
@@ -517,38 +562,105 @@ function clues(x){
   ];
 }
 function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`}
+/* ---------- il labirinto: mappa con le 7 porte e l'avatar che cammina ---------- */
+let INROOM=false,STN=null,WALKING=false,SCHROOM=false;
+const MZ_D="M60 640 L880 640 Q940 640 940 580 L940 485 Q940 425 880 425 L120 425 Q60 425 60 365 L60 275 Q60 215 120 215 L950 215";
+const canEnter=i=>isMaestra()||unlocked(i);
+function walkerHTML(){
+  const pid=CQ.who&&CQ.who(),p=pid&&CQ.pupils&&CQ.pupils[pid];
+  if(p&&!isMaestra())return CQ.avatar(p,{subj:"art",medals:false});
+  const t=CQ.me&&CQ.me();if(t&&CQ.tAvatar)return CQ.tAvatar(t);
+  return '<span aria-hidden="true">🧒</span>';
+}
+function mazePt(i){const P=$("#mzp");if(!P)return{x:0,y:0};const L_=P.getTotalLength();return P.getPointAtLength(L_*Math.max(0,Math.min(8,i+1))/8)}
+function mazeLen(i){const P=$("#mzp");return P.getTotalLength()*Math.max(0,Math.min(8,i+1))/8}
+function placeWalker(pt){const w=$("#walker");if(!w)return;w.style.left=(pt.x/10)+"%";w.style.top=(pt.y/7.05)+"%"}
+function renderMaze(){
+  const b=lab(),host=$("#maze"),end=escaped();$$(".mztip").forEach(t=>t.remove());
+  if(b.pos==null)b.pos=(b.cur!=null)?b.cur:(Object.keys(b.open).length?CUR:-1);
+  let bush="";for(let i=0;i<46;i++){const x=(i*137)%1000,y=[80,320,530,690][i%4]+((i*53)%30)-15;bush+=`<circle cx="${x}" cy="${y}" r="${26+(i*7)%18}" fill="${i%3?"#4E9B52":"#3F8744"}"/>`}
+  host.innerHTML=`<svg viewBox="0 0 1000 705" role="img" aria-label="Il labirinto con le 7 porte">
+    <defs><pattern id="gr" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#6DBA6F"/><path d="M6 30l3-8 3 8M26 14l3-8 3 8" stroke="#5DA960" stroke-width="2" fill="none"/></pattern></defs>
+    <rect width="1000" height="705" fill="url(#gr)"/>
+    <g opacity=".95">${bush}</g>
+    <path d="${MZ_D}" fill="none" stroke="#B68A4E" stroke-width="86" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${MZ_D}" fill="none" stroke="#E9CF9A" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+    <path id="mzp" d="${MZ_D}" fill="none" stroke="#D3B57A" stroke-width="4" stroke-dasharray="2 22" stroke-linecap="round"/>
+    <text x="20" y="694" font-size="20" font-weight="700" fill="#fff" stroke="#2E6B33" stroke-width="4" paint-order="stroke">🏁 Ingresso</text>
+  </svg>`;
+  Q.forEach((x,i)=>{const pt=mazePt(i),st=b.open[x.k]?"done":canEnter(i)?"ready":"locked";
+    const d=document.createElement("button");d.type="button";d.className="md "+st;d.dataset.md=i;d.style.cssText=`left:${pt.x/10}%;top:${(pt.y-22)/7.05}%;--rg:${x.g}`;
+    d.disabled=!canEnter(i);d.setAttribute("aria-label",`Porta ${i+1}: ${x.sh}, ${x.t}. `+(st==="done"?"Già aperta: rientra nella stanza.":st==="ready"?"Tocca per entrare.":"Chiusa a chiave."));
+    d.innerHTML=`<span class="arch"></span><span class="pic"></span><span class="leaf"></span><span class="sign">${i+1} · ${esc(x.sh)}</span><span class="ico" aria-hidden="true">${st==="done"?"🗝️":st==="locked"?"🔒":""}</span>`;
+    d.addEventListener("click",()=>goDoor(i));host.appendChild(d)});
+  const ep=mazePt(7),g=document.createElement("div");g.className="gate"+(end?" win":"");g.style.cssText=`left:${ep.x/10-1.5}%;top:${ep.y/7.05}%`;g.innerHTML=`${end?"🏆":"🚧"}<small>Uscita</small>`;host.appendChild(g);
+  const w=document.createElement("div");w.className="walker";w.id="walker";w.innerHTML=`<div class="wi">${walkerHTML()}</div>`;host.appendChild(w);placeWalker(mazePt(b.pos));
+  const nx=Q.findIndex((x,i)=>!b.open[x.k]&&canEnter(i)),tip=document.createElement("div");tip.className="mztip";
+  tip.textContent=end?"🏆 Sei uscito dal labirinto! Puoi rientrare in ogni quadro.":nx>=0?`✨ Tocca la porta ${nx+1} che brilla per entrare nel quadro di ${Q[nx].sh}`:"Tocca una porta aperta per rientrare";host.after(tip);
+}
+function goDoor(i){
+  if(WALKING||!canEnter(i))return;const b=lab(),from=b.pos==null?-1:b.pos;
+  const w=$("#walker"),door=$(`[data-md="${i}"]`),a=mazeLen(from),z=mazeLen(i),P=$("#mzp");
+  const fin=()=>{WALKING=false;w.classList.remove("walking");b.pos=i;CUR=i;b.cur=i;L.save();
+    door.classList.remove("ready");door.classList.add("opening");L.ding();
+    setTimeout(()=>{INROOM=true;STN=null;CLUE=null;renderLab();const r=$("#room");r.classList.remove("room-in");void r.offsetWidth;r.classList.add("room-in");r.scrollIntoView({behavior:"smooth",block:"start"})},matchMedia("(prefers-reduced-motion: reduce)").matches?150:1000)};
+  if(Math.abs(z-a)<1||matchMedia("(prefers-reduced-motion: reduce)").matches){placeWalker(mazePt(i));fin();return}
+  WALKING=true;w.classList.add("walking");const dur=Math.min(4200,400+Math.abs(z-a)*1.6),t0=performance.now();let lastX=P.getPointAtLength(a).x;
+  (function step(t){const k=Math.min(1,(t-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,pt=P.getPointAtLength(a+(z-a)*e);
+    if(Math.abs(pt.x-lastX)>.5)w.classList.toggle("flip",pt.x<lastX);lastX=pt.x;placeWalker(pt);
+    if(k<1)requestAnimationFrame(step);else fin()})(t0);
+}
 function renderLab(){
   const b=lab(),n=Q.filter(x=>b.open[x.k]).length;
   curRoom();
-  $("#kids").innerHTML=`<span aria-hidden="true">🧒👧</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
-  $("#path").innerHTML=Q.map((x,i)=>`<button class="room" type="button" data-r="${i}" style="--rc:${x.c};--rg:${x.g}"${unlocked(i)?"":" disabled"}${i===CUR?' aria-current="true"':""}><span class="st" aria-hidden="true">${b.open[x.k]?"🗝️":unlocked(i)?"🚪":"🔒"}</span><span class="fr" aria-hidden="true"></span><b>Porta ${i+1} · ${esc(x.sh)}</b><small>${b.open[x.k]?"aperta: "+PW(x.k):unlocked(i)?esc(x.t):"chiusa a chiave"}</small></button>`).join("");
-  $$("[data-r]").forEach(r=>r.addEventListener("click",()=>{CUR=+r.dataset.r;lab().cur=CUR;L.save();CLUE=null;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})}));
-  renderRoom();
+  $("#kids").innerHTML=`<span aria-hidden="true">🗝️</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
+  $("#maze").hidden=INROOM;if(INROOM)$$(".mztip").forEach(t=>t.remove());$("#room").hidden=!INROOM;
+  if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
 }
+function leaveRoom(){INROOM=false;STN=null;homeSchede();renderLab();$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
+/* le schede possono vivere anche dentro la stanza: spostiamo i loro contenitori */
+function homeSchede(){SCHROOM=false;const pn=$("#sec-schede .panel");if(pn&&$("#sbody")&&$("#sbody").parentNode!==pn)pn.append($("#snote"),$("#spick"),$("#sbody"))}
+function stState(x){const b=lab(),sh=SCH.find(s=>s.k===x.k),S=L.state(),bv=S.best["vf_"+x.k],bc=S.best["col_"+x.k],nc=(b.clue[x.k]||[]).filter(Boolean).length;
+  return{storia:!!b.look[x.k],enigmi:nc,scheda:sh&&shDone(sh),giochi:(bv!=null?1:0)+(bc!=null?1:0),porta:!!b.open[x.k]}}
 function renderRoom(){
-  const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k];
+  const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k],ss=stState(x);
   if(!done&&!b.t0[x.k]){b.t0[x.k]=Date.now();L.save()}
   if(!CLUE||CLUE.k!==x.k)CLUE={k:x.k,list:clues(x),open:null};
-  const got=b.clue[x.k]||[];
-  let h=`<div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
-    <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
+  if(!STN)STN=!ss.storia?"storia":ss.enigmi<4?"enigmi":!ss.porta?"porta":"scheda";
+  const T=[["storia","📖","La storia",ss.storia?"osservato":"leggi e guarda",ss.storia],["enigmi","🧩","Gli enigmi",ss.enigmi+" su 4",ss.enigmi===4],["scheda","📝","La scheda",ss.scheda?"completa":"da fare",ss.scheda],["giochi","🎮","I giochi",ss.giochi+" su 2",ss.giochi===2],["porta","🔒","Il lucchetto",ss.porta?"aperto!":"la password",ss.porta]];
+  homeSchede();
+  $("#room").innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button></div>
+  <div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
+    <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Sei dentro il quadro · stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
     <div class="qbody">
-      <div class="mission"><b>🗝️ Missione</b> Per uscire da questa stanza serve la <b>password</b>. Risolvi i 4 enigmi: ognuno ti dà un pezzo. Poi metti i pezzi in ordine e scrivila nel lucchetto.</div>
-      <details class="story"${done?"":" open"}><summary>📖 Che cosa succede nel libro · lo stile del pittore</summary>
-        <p class="lead">${esc(x.story)}</p><p class="lead">${esc(x.art)}</p>
-        <div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
-        <p><a class="real" href="${REAL[x.k]||IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p>
-        <h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
-        <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button></div>
-      </details>
-      <div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div>
-      <div id="cbox"></div>
-      <div class="door lockbox" id="lockbox"></div>
+      <div class="mission"><b>🗝️ Missione</b> Esplora la stanza: leggi la storia, risolvi i 4 enigmi per trovare i pezzi della password, fai la scheda e i giochi di ${esc(x.sh)}. Con la password apri il lucchetto e corri alla porta dopo!</div>
+      <div class="stations">${T.map((t,j)=>`<button class="stn${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}"><span class="n">${j+1}</span><span class="si" aria-hidden="true">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div>
+      <div class="stp" id="stp"></div>
     </div></div>`;
-  $("#room").innerHTML=h;
-  $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
-  $$("[data-cl]").forEach(bt=>bt.addEventListener("click",()=>{const j=+bt.dataset.cl;CLUE.open=CLUE.open===j?null:j;renderRoom();const cb=$("#cbox");if(cb&&CLUE.open!=null)cb.scrollIntoView({behavior:"smooth",block:"nearest"})}));
-  renderClue();renderLock();
+  $("#bk").addEventListener("click",leaveRoom);
+  $$("[data-stn]").forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.stn;renderRoom();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  const h=$("#stp");
+  if(STN==="storia"){
+    h.innerHTML=`<div class="story"><p class="lead">${esc(x.story)}</p><p class="lead">${esc(x.art)}</p>
+      <div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
+      <p><a class="real" href="${REAL[x.k]||IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p>
+      <h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
+      <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button><button class="btn" type="button" data-go="enigmi">Ora gli enigmi 🧩</button></div></div>`;
+    $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
+  }else if(STN==="enigmi"){
+    const got=b.clue[x.k]||[];
+    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4&&!done?`<div class="row"><button class="btn" type="button" data-go="porta">Hai tutti i pezzi: vai al lucchetto 🔒</button></div>`:"");
+    $$("[data-cl]").forEach(bt=>bt.addEventListener("click",()=>{const j=+bt.dataset.cl;CLUE.open=CLUE.open===j?null:j;renderRoom();const cb=$("#cbox");if(cb&&CLUE.open!=null)cb.scrollIntoView({behavior:"smooth",block:"nearest"})}));
+    renderClue();
+  }else if(STN==="scheda"){
+    h.append($("#spick"),$("#sbody"));SCHROOM=true;renderSchede();
+  }else if(STN==="giochi"){
+    h.innerHTML=`<div id="rgames"></div>`;L.sortChooser($("#rgames"),["vf_"+x.k,"col_"+x.k]);
+  }else{
+    h.innerHTML=`<div class="door lockbox" id="lockbox"></div>`;renderLock();
+  }
+  $$("[data-go]",h).forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.go;renderRoom();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  CQ.addSayButtons&&CQ.addSayButtons(h);
 }
 function renderClue(){
   const x=Q[CUR],b=lab(),host=$("#cbox");if(CLUE.open==null){host.innerHTML="";return}
@@ -572,8 +684,9 @@ function renderClue(){
 function renderLock(){
   const x=Q[CUR],b=lab(),e=ESC[x.k],got=b.clue[x.k]||[],n=got.filter(Boolean).length,host=$("#lockbox");
   if(b.open[x.k]){
-    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">Entra nella stanza ${CUR+2}</button></div>`:`<div class="row"><a class="btn" href="#atelier">Sei fuori dal labirinto! Dipingi il tuo quadro magico</a></div>`);
-    const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{CUR++;CLUE=null;renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})});return}
+    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">🏃 Corri alla porta ${CUR+2}</button><button class="btn ghost" type="button" data-go="scheda">Prima finisco scheda e giochi</button></div>`:`<div class="row"><button class="btn" type="button" id="nx2">🏆 Corri all'uscita!</button><a class="btn ghost" href="#atelier">Dipingi il tuo quadro magico</a></div>`);
+    const n2=$("#nx2");if(n2)n2.addEventListener("click",()=>{leaveRoom();setTimeout(()=>{const b=lab(),w=$("#walker"),P=$("#mzp");if(!w||!P)return;const a=mazeLen(b.pos),z=mazeLen(7),t0=performance.now();w.classList.add("walking");(function st(t){const k=Math.min(1,(t-t0)/1500),pt=P.getPointAtLength(a+(z-a)*k);placeWalker(pt);if(k<1)requestAnimationFrame(st);else{w.classList.remove("walking");L.fanfare();L.toast("Sei fuori dal labirinto! 🏆")}})(t0)},500)});
+    const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{const t=CUR+1;leaveRoom();setTimeout(()=>goDoor(t),500)});return}
   const tries=b.tries[x.k]||0;
   host.innerHTML=`<h4>🔒 Il lucchetto della porta ${CUR+1}</h4>
     <div class="slots" aria-label="I pezzi trovati">${e.pw.map((p,i)=>`<span class="slot${got[i]?" on":""}"><small>${i+1}</small>${got[i]?p:"?"}</span>`).join("")}</div>
@@ -585,7 +698,7 @@ function renderLock(){
     if(v===PW(x.k)){
       b.open[x.k]=1;if(b.t0[x.k])b.time[x.k]=Math.round((Date.now()-b.t0[x.k])/1000);L.save();
       const st=b.tries[x.k]?1:2;L.add(st);L.fanfare();L.toast(st===2?"Porta aperta al primo colpo: due stelle!":"Porta aperta: una stella!");
-      renderLock();setTimeout(renderLab,2400);
+      renderLock();setTimeout(()=>{if(INROOM&&STN==="porta")renderRoom()},2400);
     }else{
       b.tries[x.k]=(b.tries[x.k]||0)+1;S.err["Porta: "+x.p]=(S.err["Porta: "+x.p]||0)+1;L.save();L.buzz();
       const lb=$("#lockbox");lb.classList.remove("shake");void lb.offsetWidth;lb.classList.add("shake");
@@ -717,16 +830,16 @@ function partDone(sh,p,i){const st=sst(sh.k),v=st[i];if(p.ty==="cls")return !!v&
   if(p.ty==="dots")return !!v&&p.col.every((_,j)=>v[j]);if(p.ty==="draw")return !!v;if(p.ty==="match")return !!v&&p.pairs.every((_,j)=>v[j]);if(p.ty==="order")return !!v&&v.length===p.items.length;return false}
 function shDone(sh){return sh.parts.every((p,i)=>partDone(sh,p,i))}
 const GEN=["caldo","generi","ripasso"];
-function visSch(){if(isMaestra())return SCH.map((_,i)=>i);const x=curRoom(),end=escaped();
+function visSch(){if(SCHROOM){const r=SCH.findIndex(sh=>sh.k===Q[CUR].k);return CUR===0?[0,r]:[r]}if(isMaestra())return SCH.map((_,i)=>i);const x=curRoom(),end=escaped();
   return SCH.map((sh,i)=>({sh,i})).filter(o=>o.sh.k==="prima"||o.sh.k===x.k||(end&&GEN.includes(o.sh.k))).map(o=>o.i)}
 function renderSchede(){
   const VIS=visSch();if(!VIS.includes(SC)){const r=SCH.findIndex(sh=>sh.k===curRoom().k);SC=VIS.includes(r)?r:VIS[0];MSEL=null;DSEL=0}
-  roomNote("snote","le schede");
+  if(!SCHROOM)roomNote("snote","le schede");
   $("#spick").innerHTML=VIS.map(i=>[SCH[i],i]).map(([sh,i])=>`<button type="button" data-sc="${i}" style="--rc:${sh.c}"${i===SC?' aria-current="true"':""}><b>${shDone(sh)?"✅ ":""}${esc(sh.t)}</b><small>${esc(sh.sub)}</small></button>`).join("");
   $$("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=+b.dataset.sc;MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})}));
   const sh=SCH[SC];
   $("#sbody").innerHTML=sh.parts.map((p,i)=>`<div class="spart${partDone(sh,p,i)?" ok":""}" style="--rc:${sh.c}" data-p="${i}"><h4><span class="n">${i+1}</span>${esc(p.q)}</h4><div class="pb"></div></div>`).join("")+
-    `<div class="row">${VIS.indexOf(SC)<VIS.length-1?`<button class="btn" type="button" id="snext">Scheda successiva</button>`:""}</div>`+(!isMaestra()&&!escaped()?`<p class="small">🔒 Le schede «Caldo o freddo», «Ritratto, paesaggio, natura morta» e il ripasso finale si aprono quando esci dal labirinto.</p>`:"");
+    `<div class="row">${VIS.indexOf(SC)<VIS.length-1?`<button class="btn" type="button" id="snext">Scheda successiva</button>`:""}</div>`+(!SCHROOM&&!isMaestra()&&!escaped()?`<p class="small">🔒 Le schede «Caldo o freddo», «Ritratto, paesaggio, natura morta» e il ripasso finale si aprono quando esci dal labirinto.</p>`:"");
   sh.parts.forEach((p,i)=>renderPart(sh,p,i,$(`[data-p="${i}"] .pb`)));
   const nx=$("#snext");if(nx)nx.addEventListener("click",()=>{SC=VIS[VIS.indexOf(SC)+1];MSEL=null;DSEL=0;renderSchede();$("#sbody").scrollIntoView({behavior:"smooth",block:"start"})});
   CQ.addSayButtons&&CQ.addSayButtons($("#sbody"));
@@ -782,11 +895,11 @@ L.init({
   vq:["So raccontare la storia di Marco e Juliane nei quadri.","So osservare un quadro e dire che cosa vedo.","So riconoscere i colori caldi e i colori freddi.","So dire chi ha dipinto alcuni quadri del libro.","Ho dipinto un quadro mio con fantasia.","Ho collaborato con la mia squadra."],
   likes:["Il labirinto","Le schede","Dentro quale quadro?","Caldo o freddo?","Ritratto o paesaggio?","Il mio quadro magico","Il quadro vivente in classe"],
   imprevisti:[["Il custode ha chiuso la porta!","Per un minuto si parla solo sussurrando, come al museo."],["Statue!","Tutti si bloccano nella posa di un personaggio del quadro di oggi. Chi si muove perde il turno."],["Scambio di ruoli","L'osservatore diventa disegnatore e il portavoce diventa lettore."],["Occhio di falco","La prossima risposta giusta vale doppio, ma prima la squadra osserva il quadro in silenzio per 20 secondi."],["La tempesta di Turner","Tutte le squadre cambiano banco: si gira di un posto in senso orario."],["La porta dell'amicizia","Chi risponde giusto sceglie un compagno di un'altra squadra che spiega il perché."]],
-  onEnter:()=>{CUR=null;renderLabs()},
+  onEnter:()=>{CUR=null;INROOM=false;renderLabs()},
   onRoute:h=>{
     if(h==="lezione")renderLabs();
     if(h==="labirinto")renderLab();
-    if(h==="schede")renderSchede();
+    if(h==="schede"){homeSchede();renderSchede()}
     if(h==="indagini"){roomNote("gnote","i giochi");const all=isMaestra(),x=curRoom();
       const keys=all?Q.flatMap(q=>["vf_"+q.k,"col_"+q.k]).concat(["quadro","colori","genere"]):["vf_"+x.k,"col_"+x.k].concat(escaped()?["quadro","colori","genere"]:[]);
       L.sortChooser($("#sort"),keys);
