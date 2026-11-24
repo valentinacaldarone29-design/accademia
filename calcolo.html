@@ -73,6 +73,8 @@ section.view{display:grid;gap:16px;min-width:0}
 .btn.ghost{background:var(--surface2);color:var(--ink);border-color:var(--line)}
 .btn:disabled{opacity:.45;cursor:default}
 .pills{display:flex;flex-wrap:wrap;gap:8px}
+#sec-colonna .pills+.pills{margin-top:10px}
+.ownhint{background:var(--surface2);border:2px dashed var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
 .pillb{appearance:none;min-height:46px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);font:600 16px var(--font-display);cursor:pointer}
 .pillb[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .pillb.op{min-width:58px;font-size:22px}
@@ -305,6 +307,14 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
       <button class="pillb" type="button" data-l="0" aria-pressed="true">Fino a 999</button>
       <button class="pillb" type="button" data-l="1" aria-pressed="false">Oltre il mille</button>
     </div>
+    <div class="pills" id="src-pick" role="group" aria-label="Da dove vengono i numeri">
+      <button class="pillb" type="button" data-src="rnd" aria-pressed="true">🎲 Numeri a caso</button>
+      <button class="pillb" type="button" data-src="own" aria-pressed="false">✏️ Colonna vuota: scrivo io i numeri</button>
+    </div>
+    <div class="pills" id="cmb-pick" role="group" aria-label="Con il cambio o senza">
+      <button class="pillb" type="button" data-c="1" aria-pressed="true">🔁 Con il cambio</button>
+      <button class="pillb" type="button" data-c="0" aria-pressed="false">➖ Senza cambio</button>
+    </div>
     <div class="pills" id="mul-pick" role="group" aria-label="Moltiplicatore" hidden>
       <button class="pillb" type="button" data-m="1" aria-pressed="true">× 1 cifra</button>
       <button class="pillb" type="button" data-m="2" aria-pressed="false">× 2 cifre</button>
@@ -445,7 +455,7 @@ function fbHTML(kind,title,lines,extra){
 function allSteps(steps){return `<details><summary>Tutti i passaggi</summary><ol>${steps.map(s=>`<li>${s}</li>`).join("")}</ol></details>`}
 
 /* ================= OPERAZIONI IN COLONNA ================= */
-let OP="add",MULN=1,EX=null;
+let OP="add",MULN=1,EX=null,CAMBIO=true,SRC="rnd";
 function val(id){const e=document.getElementById(id);if(!e)return null;const v=e.value.trim();return /^\d$/.test(v)?+v:null}
 const dg=(v,p)=>`<span class="dg pl-${PL[p]}">${v}</span>`;
 const inp=(g,p,lab)=>`<input class="in pl-${PL[p]}" id="${g}${p}" data-g="${g}" data-p="${p}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="${lab||"Cifra"} delle ${PN[p]}">`;
@@ -466,11 +476,25 @@ function inRow(g,len,from,sign,lab){const cells={};for(let p=from||0;p<len;p++)c
 /* generatori */
 function hasCarry(a,b){const A=digs(a),B=digs(b);for(let p=0;p<Math.max(A.length,B.length);p++)if((A[p]||0)+(B[p]||0)>=10)return true;return false}
 function hasBorrow(a,b){const A=digs(a),B=digs(b);for(let p=0;p<B.length;p++)if((A[p]||0)<B[p])return true;return false}
-function genAdd(){let a,b,t=0;do{if(BIG){a=rnd(1000,7999);b=rnd(100,9999-a)}else{a=rnd(100,799);b=rnd(20,999-a)}}while((!hasCarry(a,b)||b<10)&&t++<80);return {op:"add",a,b}}
-function genSub(){let a,b,t=0;do{if(BIG){a=rnd(1200,9999);b=rnd(150,a-100)}else{a=rnd(200,999);b=rnd(20,a-10)}}while(!hasBorrow(a,b)&&t++<80);return {op:"sub",a,b}}
+/* senza cambio: si costruisce cifra per cifra */
+function noCarryPair(n,m,sub){const A=[],B=[];for(let p=0;p<n;p++){const lead=p===n-1;let a,b;
+    if(sub){a=rnd(lead?2:(p===m-1?1:0),9);b=p<m?rnd(p===m-1?1:0,lead?a-1:a):0}
+    else{a=rnd(lead?1:0,p<m?(p===m-1?8:9):9);b=p<m?rnd(p===m-1?1:0,9-a):0}
+    A.push(a);B.push(b)}
+  const num=D=>+D.slice().reverse().join("");return [num(A),num(B)]}
+function genAdd(c){c=c==null?CAMBIO:c;if(!c){const n=BIG?4:3,[a,b]=noCarryPair(n,rnd(2,n));return {op:"add",a,b}}
+  let a,b,t=0;do{if(BIG){a=rnd(1000,7999);b=rnd(100,9999-a)}else{a=rnd(100,799);b=rnd(20,999-a)}}while((!hasCarry(a,b)||b<10)&&t++<80);return {op:"add",a,b}}
+function genSub(c){c=c==null?CAMBIO:c;if(!c){const n=BIG?4:3,[a,b]=noCarryPair(n,rnd(2,n),true);return {op:"sub",a,b}}
+  let a,b,t=0;do{if(BIG){a=rnd(1200,9999);b=rnd(150,a-100)}else{a=rnd(200,999);b=rnd(20,a-10)}}while(!hasBorrow(a,b)&&t++<80);return {op:"sub",a,b}}
+function mulCarry(a,b){const A=digs(a),B=digs(b);for(const bd of B){if(!bd)continue;let c=0;for(const ad of A){const s=ad*bd+c;if(s>=10)return true;c=0}}
+  return B.length>1?hasCarry(a*B[0],a*B[1]*10):false}
 function genMul(){
-  if(MULN===2){let a,b;do{a=BIG?rnd(102,499):rnd(12,99);b=rnd(12,BIG?29:79)}while(a*b>(BIG?9999:9999)||b%10===0);return {op:"mul",a,b}}
-  let a,b,t=0;do{b=rnd(2,9);a=BIG?rnd(120,Math.floor(9999/b)):rnd(12,Math.floor(999/b))}while(a*b<100&&t++<50);return {op:"mul",a,b};
+  if(!CAMBIO){
+    if(MULN===2){let a,b,t=0;do{a=BIG?rnd(101,433):rnd(11,43);b=rnd(11,BIG?22:32)}while((mulCarry(a,b)||b%10===0)&&t++<400);return {op:"mul",a,b}}
+    const b=rnd(2,4),n=BIG?4:3,mx=Math.floor(9/b),D=[];for(let p=0;p<n;p++)D.push(rnd(p===n-1?1:0,mx));return {op:"mul",a:+D.reverse().join(""),b};
+  }
+  if(MULN===2){let a,b,t=0;do{a=BIG?rnd(102,499):rnd(12,99);b=rnd(12,BIG?29:79)}while((a*b>9999||b%10===0||!mulCarry(a,b))&&t++<200);return {op:"mul",a,b}}
+  let a,b,t=0;do{b=rnd(2,9);a=BIG?rnd(120,Math.floor(9999/b)):rnd(12,Math.floor(999/b))}while((a*b<100||!mulCarry(a,b))&&t++<80);return {op:"mul",a,b};
 }
 function genDiv(){
   const d=rnd(2,9),maxD=BIG?9999:999,minQ=BIG?101:11;
@@ -546,6 +570,7 @@ function mulWhy(c,k,shift){
 }
 
 function newOp(){
+  if(SRC==="own")return renderOwn();
   const g={add:genAdd,sub:genSub,mul:genMul,div:genDiv}[OP];
   EX=g();EX.tries=0;EX.done=false;
   if(EX.op==="div")return startDiv();
@@ -557,17 +582,17 @@ function renderOp(){
     const pl=addPlan(e.a,e.b);W=pl.R.length;
     const cr={};for(let p=1;p<W;p++)cr[p]=car("k",p);
     rows=[{sign:"",cells:cr},numRow(e.a),numRow(e.b,"+"),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
-    title="Addizione con il riporto";
+    title=hasCarry(e.a,e.b)?"Addizione con il cambio (riporto)":"Addizione senza cambio";
   }else if(e.op==="sub"){
     const pl=subPlan(e.a,e.b);W=pl.A.length;
     const cr={};for(let p=0;p<W;p++)cr[p]=car("k",p,2);
     rows=[{sign:"",cells:cr},numRow(e.a),numRow(e.b,"−"),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
-    title="Sottrazione con il cambio";
+    title=hasBorrow(e.a,e.b)?"Sottrazione con il cambio":"Sottrazione senza cambio";
   }else if(e.op==="mul"&&e.b<10){
     const pl=mulPlan(e.a,e.b);W=Math.max(pl.R.length,digs(e.a).length);
     const cr={};for(let p=1;p<W;p++)cr[p]=car("k",p);
     rows=[{sign:"",cells:cr},numRow(e.a),numRow(e.b,"×"),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
-    title="Moltiplicazione per una cifra";
+    title="Moltiplicazione per una cifra"+(mulCarry(e.a,e.b)?", con il riporto":", senza riporto");
   }else{
     const bu=e.b%10,bd=Math.floor(e.b/10),P1=e.a*bu,P2=e.a*bd,R=e.a*e.b;W=digs(R).length;
     const r2=inRow("q",digs(P2).length+1,1,"","Seconda riga");r2.cells[0]=`<span class="dash" title="Segnaposto">−</span>`;
@@ -581,15 +606,56 @@ function renderOp(){
   const first=card.querySelector('[data-g="r"][data-p="0"],[data-g="p"][data-p="0"]');
   if(first&&matchMedia("(hover:hover)").matches)first.focus();
 }
+
+/* colonna vuota: il bambino (o la maestra) scrive i numeri nella colonna, poi si calcola */
+const OPN={add:["Addizione","+","primo addendo","secondo addendo"],sub:["Sottrazione","−","minuendo","sottraendo"],mul:["Moltiplicazione","×","primo fattore","secondo fattore"],div:["Divisione",":","dividendo","divisore"]};
+function renderOwn(){
+  const o=OPN[OP],W=BIG?5:4,card=$("#op-card");
+  const rows=[inRow("na",W,0,"",o[2]),inRow("nb",W,0,o[1],o[3]),{line:true}];
+  card.innerHTML=`<h3>✏️ Colonna vuota: ${o[0].toLowerCase()}</h3>
+    <p class="ownhint">Scrivi tu i numeri, quelli che ti detta la maestra o che trovi sul libro. Metti ogni cifra al suo posto: le unità sotto le unità (u), le decine sotto le decine (d), le centinaia sotto le centinaia (c)${BIG?", le migliaia sotto le migliaia (uM)":""}.${OP==="div"?" Nel divisore scrivi un numero da 2 a 9.":""}</p>
+    <div class="stage">${grid(W,rows)}</div>
+    <div class="row"><button class="btn" type="button" id="own-go">Ho scritto i numeri: ora calcolo!</button><button class="btn ghost" type="button" id="own-clear">Svuota</button></div><div id="op-fb"></div>`;
+  wireInputs(card);
+  const f=card.querySelector("#na"+(W-1));if(f&&matchMedia("(hover:hover)").matches)f.focus();
+}
+function wireOwn(card){
+  card.querySelectorAll('.in').forEach(t=>{t.addEventListener("input",()=>{t.value=t.value.replace(/\D/g,"").slice(-1)})});
+}
+function readOwn(g,W){let D=[];for(let p=0;p<W;p++)D.push(val(g+p));
+  const used=D.map((d,p)=>d!=null?p:-1).filter(p=>p>=0);if(!used.length)return {err:"empty"};
+  if(D[0]==null)return {err:"units"};
+  const top=Math.max(...used);for(let p=0;p<=top;p++)if(D[p]==null)return {err:"gap"};
+  if(top>0&&D[top]===0)return {err:"zero"};
+  return {n:+D.slice(0,top+1).reverse().join("")}}
+function ownGo(){
+  const W=BIG?5:4,o=OPN[OP],A=readOwn("na",W),B=readOwn("nb",W),fb=$("#op-fb");
+  const say=(m,l)=>{fb.innerHTML=fbHTML("bad",m,l||[])};
+  const why={empty:"Manca un numero.",units:"Le unità vanno nell'ultima casella a destra, nella colonna u.",gap:"Tra le cifre c'è una casella vuota: le cifre vanno una accanto all'altra.",zero:"Un numero non comincia con lo 0: togli lo zero davanti."};
+  if(A.err)return say(`Controlla il ${o[2]}: ${why[A.err]}`);
+  if(B.err)return say(`Controlla il ${o[3]}: ${why[B.err]}`);
+  const a=A.n,b=B.n,max=BIG?9999:999;
+  if(OP==="add"&&a+b>(BIG?99999:9999))return say("Il risultato è troppo grande per questa colonna: prova con «Oltre il mille» o con numeri più piccoli.");
+  if(OP==="sub"&&a<b)return say(`Il ${o[2]} (${a}) deve essere più grande del ${o[3]} (${b}): nella sottrazione si toglie il numero più piccolo dal più grande.`);
+  if(OP==="sub"&&a===b)return say("I due numeri sono uguali: il risultato è 0! Prova con due numeri diversi.");
+  if(OP==="mul"&&(b<2||b>99))return say("Il secondo fattore deve essere un numero da 2 a 99.");
+  if(OP==="mul"&&a*b>99999)return say("Il risultato è troppo grande: scegli numeri più piccoli.");
+  if(OP==="div"&&(b<2||b>9))return say("Il divisore deve essere un numero da 2 a 9.");
+  if(OP==="div"&&a<b)return say("Il dividendo deve essere più grande del divisore.");
+  if((OP==="add"||OP==="sub")&&a<10&&b<10)return say("Questa la sai fare a mente! Per lavorare in colonna usa almeno un numero con due cifre.");
+  EX={op:OP,a,b,tries:0,done:false,own:true};
+  if(OP==="div")return startDiv();
+  renderOp();
+}
 /* le caselle avanzano da destra verso sinistra */
 function wireInputs(root){
   if(root.dataset.wired)return;root.dataset.wired="1";
   root.addEventListener("input",ev=>{
     const t=ev.target;if(!t.classList||!t.classList.contains("in"))return;
     t.value=t.value.replace(/\D/g,"").slice(-1);t.classList.remove("good","bad");
-    if(t.value){const nx=root.querySelector(`[data-g="${t.dataset.g}"][data-p="${+t.dataset.p+1}"]`);if(nx)nx.focus()}
+    if(t.value){const own=t.dataset.g==="na"||t.dataset.g==="nb",nx=root.querySelector(`[data-g="${t.dataset.g}"][data-p="${+t.dataset.p+(own?-1:1)}"]`);if(nx)nx.focus()}
   });
-  root.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();const b=root.querySelector("#op-check,#st-check,#pr-check,#dv-check");if(b)b.click()}});
+  root.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();const b=root.querySelector("#own-go,#op-check,#st-check,#pr-check,#dv-check");if(b)b.click()}});
 }
 function checkOp(){
   const e=EX;if(!e||e.done)return;
@@ -717,12 +783,15 @@ function showDivSol(){
   renderDiv(fbHTML("info",`Ecco la soluzione: ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}`,["Rileggi i passaggi, poi prova con una nuova divisione per conquistare le stelle."]));
 }
 
-$("#op-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-op]");if(!b)return;OP=b.dataset.op;$$("#op-pick [data-op]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));$("#mul-pick").hidden=OP!=="mul";newOp()});
+$("#op-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-op]");if(!b)return;OP=b.dataset.op;$$("#op-pick [data-op]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));syncPicks();newOp()});
 $("#lvl-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-l]");if(!b)return;BIG=b.dataset.l==="1";$$("#lvl-pick [data-l]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp();newDet()});
+function syncPicks(){$("#cmb-pick").hidden=OP==="div"||SRC==="own";$("#mul-pick").hidden=OP!=="mul"||SRC==="own"}
+$("#src-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-src]");if(!b)return;SRC=b.dataset.src;$$("#src-pick [data-src]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));syncPicks();newOp()});
+$("#cmb-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-c]");if(!b)return;CAMBIO=b.dataset.c==="1";$$("#cmb-pick [data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
 $("#mul-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-m]");if(!b)return;MULN=+b.dataset.m;$$("#mul-pick [data-m]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
 $("#op-card").addEventListener("click",ev=>{
   const id=ev.target.closest("button")&&ev.target.closest("button").id;
-  if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();
+  if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();
 });
 
 /* ================= STRATEGIE ================= */
@@ -893,7 +962,7 @@ function newDet(){
   let t=0;
   while(t++<200){
     const op=pick(["add","sub","sub","mul","mul"]);
-    MULN=MULN;const e=op==="add"?genAdd():op==="sub"?genSub():(()=>{let a,b;do{b=rnd(3,9);a=BIG?rnd(120,Math.floor(9999/b)):rnd(23,Math.floor(999/b))}while(a*b<100);return {op:"mul",a,b}})();
+    MULN=MULN;const e=op==="add"?genAdd(true):op==="sub"?genSub(true):(()=>{let a,b;do{b=rnd(3,9);a=BIG?rnd(120,Math.floor(9999/b)):rnd(23,Math.floor(999/b))}while(a*b<100);return {op:"mul",a,b}})();
     const err=op==="add"?"nocarry":op==="sub"?pick(["inverted","noreduce"]):pick(["nocarry","carryfirst","table"]);
     const W=wrongDigits(op,e.a,e.b,err),C=digs(resultOf(e));
     const diff=[];for(let p=0;p<Math.max(W.length,C.length);p++)if(W[p]!==C[p])diff.push(p);
