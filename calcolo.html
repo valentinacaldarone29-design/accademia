@@ -103,6 +103,10 @@ section.view{display:grid;gap:16px;min-width:0}
 
 /* spiegazioni */
 .fb{border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.btn.help{border-color:#F2C230!important;background:#FFF8DC!important}
+.in.hint{box-shadow:0 0 0 4px #F2C230,0 0 16px 4px rgba(242,194,48,.7)!important;animation:hintPulse 1s ease-in-out 3}
+@keyframes hintPulse{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.in.hint{animation:none}}
 .fb[hidden]{display:none}
 .fb.good{background:var(--good-soft)}
 .fb.bad{background:var(--bad-soft)}
@@ -602,7 +606,7 @@ function renderOp(){
     e.note=`Prima riga: ${e.a} × ${bu} (unità). Seconda riga: ${e.a} × ${bd} (decine), si comincia sotto le decine: nelle unità c'è il trattino.`;
   }
   card.innerHTML=`<h3>${title}</h3>${e.note&&e.op==="mul"&&e.b>=10?`<p class="lead">${e.note}</p>`:""}<div class="stage">${grid(W,rows)}</div>
-    <div class="row"><button class="btn" type="button" id="op-check">Controlla</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button><button class="btn ghost" type="button" id="op-new">Nuova operazione</button></div><div id="op-fb"></div>`;
+    <div class="row"><button class="btn" type="button" id="op-check">Controlla</button><button class="btn ghost help" type="button" id="op-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button><button class="btn ghost" type="button" id="op-new">Nuova operazione</button></div><div id="op-fb"></div>`;
   wireInputs(card);
   const first=card.querySelector('[data-g="r"][data-p="0"],[data-g="p"][data-p="0"]');
   if(first&&matchMedia("(hover:hover)").matches)first.focus();
@@ -616,7 +620,7 @@ function renderOwn(){
   card.innerHTML=`<h3>✏️ Colonna vuota: ${o[0].toLowerCase()}</h3>
     <p class="ownhint">Scrivi tu i numeri, quelli che ti detta la maestra o che trovi sul libro. Metti ogni cifra al suo posto: le migliaia sotto le migliaia (k), le centinaia sotto le centinaia (h), le decine sotto le decine (da), le unità sotto le unità (u).${OP==="div"?" Nel divisore scrivi un numero da 2 a 9.":""}</p>
     <div class="stage">${grid(W,rows)}</div>
-    <div class="row"><button class="btn" type="button" id="own-go">Ho scritto i numeri: ora calcolo!</button><button class="btn ghost" type="button" id="own-clear">Svuota</button></div><div id="op-fb"></div>`;
+    <div class="row"><button class="btn" type="button" id="own-go">Ho scritto i numeri: ora calcolo!</button><button class="btn ghost help" type="button" id="own-help">💡 Aiuto</button><button class="btn ghost" type="button" id="own-clear">Svuota</button></div><div id="op-fb"></div>`;
   wireInputs(card);
   const f=card.querySelector("#na"+(W-1));if(f&&matchMedia("(hover:hover)").matches)f.focus();
 }
@@ -648,6 +652,47 @@ function ownGo(){
   if(OP==="div")return startDiv();
   renderOp();
 }
+
+/* ---------- il tasto Aiuto: un suggerimento sulla prima casella da sistemare, senza dare la soluzione ---------- */
+let HINT=null;
+function hintAdd(c,lv){const C=colDi(c.p);
+  if(c.only)return lv<2?`Nella ${C} non ci sono cifre da sommare… ma è arrivato qualcosa dalla colonna accanto. Cosa?`:`Nella ${C} scrivi il riporto che è arrivato dalla colonna accanto.`;
+  const r=c.cin?" + 1 di riporto":"";
+  return lv<2?`Guarda la ${C}: quanto fa ${c.ai} + ${c.bi}${r}? Se arrivi a 10 o più, scrivi solo le unità e il riporto 1 va nella casellina in alto a sinistra.`
+    :`${c.ai} + ${c.bi}${r} = ${c.s}. ${c.s>=10?`È 10 o più: nella ${colDi(c.p)} scrivi solo le unità e riporta 1.`:"È meno di 10: scrivilo così com'è."}`}
+function hintSub(c,lv){const C=colDi(c.p);
+  if(c.bin||c.need)return lv<2?`Nella ${C}: ${subTopText(c)}. Ora quanto fa ${c.t2} − ${c.bi}?`:`Per fare ${c.t2} − ${c.bi} parti da ${c.bi} e conta in avanti fino a ${c.t2}: quanti salti fai?`;
+  return lv<2?`Nella ${C}: quanto fa ${c.ai} − ${c.bi}? Il ${c.ai} è più grande, quindi qui non serve il cambio.`:`Parti da ${c.bi} e conta in avanti fino a ${c.ai}: quanti salti fai?`}
+function hintMul(c,sh,lv){const C=colDi(c.p+sh);
+  if(c.only)return `Nella ${C} non ci sono più cifre da moltiplicare: scrivi il riporto che ti è rimasto.`;
+  const r=c.cin?` Poi aggiungi il riporto ${c.cin}.`:"";
+  return lv<2?`Nella ${C}: quanto fa ${c.ai} × ${c.b}?${r} Ripassa la tabellina del ${c.b}.`
+    :`${c.ai} × ${c.b} = ${c.prod}${c.cin?`, più il riporto ${c.cin} fa ${c.s}`:""}. ${c.s>=10?"Scrivi le unità e riporta le decine nella colonna a sinistra.":"È meno di 10: scrivilo così com'è."}`}
+function helpOp(){
+  const e=EX;if(!e||e.done)return;
+  const todo=[];
+  const add=(plan,kind,g,sh,lab)=>plan.cols.forEach(c=>{if(kind==="sub"&&!c.inRes)return;todo.push({id:g+(c.p+sh),c,kind,sh,lab})});
+  if(e.op==="add")add(addPlan(e.a,e.b),"add","r",0);
+  else if(e.op==="sub")add(subPlan(e.a,e.b),"sub","r",0);
+  else if(e.b<10)add(mulPlan(e.a,e.b),"mul","r",0);
+  else{const bu=e.b%10,bd=Math.floor(e.b/10);add(mulPlan(e.a,bu),"mul","p",0,`Prima riga: ${e.a} × ${bu}`);add(mulPlan(e.a,bd),"mul","q",1,`Seconda riga: ${e.a} × ${bd} decine (nelle unità c'è il trattino)`);add(addPlan(e.a*bu,e.a*bd*10),"add","r",0,"Ora somma le due righe")}
+  const t=todo.find(x=>val(x.id)!==x.c.exp);
+  $$("#op-card .in.hint").forEach(x=>x.classList.remove("hint"));
+  if(!t){$("#op-fb").innerHTML=fbHTML("info","💡 Sembra tutto a posto!",["Premi «Controlla» per vedere se è giusto."]);return}
+  const lv=HINT&&HINT.id===t.id&&HINT.ex===e?2:1;HINT={id:t.id,ex:e};e.helped=true;
+  const txt=t.kind==="add"?hintAdd(t.c,lv):t.kind==="sub"?hintSub(t.c,lv):hintMul(t.c,t.sh,lv);
+  const el=document.getElementById(t.id);if(el){el.classList.add("hint");el.focus()}
+  $("#op-fb").innerHTML=fbHTML("info",`💡 Suggerimento${lv===2?" (ancora più aiuto)":""}`,[(t.lab?t.lab+". ":"")+txt,lv<2?"Se hai ancora bisogno, premi di nuovo «Aiuto»: ti do un indizio in più.":"Scrivi la cifra nella casella che brilla, poi continua da solo verso sinistra."]);
+}
+function helpDiv(){
+  const D=DV;if(!D||D.fin)return;EX.helped=true;
+  const lv=HINT&&HINT.id==="div"+D.used&&HINT.ex===EX?2:1;HINT={id:"div"+D.used,ex:EX};
+  let lines;
+  if(lv<2)lines=[`Ripassa la tabellina del ${D.d}: cerca il numero più grande che non supera ${D.partial}.`,"Se hai ancora bisogno, premi di nuovo «Aiuto»."];
+  else{const m=[];for(let k=1;k<=9;k++){m.push(`${D.d} × ${k} = ${D.d*k}`);if(D.d*k>D.partial)break}lines=[`Ecco la tabellina del ${D.d}: ${m.join(" · ")}.`,`Quale risultato è il più vicino a ${D.partial} senza superarlo?`]}
+  $("#op-fb").innerHTML=fbHTML("info","💡 Suggerimento",lines);
+}
+function helpOwn(){$("#op-fb").innerHTML=fbHTML("info","💡 Suggerimento",["Comincia sempre dalle unità: l'ultima cifra del numero va nella casella u, tutta a destra.","Poi scrivi le altre cifre andando verso sinistra: decine (da), centinaia (h), migliaia (k). Le caselle che avanzano restano vuote."])}
 /* le caselle avanzano da destra verso sinistra */
 function wireInputs(root){
   if(root.dataset.wired)return;root.dataset.wired="1";
@@ -683,7 +728,7 @@ function checkOp(){
   marks.forEach(([id,ok])=>{const el=document.getElementById(id);if(el){el.classList.remove("good","bad");void el.offsetWidth;el.classList.add(ok?"good":"bad")}});
   const res=resultOf(e);
   if(!first){
-    e.done=true;const st=e.tries===0?2:1;
+    e.done=true;const st=e.tries===0&&!e.helped?2:1;
     $("#op-fb").innerHTML=fbHTML("good",`Esatto! ${e.a} ${sym(e.op)} ${e.b} = ${res}. ${st===2?"Due stelle!":"Una stella!"}`,[prova(e)],allSteps(steps));
     ding();done(e.op,st);
   }else{
@@ -733,7 +778,7 @@ function renderDiv(fbh){
       <label>Quante volte il ${D.d} sta nel ${D.partial}? <input class="bx" id="dq" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off"></label>
       <label><span id="dql">…</span> × ${D.d} = <input class="bx" id="dp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off"></label>
       <label>${D.partial} − <span id="dpl">…</span> = <input class="bx" id="dr" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off"> <span class="lead" style="font-size:15px">(resto)</span></label>
-      <div class="row"><button class="btn" type="button" id="dv-check">Controlla il passaggio</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button></div></div>`;
+      <div class="row"><button class="btn" type="button" id="dv-check">Controlla il passaggio</button><button class="btn ghost help" type="button" id="dv-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button></div></div>`;
   }
   $("#op-card").innerHTML=`<h3>Divisione con una cifra al divisore</h3><p class="lead">Filastrocca: quante volte ci sta? · moltiplico · sottraggo · abbasso.</p>
     <div class="divbox"><div class="dvline"><div class="dvd">${dd}</div><div class="dvs"><div class="ds">${D.d}</div><div class="qq">${qq}</div></div></div>
@@ -767,7 +812,7 @@ function checkDiv(){
     D.log.push(line);ding();renderDiv(fbHTML("good","Passaggio giusto!",[`Ora ho ${D.partial}.`]));
   }else{
     D.log.push(line);D.fin=true;D.used=D.s.length;EX.done=true;
-    const Q=Math.floor(EX.a/D.d),R=EX.a%D.d,st=D.errs===0?2:1;
+    const Q=Math.floor(EX.a/D.d),R=EX.a%D.d,st=D.errs===0&&!EX.helped?2:1;
     renderDiv(fbHTML("good",`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`,[`La prova: ${Q} × ${D.d}${R?` + ${R}`:""} = ${EX.a}. La moltiplicazione è l'operazione inversa della divisione.`]));
     ding();done("div",st);
   }
@@ -792,7 +837,7 @@ $("#cmb-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-c]
 $("#mul-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-m]");if(!b)return;MULN=+b.dataset.m;$$("#mul-pick [data-m]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
 $("#op-card").addEventListener("click",ev=>{
   const id=ev.target.closest("button")&&ev.target.closest("button").id;
-  if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();
+  if(id==="op-help")helpOp();else if(id==="dv-help")helpDiv();else if(id==="own-help")helpOwn();else if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();
 });
 
 /* ================= STRATEGIE ================= */
