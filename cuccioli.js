@@ -1001,7 +1001,7 @@ C.timeLim=function(){var s=C.settings||{};function v(k,d){return s[k]!=null&&s[k
   function showLock(id,t,L,kind){
     ensure();var p=C.pupils[id],left=kind==="day"?0:(t.lock-Date.now())/1000;
     var moves=["Fai 10 saltelli sul posto","Allunga le braccia verso il cielo e poi tocca le punte dei piedi","Cammina come un robot fino alla finestra e torna","Fai 5 respiri lenti, come un palloncino che si gonfia","Disegna nell'aria il tuo nome con il gomito"];
-    box.innerHTML='<div class="cq-tcard"><div class="cq-tav">'+C.avatar(p,{medals:false})+'</div>'+
+    box.innerHTML='<div class="cq-tcard"><div class="cq-tpav">'+C.avatar(p,{medals:false})+'</div>'+
       (kind==="day"?'<h2>Per oggi basta schermo! 🌙</h2><p>Hai usato tutti i tuoi '+L.day+' minuti di oggi, '+C.esc(p.n)+'. Le app ti aspettano domani!</p>'
         :'<h2>Pausa! ⏸️</h2><p>Hai giocato '+L.turn+' minuti di fila, '+C.esc(p.n)+'. Riposa gli occhi e muoviti un po\'.</p><p class="cq-tbig" data-cd>'+mm(left)+'</p><p class="cq-tmove">🤸 '+moves[Math.floor(Math.random()*moves.length)]+'</p>')+
       '<div class="cq-row"><button type="button" class="cq-btn ghost" data-t="out">Cambia alunno</button><button type="button" class="cq-btn ghost" data-t="pin">Sblocca (maestra)</button></div><div data-t="pinbox" hidden><input type="password" inputmode="numeric" maxlength="8" placeholder="PIN della maestra" aria-label="PIN della maestra"><button type="button" class="cq-btn pri" data-t="ok">Sblocca</button><small data-t="err"></small></div></div>';
