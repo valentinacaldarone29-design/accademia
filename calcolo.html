@@ -393,7 +393,7 @@ const buzz=()=>CQ.tone([[220,.18]]);
 
 /* ---------- valore posizionale ---------- */
 const PL=["u","d","c","m","x"];
-const PS=["u","d","c","uM","dM"];
+const PS=["u","da","h","k","dak"];
 const PN=["unità","decine","centinaia","migliaia","decine di migliaia"];
 const col=p=>`<span class="pn-${PL[p]}">${PN[p]}</span>`;
 const colDi=p=>"colonna delle "+col(p);
@@ -610,10 +610,10 @@ function renderOp(){
 /* colonna vuota: il bambino (o la maestra) scrive i numeri nella colonna, poi si calcola */
 const OPN={add:["Addizione","+","primo addendo","secondo addendo"],sub:["Sottrazione","−","minuendo","sottraendo"],mul:["Moltiplicazione","×","primo fattore","secondo fattore"],div:["Divisione",":","dividendo","divisore"]};
 function renderOwn(){
-  const o=OPN[OP],W=BIG?5:4,card=$("#op-card");
+  const o=OPN[OP],W=4,card=$("#op-card");
   const rows=[inRow("na",W,0,"",o[2]),inRow("nb",W,0,o[1],o[3]),{line:true}];
   card.innerHTML=`<h3>✏️ Colonna vuota: ${o[0].toLowerCase()}</h3>
-    <p class="ownhint">Scrivi tu i numeri, quelli che ti detta la maestra o che trovi sul libro. Metti ogni cifra al suo posto: le unità sotto le unità (u), le decine sotto le decine (d), le centinaia sotto le centinaia (c)${BIG?", le migliaia sotto le migliaia (uM)":""}.${OP==="div"?" Nel divisore scrivi un numero da 2 a 9.":""}</p>
+    <p class="ownhint">Scrivi tu i numeri, quelli che ti detta la maestra o che trovi sul libro. Metti ogni cifra al suo posto: le migliaia sotto le migliaia (k), le centinaia sotto le centinaia (h), le decine sotto le decine (da), le unità sotto le unità (u).${OP==="div"?" Nel divisore scrivi un numero da 2 a 9.":""}</p>
     <div class="stage">${grid(W,rows)}</div>
     <div class="row"><button class="btn" type="button" id="own-go">Ho scritto i numeri: ora calcolo!</button><button class="btn ghost" type="button" id="own-clear">Svuota</button></div><div id="op-fb"></div>`;
   wireInputs(card);
@@ -629,17 +629,17 @@ function readOwn(g,W){let D=[];for(let p=0;p<W;p++)D.push(val(g+p));
   if(top>0&&D[top]===0)return {err:"zero"};
   return {n:+D.slice(0,top+1).reverse().join("")}}
 function ownGo(){
-  const W=BIG?5:4,o=OPN[OP],A=readOwn("na",W),B=readOwn("nb",W),fb=$("#op-fb");
+  const W=4,o=OPN[OP],A=readOwn("na",W),B=readOwn("nb",W),fb=$("#op-fb");
   const say=(m,l)=>{fb.innerHTML=fbHTML("bad",m,l||[])};
   const why={empty:"Manca un numero.",units:"Le unità vanno nell'ultima casella a destra, nella colonna u.",gap:"Tra le cifre c'è una casella vuota: le cifre vanno una accanto all'altra.",zero:"Un numero non comincia con lo 0: togli lo zero davanti."};
   if(A.err)return say(`Controlla il ${o[2]}: ${why[A.err]}`);
   if(B.err)return say(`Controlla il ${o[3]}: ${why[B.err]}`);
   const a=A.n,b=B.n,max=BIG?9999:999;
-  if(OP==="add"&&a+b>(BIG?99999:9999))return say("Il risultato è troppo grande per questa colonna: prova con «Oltre il mille» o con numeri più piccoli.");
+  if(OP==="add"&&a+b>9999)return say("Il risultato supera le migliaia: scegli numeri più piccoli, il totale deve arrivare al massimo a 9999.");
   if(OP==="sub"&&a<b)return say(`Il ${o[2]} (${a}) deve essere più grande del ${o[3]} (${b}): nella sottrazione si toglie il numero più piccolo dal più grande.`);
   if(OP==="sub"&&a===b)return say("I due numeri sono uguali: il risultato è 0! Prova con due numeri diversi.");
   if(OP==="mul"&&(b<2||b>99))return say("Il secondo fattore deve essere un numero da 2 a 99.");
-  if(OP==="mul"&&a*b>99999)return say("Il risultato è troppo grande: scegli numeri più piccoli.");
+  if(OP==="mul"&&a*b>9999)return say("Il risultato supera le migliaia: scegli numeri più piccoli, il prodotto deve arrivare al massimo a 9999.");
   if(OP==="div"&&(b<2||b>9))return say("Il divisore deve essere un numero da 2 a 9.");
   if(OP==="div"&&a<b)return say("Il dividendo deve essere più grande del divisore.");
   if((OP==="add"||OP==="sub")&&a<10&&b<10)return say("Questa la sai fare a mente! Per lavorare in colonna usa almeno un numero con due cifre.");
