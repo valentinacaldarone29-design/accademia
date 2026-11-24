@@ -82,7 +82,7 @@ section.view{display:grid;gap:16px;min-width:0}
 
 /* griglia delle operazioni in colonna */
 .stage{display:grid;justify-items:center;gap:12px;padding:12px 0;overflow-x:auto}
-.colop{display:inline-grid;grid-template-columns:44px repeat(var(--W),var(--cw));gap:6px 6px;align-items:center;justify-items:center}
+.colop{display:inline-grid;grid-template-columns:repeat(var(--W),var(--cw)) 44px;gap:6px 6px;align-items:center;justify-items:center}
 .ph{font:700 13px var(--font-display);color:#fff;border-radius:8px;padding:2px 0;width:100%;text-align:center}
 .ph-u{background:var(--u)}.ph-d{background:var(--d)}.ph-c{background:var(--c)}.ph-m{background:var(--m)}.ph-x{background:var(--x)}
 .sg{font:700 38px/1 var(--font-display);color:var(--muted)}
@@ -461,12 +461,13 @@ const dg=(v,p)=>`<span class="dg pl-${PL[p]}">${v}</span>`;
 const inp=(g,p,lab)=>`<input class="in pl-${PL[p]}" id="${g}${p}" data-g="${g}" data-p="${p}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="${lab||"Cifra"} delle ${PN[p]}">`;
 const car=(g,p,max)=>`<input class="car" id="${g}${p}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="${max||1}" autocomplete="off" aria-label="Riporto o cambio delle ${PN[p]}">`;
 function grid(W,rows){
-  let h=`<div class="colop" style="--W:${W}"><span></span>`;
+  let h=`<div class="colop" style="--W:${W}">`;
   for(let c=0;c<W;c++){const p=W-1-c;h+=`<span class="ph ph-${PL[p]}">${PS[p]}</span>`}
+  h+=`<span></span>`;
   rows.forEach(r=>{
     if(r.line){h+=`<span class="hr" style="grid-column:1/-1"></span>`;return}
-    h+=`<span class="sg">${r.sign||""}</span>`;
     for(let c=0;c<W;c++){const p=W-1-c;h+=r.cells[p]!==undefined?r.cells[p]:`<span class="emp"></span>`}
+    h+=`<span class="sg">${r.sign||""}</span>`;
   });
   return h+"</div>";
 }
@@ -581,22 +582,22 @@ function renderOp(){
   if(e.op==="add"){
     const pl=addPlan(e.a,e.b);W=pl.R.length;
     const cr={};for(let p=1;p<W;p++)cr[p]=car("k",p);
-    rows=[{sign:"",cells:cr},numRow(e.a),numRow(e.b,"+"),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
+    rows=[{sign:"",cells:cr},numRow(e.a,"+"),numRow(e.b,"="),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
     title=hasCarry(e.a,e.b)?"Addizione con il cambio (riporto)":"Addizione senza cambio";
   }else if(e.op==="sub"){
     const pl=subPlan(e.a,e.b);W=pl.A.length;
     const cr={};for(let p=0;p<W;p++)cr[p]=car("k",p,2);
-    rows=[{sign:"",cells:cr},numRow(e.a),numRow(e.b,"−"),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
+    rows=[{sign:"",cells:cr},numRow(e.a,"−"),numRow(e.b,"="),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
     title=hasBorrow(e.a,e.b)?"Sottrazione con il cambio":"Sottrazione senza cambio";
   }else if(e.op==="mul"&&e.b<10){
     const pl=mulPlan(e.a,e.b);W=Math.max(pl.R.length,digs(e.a).length);
     const cr={};for(let p=1;p<W;p++)cr[p]=car("k",p);
-    rows=[{sign:"",cells:cr},numRow(e.a),numRow(e.b,"×"),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
+    rows=[{sign:"",cells:cr},numRow(e.a,"×"),numRow(e.b,"="),{line:true},inRow("r",pl.R.length,0,"","Risultato")];
     title="Moltiplicazione per una cifra"+(mulCarry(e.a,e.b)?", con il riporto":", senza riporto");
   }else{
     const bu=e.b%10,bd=Math.floor(e.b/10),P1=e.a*bu,P2=e.a*bd,R=e.a*e.b;W=digs(R).length;
     const r2=inRow("q",digs(P2).length+1,1,"","Seconda riga");r2.cells[0]=`<span class="dash" title="Segnaposto">−</span>`;
-    rows=[numRow(e.a),numRow(e.b,"×"),{line:true},inRow("p",digs(P1).length,0,"","Prima riga"),r2,{line:true},inRow("r",digs(R).length,0,"+","Risultato")];
+    r2.sign="=";rows=[numRow(e.a,"×"),numRow(e.b,"="),{line:true},inRow("p",digs(P1).length,0,"+","Prima riga"),r2,{line:true},inRow("r",digs(R).length,0,"","Risultato")];
     title="Moltiplicazione per due cifre";
     e.note=`Prima riga: ${e.a} × ${bu} (unità). Seconda riga: ${e.a} × ${bd} (decine), si comincia sotto le decine: nelle unità c'è il trattino.`;
   }
@@ -611,7 +612,7 @@ function renderOp(){
 const OPN={add:["Addizione","+","primo addendo","secondo addendo"],sub:["Sottrazione","−","minuendo","sottraendo"],mul:["Moltiplicazione","×","primo fattore","secondo fattore"],div:["Divisione",":","dividendo","divisore"]};
 function renderOwn(){
   const o=OPN[OP],W=4,card=$("#op-card");
-  const rows=[inRow("na",W,0,"",o[2]),inRow("nb",W,0,o[1],o[3]),{line:true}];
+  const rows=[inRow("na",W,0,o[1],o[2]),inRow("nb",W,0,"=",o[3]),{line:true}];
   card.innerHTML=`<h3>✏️ Colonna vuota: ${o[0].toLowerCase()}</h3>
     <p class="ownhint">Scrivi tu i numeri, quelli che ti detta la maestra o che trovi sul libro. Metti ogni cifra al suo posto: le migliaia sotto le migliaia (k), le centinaia sotto le centinaia (h), le decine sotto le decine (da), le unità sotto le unità (u).${OP==="div"?" Nel divisore scrivi un numero da 2 a 9.":""}</p>
     <div class="stage">${grid(W,rows)}</div>
@@ -974,7 +975,7 @@ function newDet(){
 function renderDet(fbh){
   const d=DT,e=d.e,Wn=Math.max(d.W.length,digs(e.a).length,d.C.length);
   const resCells={};d.W.forEach((x,p)=>{const cls=d.pick===p?(d.diff.includes(p)?" sel":" ok"):"";resCells[p]=`<span class="dg pl-${PL[p]}${cls}" role="button" tabindex="0" data-p="${p}" aria-label="Cifra delle ${PN[p]}: ${x}">${x}</span>`});
-  const rows=[numRow(e.a),numRow(e.b,sym(e.op)),{line:true},{sign:"",cells:resCells}];
+  const rows=[numRow(e.a,sym(e.op)),numRow(e.b,"="),{line:true},{sign:"",cells:resCells}];
   let opts="";
   if(d.stage==="why"){
     const pool=e.op==="add"?["nocarry","table","order"]:e.op==="sub"?["inverted","noreduce","order"]:["nocarry","carryfirst","table"];
