@@ -249,7 +249,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
     <ol class="lsteps">
       <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Gli amici del 10 e del 100</h3><p>Ogni bambino ha un cartellino con un numero. Al via cerca il compagno «amico» che con lui fa 10 (poi 100) e gli stringe la mano. La coppia dice ad alta voce l'addizione. Poi alla LIM si fanno due strategie guidate.</p><div class="row"><a class="btn ghost" href="#strategie">Apri le strategie</a><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
       <li class="lstep"><div class="mins"><b>12</b><small>min</small></div><div><span class="chip">Manuale</span><h3>In colonna: meccanico e controllore</h3><p>A coppie, sul quaderno: il meccanico calcola dicendo a voce ogni colonna («unità: 7 più 5 fa 12, scrivo 2 e riporto 1»), il controllore verifica con l'app. Poi si scambiano i ruoli. Si comincia con addizione e sottrazione con il cambio.</p><div class="row"><a class="btn ghost" href="#colonna">Apri le operazioni</a><button class="btn ghost" type="button" data-timer="12">Timer <span>12 min</span></button></div></div></li>
-      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Movimento</span><h3>La staffetta delle proprietà</h3><p>Ai quattro angoli dell'aula ci sono i cartelli Commutativa, Associativa, Dissociativa, Distributiva (al centro Invariantiva). La maestra mostra un'uguaglianza alla LIM: le squadre corrono all'angolo giusto. Il primo che spiega il perché porta una stella alla squadra.</p><div class="row"><a class="btn ghost" href="#proprieta">Apri le proprietà</a><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Movimento</span><h3>La staffetta delle proprietà</h3><p>In tre angoli dell'aula ci sono i cartelli Commutativa, Associativa e Invariantiva. La maestra mostra un'uguaglianza alla LIM: le squadre corrono all'angolo giusto e dicono anche di quale operazione si tratta. Il primo che spiega il perché porta una stella alla squadra.</p><div class="row"><a class="btn ghost" href="#proprieta">Apri le proprietà</a><button class="btn ghost" type="button" data-timer="8">Timer <span>8 min</span></button></div></div></li>
       <li class="lstep"><div class="mins"><b>12</b><small>min</small></div><div><span class="chip">Manuale</span><h3>Moltiplicazione e divisione</h3><p>Moltiplicazione con il riporto e divisione passo dopo passo. Nella divisione ogni coppia dice la «filastrocca»: quante volte ci sta, moltiplico, sottraggo, abbasso. L'app controlla ogni passaggio.</p><div class="row"><a class="btn ghost" href="#colonna">Apri le operazioni</a><button class="btn ghost" type="button" data-timer="12">Timer <span>12 min</span></button></div></div></li>
       <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>Detective dell'errore</h3><p>Caccia all'errore a squadre: la squadra trova la cifra sbagliata, sceglie il perché e lo spiega a voce alla classe. Chi spiega meglio vince la «chiave inglese d'oro».</p><div class="row"><a class="btn ghost" href="#detective">Apri la caccia</a><button class="btn ghost" type="button" data-timer="10">Timer <span>10 min</span></button></div></div></li>
     </ol>
@@ -335,12 +335,10 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
     <p class="lead">Le proprietà rendono i calcoli più facili. Il risultato non cambia.</p>
     <details><summary><b>Ripassa le proprietà</b></summary>
       <div class="defs" style="margin-top:10px">
-        <div class="def"><b>Commutativa</b><span>Nell'addizione e nella moltiplicazione puoi cambiare l'ordine dei numeri: il risultato non cambia. 3 + 5 = 5 + 3.</span></div>
-        <div class="def"><b>Associativa</b><span>Nell'addizione e nella moltiplicazione puoi raggruppare i numeri come vuoi. (4 + 6) + 7 = 4 + (6 + 7).</span></div>
-        <div class="def"><b>Dissociativa</b><span>Puoi sostituire un numero con due numeri che fanno lo stesso. 27 + 15 = 27 + 3 + 12.</span></div>
-        <div class="def"><b>Distributiva</b><span>Nella moltiplicazione puoi spezzare un numero e moltiplicare ogni pezzo. 6 × 14 = 6 × 10 + 6 × 4.</span></div>
-        <div class="def"><b>Invariantiva</b><span>Nella sottrazione (e nella divisione) se aggiungi o togli (moltiplichi o dividi) lo stesso numero a tutti e due i termini, il risultato non cambia.</span></div>
-      </div>
+        <div class="def"><b>Commutativa · addizione e moltiplicazione</b><span>Puoi cambiare l'ordine dei numeri: il risultato non cambia. 3 + 5 = 5 + 3 · 4 × 7 = 7 × 4.</span></div>
+        <div class="def"><b>Associativa · addizione e moltiplicazione</b><span>Puoi raggruppare i numeri come vuoi, con le parentesi: il risultato non cambia. (4 + 6) + 7 = 4 + (6 + 7) · (3 × 2) × 5 = 3 × (2 × 5).</span></div>
+        <div class="def"><b>Invariantiva · sottrazione</b><span>Se aggiungi o togli lo stesso numero a tutti e due i termini, la differenza non cambia. 52 − 19 = 53 − 20.</span></div>
+        <div class="def"><b>Invariantiva · divisione</b><span>Se moltiplichi o dividi tutti e due i termini per lo stesso numero, il quoziente non cambia. 60 : 15 = 12 : 3.</span></div></div>
     </details>
   </div>
   <div class="panel" id="pr-card"></div>
@@ -916,24 +914,31 @@ $("#st-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-s]"
 $("#st-card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;if(b.id==="st-check")checkSt();if(b.id==="st-help")helpSt();if(b.id==="st-new")newSt()});
 
 /* ================= PROPRIETÀ ================= */
-const PROPS=["Commutativa","Associativa","Dissociativa","Distributiva","Invariantiva"];
+const PROPS=["Commutativa","Associativa","Invariantiva"];
+/* solo commutativa e associativa per addizione e moltiplicazione, invariantiva per sottrazione e divisione */
 function propGen(){
-  const k=pick(["comm_add","comm_mul","assoc","dissoc_add","dissoc_mul","distr","inv_sub","inv_div"]);
-  if(k==="comm_add"){const x=rnd(12,BIG?499:89),y=rnd(12,BIG?499:89);return {prop:"Commutativa",L:`${x} + ${y}`,lv:x+y,R:`${y} + []`,a:x,rhs:v=>y+v,eq:`${x} + ${y} = ${y} + ${x}`,why:`Cambiando l'ordine degli addendi la somma non cambia: ${x} + ${y} = ${x+y} e ${y} + ${x} = ${x+y}.`}}
-  if(k==="comm_mul"){const x=rnd(3,12),y=rnd(3,12);return {prop:"Commutativa",L:`${x} × ${y}`,lv:x*y,R:`${y} × []`,a:x,rhs:v=>y*v,eq:`${x} × ${y} = ${y} × ${x}`,why:`Cambiando l'ordine dei fattori il prodotto non cambia: ${x} × ${y} = ${x*y} e ${y} × ${x} = ${x*y}.`}}
-  if(k==="assoc"){const x=rnd(11,59),y=rnd(1,9),z=10-y+(Math.random()<.5?0:10);return {prop:"Associativa",L:`(${x} + ${y}) + ${z}`,lv:x+y+z,R:`${x} + (${y} + [])`,a:z,rhs:v=>x+y+v,eq:`(${x} + ${y}) + ${z} = ${x} + (${y} + ${z})`,why:`Puoi raggruppare gli addendi come vuoi: conviene fare prima ${y} + ${z} = ${y+z}, che è un numero tondo. ${x} + ${y+z} = ${x+y+z}.`}}
-  if(k==="dissoc_add"){const x=rnd(21,88),c=near10(x)-x||10,y=c+rnd(3,19);return {prop:"Dissociativa",L:`${x} + ${y}`,lv:x+y,R:`${x} + ${c} + []`,a:y-c,rhs:v=>x+c+v,eq:`${x} + ${y} = ${x} + ${c} + ${y-c}`,why:`Sostituisci ${y} con due numeri che sommati fanno ${y}: ${c} + ${y-c}. Così ${x} + ${c} = ${x+c} è un numero tondo, e poi ${x+c} + ${y-c} = ${x+y}.`}}
-  if(k==="dissoc_mul"){const f1=pick([2,2,3]),f2=rnd(3,6),y=f1*f2,x=rnd(4,25);return {prop:"Dissociativa",L:`${x} × ${y}`,lv:x*y,R:`${x} × ${f1} × []`,a:f2,rhs:v=>x*f1*v,eq:`${x} × ${y} = ${x} × ${f1} × ${f2}`,why:`Sostituisci ${y} con due fattori che moltiplicati fanno ${y}: ${f1} × ${f2}. ${x} × ${f1} = ${x*f1}, poi ${x*f1} × ${f2} = ${x*y}.`}}
-  if(k==="distr"){const x=rnd(3,9),y=rnd(11,BIG?59:29),yd=y-y%10;return {prop:"Distributiva",L:`${x} × ${y}`,lv:x*y,R:`${x} × ${yd} + ${x} × []`,a:y%10,rhs:v=>x*yd+x*v,eq:`${x} × ${y} = ${x} × ${yd} + ${x} × ${y%10}`,why:`Spezza ${y} in ${yd} + ${y%10} e moltiplica ogni pezzo per ${x}: ${x*yd} + ${x*(y%10)} = ${x*y}.`}}
-  if(k==="inv_sub"){const y=rnd(2,8)*10+pick([8,9]),add=near10(y)-y,x=rnd(y+12,BIG?400:99);return {prop:"Invariantiva",L:`${x} − ${y}`,lv:x-y,R:`${x+add} − []`,a:y+add,rhs:v=>x+add-v,eq:`${x} − ${y} = ${x+add} − ${y+add}`,why:`Aggiungi ${add} a tutti e due i numeri: ${x}+${add} = ${x+add} e ${y}+${add} = ${y+add}. La differenza non cambia ed è più facile: ${x+add} − ${y+add} = ${x-y}.`}}
-  const f=pick([2,5,10]),q=rnd(2,9),y=pick([2,3,4,5])*f,x=q*y;return {prop:"Invariantiva",L:`${x} : ${y}`,lv:q,R:`${x/f} : []`,a:y/f,rhs:v=>v?(x/f)/v:NaN,eq:`${x} : ${y} = ${x/f} : ${y/f}`,why:`Dividi tutti e due i numeri per ${f}: ${x}:${f} = ${x/f} e ${y}:${f} = ${y/f}. Il quoziente non cambia: ${x/f} : ${y/f} = ${q}.`};
+  const k=pick(["comm_add","comm_mul","assoc_add","assoc_mul","inv_sub_add","inv_sub_tog","inv_div_div","inv_div_mol"]);
+  if(k==="comm_add"){const x=rnd(12,BIG?499:89),y=rnd(12,BIG?499:89);return {prop:"Commutativa",op:"addizione",L:`${x} + ${y}`,lv:x+y,R:`${y} + []`,a:x,rhs:v=>y+v,eq:`${x} + ${y} = ${y} + ${x}`,why:`Commutativa dell'addizione: cambiando l'ordine degli addendi la somma non cambia. ${x} + ${y} = ${x+y} e ${y} + ${x} = ${x+y}.`}}
+  if(k==="comm_mul"){const x=rnd(3,12),y=rnd(3,12);return {prop:"Commutativa",op:"moltiplicazione",L:`${x} × ${y}`,lv:x*y,R:`${y} × []`,a:x,rhs:v=>y*v,eq:`${x} × ${y} = ${y} × ${x}`,why:`Commutativa della moltiplicazione: cambiando l'ordine dei fattori il prodotto non cambia. ${x} × ${y} = ${x*y} e ${y} × ${x} = ${x*y}.`}}
+  if(k==="assoc_add"){const x=rnd(11,BIG?399:59),y=rnd(1,9),z=10-y+(Math.random()<.5?0:10);return {prop:"Associativa",op:"addizione",L:`(${x} + ${y}) + ${z}`,lv:x+y+z,R:`${x} + (${y} + [])`,a:z,rhs:v=>x+y+v,eq:`(${x} + ${y}) + ${z} = ${x} + (${y} + ${z})`,why:`Associativa dell'addizione: puoi raggruppare gli addendi come vuoi. Conviene fare prima ${y} + ${z} = ${y+z}, che è un numero tondo: ${x} + ${y+z} = ${x+y+z}.`}}
+  if(k==="assoc_mul"){const pair=pick([[2,5],[5,2],[4,5],[5,4],[2,10],[10,2],[5,6]]),x=rnd(2,BIG?19:9),y=pair[0],z=pair[1];return {prop:"Associativa",op:"moltiplicazione",L:`(${x} × ${y}) × ${z}`,lv:x*y*z,R:`${x} × (${y} × [])`,a:z,rhs:v=>x*y*v,eq:`(${x} × ${y}) × ${z} = ${x} × (${y} × ${z})`,why:`Associativa della moltiplicazione: puoi raggruppare i fattori come vuoi. Conviene fare prima ${y} × ${z} = ${y*z}: ${x} × ${y*z} = ${x*y*z}.`}}
+  if(k==="inv_sub_add"){const y=rnd(2,8)*10+pick([7,8,9]),add=near10(y)-y,x=rnd(y+12,BIG?400:99);return {prop:"Invariantiva",op:"sottrazione",L:`${x} − ${y}`,lv:x-y,R:`${x+add} − []`,a:y+add,rhs:v=>x+add-v,eq:`${x} − ${y} = ${x+add} − ${y+add}`,why:`Invariantiva della sottrazione: aggiungi ${add} a tutti e due i termini. ${x} + ${add} = ${x+add} e ${y} + ${add} = ${y+add}. La differenza non cambia ed è più facile: ${x+add} − ${y+add} = ${x-y}.`}}
+  if(k==="inv_sub_tog"){const t=pick([1,2,3]),y=rnd(2,8)*10+t,x=rnd(y+12,BIG?400:99);return {prop:"Invariantiva",op:"sottrazione",L:`${x} − ${y}`,lv:x-y,R:`${x-t} − []`,a:y-t,rhs:v=>x-t-v,eq:`${x} − ${y} = ${x-t} − ${y-t}`,why:`Invariantiva della sottrazione: togli ${t} a tutti e due i termini. ${x} − ${t} = ${x-t} e ${y} − ${t} = ${y-t}. La differenza non cambia: ${x-t} − ${y-t} = ${x-y}.`}}
+  if(k==="inv_div_div"){const f=pick([2,5,10]),q=rnd(2,9),y=pick([2,3,4,5])*f,x=q*y;return {prop:"Invariantiva",op:"divisione",L:`${x} : ${y}`,lv:q,R:`${x/f} : []`,a:y/f,rhs:v=>v?(x/f)/v:NaN,eq:`${x} : ${y} = ${x/f} : ${y/f}`,why:`Invariantiva della divisione: dividi tutti e due i termini per ${f}. ${x} : ${f} = ${x/f} e ${y} : ${f} = ${y/f}. Il quoziente non cambia: ${x/f} : ${y/f} = ${q}.`}}
+  const f=2,y=5*pick([1,3,5,7]),q=rnd(2,9),x=q*y;return {prop:"Invariantiva",op:"divisione",L:`${x} : ${y}`,lv:q,R:`${x*f} : []`,a:y*f,rhs:v=>v?(x*f)/v:NaN,eq:`${x} : ${y} = ${x*f} : ${y*f}`,why:`Invariantiva della divisione: moltiplica tutti e due i termini per ${f}. ${x} × ${f} = ${x*f} e ${y} × ${f} = ${y*f}. Il quoziente non cambia: ${x*f} : ${y*f} = ${q}.`};
 }
 const TRAPS=[
   ()=>{const a=rnd(6,15),b=rnd(2,a-1);return {s:`${a} − ${b} = ${b} − ${a}`,ok:false,why:`Falso. La sottrazione non ha la proprietà commutativa: ${a} − ${b} = ${a-b}, ma ${b} − ${a} non si può fare con i numeri che conosciamo.`}},
   ()=>{const b=rnd(2,6),a=b*rnd(2,6);return {s:`${a} : ${b} = ${b} : ${a}`,ok:false,why:`Falso. La divisione non ha la proprietà commutativa: ${a} : ${b} = ${a/b}, ma ${b} : ${a} non dà lo stesso risultato.`}},
   ()=>{const a=rnd(11,50),b=rnd(11,50);return {s:`${a} + ${b} = ${b} + ${a}`,ok:true,why:`Vero. È la proprietà commutativa dell'addizione: ${a+b} da tutte e due le parti.`}},
+  ()=>{const a=rnd(3,9),b=rnd(3,9);return {s:`${a} × ${b} = ${b} × ${a}`,ok:true,why:`Vero. È la proprietà commutativa della moltiplicazione: ${a*b} da tutte e due le parti.`}},
   ()=>{const a=rnd(20,40),b=rnd(5,9),c=rnd(2,4);return {s:`(${a} − ${b}) − ${c} = ${a} − (${b} − ${c})`,ok:false,why:`Falso. La sottrazione non ha la proprietà associativa: (${a} − ${b}) − ${c} = ${a-b-c}, ma ${a} − (${b} − ${c}) = ${a-(b-c)}.`}},
-  ()=>{const a=rnd(2,9),b=rnd(2,9),c=rnd(2,5);return {s:`(${a} × ${b}) × ${c} = ${a} × (${b} × ${c})`,ok:true,why:`Vero. È la proprietà associativa della moltiplicazione: ${a*b*c} da tutte e due le parti.`}}
+  ()=>{const a=rnd(2,9),b=rnd(2,9),c=rnd(2,5);return {s:`(${a} × ${b}) × ${c} = ${a} × (${b} × ${c})`,ok:true,why:`Vero. È la proprietà associativa della moltiplicazione: ${a*b*c} da tutte e due le parti.`}},
+  ()=>{const a=rnd(11,40),b=rnd(1,9),c=rnd(2,9);return {s:`(${a} + ${b}) + ${c} = ${a} + (${b} + ${c})`,ok:true,why:`Vero. È la proprietà associativa dell'addizione: ${a+b+c} da tutte e due le parti.`}},
+  ()=>{const b=rnd(12,29),a=b+rnd(10,40),k=pick([1,2,3]);return {s:`${a} − ${b} = ${a+k} − ${b+k}`,ok:true,why:`Vero. È la proprietà invariantiva della sottrazione: aggiungendo ${k} a tutti e due i termini la differenza resta ${a-b}.`}},
+  ()=>{const b=rnd(12,29),a=b+rnd(10,40),k=pick([1,2,3]);return {s:`${a} − ${b} = ${a+k} − ${b}`,ok:false,why:`Falso. Per l'invariantiva bisogna cambiare tutti e due i termini: ${a} − ${b} = ${a-b}, ma ${a+k} − ${b} = ${a+k-b}.`}},
+  ()=>{const q=rnd(2,9),b=pick([2,4,6,8]),a=q*b;return {s:`${a} : ${b} = ${a/2} : ${b/2}`,ok:true,why:`Vero. È la proprietà invariantiva della divisione: dividendo tutti e due i termini per 2 il quoziente resta ${q}.`}},
+  ()=>{const q=rnd(2,9),b=pick([2,4,6,8]),a=q*b;return {s:`${a} : ${b} = ${a+2} : ${b+2}`,ok:false,why:`Falso. Nella divisione l'invariantiva funziona moltiplicando o dividendo, non aggiungendo: ${a} : ${b} = ${q}, ma ${a+2} : ${b+2} non dà ${q}.`}}
 ];
 let PR=null;
 function newPr(){
@@ -945,7 +950,7 @@ function newPr(){
       <div class="row"><button class="btn" type="button" id="pr-check">Controlla</button><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
   }else if(kind==="choose"){
     Object.assign(PR,propGen());
-    c.innerHTML=`<p class="eyebrow">Quale proprietà è stata usata?</p><div class="eqline"><span>${PR.eq}</span></div><div class="opts">${PROPS.map(p=>`<button class="opt" type="button" data-p="${p}">${p}</button>`).join("")}</div>
+    c.innerHTML=`<p class="eyebrow">Quale proprietà è stata usata in questa ${PR.op}?</p><div class="eqline"><span>${PR.eq}</span></div><div class="opts">${PROPS.map(p=>`<button class="opt" type="button" data-p="${p}">${p}</button>`).join("")}</div>
       <div class="row"><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
   }else{
     Object.assign(PR,pick(TRAPS)());
@@ -961,12 +966,12 @@ $("#pr-card").addEventListener("click",ev=>{
   if(!PR||PR.done)return;
   if(b.id==="pr-check"){
     const k=numIn("px");
-    if(k===PR.a){const st=prWin();$("#px").classList.add("good");$("#pr-fb").innerHTML=fbHTML("good",`Esatto! Proprietà ${PR.prop.toLowerCase()}. ${st===2?"Due stelle!":"Una stella!"}`,[PR.why])}
+    if(k===PR.a){const st=prWin();$("#px").classList.add("good");$("#pr-fb").innerHTML=fbHTML("good",`Esatto! Proprietà ${PR.prop.toLowerCase()} della ${PR.op}. ${st===2?"Due stelle!":"Una stella!"}`,[PR.why])}
     else{PR.tries++;errTag("","proprieta");buzz();
       const r=k===null?null:PR.rhs(k);
-      $("#pr-fb").innerHTML=fbHTML("bad","Non è uguale",[k===null?"Scrivi il numero che manca.":`Con ${k} a destra viene ${Number.isInteger(r)?r:"un numero diverso"}, ma a sinistra ${PR.L} = ${PR.lv}: le due parti devono dare lo stesso risultato.`,`Aiuto: è la proprietà ${PR.prop.toLowerCase()}.`])}
+      $("#pr-fb").innerHTML=fbHTML("bad","Non è uguale",[k===null?"Scrivi il numero che manca.":`Con ${k} a destra viene ${Number.isInteger(r)?r:"un numero diverso"}, ma a sinistra ${PR.L} = ${PR.lv}: le due parti devono dare lo stesso risultato.`,`Aiuto: è la proprietà ${PR.prop.toLowerCase()} della ${PR.op}.`])}
   }else if(b.dataset.p){
-    if(b.dataset.p===PR.prop){b.classList.add("good");const st=prWin();$("#pr-fb").innerHTML=fbHTML("good",`Esatto, è la ${PR.prop.toLowerCase()}! ${st===2?"Due stelle!":"Una stella!"}`,[PR.why])}
+    if(b.dataset.p===PR.prop){b.classList.add("good");const st=prWin();$("#pr-fb").innerHTML=fbHTML("good",`Esatto, è la ${PR.prop.toLowerCase()} della ${PR.op}! ${st===2?"Due stelle!":"Una stella!"}`,[PR.why])}
     else{PR.tries++;errTag("","proprieta");b.classList.add("bad");b.disabled=true;buzz();$("#pr-fb").innerHTML=fbHTML("bad",`Non è la ${b.dataset.p.toLowerCase()}`,[hintProp(b.dataset.p)])}
   }else if(b.dataset.v){
     const ans=b.dataset.v==="1";
@@ -977,9 +982,7 @@ $("#pr-card").addEventListener("click",ev=>{
 function hintProp(p){return ({
   Commutativa:"La commutativa cambia solo l'ordine dei numeri. Qui succede qualcos'altro?",
   Associativa:"L'associativa sposta le parentesi, cioè raggruppa i numeri in modo diverso. Qui ci sono parentesi spostate?",
-  Dissociativa:"La dissociativa sostituisce un numero con due numeri che fanno lo stesso. Qui un numero si è «sdoppiato»?",
-  Distributiva:"La distributiva spezza un numero e moltiplica ogni pezzo. Qui c'è una moltiplicazione spezzata in due?",
-  Invariantiva:"L'invariantiva cambia tutti e due i numeri allo stesso modo. Qui sono cambiati tutti e due?"
+  Invariantiva:"L'invariantiva (sottrazione e divisione) cambia tutti e due i numeri allo stesso modo. Qui sono cambiati tutti e due?"
 })[p]}
 
 /* ================= CACCIA ALL'ERRORE ================= */
