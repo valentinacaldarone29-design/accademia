@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1125c">
+<link rel="stylesheet" href="cuccioli.css?v=1125d">
 <link rel="stylesheet" href="lab.css">
 <style>
 :root{--pc:#6A4BC4;--pc-d:#43298F;--pc-soft:#EEE8FB}
@@ -123,13 +123,8 @@
   <div class="panel">
     <p class="eyebrow">Limiti di tempo</p>
     <h2>Quanto possono giocare i bambini</h2>
-    <p>Il tempo conta solo mentre il bambino sta facendo una sfida. Le impostazioni valgono per tutta la classe e su tutti i dispositivi. Voi maestre non avete limiti.</p>
-    <div class="lim">
-      <div><label class="l" for="limDay">Al giorno, per ogni bambino</label><select id="limDay"><option value="10">10 minuti</option><option value="15">15 minuti</option><option value="20">20 minuti</option><option value="30">30 minuti</option><option value="45">45 minuti</option><option value="0">Nessun limite</option></select></div>
-      <div><label class="l" for="limTurn">Per volta (poi pausa)</label><select id="limTurn"><option value="5">5 minuti</option><option value="8">8 minuti</option><option value="10">10 minuti</option><option value="15">15 minuti</option><option value="0">Nessun limite</option></select></div>
-      <div><label class="l" for="limRest">Pausa prima di rientrare</label><select id="limRest"><option value="15">15 minuti</option><option value="30">30 minuti</option><option value="60">1 ora</option><option value="120">2 ore</option></select></div>
-    </div>
-    <p class="hint" id="limSaved" aria-live="polite"></p>
+    <p id="limInfo"></p>
+    <p class="hint">I limiti si cambiano nella home dell'Accademia, in «Impostazioni e consigli»: valgono per tutte le app, anche per la Palestra. Voi maestre non avete limiti.</p>
   </div>
   <div class="panel">
     <p class="eyebrow">Scheda attività · Matematica e logica</p>
@@ -220,7 +215,7 @@
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1125c"></script>
+<script src="cuccioli.js?v=1125d"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -367,7 +362,8 @@ const MOVES=[
 
 /* ---------- limiti di tempo ---------- */
 const CQ=window.Cuccioli;
-const LIM=()=>{const st=CQ.settings||{};return {day:st.palDay!=null?+st.palDay:15,turn:st.palTurn!=null?+st.palTurn:10,rest:st.palRest!=null?+st.palRest:30}};
+/* i limiti sono quelli della home (Cuccioli.timeLim), contati da cuccioli.js per tutte le app: qui nessun limite in più */
+const LIM=()=>({day:0,turn:0,rest:0});
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
 const isKid=()=>!CQ.teacher()&&!!(CQ.who&&CQ.who());
 function TM(){const s=L.state();let t=s.extra.tm;if(!t||t.d!==today())t=s.extra.tm={d:today(),s:0,ss:0,last:0,lock:0,n:(t&&t.n)||0};return t}
@@ -522,14 +518,13 @@ document.addEventListener("click",ev=>{
 });
 document.addEventListener("keydown",ev=>{if(!P||P.items[P.i].type!=="sud"||P.sel==null)return;const n=+ev.key;if(n>=1&&n<=4){const r=Math.floor(P.sel/4),c=P.sel%4;P.cur[r][c]=n;drawSud(P.items[P.i])}if(ev.key==="Backspace"||ev.key==="Delete"){const r=Math.floor(P.sel/4),c=P.sel%4;P.cur[r][c]=0;drawSud(P.items[P.i])}});
 
+CQ.on&&CQ.on(()=>{try{limUI()}catch(e){}});
 function limUI(){
-  const l=LIM();[["limDay",l.day],["limTurn",l.turn],["limRest",l.rest]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=String(v)});
+  const l=CQ.timeLim(),f=v=>v?v+" minuti":"nessun limite",el=document.getElementById("limInfo");
+  if(el)el.innerHTML=`Impostazioni attuali: al giorno <b>${f(l.day)}</b> · per volta <b>${f(l.turn)}</b> · pausa <b>${f(l.rest)}</b>.`;
 }
 document.addEventListener("change",ev=>{
-  const t=ev.target,map={limDay:"palDay",limTurn:"palTurn",limRest:"palRest"};
-  if(!map[t.id]||!CQ.teacher())return;
-  const patch={};patch[map[t.id]]=+t.value;
-  Promise.resolve(CQ.saveSettings(patch)).then(()=>{$("#limSaved").textContent="Salvato per tutta la classe."}).catch(()=>{$("#limSaved").textContent="Non riesco a salvare: riprova."});
+  return;
 });
 setInterval(()=>{if(!P&&!$("#hub").hidden&&$("#sec-giochi")&&!$("#sec-giochi").hidden)hub()},30000);
 const won=(S,k,lv)=>(S.best[k+lv]||0)>=5;

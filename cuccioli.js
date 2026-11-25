@@ -44,7 +44,7 @@ C.GAMES=[
   {k:"cervello",by:"t1",t:"La Palestra del Cervello",s:"mat",href:"cervello.html",d:"Hai finito prima? Sei sfide di numeri e logica a tre livelli: sequenze, piramidi, bilance magiche, indovinelli, Sudoku e bersagli."},
   {k:"stati",by:"t1",t:"La Danza delle Particelle",s:"sci",href:"stati.html",d:"Solido, liquido, gassoso: scalda, raffredda e scopri le trasformazioni."}
 ];
-C.BUILD="1125c";C.GAMES.forEach(function(g){if(!g.ext&&/\.html$/.test(g.href))g.href+="?v="+C.BUILD});
+C.BUILD="1125d";C.GAMES.forEach(function(g){if(!g.ext&&/\.html$/.test(g.href))g.href+="?v="+C.BUILD});
 var WORDS=["LUPO","ORSO","GATTO","VOLPE","TIGRE","PANDA","KOALA","DRAGO","FALCO","LEONE","ZEBRA","RICCIO","CERVO","FOCA","GUFO","TASSO","PUMA","LINCE","MERLO","PONY","DELFINO","AQUILA","CIGNO","LONTRA"];
 
 /* ---------- utilità ---------- */
@@ -216,6 +216,7 @@ var LS="cuccioli-in-crescita-portale-v1",subs=[];
 C.on=function(fn){subs.push(fn)};
 function notify(){subs.forEach(function(f){try{f()}catch(e){}})}
 function saveLocal(){if(C.db)return;try{localStorage.setItem(LS,JSON.stringify({pupils:C.pupils,settings:C.settings}))}catch(e){}}
+window.addEventListener("storage",function(e){if(e.key!==LS||C.db)return;try{var raw=JSON.parse(e.newValue);if(raw&&raw.settings){C.settings=raw.settings;C.pace=C.paceOf(C.settings);notify()}}catch(x){}});
 C.ready=null;
 C.boot=function(){
   if(C.ready)return C.ready;
