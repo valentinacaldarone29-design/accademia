@@ -238,9 +238,9 @@ header a{color:#F6E3A6!important}
 @media (prefers-reduced-motion:reduce){.md.ready .arch{animation:none!important}}
 
 /* ---- la mappa disegnata del museo ---- */
-.maze.mimg{aspect-ratio:3/2;background:#F3E7D3!important}
+.maze.mimg{aspect-ratio:1224/818;background:#F3E7D3!important}
 .maze.mimg .mbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
-.md2{position:absolute;transform:translate(-50%,-50%);width:8.6%;aspect-ratio:135/150;padding:0;border:0;background:none;cursor:pointer;border-radius:46% 46% 6px 6px/34% 34% 6px 6px;z-index:2}
+.md2{position:absolute;transform:translate(-50%,-50%);width:7.6%;aspect-ratio:92/118;padding:0;border:0;background:none;cursor:pointer;border-radius:46% 46% 6px 6px/34% 34% 6px 6px;z-index:2}
 .md2 .peek{position:absolute;inset:6% 9% 0;border-radius:44% 44% 4px 4px/32% 32% 4px 4px;background:var(--rg);opacity:0;transform:perspective(400px) rotateY(0);transition:opacity .6s}
 .md2.done .peek,.md2.opening .peek{opacity:.92;box-shadow:inset 0 0 16px rgba(255,240,180,.9)}
 .md2.locked{background:rgba(40,30,25,.5);cursor:not-allowed}
@@ -668,9 +668,9 @@ function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s
 /* ---------- il labirinto: mappa con le 7 porte e l'avatar che cammina ---------- */
 let INROOM=false,STN=null,WALKING=false,SCHROOM=false;
 /* la mappa è il disegno del museo (1536 × 1024): porte e corridoi in coordinate dell'immagine */
-const MW=1536,MH=1024,P0=[767,880];
-const MDOOR=[[397,218],[772,203],[1118,220],[275,420],[1278,428],[355,722],[1205,722]];
-const MROUTE={0:[[767,853],[767,780],[227,780],[200,587],[227,400],[333,320],[397,291]],1:[[767,853],[767,780],[627,693],[627,333],[767,291]],2:[[767,853],[767,780],[933,693],[933,427],[1040,333],[1117,291]],3:[[767,853],[767,780],[227,780],[200,587],[273,517]],4:[[767,853],[767,780],[1387,780],[1440,613],[1277,517]],5:[[767,853],[767,780],[440,780],[353,816]],6:[[767,853],[767,780],[1147,780],[1207,816]]};
+const MW=1224,MH=818,P0=[612,745];
+const MDOOR=[[278,585],[220,345],[312,175],[612,165],[890,175],[1020,345],[957,585]];
+const MROUTE={"0":[[612,745],[612,615],[380,615],[330,640],[278,650]],"6":[[612,745],[612,615],[870,620],[957,650]],"1":[[612,745],[612,615],[380,600],[320,520],[270,470],[220,410]],"2":[[612,745],[612,615],[470,555],[320,460],[320,270],[312,230]],"3":[[612,745],[612,615],[500,540],[470,300],[560,215],[612,215]],"4":[[612,745],[612,615],[720,560],[740,350],[800,260],[890,230]],"5":[[612,745],[612,615],[760,560],[1060,520],[1120,450],[1020,410]]};
 const canEnter=i=>isMaestra()||unlocked(i);
 /* stanze illustrate: la porta che si apre e la parete con le 5 cornici (coordinate nell'immagine 1264 × 1264) */
 const ROOMART={"monet":{"door":"img/porta-monet2.webp","wall":"img/sala-monet2.webp","ar":[592,1134],"crop":[196,961],"frames":[[54,426,238,711],[296,426,481,711],[539,426,723,711],[780,426,965,710],[1023,426,1208,711]]},"turner":{"door":"img/porta-turner.webp","wall":"img/sala-turner.webp","ar":[730,1228],"crop":[300,1070],"frames":[[80,530,263,820],[310,530,495,820],[540,530,725,820],[770,530,955,820],[1000,530,1185,820]]},"degas":{"door":"img/porta-degas.webp","wall":"img/sala-degas.webp","ar":[447,934],"crop":[264,1084],"frames":[[149,494,316,833],[346,494,514,833],[545,494,714,833],[746,494,915,834],[946,494,1112,833]]},"botero":{"door":"img/porta-botero.webp","wall":"img/sala-botero.webp","ar":[649,956],"crop":[310,1092],"frames":[[108,540,287,842],[325,540,505,842],[543,540,723,842],[761,540,940,842],[979,540,1158,842]]},"vangogh":{"door":"img/porta-vangogh.webp","wall":"img/sala-vangogh.webp","ar":[559,963],"crop":[260,1075],"frames":[[40,490,250,825],[282,490,490,825],[524,490,731,825],[766,490,973,825],[1008,490,1218,825]]},"escher":{"door":"img/porta-escher.webp","wall":"img/sala-escher.webp","ar":[586,1173],"crop":[301,1053],"frames":[[69,531,245,802],[306,531,482,802],[543,531,720,803],[781,531,957,803],[1018,531,1195,803]]},"klimt":{"door":"img/porta-klimt.webp","wall":"img/sala-klimt.webp","ar":[739,1169],"crop":[280,1035],"frames":[[122,510,288,785],[337,510,505,785],[550,510,716,785],[763,513,932,785],[979,510,1146,785]]}};
@@ -698,13 +698,13 @@ function renderMaze(){
   const b=lab(),host=$("#maze"),end=escaped();$$(".mztip").forEach(t=>t.remove());
   if(b.pos==null)b.pos=(b.cur!=null)?b.cur:(Object.keys(b.open).length?CUR:-1);
   host.classList.add("mimg");
-  host.innerHTML=`<img class="mbg" src="img/museo-labirinto2.webp" alt="Il museo-labirinto: sette porte tra corridoi, statue e quadri; in basso la partenza" draggable="false">`;
+  host.innerHTML=`<img class="mbg" src="img/museo-labirinto3.webp" alt="Il museo-labirinto: sette porte tra corridoi, statue e quadri; in basso la partenza" draggable="false">`;
   Q.forEach((x,i)=>{const [cx,cy]=MDOOR[i],st=b.open[x.k]?"done":canEnter(i)?"ready":"locked";
     const d=document.createElement("button");d.type="button";d.className="md2 "+st;d.dataset.md=i;d.style.cssText=`left:${cx/MW*100}%;top:${cy/MH*100}%;--rg:${x.g};--dc:${x.c}`;
     d.disabled=!canEnter(i);d.setAttribute("aria-label",`Porta ${i+1}: ${x.sh}, ${x.t}. `+(st==="done"?"Già aperta: rientra nella stanza.":st==="ready"?"Tocca per entrare.":"Chiusa a chiave."));
-    d.innerHTML=`<span class="peek"></span><span class="num" style="--nc:${["#E0322B","#1F73D9","#3E9B2E","#7B3FC4","#F08A12","#1E8A3C","#E83E8C"][i]}">${i+1}</span><span class="ico" aria-hidden="true">${st==="done"?"✅":st==="locked"?"🔒":""}</span><span class="tag">${esc(x.sh)}</span>`;
+    d.innerHTML=`<span class="peek"></span><span class="ico" aria-hidden="true">${st==="done"?"✅":st==="locked"?"🔒":""}</span><span class="tag">${esc(x.sh)}</span>`;
     d.addEventListener("click",()=>goDoor(i));host.appendChild(d)});
-  const g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate2"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${P0[0]/MW*100}%;top:${700/MH*100}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=end?"🏆 Uscita":"🔒 Uscita";g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
+  const g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate2"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${P0[0]/MW*100}%;top:${792/MH*100}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=end?"🏆 Uscita":"🔒 Uscita";g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
   const w=document.createElement("div");w.className="walker";w.id="walker";w.innerHTML=`<div class="wi">${walkerHTML()}</div>`;host.appendChild(w);placeWalker(mazePt(b.pos));
   const nx=Q.findIndex((x,i)=>!b.open[x.k]&&canEnter(i)),tip=document.createElement("div");tip.className="mztip";
   tip.textContent=end?"🏆 Sei uscito dal labirinto! Puoi rientrare in ogni quadro.":nx>=0?`✨ Tocca la porta ${nx+1} che brilla per entrare nel quadro di ${Q[nx].sh}`:"Tocca una porta aperta per rientrare";host.after(tip);
