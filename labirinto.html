@@ -260,6 +260,30 @@ header a{color:#F6E3A6!important}
 @keyframes mdGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,226,122,0)}50%{box-shadow:0 0 0 6px rgba(255,226,122,.95),0 0 22px 8px rgba(255,226,122,.8)}}
 @keyframes mdOpen{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
 @media (prefers-reduced-motion:reduce){.md2.ready,.md2.opening,.gate2.win{animation:none}}
+
+/* ---- la porta dipinta che si apre e la parete con le cornici ---- */
+.dooro{position:fixed;inset:0;z-index:9998;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,rgba(40,30,60,.75),rgba(10,8,20,.95));opacity:0;transition:opacity .5s}
+.dooro.in{opacity:1}.dooro.out{opacity:0}
+.dstage{position:relative;height:min(78vh,620px);aspect-ratio:774/1243;perspective:1400px;transform:scale(.7);transition:transform .8s cubic-bezier(.3,1.3,.5,1)}
+.dooro.in .dstage{transform:scale(1)}
+.dooro.zoom .dstage{transform:scale(3.2);transition:transform .7s ease-in}
+.dbehind{position:absolute;inset:12% 14% 6% 14%;border-radius:40% 40% 2px 2px/20% 20% 2px 2px;background-size:cover;background-position:50% 55%;box-shadow:inset 0 0 40px 10px rgba(255,240,190,.9);filter:brightness(1.15)}
+.dleaf{position:absolute;inset:0;width:100%;height:100%;transform-origin:12% 50%;transition:transform 1.3s cubic-bezier(.5,0,.2,1),filter 1.3s;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+.dooro.open .dleaf{transform:rotateY(-100deg);filter:drop-shadow(0 20px 30px rgba(0,0,0,.5)) brightness(.8)}
+.wall{position:relative;overflow:hidden;border-radius:8px;margin:12px 0;box-shadow:inset 0 0 0 3px #C9A227,0 8px 20px rgba(0,0,0,.18)}
+.wall .wimg{position:absolute;left:0;width:100%;object-fit:cover;pointer-events:none;user-select:none}
+.wfr{position:absolute;display:grid;align-content:center;justify-items:center;gap:2px;padding:4% 3%;border:0;background:rgba(255,250,235,.05);border-radius:2px;cursor:pointer;color:#3A2418;font-family:Georgia,serif;text-align:center;transition:background .2s,box-shadow .2s,transform .15s}
+.wfr:hover{background:rgba(255,250,235,.35)}
+.wfr[aria-pressed="true"]{background:rgba(255,236,170,.55);box-shadow:0 0 0 4px #F6E08A,0 0 26px 8px rgba(255,226,122,.85)}
+.wfr:active{transform:scale(.97)}
+.wfr .wn{position:absolute;top:6%;left:8%;width:22%;aspect-ratio:1;border-radius:50%;background:#7A1F2B;color:#F6E3A6;display:grid;place-items:center;font:700 clamp(9px,1.4vw,15px)/1 Georgia,serif}
+.wfr .wi{font-size:clamp(18px,4vw,44px);line-height:1}
+.wfr b{font:700 clamp(10px,1.7vw,18px)/1.15 Georgia,serif}
+.wfr small{font:600 clamp(8px,1.2vw,13px)/1.2 Georgia,serif;color:#6B4E2E}
+.wfr.ok::after{content:"✅";position:absolute;top:4%;right:6%;font-size:clamp(11px,1.8vw,20px)}
+.wfr:focus-visible{outline:4px solid #7A1F2B;outline-offset:2px}
+@media (max-width:560px){.wfr small{display:none}}
+@media (prefers-reduced-motion:reduce){.dooro,.dstage,.dleaf{transition:none}}
 </style>
 
 </head><body>
@@ -648,6 +672,18 @@ const MW=1536,MH=1024,P0=[767,880];
 const MDOOR=[[397,218],[772,203],[1118,220],[275,420],[1278,428],[355,722],[1205,722]];
 const MROUTE={0:[[767,853],[767,780],[227,780],[200,587],[227,400],[333,320],[397,291]],1:[[767,853],[767,780],[627,693],[627,333],[767,291]],2:[[767,853],[767,780],[933,693],[933,427],[1040,333],[1117,291]],3:[[767,853],[767,780],[227,780],[200,587],[273,517]],4:[[767,853],[767,780],[1387,780],[1440,613],[1277,517]],5:[[767,853],[767,780],[440,780],[353,816]],6:[[767,853],[767,780],[1147,780],[1207,816]]};
 const canEnter=i=>isMaestra()||unlocked(i);
+/* stanze illustrate: la porta che si apre e la parete con le 5 cornici (coordinate nell'immagine 1264 × 1264) */
+const ROOMART={monet:{door:"img/porta-monet.webp",wall:"img/sala-monet.webp",crop:[270,1050],frames:[[128,487,312,785],[340,487,525,785],[555,487,740,785],[770,487,958,785],[988,487,1175,785]]}};
+function playDoor(k,done){
+  const A=ROOMART[k];if(!A||!A.door||matchMedia("(prefers-reduced-motion: reduce)").matches){done();return}
+  const o=document.createElement("div");o.className="dooro";o.innerHTML=`<div class="dstage"><div class="dbehind" style="background-image:url(${A.wall})"></div><img class="dleaf" src="${A.door}" alt=""></div>`;
+  document.body.appendChild(o);document.documentElement.classList.add("cq-tlocked");
+  requestAnimationFrame(()=>o.classList.add("in"));
+  setTimeout(()=>o.classList.add("open"),900);
+  setTimeout(()=>o.classList.add("zoom"),2300);
+  setTimeout(()=>{done();o.classList.add("out")},2900);
+  setTimeout(()=>{o.remove();document.documentElement.classList.remove("cq-tlocked")},3500);
+}
 function walkerHTML(){
   const pid=CQ.who&&CQ.who(),p=pid&&CQ.pupils&&CQ.pupils[pid];
   if(p&&!isMaestra())return CQ.avatar(p,{subj:"art",medals:false});
@@ -678,6 +714,8 @@ function goDoor(i){
   const w=$("#walker"),door=$(`[data-md="${i}"]`),pts=from===i?[routeOf(i).slice(-1)[0]]:pathBetween(from,i);
   const fin=()=>{WALKING=false;w.classList.remove("walking");b.pos=i;if(i<7){CUR=i;b.cur=i}L.save();
     door.classList.remove("ready");door.classList.add("opening");L.ding();
+    const enter=()=>{INROOM=i===7?"exit":true;STN=null;CLUE=null;renderLab();const r=$("#room");r.classList.remove("room-in");void r.offsetWidth;r.classList.add("room-in");r.scrollIntoView({behavior:"smooth",block:"start"})};
+    if(i<7&&ROOMART[Q[i].k]){setTimeout(()=>playDoor(Q[i].k,enter),400);return}
     setTimeout(()=>{INROOM=i===7?"exit":true;STN=null;CLUE=null;renderLab();const r=$("#room");r.classList.remove("room-in");void r.offsetWidth;r.classList.add("room-in");r.scrollIntoView({behavior:"smooth",block:"start"})},matchMedia("(prefers-reduced-motion: reduce)").matches?150:1000)};
   const seg=[];let tot=0;for(let k=1;k<pts.length;k++){const l=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);seg.push(l);tot+=l}
   if(tot<2||matchMedia("(prefers-reduced-motion: reduce)").matches){placeWalker(mazePt(i));fin();return}
@@ -702,6 +740,8 @@ function mountPanel(k,host){if(!PANELS[k])PANELS[k]=$("#sec-"+k+" .panel");host.
 function homeSchede(){homePanels();SCHROOM=false;const pn=$("#sec-schede .panel");if(pn&&$("#sbody")&&$("#sbody").parentNode!==pn)pn.append($("#snote"),$("#spick"),$("#sbody"))}
 function stState(x){const b=lab(),sh=SCH.find(s=>s.k===x.k),S=L.state(),bv=S.best["vf_"+x.k],bc=S.best["col_"+x.k],nc=(b.clue[x.k]||[]).filter(Boolean).length;
   return{storia:!!b.look[x.k],enigmi:nc,scheda:sh&&shDone(sh),giochi:(bv!=null?1:0)+(bc!=null?1:0),porta:!!b.open[x.k]}}
+function wallHTML(x,T){const A=ROOMART[x.k],[y0,y1]=A.crop,H=y1-y0,W=1264;
+  return `<div class="wall" style="aspect-ratio:${W}/${H}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${T.map((t,j)=>{const f=A.frames[j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
 function renderRoom(){
   const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k],ss=stState(x);
   if(!done&&!b.t0[x.k]){b.t0[x.k]=Date.now();L.save()}
@@ -714,7 +754,7 @@ function renderRoom(){
     <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Sei dentro il quadro · stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
     <div class="qbody">
       <div class="mission"><b>🗝️ Missione</b> Esplora la stanza: leggi la storia, risolvi i 4 enigmi per trovare i pezzi della password, fai la scheda e i giochi di ${esc(x.sh)}. Con la password apri il lucchetto e corri alla porta dopo!</div>
-      <div class="stations">${T.map((t,j)=>`<button class="stn${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}"><span class="n">${j+1}</span><span class="si" aria-hidden="true">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div>
+      ${ROOMART[x.k]&&ROOMART[x.k].wall?wallHTML(x,T):""}<div class="stations"${ROOMART[x.k]&&ROOMART[x.k].wall?" hidden":""}>${T.map((t,j)=>`<button class="stn${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}"><span class="n">${j+1}</span><span class="si" aria-hidden="true">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div>
       <div class="stp" id="stp"></div>
     </div></div>`;
   $("#bk").addEventListener("click",leaveRoom);
