@@ -341,6 +341,11 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
         <div class="def"><b>Invariantiva · divisione</b><span>Se moltiplichi o dividi tutti e due i termini per lo stesso numero, il quoziente non cambia. 60 : 15 = 12 : 3.</span></div></div>
     </details>
   </div>
+  <div class="panel" id="pr-sel">
+    <p class="eyebrow">Su che cosa ci alleniamo</p>
+    <div id="pr-teach" data-teacher hidden><p style="margin:0 0 6px">Scegliete una o più proprietà: i bambini si eserciteranno solo su quelle. Nessuna scelta = tutte mescolate. Vale per tutta la classe.</p><div class="pills" id="pr-pick" role="group" aria-label="Proprietà da allenare"></div><p class="lbl" id="pr-saved" aria-live="polite" style="margin:6px 0 0"></p></div>
+    <p id="pr-now" style="margin:6px 0 0;font-weight:700"></p>
+  </div>
   <div class="panel" id="pr-card"></div>
 </section>
 
@@ -916,8 +921,13 @@ $("#st-card").addEventListener("click",ev=>{const b=ev.target.closest("button");
 /* ================= PROPRIETÀ ================= */
 const PROPS=["Commutativa","Associativa","Invariantiva"];
 /* solo commutativa e associativa per addizione e moltiplicazione, invariantiva per sottrazione e divisione */
+const PGROUPS=[["comm_add","Commutativa","addizione","+"],["comm_mul","Commutativa","moltiplicazione","×"],["assoc_add","Associativa","addizione","+"],["assoc_mul","Associativa","moltiplicazione","×"],["inv_sub","Invariantiva","sottrazione","−"],["inv_div","Invariantiva","divisione",":"]];
+const PKEYS={comm_add:["comm_add"],comm_mul:["comm_mul"],assoc_add:["assoc_add"],assoc_mul:["assoc_mul"],inv_sub:["inv_sub_add","inv_sub_tog"],inv_div:["inv_div_div","inv_div_mol"]};
+const TRAPK=[["comm_add","comm_mul"],["comm_add","comm_mul"],["comm_add"],["comm_mul"],["assoc_add","assoc_mul"],["assoc_mul"],["assoc_add"],["inv_sub"],["inv_sub"],["inv_div"],["inv_div"]];
+function propSel(){const v=(CQ.settings&&CQ.settings.propSel)||[];return Array.isArray(v)?v.filter(k=>PKEYS[k]):[]}
+function propAllowed(){const v=propSel();return v.length?v:PGROUPS.map(g=>g[0])}
 function propGen(){
-  const k=pick(["comm_add","comm_mul","assoc_add","assoc_mul","inv_sub_add","inv_sub_tog","inv_div_div","inv_div_mol"]);
+  const k=pick(propAllowed().flatMap(g=>PKEYS[g]));
   if(k==="comm_add"){const x=rnd(12,BIG?499:89),y=rnd(12,BIG?499:89);return {prop:"Commutativa",op:"addizione",L:`${x} + ${y}`,lv:x+y,R:`${y} + []`,a:x,rhs:v=>y+v,eq:`${x} + ${y} = ${y} + ${x}`,why:`Commutativa dell'addizione: cambiando l'ordine degli addendi la somma non cambia. ${x} + ${y} = ${x+y} e ${y} + ${x} = ${x+y}.`}}
   if(k==="comm_mul"){const x=rnd(3,12),y=rnd(3,12);return {prop:"Commutativa",op:"moltiplicazione",L:`${x} × ${y}`,lv:x*y,R:`${y} × []`,a:x,rhs:v=>y*v,eq:`${x} × ${y} = ${y} × ${x}`,why:`Commutativa della moltiplicazione: cambiando l'ordine dei fattori il prodotto non cambia. ${x} × ${y} = ${x*y} e ${y} × ${x} = ${x*y}.`}}
   if(k==="assoc_add"){const x=rnd(11,BIG?399:59),y=rnd(1,9),z=10-y+(Math.random()<.5?0:10);return {prop:"Associativa",op:"addizione",L:`(${x} + ${y}) + ${z}`,lv:x+y+z,R:`${x} + (${y} + [])`,a:z,rhs:v=>x+y+v,eq:`(${x} + ${y}) + ${z} = ${x} + (${y} + ${z})`,why:`Associativa dell'addizione: puoi raggruppare gli addendi come vuoi. Conviene fare prima ${y} + ${z} = ${y+z}, che è un numero tondo: ${x} + ${y+z} = ${x+y+z}.`}}
@@ -941,24 +951,38 @@ const TRAPS=[
   ()=>{const q=rnd(2,9),b=pick([2,4,6,8]),a=q*b;return {s:`${a} : ${b} = ${a+2} : ${b+2}`,ok:false,why:`Falso. Nella divisione l'invariantiva funziona moltiplicando o dividendo, non aggiungendo: ${a} : ${b} = ${q}, ma ${a+2} : ${b+2} non dà ${q}.`}}
 ];
 let PR=null;
+function prSelUI(){
+  const sel=propSel(),T=CQ.teacher&&CQ.teacher(),pk=$("#pr-pick");
+  if(pk)pk.innerHTML=PGROUPS.map(g=>`<button class="pillb" type="button" data-g="${g[0]}" aria-pressed="${sel.includes(g[0])}">${g[1]} ${g[3]}</button>`).join("");
+  $("#pr-teach").hidden=!T;
+  const names=(sel.length?sel:[]).map(k=>{const g=PGROUPS.find(x=>x[0]===k);return g[1].toLowerCase()+" della "+g[2]});
+  $("#pr-now").textContent=sel.length?"🎯 Oggi ci alleniamo con: "+names.join(", ")+".":"🎯 Oggi ci alleniamo con tutte le proprietà, mescolate.";
+}
 function newPr(){
-  const kind=pick(["fill","fill","fill","choose","choose","trap"]);PR={kind,tries:0,done:false};
+  const al=propAllowed(),one=new Set(al.map(g=>PGROUPS.find(x=>x[0]===g)[1])).size===1,traps=TRAPS.map((t,i)=>i).filter(i=>TRAPK[i].some(k=>al.includes(k)));
+  const kind=pick(one?["fill","fill","fill","trap"]:["fill","fill","fill","choose","choose","trap"]);PR={kind,tries:0,done:false};
+  if(kind==="trap"&&!traps.length)PR.kind="fill";
   const c=$("#pr-card");
-  if(kind==="fill"){
+  if(PR.kind==="fill"){
     Object.assign(PR,propGen());
     c.innerHTML=`<p class="eyebrow">Completa l'uguaglianza</p><div class="eqline"><span>${PR.L}</span><span>=</span><span>${PR.R.replace("[]",`<input class="bx" id="px" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Numero mancante">`)}</span></div>
       <div class="row"><button class="btn" type="button" id="pr-check">Controlla</button><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
-  }else if(kind==="choose"){
+  }else if(PR.kind==="choose"){
     Object.assign(PR,propGen());
     c.innerHTML=`<p class="eyebrow">Quale proprietà è stata usata in questa ${PR.op}?</p><div class="eqline"><span>${PR.eq}</span></div><div class="opts">${PROPS.map(p=>`<button class="opt" type="button" data-p="${p}">${p}</button>`).join("")}</div>
       <div class="row"><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
   }else{
-    Object.assign(PR,pick(TRAPS)());
+    Object.assign(PR,TRAPS[pick(TRAPS.map((t,i)=>i).filter(i=>TRAPK[i].some(k=>al.includes(k))))]());
     c.innerHTML=`<p class="eyebrow">Vero o falso?</p><div class="eqline"><span>${PR.s}</span></div><div class="opts"><button class="opt" type="button" data-v="1">Vero</button><button class="opt" type="button" data-v="0">Falso</button></div>
       <div class="row"><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
   }
   wireInputs(c);
 }
+
+$("#pr-sel").addEventListener("click",ev=>{const b=ev.target.closest("[data-g]");if(!b||!(CQ.teacher&&CQ.teacher()))return;
+  const sel=propSel(),k=b.dataset.g,nv=sel.includes(k)?sel.filter(x=>x!==k):sel.concat([k]);
+  CQ.saveSettings({propSel:nv});$("#pr-saved").textContent="Salvato per tutta la classe.";prSelUI();newPr()});
+CQ.on&&CQ.on(()=>{try{const before=$("#pr-now").textContent;prSelUI();if($("#pr-now").textContent!==before)newPr()}catch(e){}});
 function prWin(){PR.done=true;const st=PR.tries===0?2:1;ding();done("prop",st);return st}
 $("#pr-card").addEventListener("click",ev=>{
   const b=ev.target.closest("button");if(!b)return;
@@ -1126,7 +1150,7 @@ async function enter(r){
   }
   $("nav").hidden=false;$("main").hidden=false;$("#who").hidden=false;
   applyTeacher();renderBoard();buildV();
-  newSt();newOp();newPr();newDet();
+  newSt();newOp();prSelUI();newPr();newDet();
   if(!location.hash)location.hash=CQ.teacher()?"#lezione":"#strategie";else route();
   window.scrollTo(0,0);
 }
