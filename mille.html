@@ -99,6 +99,27 @@ header .wrap{display:grid;gap:14px;padding-block:18px 14px}
 .mis p{color:var(--muted)}
 .cmpsym{display:grid;place-items:center;min-width:64px;height:64px;border-radius:14px;background:var(--surface2);border:2px dashed var(--line);font:700 36px var(--font-display)}
 .cmpsym.ok{border-style:solid;border-color:var(--good);background:var(--good-soft)}
+.chal{display:grid;gap:6px;margin:0 0 12px;padding:10px 12px;border-radius:14px;background:var(--surface2,#F3F1EA);border:2px dashed var(--line)}
+.chal .mrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chal .md{font-size:26px;line-height:1;filter:grayscale(1);opacity:.35;transition:filter .3s,opacity .3s,transform .3s}
+.chal .md.on{filter:none;opacity:1}
+.chal .md.pop{animation:mdPop .8s cubic-bezier(.3,1.6,.5,1)}
+.chal .goal{font-weight:700;font-size:15px}
+.chal .st{display:flex;gap:4px;margin-left:auto}
+.chal .st i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.chal .st i.on{background:#F2C230;box-shadow:0 0 0 2px #C9A227 inset}
+.chal.week{border-style:solid;border-color:#F2C230;background:#FFF8DC}
+.chal .wk{font-size:13px;font-weight:700;color:#8A5A00}
+@keyframes mdPop{0%{transform:scale(.3) rotate(-30deg)}60%{transform:scale(1.5) rotate(10deg)}100%{transform:none}}
+.sfboard h3{margin:0 0 4px}
+.sfboard ol{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.sfboard li{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:12px;background:var(--surface2,#F3F1EA)}
+.sfboard li.me{background:#FFF1C2;outline:3px solid #F2C230}
+.sfboard li .pos{font:700 20px/1 inherit;width:34px;text-align:center}
+.sfboard li .av{width:36px;height:36px;flex:none}
+.sfboard li .nm{font-weight:700;flex:1}
+.sfboard li .pt{font-weight:700;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.chal .md.pop{animation:none}}
 .seq{min-height:1.5em;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700}
 .rorow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;min-height:76px;touch-action:none}
 .rocard{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:92px;height:64px;padding:0 14px;border-radius:16px;border:3px solid var(--line);background:var(--surface);font:700 28px/1 var(--font-display,inherit);font-variant-numeric:tabular-nums;color:var(--ink);cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 5px 0 rgba(0,0,0,.12);transition:transform .15s,box-shadow .15s}
@@ -368,6 +389,13 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <!-- LEZIONE -->
 <section class="view" id="sec-lezione">
+  <div class="panel" id="sf-teach">
+    <p class="eyebrow">Sfida della classe</p>
+    <h2>Il gioco della settimana</h2>
+    <p>Scegliete il gioco della sfida: ogni risposta giusta in quel gioco, da lunedì a domenica, fa salire il bambino nella classifica della classe. Il lunedì la classifica riparte da zero.</p>
+    <div class="pills" id="sf-pick"></div>
+    <p class="lbl" id="sf-saved" aria-live="polite"></p>
+  </div>
   <div class="panel">
     <p class="eyebrow">Scheda attività · Numeri entro il 1000</p>
     <h2>Gli Esploratori del Gran Cambio</h2>
@@ -570,6 +598,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <!-- NUMERI -->
 <section class="view" id="sec-numeri" hidden>
+  <div class="panel sfboard" data-sfb="numeri"></div>
   <div class="panel">
     <p class="eyebrow">Laboratorio dei numeri</p>
     <h2>Scomponi, componi, scrivi e confronta</h2>
@@ -657,6 +686,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <!-- SALTI -->
 <section class="view" id="sec-salti" hidden>
+  <div class="panel sfboard" data-sfb="salti"></div>
   <div class="panel">
     <p class="eyebrow">Attività 2 · Movimento</p>
     <h2>Salti da cento</h2>
@@ -846,7 +876,7 @@ function checkMaestro(){
 /* ---------- navigazione ---------- */
 var TABS=['lezione','fabbrica','abaco','numeri','salti','banco','valuta'];
 var firstRoute=true;
-function route(){
+function route(){try{sfBoards()}catch(e){}
   var h=location.hash.slice(1);
   var home=teacherOn()?'lezione':'fabbrica';
   if(TABS.indexOf(h)<0)h=home;
@@ -1063,10 +1093,10 @@ $('#q-opts').addEventListener('click',function(e){
     answered=true;b.classList.add('good');
     fb.className='fb good';
     fb.textContent='Esatto! '+q.s+(q.dir>0?' + ':' − ')+q.k+' × '+STEP+' = '+q.ans+'. Una stella in più.';
-    S.quiz++;addStars(1);
+    S.quiz++;addStars(1);chHit('q',true);
     if(S.quiz>=3)award('saltatore');
   }else{
-    b.classList.add('bad');b.disabled=true;
+    b.classList.add('bad');b.disabled=true;chHit('q',false);
     fb.className='fb bad';
     fb.textContent='Non ancora. Prova a contare i salti sulla linea.';
   }
@@ -1313,7 +1343,7 @@ $('#lvl').addEventListener('click',function(e){
   BIG=b.getAttribute('data-l')==='1';
   $$('#lvl button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
   $$('.bigonly').forEach(function(x){x.hidden=!BIG});
-  newSc();newCo();newLe();newRd();newCp();newOd();newRo();
+  newSc();newCo();newLe();newRd();newCp();newOd();newRo();chAll();
 });
 
 var sc={n:0,done:false};
@@ -1542,6 +1572,71 @@ $('#ro-check').addEventListener('click',function(){
 });
 $('#ro-next').addEventListener('click',newRo);
 
+/* ---------- le sfide: medaglie da sbloccare in ogni gioco + sfida della classe ---------- */
+var CHG={sc:'Scomposizione',co:'Composizione',le:'Scrittura in lettere',rd:'Lettura',cp:'Confronto',od:'Ordine',ro:'Riordino',q:'Domande dei salti'};
+var CHMED=[{i:'🥉',n:'Bronzo',need:5,big:false,st:2},{i:'🥈',n:'Argento',need:5,big:true,st:3},{i:'🥇',n:'Oro',need:10,big:true,st:5}];
+function chS(k){S.ch=S.ch||{};return S.ch[k]=S.ch[k]||{m:0,s:0}}
+function chBig(k){return k==='q'?true:BIG}
+function chGoal(k){var c=chS(k);if(c.m>=3)return null;return CHMED[c.m]}
+function weekKey(d){d=d||new Date();var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);var y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()+'-W'+Math.ceil(((t-y)/864e5+1)/7)}
+function sfGame(){return (CQ.settings&&CQ.settings.milleSfida)||'cp'}
+function chDraw(k){
+  var box=document.querySelector('.chal[data-ch="'+k+'"]');if(!box)return;
+  var c=chS(k),g=chGoal(k),wk=sfGame()===k;
+  box.classList.toggle('week',wk);
+  var goal=g?('Prossima medaglia: '+g.i+' '+g.n+' · '+g.need+' risposte giuste di fila'+(g.big&&k!=='q'?' con «Oltre il mille»':'')):'Hai tutte e tre le medaglie! Sei un campione di questo gioco.';
+  var dots=g?Array.apply(null,Array(g.need)).map(function(_,i){return '<i class="'+(i<c.s?'on':'')+'"></i>'}).join(''):'';
+  box.innerHTML='<div class="mrow">'+CHMED.map(function(m,i){return '<span class="md'+(i<c.m?' on':'')+'" title="'+m.n+'" aria-label="'+m.n+(i<c.m?' conquistata':' da conquistare')+'">'+m.i+'</span>'}).join('')+'<span class="st" aria-label="Giuste di fila: '+c.s+'">'+dots+'</span></div><div class="goal">'+goal+'</div>'+(wk?'<div class="wk">🏆 È il gioco della sfida della classe di questa settimana!</div>':'');
+}
+function chHit(k,ok){
+  if(!CHG[k])return;
+  var c=chS(k),g=chGoal(k);
+  if(ok)sfAdd(k);
+  if(!g){chDraw(k);return}
+  if(!ok){if(c.s){c.s=0;save();chDraw(k)}return}
+  if(g.big&&!chBig(k)){chDraw(k);var b=document.querySelector('.chal[data-ch="'+k+'"] .goal');if(b)b.textContent='Per la medaglia '+g.i+' '+g.n+' scegli «Oltre il mille» in alto.';return}
+  c.s++;
+  if(c.s>=g.need){c.m++;c.s=0;save();chDraw(k);
+    var md=document.querySelectorAll('.chal[data-ch="'+k+'"] .md')[c.m-1];if(md)md.classList.add('pop');
+    toast('Medaglia '+g.i+' '+g.n+' in '+CHG[k]+'! '+g.st+' stelle in più.');addStars(g.st);
+    tone([[523,.12],[659,.12],[784,.12],[1047,.3]]);
+  }else{save();chDraw(k)}
+}
+/* sfida della classe: le risposte giuste della settimana nel gioco scelto, salvate sulla scheda dell'alunno */
+var sfT=null;
+function sfAdd(k){
+  if(k!==sfGame()||!pupil.id||!CQ.pupils[pupil.id]||(CQ.teacher&&CQ.teacher()))return;
+  var p=CQ.pupils[pupil.id],wk=weekKey(),cur=(p.sfm&&p.sfm.w===wk&&p.sfm.g===k)?p.sfm.n:0;
+  var q=CQ.clone(p);q.sfm={w:wk,g:k,n:cur+1};CQ.pupils[pupil.id]=q;
+  clearTimeout(sfT);sfT=setTimeout(function(){var pp=CQ.pupils[pupil.id];if(pp)CQ.put(pupil.id,pp)},1500);
+  sfBoards();
+}
+function sfBoards(){
+  var k=sfGame(),wk=weekKey(),me=pupil.id;
+  var list=Object.keys(CQ.pupils||{}).map(function(id){var p=CQ.pupils[id];return {id:id,p:p,n:(p.sfm&&p.sfm.w===wk&&p.sfm.g===k)?p.sfm.n:0}}).filter(function(x){return x.n>0}).sort(function(a,b){return b.n-a.n||String(a.p.n).localeCompare(String(b.p.n))});
+  var where=(k==='q')?'salti':'numeri';
+  Array.prototype.forEach.call(document.querySelectorAll('.sfboard'),function(b){
+    if(b.getAttribute('data-sfb')!==where){b.hidden=true;return}
+    b.hidden=false;var mine=list.findIndex(function(x){return x.id===me}),top=list.slice(0,10);
+    b.innerHTML='<p class="eyebrow">Sfida della classe · questa settimana</p><h3>🏆 '+CHG[k]+'</h3><p class="lbl">Ogni risposta giusta in «'+CHG[k]+'» vale un punto. Il lunedì si ricomincia.</p>'+
+      (top.length?'<ol>'+top.map(function(x,i){return '<li class="'+(x.id===me?'me':'')+'"><span class="pos">'+(i<3?['🥇','🥈','🥉'][i]:(i+1)+'°')+'</span><span class="av">'+CQ.avatar(x.p,{medals:false})+'</span><span class="nm">'+esc(x.p.n)+'</span><span class="pt">'+x.n+'</span></li>'}).join('')+'</ol>'+(mine>=10?'<p class="lbl">Tu sei '+(mine+1)+'° con '+list[mine].n+' punti.</p>':''):'<p class="lbl">Nessuno ha ancora punti: la prima risposta giusta ti porta in testa!</p>');
+  });
+}
+function sfTeach(){
+  var box=$('#sf-pick');if(!box)return;var cur=sfGame();
+  box.innerHTML=Object.keys(CHG).map(function(k){return '<button class="pill" type="button" data-sf="'+k+'" aria-pressed="'+(k===cur)+'">'+CHG[k]+'</button>'}).join('');
+}
+(function(){
+  /* una striscia di medaglie in cima a ogni gioco */
+  Object.keys(CHG).forEach(function(k){var fb=$('#'+k+'-fb');if(!fb)return;var pn=fb.closest('.panel');if(!pn)return;var d=document.createElement('div');d.className='chal';d.setAttribute('data-ch',k);var ey=pn.querySelector('.eyebrow');if(ey)ey.after(d);else pn.prepend(d)});
+  var _fb=fbSet;
+  fbSet=function(sel,txt,cls){_fb(sel,txt,cls);var m=/^#([a-z]+)-fb$/.exec(sel);if(!m||!CHG[m[1]])return;
+    if(cls==='good')chHit(m[1],true);else if(cls==='bad'&&!/^(Riempi|Scrivi il numero|Scrivi in lettere il numero|Scrivi il numero in lettere)/.test(txt))chHit(m[1],false)};
+  var sp=$('#sf-pick');if(sp)sp.addEventListener('click',function(e){var b=e.target.closest('[data-sf]');if(!b)return;CQ.saveSettings({milleSfida:b.getAttribute('data-sf')});$('#sf-saved').textContent='Salvato: la sfida della settimana è «'+CHG[b.getAttribute('data-sf')]+'».';sfTeach();chAll()});
+  CQ.on&&CQ.on(function(){sfBoards();sfTeach()});
+})();
+function chAll(){Object.keys(CHG).forEach(chDraw);sfBoards();sfTeach()}
+
 /* ---------- missioni dell'abaco ---------- */
 var MISSIONS=[
   {id:'m1',t:'Scatta il mille',x:'Porta l’abaco a 999, poi aggiungi 1 unità. Che cosa succede?',ok:function(p,a){return p===999&&a===1000;}},
@@ -1593,7 +1688,7 @@ function resetActivities(){
   DEN.forEach(function(d){cnt[d]=0});renderB();
   pos=0;trail=[0];renderS();newQ();
   var ap=ab;ab=0;renderAb(ap);abSay('');newTarget();
-  newSc();newCo();newLe();newRd();newCp();newOd();newRo();
+  newSc();newCo();newLe();newRd();newCp();newOd();newRo();chAll();
 }
 function renderAll(){renderBoard();renderFound();renderMissions();$('#v-sum').hidden=true;buildV();}
 async function startSession(pid){
@@ -1673,7 +1768,7 @@ $('#wipe').addEventListener('click',function(){
 });
 
 /* ---------- avvio ---------- */
-renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV();newQ();buildAbaco();renderAb(0);newTarget();newSc();newCo();newLe();newRd();newCp();newOd();newRo();renderMissions();route();initGate();
+renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV();newQ();buildAbaco();renderAb(0);newTarget();newSc();newCo();newLe();newRd();newCp();newOd();newRo();chAll();renderMissions();route();initGate();
 })();
 </script>
 

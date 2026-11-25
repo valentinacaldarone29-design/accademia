@@ -753,6 +753,7 @@ function loadResults(){
     C.db.collection(col).onSnapshot(function(snap){var m={};snap.docs.forEach(function(d){m[d.id]=d.data()});RES[col]=m;if(hash()==="risultati")render()},function(){RES.err=true;if(hash()==="risultati")render()});
   });
 }
+function weekKeyIdx(){var d=new Date(),t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);var y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()+"-W"+Math.ceil(((t-y)/864e5+1)/7)}
 function fmtDate(t){if(!t)return "";var d=new Date(t);if(isNaN(d))return "";return d.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}
 function mondoStars(s){var g=s.g||{},t=(g.pair||0)+(g.look||0);["drag","swap","tray"].forEach(function(k){Object.keys(g[k]||{}).forEach(function(x){t+=g[k][x]||0})});(s.missions||[]).forEach(function(m){if(m)t+=2});return t+Math.min(s.bonus||0,10)}
 function cnt(o){return Object.keys(o||{}).length}
@@ -769,10 +770,10 @@ function sheetDef(app){
     rows=ids.map(function(id){var p=P(id),r={n:p.n,code:C.fmtCode(p.code||""),stage:C.lvInfo(p).name,xp:p.xp||0};C.SUBJ.forEach(function(s){r["s_"+s.k]=(p.sj||{})[s.k]||0});var lg=(p.log||[]);r.last=lg.length?fmtDate(lg[lg.length-1].t):"";r._t=lg.length?lg[lg.length-1].t:0;return r});
   }else if(app==="mille"){
     title="Missione Mille";
-    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"badge",h:"Badge"},{k:"scomp",h:"Scomposizioni",num:1},{k:"comp",h:"Composizioni",num:1},{k:"lett",h:"Lettere e lettura",num:1},{k:"conf",h:"Confronti e ordine",num:1},{k:"abaco",h:"Sfide abaco",num:1},{k:"mis",h:"Missioni abaco",num:1},{k:"salti",h:"Salti giusti",num:1},{k:"banco",h:"Modi di fare 1000 €",num:1}]
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"badge",h:"Badge"},{k:"scomp",h:"Scomposizioni",num:1},{k:"comp",h:"Composizioni",num:1},{k:"lett",h:"Lettere e lettura",num:1},{k:"conf",h:"Confronti e ordine",num:1},{k:"abaco",h:"Sfide abaco",num:1},{k:"mis",h:"Missioni abaco",num:1},{k:"salti",h:"Salti giusti",num:1},{k:"banco",h:"Modi di fare 1000 €",num:1},{k:"med",h:"Medaglie delle sfide (su 24)",num:1},{k:"sfw",h:"Punti sfida della settimana",num:1}]
       .concat(QM.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"sess",h:"Sessioni",num:1},{k:"last",h:"Ultimo accesso"}]);
     rows=ids.map(function(id){var d=RES.alunni[id],r={n:P(id).n};if(!d){r._none=1;return r}var s=d.stato||{},va=(s.valuta||{}).a||{};
-      r.stelle=d.stelle||0;r.badge=(d.badge||[]).length;r.scomp=s.scomp||0;r.comp=s.comp||0;r.lett=(s.lett||0)+(s.leggi||0);r.conf=(s.conf||0)+(s.ord||0);r.abaco=s.abaco||0;r.mis=cnt(s.missioni);r.salti=s.quiz||0;r.banco=(s.found||[]).length;
+      r.stelle=d.stelle||0;r.badge=(d.badge||[]).length;r.scomp=s.scomp||0;r.comp=s.comp||0;r.lett=(s.lett||0)+(s.leggi||0);r.conf=(s.conf||0)+(s.ord||0);r.abaco=s.abaco||0;r.mis=cnt(s.missioni);r.salti=s.quiz||0;r.banco=(s.found||[]).length;r.med=Object.keys(s.ch||{}).reduce(function(t,k){return t+((s.ch[k]||{}).m||0)},0);var pp=C.pupils[id]||{},sg=(C.settings&&C.settings.milleSfida)||"cp";r.sfw=(pp.sfm&&pp.sfm.g===sg&&pp.sfm.w===weekKeyIdx())?pp.sfm.n:0;
       QM.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.sess=d.sessioni||"";r.last=fmtDate(d.ultimoAccesso);r._t=d.ultimoAccesso?Date.parse(d.ultimoAccesso):0;return r});
     legend=QM;
   }else if(app==="mondo"){
