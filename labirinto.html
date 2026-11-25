@@ -351,6 +351,9 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
 .bin{border-radius:22px!important;border:4px solid #fff!important}
 .opt{border-radius:20px!important;border:4px solid #fff!important}
 .dots i.ok{background:var(--al-yellow)!important}
+.valbtn{position:absolute;right:2%;bottom:3%;z-index:2;border:3px solid #fff;border-radius:99px;padding:6px 14px;background:linear-gradient(#5FD3C8,#2EC4B6);color:#fff;font:700 clamp(11px,1.7vw,17px)/1.3 "Fredoka",system-ui,sans-serif;box-shadow:0 5px 0 #1C8F84,0 8px 14px rgba(0,0,0,.15);cursor:pointer;text-shadow:0 1px 0 rgba(0,0,0,.2)}
+.valbtn:active{transform:translateY(4px);box-shadow:0 1px 0 #1C8F84}
+.valbtn.done{background:linear-gradient(#FFE36E,#FFC21A);color:#5A3A00;box-shadow:0 5px 0 #D99800}
 </style>
 
 
@@ -773,6 +776,7 @@ function renderMaze(){
     d.innerHTML=`<span class="peek"></span><span class="ico" aria-hidden="true">${st==="done"?"✅":st==="locked"?"🔒":""}</span><span class="tag">${esc(x.sh)}</span>`;
     d.addEventListener("click",()=>goDoor(i));host.appendChild(d)});
   const g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate2"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${P0[0]/MW*100}%;top:${792/MH*100}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=end?"🏆 Uscita":"🔒 Uscita";g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
+  const vb=document.createElement("button");vb.type="button";vb.className="valbtn"+(L.state().valuta.done?" done":"");vb.innerHTML=`🪞 Come è andata?${L.state().valuta.done?" ✅":""}`;vb.setAttribute("aria-label","Scheda di autovalutazione");vb.addEventListener("click",()=>{INROOM="valuta";renderLab();$("#room").scrollIntoView({behavior:"smooth",block:"start"})});host.appendChild(vb);
   const w=document.createElement("div");w.className="walker";w.id="walker";w.innerHTML=`<div class="wi">${walkerHTML()}</div>`;host.appendChild(w);placeWalker(mazePt(b.pos));
   const nx=Q.findIndex((x,i)=>!b.open[x.k]&&canEnter(i)),tip=document.createElement("div");tip.className="mztip";
   tip.textContent=end?"🏆 Sei uscito dal labirinto! Puoi rientrare in ogni quadro.":nx>=0?`✨ Tocca la porta ${nx+1} che brilla per entrare nel quadro di ${Q[nx].sh}`:"Tocca una porta aperta per rientrare";host.after(tip);
@@ -798,7 +802,7 @@ function renderLab(){
   curRoom();
   $("#kids").innerHTML=`<span aria-hidden="true">🗝️</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
   $("#maze").hidden=INROOM;if(INROOM)$$(".mztip").forEach(t=>t.remove());$("#room").hidden=!INROOM;
-  if(INROOM==="exit")renderExit();else if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
+  if(INROOM==="valuta")renderValuta();else if(INROOM==="exit")renderExit();else if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
 }
 function leaveRoom(){INROOM=false;STN=null;homeSchede();renderLab();$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
 /* le schede possono vivere anche dentro la stanza: spostiamo i loro contenitori */
@@ -874,6 +878,11 @@ function renderExit(){
   else if(STN==="x_giochi"){h.innerHTML=`<div id="rgames"></div>`;L.sortChooser($("#rgames"),["quadro","colori","genere"])}
   else{mountPanel("valuta",h)}
   CQ.addSayButtons&&CQ.addSayButtons(h);
+}
+function renderValuta(){
+  homeSchede();
+  $("#room").innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button></div><div id="vroom"></div>`;
+  $("#bk").addEventListener("click",leaveRoom);mountPanel("valuta",$("#vroom"));CQ.addSayButtons&&CQ.addSayButtons($("#vroom"));
 }
 function renderClue(){
   const x=Q[CUR],b=lab(),host=$("#cbox");if(CLUE.open==null){host.innerHTML="";return}
