@@ -335,3 +335,8 @@ html.cq-tlocked body{overflow:hidden}
 .cq-tcard input{font-size:18px;padding:8px 12px;border-radius:12px;border:2px solid #CFC6E6;width:170px}
 .cq-tcard small{color:#C0304F;width:100%}
 @media (prefers-reduced-motion:reduce){.cq-tchip.low{animation:none}}
+
+/* stampatello maiuscolo ad alta leggibilità (per alunno) */
+html.cq-caps body,html.cq-caps body *:not(svg):not(svg *):not(.kh):not(.ph):not(code){font-family:"Atkinson Hyperlegible",Verdana,Tahoma,sans-serif!important;text-transform:uppercase!important;letter-spacing:.04em!important;font-style:normal!important}
+html.cq-caps body{word-spacing:.12em;line-height:1.5}
+html.cq-caps input::placeholder{text-transform:uppercase}

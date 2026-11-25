@@ -1037,4 +1037,10 @@ C.timeLim=function(){var s=C.settings||{};function v(k,d){return s[k]!=null&&s[k
   setInterval(function(){if(C.loaded!==false)try{tick()}catch(e){}},TICK*1000);
   C.on&&C.on(function(){try{var id=kid();if(!id)hideLock()}catch(e){}});
 })();
+
+/* ===== scrittura in stampatello maiuscolo ad alta leggibilità per gli alunni che ne hanno bisogno ===== */
+(function(){
+  function apply(){try{var id=C.who&&C.who(),p=id&&C.pupils&&C.pupils[id],on=!!(p&&p.caps&&!(C.teacher&&C.teacher()));document.documentElement.classList.toggle("cq-caps",on)}catch(e){}}
+  C.on(apply);setInterval(apply,3000);if(document.readyState!=="loading")apply();else document.addEventListener("DOMContentLoaded",apply);
+})();
 })();

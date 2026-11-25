@@ -265,7 +265,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 .rtab tr.none td{color:var(--muted);font-style:italic}
 .rtab tfoot td{background:var(--sea-soft);border-bottom:0}
 </style>
-<link rel="stylesheet" href="cuccioli.css?v=1125a">
+<link rel="stylesheet" href="cuccioli.css?v=1125b">
 <style id="magia">
 /* ===== Tema "scuola di magia": cielo notturno, pergamena, oro ===== */
 :root:not(#_){
@@ -463,7 +463,7 @@ details.fold>.fbody{padding:14px 18px 18px}
 </div>
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1125a"></script>
+<script src="cuccioli.js?v=1125b"></script>
 <script src="stagioni.js"></script>
 <script>
 (function(){
@@ -687,6 +687,7 @@ function viewPupil(id){
   if(C.canWrite){
     h+='<div class="panel"><p class="sec">La sua caricatura</p><label class="l" for="rn">Nome</label><input type="text" id="rn" maxlength="30" value="'+esc(p.n)+'" autocomplete="off">'+
       '<label class="l">Caricatura</label>'+speciesPicker(p.sp,takenSet(id))+'<label class="l">Colore dell\'anello</label>'+colorPicker(p.co)+
+      '<label class="l">Scrittura</label><div class="opts">'+[[false,"Normale"],[true,"MAIUSCOLO AD ALTA LEGGIBILITÀ"]].map(function(x){return '<button class="opt" style="padding:10px 14px;font-weight:700" data-act="caps" data-v="'+x[0]+'" aria-pressed="'+(!!p.caps===x[0])+'">'+x[1]+'</button>'}).join("")+'</div><p style="color:var(--muted);margin:6px 0 0;font-size:14px">Quando entra con il suo codice, in tutte le app vede le scritte in stampatello maiuscolo con un carattere ad alta leggibilità.</p>'+
       '<div class="row" style="margin-top:20px">'+(ST.confirmDel?'<span style="font-weight:700">Eliminare per sempre?</span><button class="btn sm danger" data-act="delgo">Sì, elimina</button><button class="btn sm" data-act="delno">No</button>':'<button class="btn sm danger" data-act="delask">Elimina alunno</button>')+'</div></div>';
   }
   app.innerHTML=h;
@@ -1157,6 +1158,7 @@ var A={
   undo:function(){var id=curId();if(id)C.undoLast(id)},
   sp:function(t){var id=curId(),p=C.pupils[id];if(!p||takenSet(id)[t.dataset.v]||!C.CH[t.dataset.v])return;var q=C.clone(p);q.sp=t.dataset.v;C.put(id,q)},
   co:function(t){var id=curId(),p=C.pupils[id];if(!p)return;var q=C.clone(p);q.co=t.dataset.v;C.put(id,q)},
+  caps:function(t){var id=curId(),p=C.pupils[id];if(!p)return;var q=C.clone(p);q.caps=t.dataset.v==="true";C.put(id,q)},
   delask:function(){ST.confirmDel=true;render()},
   delno:function(){ST.confirmDel=false;render()},
   delgo:function(){var id=curId(),p=id&&C.pupils[id];ST.confirmDel=false;if(id){if(p&&p.code&&p.sp)C.keepCode(p.sp,p.code);C.remove(id);location.hash="maestra"}render()}
