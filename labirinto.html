@@ -236,6 +236,28 @@ header a{color:#F6E3A6!important}
 #who,#who b,#who-name,#who span{color:#F6E3A6!important}
 .kids .bar{background:#EADBB8!important}.kids .bar i{background:linear-gradient(90deg,var(--mu-wall),#B3202E)!important}
 @media (prefers-reduced-motion:reduce){.md.ready .arch{animation:none!important}}
+
+/* ---- la mappa disegnata del museo ---- */
+.maze.mimg{aspect-ratio:3/2;background:#F3E7D3!important}
+.maze.mimg .mbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.md2{position:absolute;transform:translate(-50%,-50%);width:8.6%;aspect-ratio:135/150;padding:0;border:0;background:none;cursor:pointer;border-radius:46% 46% 6px 6px/34% 34% 6px 6px;z-index:2}
+.md2 .peek{position:absolute;inset:6% 9% 0;border-radius:44% 44% 4px 4px/32% 32% 4px 4px;background:var(--rg);opacity:0;transform:perspective(400px) rotateY(0);transition:opacity .6s}
+.md2.done .peek,.md2.opening .peek{opacity:.92;box-shadow:inset 0 0 16px rgba(255,240,180,.9)}
+.md2.locked{background:rgba(40,30,25,.5);cursor:not-allowed}
+.md2.ready{animation:mdGlow 1.5s ease-in-out infinite}
+.md2.opening{animation:mdOpen 1s ease both}
+.md2 .ico{position:absolute;right:-14%;top:-10%;display:grid;place-items:center;width:clamp(20px,3.4vw,36px);aspect-ratio:1;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.3);font-size:clamp(12px,2vw,22px)}
+.md2 .ico:empty{display:none}
+.md2 .tag{position:absolute;left:50%;top:100%;transform:translate(-50%,2px);white-space:nowrap;background:linear-gradient(#3A2418,#24150C);color:#F6E3A6;border:2px solid #C9A227;border-radius:4px;padding:0 7px;font:700 clamp(9px,1.5vw,15px)/1.4 Georgia,serif}
+.md2.locked .tag{filter:grayscale(1);opacity:.85}
+.md2:focus-visible{outline:4px solid #fff;outline-offset:3px}
+.gate2{position:absolute;transform:translate(-50%,-50%);border:3px solid #C9A227;border-radius:99px;padding:2px 12px;background:linear-gradient(#7A1F2B,#4A1019);color:#F6E3A6;font:700 clamp(10px,1.7vw,17px)/1.4 Georgia,serif;cursor:pointer;z-index:2;box-shadow:0 4px 0 rgba(0,0,0,.3)}
+.gate2:disabled{cursor:not-allowed;opacity:.85}
+.gate2.win{animation:mGlowT 1.4s ease-in-out infinite}
+.maze.mimg .walker{width:7.5%;transform:translate(-50%,-88%)}
+@keyframes mdGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,226,122,0)}50%{box-shadow:0 0 0 6px rgba(255,226,122,.95),0 0 22px 8px rgba(255,226,122,.8)}}
+@keyframes mdOpen{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
+@media (prefers-reduced-motion:reduce){.md2.ready,.md2.opening,.gate2.win{animation:none}}
 </style>
 
 </head><body>
@@ -619,7 +641,10 @@ function clues(x){
 function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`}
 /* ---------- il labirinto: mappa con le 7 porte e l'avatar che cammina ---------- */
 let INROOM=false,STN=null,WALKING=false,SCHROOM=false;
-const MZ_D="M60 640 L880 640 Q940 640 940 580 L940 485 Q940 425 880 425 L120 425 Q60 425 60 365 L60 275 Q60 215 120 215 L950 215";
+/* la mappa è il disegno del museo (1536 × 1024): porte e corridoi in coordinate dell'immagine */
+const MW=1536,MH=1024,P0=[767,880];
+const MDOOR=[[397,218],[772,203],[1118,220],[275,420],[1278,428],[355,722],[1205,722]];
+const MROUTE={0:[[767,853],[767,780],[227,780],[200,587],[227,400],[333,320],[397,291]],1:[[767,853],[767,780],[627,693],[627,333],[767,291]],2:[[767,853],[767,780],[933,693],[933,427],[1040,333],[1117,291]],3:[[767,853],[767,780],[227,780],[200,587],[273,517]],4:[[767,853],[767,780],[1387,780],[1440,613],[1277,517]],5:[[767,853],[767,780],[440,780],[353,816]],6:[[767,853],[767,780],[1147,780],[1207,816]]};
 const canEnter=i=>isMaestra()||unlocked(i);
 function walkerHTML(){
   const pid=CQ.who&&CQ.who(),p=pid&&CQ.pupils&&CQ.pupils[pid];
@@ -627,47 +652,36 @@ function walkerHTML(){
   const t=CQ.me&&CQ.me();if(t&&CQ.tAvatar)return CQ.tAvatar(t);
   return '<span aria-hidden="true">🧒</span>';
 }
-function mazePt(i){const P=$("#mzp");if(!P)return{x:0,y:0};const L_=P.getTotalLength();return P.getPointAtLength(L_*Math.max(0,Math.min(8,i+1))/8)}
-function mazeLen(i){const P=$("#mzp");return P.getTotalLength()*Math.max(0,Math.min(8,i+1))/8}
-function placeWalker(pt){const w=$("#walker");if(!w)return;w.style.left=(pt.x/10)+"%";w.style.top=(pt.y/7.05)+"%"}
+const routeOf=i=>(i>=0&&i<7)?MROUTE[i]:[P0];
+function mazePt(i){const r=routeOf(i);const q=r[r.length-1];return {x:q[0],y:q[1]}}
+function placeWalker(pt){const w=$("#walker");if(!w)return;w.style.left=(pt.x/MW*100)+"%";w.style.top=(pt.y/MH*100)+"%"}
+function pathBetween(a,b){const A=routeOf(a).slice().reverse(),B=routeOf(b);const pts=A.concat(B);return pts.filter((q,k)=>!k||q[0]!==pts[k-1][0]||q[1]!==pts[k-1][1])}
 function renderMaze(){
   const b=lab(),host=$("#maze"),end=escaped();$$(".mztip").forEach(t=>t.remove());
   if(b.pos==null)b.pos=(b.cur!=null)?b.cur:(Object.keys(b.open).length?CUR:-1);
-  let deco="";const rows=[95,320,530,690];
-  for(let r=0;r<3;r++){const y0=[0,265,475][r],y1=[170,380,590][r];deco+=`<rect x="0" y="${y0}" width="1000" height="${y1-y0}" fill="url(#dam)"/><line x1="0" y1="${y1-6}" x2="1000" y2="${y1-6}" stroke="#C9A227" stroke-width="4"/><line x1="0" y1="${y0+6}" x2="1000" y2="${y0+6}" stroke="#C9A227" stroke-width="3" opacity=".7"/>`}
-  [[240,500],[600,500],[310,290],[660,290],[340,60],[740,60]].forEach(([x,y],k)=>{const c=Q[k%7];deco+=`<g transform="translate(${x} ${y})"><rect x="-26" y="-20" width="52" height="40" fill="#C9A227" stroke="#8A6D12" stroke-width="3"/><rect x="-19" y="-13" width="38" height="26" fill="${c.col[0]}"/><rect x="-19" y="0" width="38" height="13" fill="${c.col[1]}" opacity=".85"/><circle cx="0" cy="34" r="3" fill="#F2D27A"/></g>`});
-  [[90,500],[760,290],[870,60],[60,60]].forEach(([x,y])=>{deco+=`<text x="${x}" y="${y+18}" font-size="44" text-anchor="middle">🏺</text>`});
-  host.innerHTML=`<svg viewBox="0 0 1000 705" role="img" aria-label="Il museo-labirinto con le 7 porte">
-    <defs><pattern id="pq" width="60" height="30" patternUnits="userSpaceOnUse"><rect width="60" height="30" fill="#C08A50"/><rect width="30" height="15" fill="#B47E45"/><rect x="30" y="15" width="30" height="15" fill="#B47E45"/><path d="M0 15H60M30 0V15M0 15V30M60 15V30" stroke="#9C6B37" stroke-width="1.5"/></pattern>
-      <pattern id="dam" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#6E1C27"/><path d="M20 6c5 6 5 10 0 14c-5-4-5-8 0-14zM20 34c5-6 5-10 0-14c-5 4-5 8 0 14z" fill="#7D2531"/></pattern></defs>
-    <rect width="1000" height="705" fill="url(#pq)"/>
-    ${deco}
-    <path d="${MZ_D}" fill="none" stroke="#8A6D12" stroke-width="112" stroke-linecap="round" stroke-linejoin="round" opacity=".35"/>
-    <path d="${MZ_D}" fill="none" stroke="url(#pq)" stroke-width="104" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="${MZ_D}" fill="none" stroke="#E2B640" stroke-width="58" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="${MZ_D}" fill="none" stroke="#A8192A" stroke-width="50" stroke-linecap="round" stroke-linejoin="round"/>
-    <path id="mzp" d="${MZ_D}" fill="none" stroke="#D2485A" stroke-width="3" stroke-dasharray="14 10" stroke-linecap="round" opacity=".7"/>
-    <text x="20" y="694" font-size="20" font-weight="700" fill="#F6E3A6" stroke="#4A1019" stroke-width="4" paint-order="stroke">🏁 Ingresso</text>
-  </svg>`;
-  Q.forEach((x,i)=>{const pt=mazePt(i),st=b.open[x.k]?"done":canEnter(i)?"ready":"locked";
-    const d=document.createElement("button");d.type="button";d.className="md "+st;d.dataset.md=i;d.style.cssText=`left:${pt.x/10}%;top:${(pt.y-22)/7.05}%;--rg:${x.g};--dc:${x.c}`;
+  host.classList.add("mimg");
+  host.innerHTML=`<img class="mbg" src="img/museo-labirinto.webp" alt="Il museo-labirinto: sette porte numerate tra corridoi, statue e quadri; in basso la partenza" draggable="false">`;
+  Q.forEach((x,i)=>{const [cx,cy]=MDOOR[i],st=b.open[x.k]?"done":canEnter(i)?"ready":"locked";
+    const d=document.createElement("button");d.type="button";d.className="md2 "+st;d.dataset.md=i;d.style.cssText=`left:${cx/MW*100}%;top:${cy/MH*100}%;--rg:${x.g};--dc:${x.c}`;
     d.disabled=!canEnter(i);d.setAttribute("aria-label",`Porta ${i+1}: ${x.sh}, ${x.t}. `+(st==="done"?"Già aperta: rientra nella stanza.":st==="ready"?"Tocca per entrare.":"Chiusa a chiave."));
-    d.innerHTML=`<span class="arch"></span><span class="pic"></span><span class="leaf"></span><span class="sign">${i+1} · ${esc(x.sh)}</span><span class="ico" aria-hidden="true">${st==="done"?"🗝️":st==="locked"?"🔒":""}</span>`;
+    d.innerHTML=`<span class="peek"></span><span class="ico" aria-hidden="true">${st==="done"?"✅":st==="locked"?"🔒":""}</span><span class="tag">${esc(x.sh)}</span>`;
     d.addEventListener("click",()=>goDoor(i));host.appendChild(d)});
-  const ep=mazePt(7),g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${ep.x/10-1.5}%;top:${ep.y/7.05}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=`${end?"🏆":"🏛️"}<small>Uscita</small>`;g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
+  const g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate2"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${P0[0]/MW*100}%;top:${700/MH*100}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=end?"🏆 Uscita":"🔒 Uscita";g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
   const w=document.createElement("div");w.className="walker";w.id="walker";w.innerHTML=`<div class="wi">${walkerHTML()}</div>`;host.appendChild(w);placeWalker(mazePt(b.pos));
   const nx=Q.findIndex((x,i)=>!b.open[x.k]&&canEnter(i)),tip=document.createElement("div");tip.className="mztip";
   tip.textContent=end?"🏆 Sei uscito dal labirinto! Puoi rientrare in ogni quadro.":nx>=0?`✨ Tocca la porta ${nx+1} che brilla per entrare nel quadro di ${Q[nx].sh}`:"Tocca una porta aperta per rientrare";host.after(tip);
 }
 function goDoor(i){
   if(WALKING||!canEnter(i))return;const b=lab(),from=b.pos==null?-1:b.pos;
-  const w=$("#walker"),door=$(`[data-md="${i}"]`),a=mazeLen(from),z=mazeLen(i),P=$("#mzp");
+  const w=$("#walker"),door=$(`[data-md="${i}"]`),pts=from===i?[routeOf(i).slice(-1)[0]]:pathBetween(from,i);
   const fin=()=>{WALKING=false;w.classList.remove("walking");b.pos=i;if(i<7){CUR=i;b.cur=i}L.save();
     door.classList.remove("ready");door.classList.add("opening");L.ding();
     setTimeout(()=>{INROOM=i===7?"exit":true;STN=null;CLUE=null;renderLab();const r=$("#room");r.classList.remove("room-in");void r.offsetWidth;r.classList.add("room-in");r.scrollIntoView({behavior:"smooth",block:"start"})},matchMedia("(prefers-reduced-motion: reduce)").matches?150:1000)};
-  if(Math.abs(z-a)<1||matchMedia("(prefers-reduced-motion: reduce)").matches){placeWalker(mazePt(i));fin();return}
-  WALKING=true;w.classList.add("walking");const dur=Math.min(4200,400+Math.abs(z-a)*1.6),t0=performance.now();let lastX=P.getPointAtLength(a).x;
-  (function step(t){const k=Math.min(1,(t-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,pt=P.getPointAtLength(a+(z-a)*e);
+  const seg=[];let tot=0;for(let k=1;k<pts.length;k++){const l=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);seg.push(l);tot+=l}
+  if(tot<2||matchMedia("(prefers-reduced-motion: reduce)").matches){placeWalker(mazePt(i));fin();return}
+  const at=d=>{let k=0;while(k<seg.length-1&&d>seg[k]){d-=seg[k];k++}const f=seg[k]?Math.min(1,d/seg[k]):1,A=pts[k],B=pts[k+1];return {x:A[0]+(B[0]-A[0])*f,y:A[1]+(B[1]-A[1])*f}};
+  WALKING=true;w.classList.add("walking");const dur=Math.min(5200,500+tot*1.9),t0=performance.now();let lastX=pts[0][0];
+  (function step(t){const k=Math.min(1,(t-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,pt=at(tot*e);
     if(Math.abs(pt.x-lastX)>.5)w.classList.toggle("flip",pt.x<lastX);lastX=pt.x;placeWalker(pt);
     if(k<1)requestAnimationFrame(step);else fin()})(t0);
 }
