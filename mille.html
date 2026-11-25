@@ -393,7 +393,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
     <p class="eyebrow">Sfida della classe</p>
     <h2>Il gioco della settimana</h2>
     <p>Scegliete il gioco della sfida: ogni risposta giusta in quel gioco, da lunedì a domenica, fa salire il bambino nella classifica della classe. Il lunedì la classifica riparte da zero.</p>
-    <div class="pills" id="sf-pick"></div>
+    <div class="lvl" id="sf-pick" role="group" aria-label="Gioco della settimana" style="flex-wrap:wrap"></div>
     <p class="lbl" id="sf-saved" aria-live="polite"></p>
   </div>
   <div class="panel">
@@ -1624,7 +1624,7 @@ function sfBoards(){
 }
 function sfTeach(){
   var box=$('#sf-pick');if(!box)return;var cur=sfGame();
-  box.innerHTML=Object.keys(CHG).map(function(k){return '<button class="pill" type="button" data-sf="'+k+'" aria-pressed="'+(k===cur)+'">'+CHG[k]+'</button>'}).join('');
+  box.innerHTML=Object.keys(CHG).map(function(k){return '<button type="button" data-sf="'+k+'" aria-pressed="'+(k===cur)+'">'+CHG[k]+'</button>'}).join('');
 }
 (function(){
   /* una striscia di medaglie in cima a ogni gioco */
