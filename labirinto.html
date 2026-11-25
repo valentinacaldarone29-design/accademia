@@ -248,6 +248,8 @@ header a{color:#F6E3A6!important}
 .md2.opening{animation:mdOpen 1s ease both}
 .md2 .ico{position:absolute;right:-14%;top:-10%;display:grid;place-items:center;width:clamp(20px,3.4vw,36px);aspect-ratio:1;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.3);font-size:clamp(12px,2vw,22px)}
 .md2 .ico:empty{display:none}
+.md2 .num{position:absolute;left:50%;top:22%;transform:translate(-50%,-50%);display:grid;place-items:center;width:42%;aspect-ratio:1;border-radius:50%;background:var(--nc);color:#fff;border:3px solid #fff;font:700 clamp(12px,2.4vw,26px)/1 Georgia,serif;box-shadow:0 3px 0 rgba(0,0,0,.3);text-shadow:0 1px 0 rgba(0,0,0,.3);z-index:1}
+.md2.locked .num{filter:grayscale(.6) brightness(.85)}
 .md2 .tag{position:absolute;left:50%;top:100%;transform:translate(-50%,2px);white-space:nowrap;background:linear-gradient(#3A2418,#24150C);color:#F6E3A6;border:2px solid #C9A227;border-radius:4px;padding:0 7px;font:700 clamp(9px,1.5vw,15px)/1.4 Georgia,serif}
 .md2.locked .tag{filter:grayscale(1);opacity:.85}
 .md2:focus-visible{outline:4px solid #fff;outline-offset:3px}
@@ -660,11 +662,11 @@ function renderMaze(){
   const b=lab(),host=$("#maze"),end=escaped();$$(".mztip").forEach(t=>t.remove());
   if(b.pos==null)b.pos=(b.cur!=null)?b.cur:(Object.keys(b.open).length?CUR:-1);
   host.classList.add("mimg");
-  host.innerHTML=`<img class="mbg" src="img/museo-labirinto.webp" alt="Il museo-labirinto: sette porte numerate tra corridoi, statue e quadri; in basso la partenza" draggable="false">`;
+  host.innerHTML=`<img class="mbg" src="img/museo-labirinto2.webp" alt="Il museo-labirinto: sette porte tra corridoi, statue e quadri; in basso la partenza" draggable="false">`;
   Q.forEach((x,i)=>{const [cx,cy]=MDOOR[i],st=b.open[x.k]?"done":canEnter(i)?"ready":"locked";
     const d=document.createElement("button");d.type="button";d.className="md2 "+st;d.dataset.md=i;d.style.cssText=`left:${cx/MW*100}%;top:${cy/MH*100}%;--rg:${x.g};--dc:${x.c}`;
     d.disabled=!canEnter(i);d.setAttribute("aria-label",`Porta ${i+1}: ${x.sh}, ${x.t}. `+(st==="done"?"Già aperta: rientra nella stanza.":st==="ready"?"Tocca per entrare.":"Chiusa a chiave."));
-    d.innerHTML=`<span class="peek"></span><span class="ico" aria-hidden="true">${st==="done"?"✅":st==="locked"?"🔒":""}</span><span class="tag">${esc(x.sh)}</span>`;
+    d.innerHTML=`<span class="peek"></span><span class="num" style="--nc:${["#E0322B","#1F73D9","#3E9B2E","#7B3FC4","#F08A12","#1E8A3C","#E83E8C"][i]}">${i+1}</span><span class="ico" aria-hidden="true">${st==="done"?"✅":st==="locked"?"🔒":""}</span><span class="tag">${esc(x.sh)}</span>`;
     d.addEventListener("click",()=>goDoor(i));host.appendChild(d)});
   const g=document.createElement("button");g.type="button";g.dataset.md=7;g.className="gate2"+(end?" win":"");g.disabled=!canEnter(7);g.style.cssText=`left:${P0[0]/MW*100}%;top:${700/MH*100}%`;g.setAttribute("aria-label",canEnter(7)?"Uscita: entra nella sala finale":"Uscita: si apre dopo la porta 7");g.innerHTML=end?"🏆 Uscita":"🔒 Uscita";g.addEventListener("click",()=>goDoor(7));host.appendChild(g);
   const w=document.createElement("div");w.className="walker";w.id="walker";w.innerHTML=`<div class="wi">${walkerHTML()}</div>`;host.appendChild(w);placeWalker(mazePt(b.pos));
