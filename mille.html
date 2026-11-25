@@ -100,6 +100,16 @@ header .wrap{display:grid;gap:14px;padding-block:18px 14px}
 .cmpsym{display:grid;place-items:center;min-width:64px;height:64px;border-radius:14px;background:var(--surface2);border:2px dashed var(--line);font:700 36px var(--font-display)}
 .cmpsym.ok{border-style:solid;border-color:var(--good);background:var(--good-soft)}
 .seq{min-height:1.5em;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700}
+.rorow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;min-height:76px;touch-action:none}
+.rocard{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:92px;height:64px;padding:0 14px;border-radius:16px;border:3px solid var(--line);background:var(--surface);font:700 28px/1 var(--font-display,inherit);font-variant-numeric:tabular-nums;color:var(--ink);cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 5px 0 rgba(0,0,0,.12);transition:transform .15s,box-shadow .15s}
+.rocard:focus-visible{outline:4px solid var(--accent,#3D6FD6);outline-offset:3px}
+.rocard.drag{cursor:grabbing;transform:scale(1.08) rotate(-2deg);box-shadow:0 12px 20px rgba(0,0,0,.22);z-index:3;border-color:var(--accent,#3D6FD6)}
+.rocard.ghost{opacity:.35}
+.rocard.ok{border-color:var(--good);background:var(--good-soft)}
+.rocard.ko{border-color:var(--bad);background:var(--bad-soft)}
+.rosig{font:700 26px/1 var(--font-display,inherit);color:var(--muted)}
+.rocard .rk{color:#E07A2E}.rocard .rh{color:#2E8B57}.rocard .rd{color:#D2325F}.rocard .ru{color:#3D6FD6}
+@media (prefers-reduced-motion:reduce){.rocard{transition:none}.rocard.drag{transform:none}}
 
 /* accesso e registro */
 .gate{padding-block:24px}
@@ -632,6 +642,16 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
     <p class="seq" id="od-seq"></p>
     <p class="fb" id="od-fb" role="status" aria-live="polite"></p>
     <div class="row"><button class="btn ghost" id="od-next" type="button">Altri numeri</button></div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Riordino</p>
+    <p class="q" id="ro-q"></p>
+    <div class="lvl" id="ro-dir" role="group" aria-label="Verso"><button type="button" data-d="1" aria-pressed="true">Crescente &lt;</button><button type="button" data-d="0" aria-pressed="false">Decrescente &gt;</button></div>
+    <p class="lbl">Trascina le carte con il dito per metterle in fila. Puoi anche toccare una carta e usare le frecce.</p>
+    <div class="rorow" id="ro-row" role="list" aria-label="Numeri da riordinare"></div>
+    <p class="fb" id="ro-fb" role="status" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="ro-check" type="button">Controlla</button><button class="btn ghost" id="ro-next" type="button">Altri numeri</button></div>
   </div>
 </section>
 
@@ -1293,7 +1313,7 @@ $('#lvl').addEventListener('click',function(e){
   BIG=b.getAttribute('data-l')==='1';
   $$('#lvl button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
   $$('.bigonly').forEach(function(x){x.hidden=!BIG});
-  newSc();newCo();newLe();newRd();newCp();newOd();
+  newSc();newCo();newLe();newRd();newCp();newOd();newRo();
 });
 
 var sc={n:0,done:false};
@@ -1459,6 +1479,69 @@ $('#od-opts').addEventListener('click',function(e){
 });
 $('#od-next').addEventListener('click',newOd);
 
+/* ---------- riordino: trascina le carte in fila ---------- */
+var ro={asc:true,list:[],done:false,tries:0,sel:-1};
+function roColor(v){var d=String(v).split(''),cl=d.length===4?['rk','rh','rd','ru']:['rh','rd','ru'];return d.map(function(c,i){return '<span class="'+cl[i]+'">'+c+'</span>'}).join('')}
+function newRo(){
+  var arr=[],seen={},same=Math.random()<0.6,h=BIG?rnd(1,8)*1000:rnd(1,8)*100,v,t=0;
+  while(arr.length<5&&t++<200){
+    v=BIG?(same?h+rnd(0,999):rnd(1000,9999)):(same?h+rnd(0,99):rnd(100,999));
+    if(!seen[v]){seen[v]=1;arr.push(v);}
+  }
+  ro.list=shuffle(arr.slice());ro.done=false;ro.tries=0;ro.sel=-1;
+  var sorted=arr.slice().sort(function(x,y){return x-y});if(ro.list.join()===sorted.join()||ro.list.join()===sorted.slice().reverse().join())ro.list.reverse(),ro.list.push(ro.list.shift());
+  drawRo();fbSet('#ro-fb','','');
+}
+function drawRo(marks){
+  $('#ro-q').textContent=ro.asc?'Metti i numeri in ordine crescente: dal più piccolo al più grande.':'Metti i numeri in ordine decrescente: dal più grande al più piccolo.';
+  var sig=ro.asc?'&lt;':'&gt;';
+  $('#ro-row').innerHTML=ro.list.map(function(v,i){return (i?'<span class="rosig" aria-hidden="true">'+sig+'</span>':'')+'<span class="rocard'+(marks?(marks[i]?' ok':' ko'):'')+'" role="listitem" tabindex="0" data-i="'+i+'" aria-label="'+v+', posto '+(i+1)+' di '+ro.list.length+'">'+roColor(v)+'</span>'}).join('');
+  if(ro.sel>=0){var c=$('#ro-row').querySelector('[data-i="'+ro.sel+'"]');if(c)c.focus();}
+}
+function roMove(from,to){if(to<0||to>=ro.list.length||from===to)return;var v=ro.list.splice(from,1)[0];ro.list.splice(to,0,v);ro.sel=to;fbSet('#ro-fb','','');drawRo();}
+(function(){
+  var row=$('#ro-row'),drag=null;
+  row.addEventListener('pointerdown',function(e){
+    var c=e.target.closest('.rocard');if(!c||ro.done)return;e.preventDefault();
+    var r=c.getBoundingClientRect();drag={i:+c.getAttribute('data-i'),el:c,dx:e.clientX-r.left,dy:e.clientY-r.top,x0:e.clientX,y0:e.clientY,moved:false,id:e.pointerId};
+    try{row.setPointerCapture(e.pointerId)}catch(_){}
+  });
+  row.addEventListener('pointermove',function(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    var dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
+    if(!drag.moved&&Math.abs(dx)+Math.abs(dy)<6)return;
+    drag.moved=true;drag.el.classList.add('drag');drag.el.style.transform='translate('+dx+'px,'+dy+'px) scale(1.08) rotate(-2deg)';
+    var cards=Array.prototype.slice.call(row.querySelectorAll('.rocard')),target=-1;
+    cards.forEach(function(k){if(k===drag.el)return;var b=k.getBoundingClientRect();if(e.clientX>b.left&&e.clientX<b.right&&e.clientY>b.top-10&&e.clientY<b.bottom+10)target=+k.getAttribute('data-i');});
+    if(target>=0&&target!==drag.i){
+      var v=ro.list.splice(drag.i,1)[0];ro.list.splice(target,0,v);drag.i=target;drawRo();
+      var nc=row.querySelector('[data-i="'+target+'"]');drag.el=nc;var nb=nc.getBoundingClientRect();drag.x0=e.clientX-(e.clientX-nb.left-drag.dx);drag.y0=e.clientY-(e.clientY-nb.top-drag.dy);
+      drag.x0=nb.left+drag.dx;drag.y0=nb.top+drag.dy;nc.classList.add('drag');nc.style.transform='translate('+(e.clientX-drag.x0)+'px,'+(e.clientY-drag.y0)+'px) scale(1.08) rotate(-2deg)';
+      tone([[520,.04]]);
+    }
+  });
+  function end(e){if(!drag)return;var d=drag;drag=null;if(d.el){d.el.classList.remove('drag');d.el.style.transform='';}
+    if(!d.moved){ro.sel=d.i;drawRo();}}
+  row.addEventListener('pointerup',end);row.addEventListener('pointercancel',end);
+  row.addEventListener('keydown',function(e){var c=e.target.closest('.rocard');if(!c||ro.done)return;var i=+c.getAttribute('data-i');
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();roMove(i,i-1);}else if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();roMove(i,i+1);}});
+})();
+$('#ro-dir').addEventListener('click',function(e){var b=e.target.closest('[data-d]');if(!b)return;ro.asc=b.getAttribute('data-d')==='1';Array.prototype.forEach.call($('#ro-dir').querySelectorAll('[data-d]'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});newRo();});
+$('#ro-check').addEventListener('click',function(){
+  if(ro.done)return;
+  var want=ro.list.slice().sort(function(x,y){return ro.asc?x-y:y-x}),marks=ro.list.map(function(v,i){return v===want[i]});
+  ro.sel=-1;drawRo(marks);
+  if(marks.every(Boolean)){
+    ro.done=true;S.rio=(S.rio||0)+1;var st=ro.tries===0?2:1;
+    fbSet('#ro-fb','Fila perfetta: '+ro.list.join(ro.asc?' < ':' > ')+'! '+(st===2?'Due stelle!':'Una stella in più.'),'good');
+    addStars(st);tone([[659,.1],[880,.2]]);
+  }else{
+    ro.tries++;var n=marks.filter(function(m){return !m}).length;
+    fbSet('#ro-fb','Ci sono '+n+' carte fuori posto (in rosso). '+(BIG?'Confronta prima le migliaia, poi le centinaia.':'Confronta prima le centinaia, poi le decine.')+' Spostale e premi di nuovo Controlla.','bad');
+  }
+});
+$('#ro-next').addEventListener('click',newRo);
+
 /* ---------- missioni dell'abaco ---------- */
 var MISSIONS=[
   {id:'m1',t:'Scatta il mille',x:'Porta l’abaco a 999, poi aggiungi 1 unità. Che cosa succede?',ok:function(p,a){return p===999&&a===1000;}},
@@ -1510,7 +1593,7 @@ function resetActivities(){
   DEN.forEach(function(d){cnt[d]=0});renderB();
   pos=0;trail=[0];renderS();newQ();
   var ap=ab;ab=0;renderAb(ap);abSay('');newTarget();
-  newSc();newCo();newLe();newRd();newCp();newOd();
+  newSc();newCo();newLe();newRd();newCp();newOd();newRo();
 }
 function renderAll(){renderBoard();renderFound();renderMissions();$('#v-sum').hidden=true;buildV();}
 async function startSession(pid){
@@ -1590,7 +1673,7 @@ $('#wipe').addEventListener('click',function(){
 });
 
 /* ---------- avvio ---------- */
-renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV();newQ();buildAbaco();renderAb(0);newTarget();newSc();newCo();newLe();newRd();newCp();newOd();renderMissions();route();initGate();
+renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV();newQ();buildAbaco();renderAb(0);newTarget();newSc();newCo();newLe();newRd();newCp();newOd();newRo();renderMissions();route();initGate();
 })();
 </script>
 
