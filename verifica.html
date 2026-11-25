@@ -1,0 +1,312 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Verifica: le migliaia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css?v=1125a">
+<link rel="stylesheet" href="lab.css">
+<style>
+:root{--k:#E07A2E;--h:#2E8B57;--da:#D2325F;--u:#3D6FD6;--vk:#FFF1E4;--vh:#E6F6EC;--vda:#FDE8EE;--vu:#E7EEFC}
+.ex{position:relative}
+.ex .pts{position:absolute;right:18px;top:16px;font:700 14px var(--font-body);color:var(--muted);background:var(--surface2);border-radius:99px;padding:4px 10px}
+.ex .pts.done{color:#fff;background:var(--accent)}
+.ex h2{display:flex;gap:10px;align-items:center;padding-right:90px}
+.ex h2 .n{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-size:20px;flex:none}
+.ex .cons{font-size:18px;margin:4px 0 14px}
+.vt{width:100%;border-collapse:separate;border-spacing:0 8px}
+.vt th{text-align:left;font:700 14px var(--font-body);color:var(--muted);padding:0 8px}
+.vt td{padding:0 8px;vertical-align:middle}
+.vt td.num{font:700 26px var(--font-display);white-space:nowrap;color:var(--ink)}
+.in{font:700 22px var(--font-display);color:var(--ink);background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:8px 12px;width:100%;min-height:50px;box-sizing:border-box}
+.in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
+.in.n{max-width:150px;text-align:center}
+.in.d{width:58px;text-align:center;padding:8px 4px}
+.in.w{font:600 20px var(--font-body)}
+.in.ok{border-color:var(--good);background:var(--good-soft)}
+.in.ko{border-color:var(--bad);background:var(--bad-soft)}
+.in:disabled{opacity:1;color:var(--ink);-webkit-text-fill-color:var(--ink)}
+.sol{display:block;font:700 14px var(--font-body);color:var(--good);margin-top:4px}
+.kh{display:inline-grid;place-items:center;min-width:44px;border-radius:10px;padding:3px 8px;color:#fff;font:700 15px var(--font-body)}
+.kh.k{background:var(--k)}.kh.h{background:var(--h)}.kh.da{background:var(--da)}.kh.u{background:var(--u)}
+.in.d.k{background:var(--vk)}.in.d.h{background:var(--vh)}.in.d.da{background:var(--vda)}.in.d.u{background:var(--vu)}
+.in.d.k.ok,.in.d.h.ok,.in.d.da.ok,.in.d.u.ok{background:var(--good-soft)}.in.d.k.ko,.in.d.h.ko,.in.d.da.ko,.in.d.u.ko{background:var(--bad-soft)}
+.line{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:700 22px var(--font-display);margin:8px 0}
+.line .in.n{width:110px}
+.line .op{color:var(--muted)}
+.cmp{display:flex;gap:6px}
+.cmp button{width:56px;height:50px;border-radius:14px;border:3px solid var(--line);background:var(--surface);font:700 26px var(--font-display);color:var(--ink);cursor:pointer}
+.cmp button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.cmp.ok button[aria-pressed="true"]{background:var(--good);border-color:var(--good)}
+.cmp.ko button[aria-pressed="true"]{background:var(--bad);border-color:var(--bad)}
+.cmp button:disabled{cursor:default}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 4px}
+.pool span{font:700 24px var(--font-display);background:var(--surface2);border-radius:12px;padding:4px 14px}
+.dett{display:flex;flex-wrap:wrap;gap:14px}
+.dett>div{display:grid;gap:6px;justify-items:start}
+.say{border:3px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:99px;padding:6px 14px;font:700 16px var(--font-body);cursor:pointer}
+.legend{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 0}
+.endbox{display:grid;gap:12px}
+.score{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.score .big{font:700 56px/1 var(--font-display);color:var(--accent)}
+.score .lv{font:700 22px var(--font-display);padding:6px 16px;border-radius:99px;background:var(--surface2)}
+.pertab{width:100%;border-collapse:collapse}.pertab td,.pertab th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}.pertab td:last-child,.pertab th:last-child{text-align:right}
+.warn{background:var(--warn-soft);border-radius:14px;padding:12px 14px}
+.progress{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:3px solid var(--line);padding:8px 0;margin:-6px 0 12px}
+.progress .bar{height:12px;border-radius:99px;background:var(--surface2);overflow:hidden}.progress .bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.progress small{display:block;margin-top:4px;color:var(--muted);font-weight:700}
+@media (max-width:560px){.vt td.num{font-size:21px}.in.d{width:48px}.line{font-size:19px}.line .in.n{width:92px}}
+</style>
+<link rel="stylesheet" href="gioco.css?v=1">
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <rect x="40" y="40" width="120" height="96" rx="14" fill="#FFE7A8"/>
+    <rect x="52" y="54" width="22" height="30" rx="6" fill="#E07A2E"/><rect x="78" y="54" width="22" height="30" rx="6" fill="#2E8B57"/><rect x="104" y="54" width="22" height="30" rx="6" fill="#D2325F"/><rect x="130" y="54" width="22" height="30" rx="6" fill="#3D6FD6"/>
+    <text x="57" y="76" font-size="18" fill="#fff" font-family="Fredoka">k</text><text x="83" y="76" font-size="18" fill="#fff" font-family="Fredoka">h</text><text x="105" y="76" font-size="16" fill="#fff" font-family="Fredoka">da</text><text x="136" y="76" font-size="18" fill="#fff" font-family="Fredoka">u</text>
+    <path d="M56 108h88M56 122h60" stroke="#B7791F" stroke-width="6" stroke-linecap="round"/>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Matematica · Classe terza</p>
+        <h1>Verifica: le migliaia</h1>
+        <p class="lead">Leggere, scrivere, comporre, scomporre, confrontare e ordinare i numeri fino a 9999.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Alunno: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Sezioni" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Per la maestra</a>
+    <a href="#verifica">La verifica</a>
+    <a href="#valuta">Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Impostazioni</p>
+    <h2>Dopo la consegna</h2>
+    <p>Il bambino vede sempre il punteggio e le caselle giuste (verdi) e sbagliate (rosse). Scegliete se deve vedere anche le soluzioni.</p>
+    <div class="row" id="solpick"></div>
+    <p class="hint" id="solsaved" aria-live="polite"></p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Matematica</p>
+    <h2>Verifica digitale: le migliaia</h2>
+    <dl class="facts">
+      <div><dt>Che cosa verifica</dt><dd>I numeri fino a 9999: leggere e scrivere (in parole, in cifre, sotto dettato), valore posizionale con k h da u, scomporre e comporre, confrontare con &gt; &lt; =, ordinare, precedente e successivo.</dd></div>
+      <div><dt>Come funziona</dt><dd>Il bambino entra con il suo codice e risponde direttamente sul tablet. Le risposte si salvano da sole mentre scrive, quindi si può riprendere da un altro dispositivo. Alla fine preme «Consegno»: la correzione è automatica e il risultato arriva nei Risultati del portale, foglio «Verifica: le migliaia».</dd></div>
+      <div><dt>Il dettato</dt><dd>Nell'esercizio 2 ci sono quattro numeri da ascoltare con il tasto 🔊 (la voce del tablet). Se preferite dettarli voi: a) 1205 · b) 7050 · c) 3333 · d) 8008.</dd></div>
+      <div><dt>Punteggio</dt><dd>1 punto per risposta, 58 in tutto, più 3 punti bonus nella sfida finale. Livelli: 53–58 Avanzato · 44–52 Intermedio · 35–43 Base · 0–34 In via di prima acquisizione. Le stelle per l'avatar sono una ogni 6 punti, al massimo 10.</dd></div>
+      <div><dt>Una sola consegna</dt><dd>Dopo la consegna la verifica si blocca. Per farla rifare a un bambino premete «Riapri la verifica» sul suo dispositivo e scrivete il vostro PIN: il primo tentativo resta salvato.</dd></div>
+      <div><dt>Tempo</dt><dd>Il limite di tempo dell'Accademia non vale in questa pagina, così nessuno viene interrotto durante la verifica.</dd></div>
+      <div><dt>Versione su carta</dt><dd>È la stessa verifica del documento «Verifica: le migliaia», con gli stessi numeri.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="view" id="sec-verifica" hidden>
+  <div id="ver"></div>
+</section>
+
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andata la verifica?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Quale esercizio è stato il più facile per me?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Matematica.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js?v=1125a"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,CQ=window.Cuccioli,$=L.$,$$=L.$$,esc=L.esc;
+
+/* ---------- i dati della verifica (gli stessi della versione su carta) ---------- */
+const W1=[[2485,"duemilaquattrocentottantacinque"],[6070,"seimilasettanta"],[9302,"novemilatrecentodue"],[4006,"quattromilasei"],[7840,"settemilaottocentoquaranta"],[1999,"millenovecentonovantanove"]];
+const W2=[["tremilacinquecentosessantadue",3562],["ottomilaquattrocento",8400],["cinquemilaventi",5020],["duemilanove",2009],["novemilanovecentonovanta",9990],["seimilatrecentouno",6301]];
+const DET=[1205,7050,3333,8008];
+const T3=[4736,8059,1600,5008];
+const V3=[["5214",0,5000],["3807",1,800],["6490",2,90],["1207",3,7]];
+const S4=[6715,9042,2306,8500,4009];
+const C5=[["5 k + 2 h + 7 da + 1 u",5271],["8 k + 3 da + 6 u",8036],["7 k + 4 u",7004],["4000 + 900 + 5",4905],["2000 + 300 + 60",2360]];
+const C6=[["4563","4536",">"],["7009","7090","<"],["2999","3000","<"],["6400","6004",">"],["5 k + 3 h","5300","="],["8000 + 70","8007",">"],["1111","1101",">"],["9090","9900","<"]];
+const CR=[3405,3054,3540,3450,3045],DE=[7812,8721,7128,8127,7821];
+const PS=[4000,6790,9998,2100];
+const CONTA=[6000,6100,6200];
+const PL=["k","h","da","u"];
+const EXN=["Leggo e scrivo in parole","Scrivo in cifre","Ogni cifra al suo posto","Scompongo","Compongo","Confronto","Ordino"];
+const MAXP=[6,10,8,10,5,8,11],TOT=58;
+const LEVELS=[[53,"Avanzato"],[44,"Intermedio"],[35,"Base"],[0,"In via di prima acquisizione"]];
+
+/* ---------- stato ---------- */
+function V(){const s=L.state();if(!s.extra.ver)s.extra.ver={ans:{},sub:false};return s.extra.ver}
+let saveT=null;
+function put(id,v){const ver=V();if(ver.sub)return;ver.ans[id]=v;clearTimeout(saveT);saveT=setTimeout(()=>{ver.ts=Date.now();L.save()},700);progress()}
+const A=id=>{const v=V().ans[id];return v==null?"":String(v)};
+const num=v=>{v=String(v||"").replace(/[\s.'’,]/g,"");return /^\d+$/.test(v)?+v:null};
+const word=v=>String(v||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z]/g,"").replace(/oo/g,"o");
+const showSol=()=>!!(CQ.settings&&CQ.settings.verSol);
+
+/* ---------- correzione ---------- */
+function grade(){
+  const a=V().ans,R={},per=[0,0,0,0,0,0,0];let bonus=0;
+  const mark=(id,ok,sol,e)=>{R[id]={ok,sol};if(ok)per[e]++};
+  W1.forEach(([n,w],i)=>mark("e1_"+i,word(a["e1_"+i])===word(w),w,0));
+  W2.forEach(([w,n],i)=>mark("e2_"+i,num(a["e2_"+i])===n,n,1));
+  DET.forEach((n,i)=>mark("e2d_"+i,num(a["e2d_"+i])===n,n,1));
+  T3.forEach((n,i)=>{const d=String(n).split("");const ok=d.every((x,j)=>String(a[`e3_${i}_${j}`]||"").trim()===x);d.forEach((x,j)=>R[`e3_${i}_${j}`]={ok:String(a[`e3_${i}_${j}`]||"").trim()===x,sol:x});if(ok)per[2]++});
+  V3.forEach(([n,p,val],i)=>mark("e3v_"+i,num(a["e3v_"+i])===val,val,2));
+  S4.forEach((n,i)=>{const d=String(n).split("").map(Number);
+    const okK=d.every((x,j)=>{const v=num(a[`e4k_${i}_${j}`]);return (v==null?0:v)===x&&(x!==0||a[`e4k_${i}_${j}`]==null||a[`e4k_${i}_${j}`]===""||v===0)});
+    d.forEach((x,j)=>{const v=num(a[`e4k_${i}_${j}`]);R[`e4k_${i}_${j}`]={ok:(v==null?0:v)===x,sol:x}});
+    if(okK)per[3]++;
+    const want=d.map((x,j)=>x*Math.pow(10,3-j)).filter(x=>x).sort((p,q)=>q-p);
+    const got=[0,1,2,3].map(j=>num(a[`e4a_${i}_${j}`])).filter(x=>x).sort((p,q)=>q-p);
+    const okA=want.length===got.length&&want.every((x,j)=>x===got[j]);
+    [0,1,2,3].forEach(j=>R[`e4a_${i}_${j}`]={ok:okA,sol:want.join(" + ")});if(okA)per[3]++});
+  C5.forEach(([t,n],i)=>mark("e5_"+i,num(a["e5_"+i])===n,n,4));
+  C6.forEach(([x,y,s],i)=>mark("e6_"+i,a["e6_"+i]===s,s,5));
+  const seq=(pre,arr,cmp)=>{const want=arr.slice().sort(cmp);const ok=want.every((x,j)=>num(a[pre+j])===x);want.forEach((x,j)=>R[pre+j]={ok:num(a[pre+j])===x,sol:x});if(ok)per[6]++};
+  seq("e7c_",CR,(p,q)=>p-q);seq("e7d_",DE,(p,q)=>q-p);
+  PS.forEach((n,i)=>{mark(`e7p_${i}`,num(a[`e7p_${i}`])===n-1,n-1,6);mark(`e7s_${i}`,num(a[`e7s_${i}`])===n+1,n+1,6)});
+  const okC=CONTA.every((x,j)=>num(a["e7n_"+j])===x);CONTA.forEach((x,j)=>R["e7n_"+j]={ok:num(a["e7n_"+j])===x,sol:x});if(okC)per[6]++;
+  [["sf_0",6042],["sf_1",9730],["sf_2",3079]].forEach(([id,n])=>{const ok=num(a[id])===n;R[id]={ok,sol:n};if(ok)bonus++});
+  const score=per.reduce((x,y)=>x+y,0);
+  return {R,per,bonus,score,level:LEVELS.find(l=>score>=l[0])[1]};
+}
+
+/* ---------- disegno ---------- */
+const inp=(id,cls,lab,extra)=>`<input class="in ${cls}" id="${id}" data-a="${id}" type="text" ${cls.includes("w")?'inputmode="text" autocapitalize="off" spellcheck="false"':'inputmode="numeric"'} autocomplete="off" aria-label="${esc(lab)}" value="${esc(A(id))}"${extra||""}>`;
+const kh=p=>`<span class="kh ${p}">${p}</span>`;
+function panel(i,body){return `<div class="panel ex" id="ex${i}"><span class="pts" data-pts="${i}">${MAXP[i]} punti</span><h2><span class="n">${i+1}</span>${EXN[i]}</h2>${body}</div>`}
+function render(){
+  const ver=V(),host=$("#ver");
+  if(ver.sub)return renderDone();
+  let h=`<div class="panel"><p class="lead" style="margin:0">Leggi bene ogni consegna. Le risposte si salvano da sole. Quando hai finito tutto, controlla e premi <b>Consegno</b> in fondo.</p><div class="legend"><b>Ricorda:</b> ${kh("k")} migliaia ${kh("h")} centinaia ${kh("da")} decine ${kh("u")} unità · 1 k = 10 h = 100 da = 1000 u</div></div>
+  <div class="progress" id="prog"><div class="bar"><i></i></div><small></small></div>`;
+  h+=panel(0,`<p class="cons">Scrivi in parole ogni numero.</p><table class="vt"><tbody>${W1.map(([n],i)=>`<tr><td class="num">${n}</td><td>${inp("e1_"+i,"w","Il numero "+n+" in parole")}</td></tr>`).join("")}</tbody></table>`);
+  h+=panel(1,`<p class="cons">Scrivi in cifre ogni numero.</p><table class="vt"><tbody>${W2.map(([w],i)=>`<tr><td style="font-size:19px;font-weight:700;word-break:break-word">${w}</td><td style="width:160px">${inp("e2_"+i,"n",w+" in cifre")}</td></tr>`).join("")}</tbody></table>
+    <p class="cons" style="margin-top:16px"><b>Dettato.</b> Premi 🔊, ascolta il numero e scrivilo in cifre. Puoi ascoltarlo più volte.</p>
+    <div class="dett">${DET.map((n,i)=>`<div><button class="say" type="button" data-say="${n}">🔊 ${"abcd"[i]})</button>${inp("e2d_"+i,"n","Dettato "+"abcd"[i])}</div>`).join("")}</div>`);
+  h+=panel(2,`<p class="cons">Scrivi ogni numero nella tabella, una cifra per casella.</p>
+    <table class="vt"><thead><tr><th></th>${PL.map(p=>`<th>${kh(p)}</th>`).join("")}</tr></thead><tbody>${T3.map((n,i)=>`<tr><td class="num">${n}</td>${PL.map((p,j)=>`<td>${inp(`e3_${i}_${j}`,"d "+p,`${n}: cifra delle ${["migliaia","centinaia","decine","unità"][j]}`,' maxlength="1"')}</td>`).join("")}</tr>`).join("")}</tbody></table>
+    <p class="cons" style="margin-top:16px">Quanto vale la cifra colorata? Scrivi il numero, come nell'esempio.</p>
+    <table class="vt"><tbody><tr><td class="num">2<span style="color:var(--h);text-decoration:underline">3</span>41</td><td style="font:700 20px var(--font-display);color:var(--muted)">3 h = 300</td></tr>${V3.map(([s,p,val],i)=>`<tr><td class="num">${s.split("").map((c,j)=>j===p?`<span style="color:var(--${PL[p]});text-decoration:underline">${c}</span>`:c).join("")}</td><td>${inp("e3v_"+i,"n","Quanto vale la cifra colorata di "+s)}</td></tr>`).join("")}</tbody></table>`);
+  h+=panel(3,`<p class="cons">Scomponi ogni numero in due modi. Esempio: 3482 = 3 k + 4 h + 8 da + 2 u = 3000 + 400 + 80 + 2. Se una cifra è 0 scrivi 0 oppure lascia vuoto.</p>
+    ${S4.map((n,i)=>`<div class="line"><span>${n} =</span>${PL.map((p,j)=>`${inp(`e4k_${i}_${j}`,"d "+p,`${n}: quante ${["migliaia","centinaia","decine","unità"][j]}`,' maxlength="1"')}${kh(p)}${j<3?'<span class="op">+</span>':""}`).join("")}</div>
+      <div class="line" style="margin-bottom:18px"><span>${n} =</span>${[0,1,2,3].map(j=>`${inp(`e4a_${i}_${j}`,"n",`${n} con l'addizione, parte ${j+1}`)}${j<3?'<span class="op">+</span>':""}`).join("")}</div>`).join("")}`);
+  h+=panel(4,`<p class="cons">Scrivi il numero che si forma. Attento: dove manca un ordine ci va lo zero!</p><table class="vt"><tbody>${C5.map(([t],i)=>`<tr><td style="font:700 22px var(--font-display)">${t} =</td><td style="width:160px">${inp("e5_"+i,"n",t)}</td></tr>`).join("")}</tbody></table>`);
+  h+=panel(5,`<p class="cons">Tocca il segno giusto: &gt; maggiore, &lt; minore, = uguale. Parti sempre dalle migliaia.</p><table class="vt"><tbody>${C6.map(([x,y],i)=>`<tr><td class="num" style="text-align:right">${x}</td><td><div class="cmp" role="group" aria-label="Segno tra ${x} e ${y}" data-cmp="e6_${i}">${[">","<","="].map(s=>`<button type="button" data-s="${s}" aria-pressed="${A("e6_"+i)===s}">${s}</button>`).join("")}</div></td><td class="num">${y}</td></tr>`).join("")}</tbody></table>`);
+  const seqUI=(pre,arr,sign)=>`<div class="pool">${arr.map(n=>`<span>${n}</span>`).join("")}</div><div class="line">${arr.map((x,j)=>`${inp(pre+j,"n",(j+1)+"° numero")}${j<arr.length-1?`<span class="op">${sign}</span>`:""}`).join("")}</div>`;
+  h+=panel(6,`<p class="cons">Metti i numeri in ordine <b>crescente</b>, dal più piccolo al più grande.</p>${seqUI("e7c_",CR,"&lt;")}
+    <p class="cons" style="margin-top:16px">Metti i numeri in ordine <b>decrescente</b>, dal più grande al più piccolo.</p>${seqUI("e7d_",DE,"&gt;")}
+    <p class="cons" style="margin-top:16px">Scrivi il numero che viene <b>prima</b> e quello che viene <b>dopo</b>.</p>
+    <table class="vt"><thead><tr><th>Prima</th><th></th><th>Dopo</th></tr></thead><tbody>${PS.map((n,i)=>`<tr><td>${inp("e7p_"+i,"n","Prima di "+n)}</td><td class="num" style="text-align:center">${n}</td><td>${inp("e7s_"+i,"n","Dopo "+n)}</td></tr>`).join("")}</tbody></table>
+    <p class="cons" style="margin-top:16px">Continua contando di 100 in 100.</p><div class="line"><span>5800</span><span class="op">·</span><span>5900</span>${CONTA.map((x,j)=>`<span class="op">·</span>${inp("e7n_"+j,"n","Numero "+(j+3))}`).join("")}</div>`);
+  h+=`<div class="panel ex"><span class="pts">bonus</span><h2><span class="n">★</span>Sfida finale</h2>
+    <p class="cons"><b>Indovinello.</b> Ho 6 migliaia, 0 centinaia, 4 decine e 2 unità. Chi sono?</p>${inp("sf_0","n","Indovinello")}
+    <p class="cons" style="margin-top:16px"><b>Le carte magiche.</b> Con le cifre 7, 0, 3, 9 (tutte, una volta sola) scrivi:</p>
+    <div class="line"><span>il numero più grande</span>${inp("sf_1","n","Il numero più grande")}</div>
+    <div class="line"><span>il numero più piccolo di 4 cifre</span>${inp("sf_2","n","Il numero più piccolo di 4 cifre")}</div></div>
+  <div class="panel" id="sendbox"><h2>Hai finito?</h2><p>Ricontrolla le risposte. Dopo la consegna non potrai più cambiarle.</p><div id="sendmsg"></div><div class="row"><button class="btn" type="button" id="send">Consegno la verifica</button></div></div>`;
+  host.innerHTML=h;wire();progress();
+}
+function ids(){return $$("#ver [data-a]").map(x=>x.dataset.a).concat($$("#ver [data-cmp]").map(x=>x.dataset.cmp))}
+const countable=i=>!i.startsWith("sf_")&&!i.startsWith("e4");
+function progress(){const p=$("#prog");if(!p)return;const all=ids().filter(countable),a=V().ans,n=all.filter(i=>String(a[i]||"").trim()!=="").length;
+  p.querySelector("i").style.width=Math.round(n/all.length*100)+"%";p.querySelector("small").textContent=`Hai riempito ${n} caselle su ${all.length}`}
+function wire(){
+  $$("#ver [data-a]").forEach(t=>{t.addEventListener("input",()=>{if(t.classList.contains("d"))t.value=t.value.replace(/\D/g,"").slice(-1);else if(!t.classList.contains("w"))t.value=t.value.replace(/[^\d.\s]/g,"");put(t.dataset.a,t.value);
+      if(t.classList.contains("d")&&t.value){const all=$$("#ver input.d"),k=all.indexOf(t);if(all[k+1]&&all[k+1].closest("tr,.line")===t.closest("tr,.line"))all[k+1].focus()}});
+    t.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();const all=$$("#ver input.in"),k=all.indexOf(t);if(all[k+1])all[k+1].focus()}})});
+  $$("#ver [data-cmp]").forEach(g=>g.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));put(g.dataset.cmp,b.dataset.s)}));
+  $$("#ver [data-say]").forEach(b=>b.addEventListener("click",()=>say(b.dataset.say)));
+  const sd=$("#send");if(sd)sd.addEventListener("click",ask);
+}
+function say(n){try{const u=new SpeechSynthesisUtterance(String(n));u.lang="it-IT";u.rate=.75;const v=speechSynthesis.getVoices().find(x=>/^it/i.test(x.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){L.toast("Questo dispositivo non sa leggere ad alta voce: chiedi alla maestra di dettare.")}}
+function ask(){
+  const all=ids().filter(countable),a=V().ans,empty=all.filter(i=>String(a[i]||"").trim()==="").length;
+  $("#sendmsg").innerHTML=`<div class="warn"><p style="margin:0 0 8px">${empty?`Hai lasciato <b>${empty}</b> caselle vuote. `:"Hai riempito tutte le caselle. "}Sei sicuro di voler consegnare?</p><div class="row"><button class="btn" type="button" id="yes">Sì, consegno</button><button class="btn ghost" type="button" id="no">Torno a controllare</button></div></div>`;
+  $("#yes").addEventListener("click",submit);$("#no").addEventListener("click",()=>{$("#sendmsg").innerHTML=""});
+}
+function submit(){
+  const ver=V(),g=grade();
+  ver.sub=true;ver.score=g.score;ver.per=g.per;ver.bonus=g.bonus;ver.level=g.level;ver.at=Date.now();ver.ts=ver.at;
+  const stars=Math.min(10,Math.round((g.score+g.bonus)/6));
+  if(!ver.starred){ver.starred=1;L.add(stars)}
+  L.save();L.fanfare();render();window.scrollTo({top:$("#ver").offsetTop-10,behavior:"smooth"});
+}
+function renderDone(){
+  const ver=V(),g=grade(),sol=showSol();
+  let h=`<div class="panel endbox"><p class="eyebrow">Verifica consegnata</p><h2>Ecco come è andata!</h2>
+    <div class="score"><span class="big">${g.score}<small style="font-size:24px;color:var(--muted)"> / ${TOT}</small></span><span class="lv">${g.level}</span>${g.bonus?`<span class="lv">★ sfida: +${g.bonus}</span>`:""}</div>
+    <table class="pertab"><thead><tr><th>Esercizio</th><th>Punti</th></tr></thead><tbody>${EXN.map((n,i)=>`<tr><td>${i+1}. ${n}</td><td>${g.per[i]} / ${MAXP[i]}</td></tr>`).join("")}<tr><td>Sfida finale</td><td>${g.bonus} / 3</td></tr></tbody></table>
+    <p>Le caselle <b style="color:var(--good)">verdi</b> sono giuste, quelle <b style="color:var(--bad)">rosse</b> sono da ripassare.${sol?" Sotto ogni casella rossa trovi la risposta giusta.":""}</p>
+    <div class="row"><a class="btn" href="#valuta">Compila «Come è andata?»</a><button class="btn ghost" type="button" id="reopen">Riapri la verifica (maestra)</button></div><div id="pinbox"></div></div>`;
+  $("#ver").innerHTML=h;
+  /* mostra le risposte corrette sotto, in sola lettura */
+  const keep=$("#ver").innerHTML;V().sub=false;const sub0=true;render();V().sub=sub0;
+  const body=$("#ver").innerHTML;$("#ver").innerHTML=keep+body;
+  $$("#ver #sendbox,#ver #prog").forEach(x=>x.remove());
+  $$("#ver [data-a]").forEach(t=>{t.disabled=true;const r=g.R[t.dataset.a];if(!r)return;t.classList.add(r.ok?"ok":"ko");if(!r.ok&&sol&&!t.classList.contains("d")){const s=document.createElement("span");s.className="sol";s.textContent="→ "+r.sol;t.after(s)}});
+  $$("#ver [data-cmp]").forEach(c=>{const r=g.R[c.dataset.cmp];c.classList.add(r&&r.ok?"ok":"ko");c.querySelectorAll("button").forEach(b=>b.disabled=true);if(r&&!r.ok&&sol){const s=document.createElement("span");s.className="sol";s.textContent="→ "+r.sol;c.after(s)}});
+  $$("#ver [data-pts]").forEach(p=>{const i=+p.dataset.pts;p.textContent=`${g.per[i]} / ${MAXP[i]}`;p.classList.add("done")});
+  $$("#ver [data-say]").forEach(b=>b.addEventListener("click",()=>say(b.dataset.say)));
+  $("#reopen").addEventListener("click",()=>{
+    const tm=CQ.teacher&&CQ.teacher();
+    if(tm){reopen();return}
+    $("#pinbox").innerHTML=`<div class="row" style="margin-top:8px"><input class="in n" type="password" inputmode="numeric" id="pin" placeholder="PIN" aria-label="PIN della maestra"><button class="btn" type="button" id="pinok">Riapri</button><span id="pinerr" style="color:var(--bad);font-weight:700"></span></div>`;
+    $("#pin").focus();$("#pinok").addEventListener("click",()=>{const list=CQ.teachers();if(!list.some(x=>x.pin)||CQ.checkPin($("#pin").value)!==""){$("#pinerr").textContent="PIN sbagliato.";return}reopen()});
+  });
+}
+function reopen(){const s=L.state(),v=V();s.extra.verPrev=(s.extra.verPrev||[]).concat([{score:v.score,per:v.per,bonus:v.bonus,level:v.level,at:v.at,ans:v.ans}]);s.extra.ver={ans:{},sub:false,starred:v.starred};L.save();L.toast("Verifica riaperta: il primo tentativo è salvato.");render()}
+
+/* ---------- impostazione della maestra: soluzioni sì o no ---------- */
+function solUI(){const v=showSol();$("#solpick").innerHTML=[[false,"Solo punteggio e caselle verdi/rosse"],[true,"Anche le soluzioni giuste"]].map(([k,t])=>`<button class="btn${v===k?"":" ghost"}" type="button" data-sol="${k}">${t}</button>`).join("");
+  $$("#solpick [data-sol]").forEach(b=>b.addEventListener("click",()=>{CQ.saveSettings({verSol:b.dataset.sol==="true"});$("#solsaved").textContent="Salvato per tutta la classe.";solUI()}))}
+
+const won=(S,i)=>S.extra&&S.extra.ver&&S.extra.ver.sub&&S.extra.ver.per&&S.extra.ver.per[i]===MAXP[i];
+L.init({
+  key:"verifica-migliaia-v1",col:"verifica",subj:"mat",src:"verifica",title:"Verifica: le migliaia",
+  tabs:["lezione","verifica","valuta"],home:"verifica",sets:{},
+  badges:[
+    {id:"consegna",n:"Verifica consegnata",d:"Hai consegnato la verifica",ok:S=>!!(S.extra&&S.extra.ver&&S.extra.ver.sub)},
+    {id:"esperto",n:"Esperto delle migliaia",d:"Almeno 44 punti su 58",ok:S=>!!(S.extra&&S.extra.ver&&S.extra.ver.sub&&S.extra.ver.score>=44)},
+    {id:"pieno",n:"Esercizio perfetto",d:"Tutto giusto in almeno un esercizio",ok:S=>[0,1,2,3,4,5,6].some(i=>won(S,i))},
+    {id:"sfida",n:"Re della sfida",d:"Tutta giusta la sfida finale",ok:S=>!!(S.extra&&S.extra.ver&&S.extra.ver.bonus===3)},
+    {id:"riflessivo",n:"Riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So leggere e scrivere i numeri fino a 9999.","So mettere ogni cifra al posto giusto (k h da u).","So scomporre e comporre i numeri.","So confrontare i numeri con > < =.","So mettere in ordine i numeri.","Durante la verifica sono rimasto calmo e concentrato."],
+  likes:EXN,
+  imprevisti:[["Nessun imprevisto","Durante la verifica si lavora in silenzio."]],
+  onRoute:h=>{if(h==="verifica")render();if(h==="lezione")solUI()},
+  onEnter:()=>{},onLeave:()=>{}
+});
+})();
+</script>
+</body></html>

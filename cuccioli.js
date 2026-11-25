@@ -40,6 +40,7 @@ C.GAMES=[
   {k:"metodo",by:"t1",t:"Scienziati in 6 mosse",s:"sci",href:"metodo.html",d:"Il metodo scientifico: fenomeno, domande, ipotesi, esperimento, analisi e conclusione."},
   {k:"labirinto",by:"t1",t:"Nel labirinto dei quadri",s:"art",href:"labirinto.html",d:"Il libro di Bordiglioni: entra nei 7 quadri, trova le porte magiche e dipingi il tuo quadro."},
   {k:"suoni",by:"t1",t:"Suoni e Silenzi",s:"mus",href:"ritmo.html",d:"Il libro di Maestro Libero: leggi PA, SH, PO-O, TITTI e TEKETEKE, suona a tempo con il corpo e componi i tuoi ritmi."},
+  {k:"verifica",by:"t1",t:"Verifica: le migliaia",s:"mat",href:"verifica.html",d:"La verifica sui numeri fino a 9999: leggere, scrivere, comporre, scomporre, confrontare e ordinare. Correzione automatica."},
   {k:"cervello",by:"t1",t:"La Palestra del Cervello",s:"mat",href:"cervello.html",d:"Hai finito prima? Sei sfide di numeri e logica a tre livelli: sequenze, piramidi, bilance magiche, indovinelli, Sudoku e bersagli."},
   {k:"stati",by:"t1",t:"La Danza delle Particelle",s:"sci",href:"stati.html",d:"Solido, liquido, gassoso: scalda, raffredda e scopri le trasformazioni."}
 ];
@@ -262,7 +263,7 @@ C.saveSettings=function(patch){
 C.newId=function(){return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)};
 
 /* ===== backup: copia di tutti i dati della classe e di tutte le app ===== */
-var BKCOLS=["pupils","meta","alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello"],BKLS="accademia-backup-v1",BKCHUNK=200000,BKKEEP=25,BKEVERY=20*60*1000;
+var BKCOLS=["pupils","meta","alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello","verifica"],BKLS="accademia-backup-v1",BKCHUNK=200000,BKKEEP=25,BKEVERY=20*60*1000;
 C.BK_EVERY_MIN=BKEVERY/60000;C.BK_KEEP=BKKEEP;
 function colDocs(col){
   return new Promise(function(res,rej){
@@ -988,7 +989,7 @@ C.timeLim=function(){var s=C.settings||{};function v(k,d){return s[k]!=null&&s[k
 (function(){
   var TICK=5,lastAct=Date.now(),dirty=0,box=null,chip=null,warned=false;
   function today(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
-  function isApp(){return C.GAMES&&C.GAMES.some(function(g){return g.k===C.PAGE})}
+  function isApp(){return C.PAGE!=="verifica"&&C.GAMES&&C.GAMES.some(function(g){return g.k===C.PAGE})}
   function kid(){if(!isApp()||(C.teacher&&C.teacher()))return null;var id=C.who&&C.who();return id&&C.pupils[id]?id:null}
   function st(id){var p=C.pupils[id],t=Object.assign({d:"",s:0,ss:0,last:0,lock:0},p.tm||{});if(t.d!==today()){t.d=today();t.s=0;t.ss=0;t.lock=0;t.ok=0}return t}
   function save(id,t,force){var p=C.pupils[id];if(!p)return;var q=C.clone(p);q.tm=t;if(force||++dirty>=6){dirty=0;C.put(id,q)}else{C.pupils[id]=q}}
