@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126m">
+<link rel="stylesheet" href="cuccioli.css?v=1126n">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -470,6 +470,10 @@ html.lab-full .mztip{position:fixed;left:50%;top:58px;transform:translateX(-50%)
 html.lab-full .mzlez:not([hidden]){display:inline-flex;position:fixed;top:10px;left:10px;z-index:3;align-items:center;min-height:44px;padding:6px 16px;border-radius:99px;background:#fff;color:#5B3F99;font:700 16px var(--font-display);text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;background:#FFF6E0;padding:12px}
 .tlook{border:3px dashed #7A4FC4;border-radius:16px;padding:10px 14px;background:#F3EEFF}
+.nextrow{justify-content:center;margin-top:16px}
+.btn.nextb{background:linear-gradient(135deg,#FF4F8B,#FF8A3D);color:#fff;border:0;font-size:18px;padding:12px 22px;box-shadow:0 5px 0 #C92A63;animation:nxPulse 1.6s ease-in-out infinite}
+@keyframes nxPulse{50%{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.btn.nextb{animation:none}}
 </style>
 
 
@@ -656,7 +660,7 @@ html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;b
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126m"></script>
+<script src="cuccioli.js?v=1126n"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -969,7 +973,7 @@ function renderRoom(){
     $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
   }else if(STN==="enigmi"){
     const got=b.clue[x.k]||[];
-    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4?`<div class="mission" style="margin-top:12px">🗝️ Hai tutti i pezzi della password: <b>${e.pw.map((p,k)=>(k+1)+". "+p).join(" · ")}</b>. Mettili nel lucchetto della quinta cornice per aprire ${CUR<6?"la porta "+(CUR+2):"l'uscita"}.</div>`+(done?"":`<div class="row"><button class="btn" type="button" data-gost="porta">🔒 Vai al lucchetto</button></div>`):"");
+    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4?`<div class="mission" style="margin-top:12px">🗝️ Hai tutti i pezzi della password: <b>${e.pw.map((p,k)=>(k+1)+". "+p).join(" · ")}</b>. Ricordali! Alla fine li metterai nel lucchetto per aprire ${CUR<6?"la porta "+(CUR+2):"l'uscita"}.</div><div class="row"><button class="btn nextb" type="button" data-gost="giochi">🎮 Ora vai ai giochi ➜</button></div>`:"");
     {const gn=$("#gonext");if(gn)gn.addEventListener("click",()=>{const t=CUR+1;leaveRoom();setTimeout(()=>goDoor(t),500)})}
     $$("[data-cl]").forEach(bt=>bt.addEventListener("click",()=>{const j=+bt.dataset.cl;CLUE.open=CLUE.open===j?null:j;renderRoom();const cb=$("#cbox");if(cb&&CLUE.open!=null)cb.scrollIntoView({behavior:"smooth",block:"nearest"})}));
     renderClue();
@@ -984,6 +988,9 @@ function renderRoom(){
   }else{
     h.innerHTML=`<div class="door lockbox" id="lockbox"></div>`;renderLock();
   }
+  /* il percorso della stanza: storia → enigmi → giochi → come è andata → lucchetto */
+  {const vd=!!(b.val&&b.val[x.k]&&b.val[x.k].done),nx=STN==="storia"?["enigmi","🧩 Ora risolvi gli enigmi ➜"]:STN==="giochi"?["valuta","🪞 Ho finito i giochi: vai a «Come è andata?» ➜"]:STN==="valuta"&&vd?["porta","🔒 Ora apri il lucchetto ➜"]:null;
+   if(nx)h.insertAdjacentHTML("beforeend",`<div class="row nextrow"><button class="btn nextb" type="button" data-gost="${nx[0]}">${nx[1]}</button></div>`)}
   $$("[data-gost]",h).forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.gost;renderRoom();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
   CQ.addSayButtons&&CQ.addSayButtons(h);
 }
@@ -1035,7 +1042,7 @@ function renderValRoom(x,h){
     else if(bt.dataset.like){v.like=bt.dataset.like;$$(".vop[data-like]",h).forEach(z=>z.setAttribute("aria-pressed",z===bt))}
     else{v.mood=bt.dataset.mood;$$(".vop[data-mood]",h).forEach(z=>z.setAttribute("aria-pressed",z===bt))}
     v.at=Date.now();L.save();upd()}));
-  $("#vdone").addEventListener("click",()=>{if(v.done)return;v.done=true;v.at=Date.now();L.save();L.add(1);L.ding();L.toast("Grazie! Una stella per aver riflettuto.");renderRoom()});
+  $("#vdone").addEventListener("click",()=>{if(v.done)return;v.done=true;v.at=Date.now();L.save();L.add(1);L.ding();L.toast("Grazie! Una stella per aver riflettuto. Ora il lucchetto!");renderRoom();setTimeout(()=>{if(INROOM===true&&STN==="valuta"){STN="porta";renderRoom()}},1800)});
   upd();
 }
 function askLock(pi,cb){
