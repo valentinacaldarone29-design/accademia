@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126c">
+<link rel="stylesheet" href="cuccioli.css?v=1126d">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -113,6 +113,10 @@ section.view{display:grid;gap:16px;min-width:0}
 span.in.snap{display:grid;place-items:center;background:var(--good-soft)}
 span.car.snap{display:grid;place-items:center}
 .pvcol .divbox .dvd span{width:var(--cw)}
+.pvdiv .dvd .in,.pvdiv .qq .in{width:var(--cw)}
+.pvdiv .dvs .qq{gap:6px}
+.pvrest{display:flex;align-items:center;gap:8px;font:700 18px var(--font-display);color:var(--muted)}
+.pvside .row{justify-content:center}
 .provab{display:grid;gap:4px;background:#E8F0FF;border:3px dashed #3A86FF;border-radius:16px;padding:10px 14px;margin:0 0 12px;font-size:17px}
 .provab b{color:#1F5FCC}
 .btn.prova{background:#3A86FF;color:#fff}
@@ -396,7 +400,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126c"></script>
+<script src="cuccioli.js?v=1126d"></script>
 <script>
 (function(){
 "use strict";
@@ -598,7 +602,9 @@ function newOp(){
   if(SRC==="own")return renderOwn();
   mix();
   const g={add:genAdd,sub:genSub,mul:genMul,div:genDiv}[OP];
-  EX=g();EX.tries=0;EX.done=false;
+  EX=g();
+  if(PROVA&&OP==="mul"&&MULN===2){let t=0;while(!pvSpec(EX)&&t++<40){BIG=false;EX=g()}}
+  EX.tries=0;EX.done=false;EX.pv=PROVA?pvSpec(EX):null;
   if(EX.op==="div")return startDiv();
   renderOp();
 }
@@ -669,7 +675,7 @@ function ownGo(){
   if(OP==="div"&&(b<2||b>9))return say("Il divisore deve essere un numero da 2 a 9.");
   if(OP==="div"&&a<b)return say("Il dividendo deve essere più grande del divisore.");
   if((OP==="add"||OP==="sub")&&a<10&&b<10)return say("Questa la sai fare a mente! Per lavorare in colonna usa almeno un numero con due cifre.");
-  EX={op:OP,a,b,tries:0,done:false,own:true};
+  EX={op:OP,a,b,tries:0,done:false,own:true};EX.pv=PROVA?pvSpec(EX):null;
   if(OP==="div")return startDiv();
   renderOp();
 }
@@ -699,6 +705,7 @@ function helpOp(){
   else{const bu=e.b%10,bd=Math.floor(e.b/10);add(mulPlan(e.a,bu),"mul","p",0,`Prima riga: ${e.a} × ${bu}`);add(mulPlan(e.a,bd),"mul","q",1,`Seconda riga: ${e.a} × ${bd} decine (nelle unità c'è il trattino)`);add(addPlan(e.a*bu,e.a*bd*10),"add","r",0,"Ora somma le due righe")}
   const t=todo.find(x=>val(x.id)!==x.c.exp);
   $$("#op-card .in.hint").forEach(x=>x.classList.remove("hint"));
+  if(!t&&e.pv&&!checkPv().ok){e.helped=true;$$("#op-card .pvside .in").forEach(x=>x.classList.remove("good","bad"));$("#op-fb").innerHTML=fbHTML("info","💡 Suggerimento per la prova",["L'operazione sembra a posto. "+pvHint()]);return}
   if(!t){$("#op-fb").innerHTML=fbHTML("info","💡 Sembra tutto a posto!",["Premi «Controlla» per vedere se è giusto."]);return}
   const lv=HINT&&HINT.id===t.id&&HINT.ex===e?2:1;HINT={id:t.id,ex:e};e.helped=true;
   const txt=t.kind==="add"?hintAdd(t.c,lv):t.kind==="sub"?hintSub(t.c,lv):hintMul(t.c,t.sh,lv);
@@ -720,7 +727,7 @@ function wireInputs(root){
   root.addEventListener("input",ev=>{
     const t=ev.target;if(!t.classList||!t.classList.contains("in"))return;
     t.value=t.value.replace(/\D/g,"").slice(-1);t.classList.remove("good","bad");
-    if(t.value){const own=t.dataset.g==="na"||t.dataset.g==="nb",nx=root.querySelector(`[data-g="${t.dataset.g}"][data-p="${+t.dataset.p+(own?-1:1)}"]`);if(nx)nx.focus()}
+    if(t.value){const own=["na","nb","pa","pb","pc","dva","dvq"].includes(t.dataset.g),nx=root.querySelector(`[data-g="${t.dataset.g}"][data-p="${+t.dataset.p+(own?-1:1)}"]`);if(nx)nx.focus()}
   });
   root.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();const b=root.querySelector("#own-go,#op-check,#st-check,#pr-check,#dv-check");if(b)b.click()}});
 }
@@ -748,6 +755,11 @@ function checkOp(){
   }
   marks.forEach(([id,ok])=>{const el=document.getElementById(id);if(el){el.classList.remove("good","bad");void el.offsetWidth;el.classList.add(ok?"good":"bad")}});
   const res=resultOf(e);
+  const pv=e.pv?checkPv():null;
+  if(!first&&pv&&!pv.ok){e.tries++;errTag(pv.msg,"prova");$("#op-fb").innerHTML=fbHTML("bad","L'operazione è giusta, ma la prova non torna ancora",[pv.msg,"Correggi e premi di nuovo Controlla."]);buzz();return}
+  if(!first&&pv){e.done=true;const st=e.tries===0&&!e.helped?2:1;
+    $("#op-fb").innerHTML=fbHTML("good",`Tutto giusto! ${e.a} ${sym(e.op)} ${e.b} = ${res}. ${st===2?"Due stelle!":"Una stella!"}`,[pvEndMsg(pv.got)],allSteps(steps));
+    ding();done(e.op,st);done("prova",st);return}
   if(!first){
     e.done=true;const st=e.tries===0&&!e.helped?2:1;
     if(e.prova){provaEnd(res,st,allSteps(steps));return}
@@ -756,7 +768,7 @@ function checkOp(){
   }else{
     e.tries++;errTag(first);
     const nBad=marks.filter(m=>!m[1]).length;
-    $("#op-fb").innerHTML=fbHTML("bad",`Guasto trovato${nBad>1?` (${nBad} caselle da sistemare)`:""}`,[first,"Correggi le caselle rosse e premi di nuovo Controlla."]);
+    $("#op-fb").innerHTML=fbHTML("bad",`Guasto trovato${nBad>1?` (${nBad} caselle da sistemare)`:""}`,[first,"Correggi le caselle rosse e premi di nuovo Controlla."].concat(pv&&!pv.ok?["Poi sistema anche la prova: "+pv.msg]:[]));
     buzz();
     const b=marks.find(m=>!m[1]);if(b){const el=document.getElementById(b[0]);if(el)el.focus()}
   }
@@ -777,7 +789,7 @@ function showSol(){
   else if(e.b<10){const pl=mulPlan(e.a,e.b);fill(pl,"r",0);pl.cols.forEach((c,i)=>{steps.push(mulText(c,0,i===pl.cols.length-1));const k=document.getElementById("k"+(c.p+1));if(k&&c.s>=10)k.value=Math.floor(c.s/10)})}
   else{const bu=e.b%10,bd=Math.floor(e.b/10),p1=mulPlan(e.a,bu),p2=mulPlan(e.a,bd),ad=addPlan(e.a*bu,e.a*bd*10);fill(p1,"p",0);fill(p2,"q",1);fill(ad,"r",0);
     p1.cols.forEach((c,i)=>steps.push("Prima riga · "+mulText(c,0,i===p1.cols.length-1)));p2.cols.forEach((c,i)=>steps.push("Seconda riga · "+mulText(c,1,i===p2.cols.length-1)));ad.cols.forEach((c,i)=>steps.push("Somma · "+addText(c,i===ad.cols.length-1)))}
-  e.done=true;
+  e.done=true;if(e.pv)fillPv();
   $("#op-fb").innerHTML=fbHTML("info",`Ecco la soluzione: ${e.a} ${sym(e.op)} ${e.b} = ${resultOf(e)}`,[e.prova?provaVerdict(resultOf(e),0):"Leggi i passaggi, poi prova con una nuova operazione per conquistare le stelle."],allSteps(steps))+(e.prova&&e.prova.next?`<div class="row"><button class="btn" type="button" id="op-prova2">Continua la prova ➜</button></div>`:"");
 }
 
@@ -795,8 +807,8 @@ function provaPlan(e){
       next:r?{ex:{op:"add",a:Q*e.b,b:r},exp:e.a,why:`Ora aggiungo il resto: ${Q*e.b} + ${r}. Devo ritrovare il dividendo, ${e.a}.`}:null}}
   return null;
 }
-function provaBtn(e){return PROVA&&provaPlan(e)?`<div class="row"><button class="btn prova" type="button" id="op-prova">🔁 Fai la prova in colonna</button></div>`:""}
-function provaBanner(){const P=EX&&EX.prova;if(!P)return "";return `<div class="provab"><b>🔁 La prova di ${P.f} = ${P.res}${P.rest?` con resto ${P.rest}`:""}</b><span>${P.why}</span></div>`}
+function provaBtn(e){return false?`<div class="row"><button class="btn prova" type="button" id="op-prova">🔁 Fai la prova in colonna</button></div>`:""}
+function provaBanner(){if(EX&&EX.pv)return `<div class="provab"><b>🔍 Con la prova</b><span>${EX.pv.how} Quando hai finito tutte e due, premi «${EX.op==="div"?"Controlla la prova":"Controlla"}».</span></div>`;const P=EX&&EX.prova;if(!P)return "";return `<div class="provab"><b>🔁 La prova di ${P.f} = ${P.res}${P.rest?` con resto ${P.rest}`:""}</b><span>${P.why}</span></div>`}
 function provaGo(P,ex,exp,why,next){EX=Object.assign({},ex,{tries:0,done:false,prova:{f:P.f,res:P.res,rest:P.rest,exp,why,next,orig:P.orig,snap:P.snap}});if(EX.op==="div")return startDiv();renderOp();$("#op-card").scrollIntoView({behavior:"smooth",block:"start"})}
 function provaSnap(){
   const src=$("#op-card .pvnow")||$("#op-card .stage")||$("#op-card .divbox");if(!src)return "";
@@ -807,11 +819,12 @@ function provaSnap(){
   return c.outerHTML;
 }
 function provaWrap(inner){
+  if(EX&&EX.pv)return `<div class="pvwrap"><div class="pvcol pvmain"><p class="pvh">✏️ L'operazione</p>${inner}</div><div class="pvcol pvnow pvside"><p class="pvh">🔍 La prova</p>${pvGrid()}</div></div>`;
   const P=EX&&EX.prova;if(!P)return inner;
   return `<div class="pvwrap"><div class="pvcol"><p class="pvh">✏️ L'operazione</p>${P.snap}</div>${P.snap2?`<div class="pvcol"><p class="pvh">🔁 La prova · prima parte</p>${P.snap2}</div>`:""}<div class="pvcol pvnow"><p class="pvh">🔁 La prova${P.snap2?" · il resto":""}</p>${inner}</div></div>`;
 }
 function provaAuto(msg){
-  if(!PROVA||!provaPlan(EX))return;
+  return;
   provaStart();
   const fb=$("#op-fb");if(fb)fb.innerHTML=fbHTML("good",msg,["Ora fai la prova nella colonna accanto: se ritrovi il numero giusto, l'operazione è corretta."]);
 }
@@ -833,6 +846,83 @@ function provaEnd(res,st,steps,rest){
   ding();done("prova",st);
 }
 
+/* --- la prova accanto: colonna vuota che il bambino riempie da solo --- */
+const PW=4;
+function pvSpec(e){
+  if(e.op==="add"){const R=e.a+e.b;return {inv:"sub",top:R,bot:e.b,res:e.a,nTop:"il risultato dell'addizione",nBot:"il secondo addendo",nRes:"il primo addendo",how:"Fai l'addizione. Nella colonna della prova scrivi il risultato e sotto il secondo addendo, poi fai la sottrazione: devi ritrovare il primo addendo."}}
+  if(e.op==="sub"){const R=e.a-e.b;return {inv:"add",top:R,bot:e.b,res:e.a,nTop:"il risultato della sottrazione",nBot:"il sottraendo",nRes:"il minuendo",how:"Fai la sottrazione. Nella colonna della prova scrivi il risultato e sotto il sottraendo, poi fai l'addizione: devi ritrovare il minuendo."}}
+  if(e.op==="mul"&&e.b<10){const R=e.a*e.b;return {inv:"div",top:R,bot:e.b,res:e.a,nTop:"il risultato della moltiplicazione",nBot:"il secondo fattore",nRes:"il primo fattore",how:"Fai la moltiplicazione. Nella prova dividi il risultato per il secondo fattore: devi ritrovare il primo fattore, con resto 0."}}
+  if(e.op==="mul"&&e.a<100&&e.a%10){const R=e.a*e.b;return {inv:"mul",top:e.b,bot:e.a,res:R,two:true,nTop:"il secondo fattore",nBot:"il primo fattore",nRes:"lo stesso risultato",how:"Fai la moltiplicazione. Nella prova scambia i fattori (proprietà commutativa) e rifai la moltiplicazione: devi ritrovare lo stesso risultato."}}
+  if(e.op==="div"){const Q=Math.floor(e.a/e.b),r=e.a%e.b;return {inv:"muladd",top:Q,bot:e.b,res:Q*e.b,rest:r,fin:e.a,nTop:"il quoziente",nBot:"il divisore",nRes:"il dividendo",how:"Fai la divisione. Nella prova moltiplica il quoziente per il divisore, poi aggiungi il resto (se non c'è, scrivi 0): devi ritrovare il dividendo."}}
+  return null;
+}
+const pvCar=max=>{const c={};for(let p=0;p<PW;p++)c[p]=car("pk",p,max);return {sign:"",cells:c}};
+function pvGrid(){
+  const v=EX.pv;
+  if(v.inv==="div"){
+    const box=(g,p,lab)=>inp(g,p,lab);let dd="",qq="";for(let p=PW-1;p>=0;p--){dd+=box("dva",p,"Dividendo");qq+=box("dvq",p,"Quoziente")}
+    return `<div class="stage"><div class="divbox pvdiv"><div class="dvline"><div class="dvd">${dd}</div><div class="dvs"><div class="ds">${box("dvb",0,"Divisore")}</div><div class="qq">${qq}</div></div></div><label class="pvrest">resto ${box("dvz",0,"Resto")}</label></div></div>`+
+      (EX.op==="div"?`<div class="row"><button class="btn" type="button" id="pv-check">Controlla la prova</button></div>`:"");
+  }
+  let rows;
+  if(v.inv==="sub")rows=[pvCar(2),inRow("pa",PW,0,"−","Prova, numero in alto"),inRow("pb",PW,0,"=","Prova, numero sotto"),{line:true},inRow("pr",PW,0,"","Prova, risultato")];
+  else if(v.inv==="add")rows=[pvCar(1),inRow("pa",PW,0,"+","Prova, numero in alto"),inRow("pb",PW,0,"=","Prova, numero sotto"),{line:true},inRow("pr",PW,0,"","Prova, risultato")];
+  else if(v.inv==="mul"){const q=inRow("pq",PW,1,"=","Prova, seconda riga");q.cells[0]=`<span class="dash">−</span>`;rows=[pvCar(1),inRow("pa",PW,0,"×","Prova, primo fattore"),inRow("pb",PW,0,"=","Prova, secondo fattore"),{line:true},inRow("pp",PW,0,"+","Prova, prima riga"),q,{line:true},inRow("pr",PW,0,"","Prova, risultato")]}
+  else rows=[pvCar(1),inRow("pa",PW,0,"×","Prova, quoziente"),inRow("pb",PW,0,"=","Prova, divisore"),{line:true},inRow("pr",PW,0,"+","Prova, prodotto"),inRow("pc",PW,0,"=","Prova, resto"),{line:true},inRow("pf",PW,0,"","Prova, risultato")];
+  return `<div class="stage">${grid(PW,rows)}</div>`+(EX.op==="div"?`<div class="row"><button class="btn" type="button" id="pv-check">Controlla la prova</button></div>`:"");
+}
+function readFree(g,N){N=N||PW;let t="";for(let p=N-1;p>=0;p--){const v=val(g+p);if(v==null){if(t&&p>=0){let rest=false;for(let q=p-1;q>=0;q--)if(val(g+q)!=null)rest=true;if(rest)return {err:"gap"}}continue}t+=v}
+  if(!t)return {err:"empty"};if(t.length>1&&t[0]==="0")return {err:"zero"};return {n:+t}}
+function markNum(g,n,W,free){
+  const D=digs(n);let bad=0;
+  if(free){const t=String(n);let k=0;for(let p=PW-1;p>=0;p--){const el=document.getElementById(g+p);if(!el)continue;const v=val(g+p);if(v==null&&k>=t.length)continue;const ok=v!=null&&k<t.length&&v===+t[k];k++;el.classList.remove("good","bad");void el.offsetWidth;el.classList.add(ok?"good":"bad");if(!ok)bad++}return bad}
+  for(let p=0;p<W;p++){const el=document.getElementById(g+p);if(!el)continue;const v=val(g+p),ex=p<D.length?D[p]:null;if(v==null&&ex==null)continue;const ok=v===ex;el.classList.remove("good","bad");void el.offsetWidth;el.classList.add(ok?"good":"bad");if(!ok)bad++}
+  return bad;
+}
+function checkPv(){
+  const v=EX.pv,W=PW,why={empty:"è vuoto",units:"deve finire nella colonna u, tutta a destra",gap:"ha una casella vuota in mezzo",zero:"non può cominciare con lo 0"};
+  const fr=v.inv==="div",A=fr?readFree("dva"):readOwn("pa",W),B=fr?readFree("dvb",1):readOwn("pb",W);
+  const lA=fr?"Nel dividendo della prova":"Nella prova, in alto,",lB=fr?"Nel divisore della prova":"Nella prova, sotto,";
+  if(A.err)return {ok:false,msg:`${lA} scrivi ${v.nTop}: il numero ${why[A.err]}.`};
+  if(B.err)return {ok:false,msg:`${lB} scrivi ${v.nBot}: il numero ${why[B.err]}.`};
+  const swapOk=(v.inv==="mul"||v.inv==="muladd")&&A.n===v.bot&&B.n===v.top;
+  if(!(A.n===v.top&&B.n===v.bot)&&!swapOk){
+    if(A.n!==v.top&&!(swapOk))return {ok:false,msg:A.n===v.bot&&v.inv==="mul"?"Nella prova devi scambiare i fattori: in alto scrivi il secondo fattore, sotto il primo.":`${lA} va ${v.nTop}. Controlla di averlo scritto giusto.`};
+    return {ok:false,msg:`${lB} va ${v.nBot}: ${v.bot}.`};
+  }
+  if(fr){const bq=markNum("dvq",v.res,W,true),z=val("dvz"),zel=document.getElementById("dvz0");const zok=z==null||z===0;if(zel){zel.classList.remove("good","bad");zel.classList.add(zok?"good":"bad")}
+    if(bq)return {ok:false,msg:`Nella prova controlla il quoziente: dividendo il risultato per ${v.bot} devi ritrovare ${v.nRes}.`};
+    if(!zok)return {ok:false,msg:"In questa prova il resto deve essere 0: se ritrovi un resto, c'è un errore."};
+    return {ok:true,got:v.res}}
+  if(v.inv==="muladd"){
+    if(markNum("pr",v.res,W))return {ok:false,msg:`Nella prova controlla la moltiplicazione ${A.n} × ${B.n}: guarda le caselle rosse.`};
+    const C=readOwn("pc",W),rc=C.err==="empty"?0:C.n;
+    if(C.err&&C.err!=="empty")return {ok:false,msg:`Il resto nella prova ${why[C.err]}.`};
+    if(rc!==v.rest)return {ok:false,msg:"Sotto il prodotto scrivi il resto della divisione (se non c'è resto, scrivi 0)."};
+    if(markNum("pf",v.fin,W))return {ok:false,msg:"Nella prova controlla l'ultima addizione: prodotto + resto. Guarda le caselle rosse."};
+    return {ok:true,got:v.fin};
+  }
+  if(markNum("pr",v.res,W))return {ok:false,msg:`Nella prova c'è un errore nel risultato: controlla le caselle rosse. Devi ritrovare ${v.nRes}.`};
+  return {ok:true,got:v.res};
+}
+function pvHint(){const v=EX.pv;return `Nella colonna della prova scrivi ${v.inv==="div"?"nel dividendo":"in alto"} ${v.nTop} e ${v.inv==="div"?"nel divisore":"sotto"} ${v.nBot}${v.inv==="mul"?" (i fattori scambiati)":""}. Poi calcola: devi ritrovare ${v.nRes}.`}
+function writeNum(g,n,free){const t=String(n);if(free){const N=free===true||free===1?(g==="dvb"||g==="dvz"?1:PW):free;t.split("").forEach((d,i)=>{const el=document.getElementById(g+(N-1-i));if(el)el.value=d});return}digs(n).forEach((d,p)=>{const el=document.getElementById(g+p);if(el)el.value=d})}
+function fillPv(){const v=EX.pv;if(!v)return;
+  if(v.inv==="div"){writeNum("dva",v.top,1);writeNum("dvb",v.bot,1);writeNum("dvq",v.res,1);writeNum("dvz",0,1);return}
+  writeNum("pa",v.top);writeNum("pb",v.bot);
+  if(v.inv==="mul"){const bu=v.bot%10,bd=Math.floor(v.bot/10);writeNum("pp",v.top*bu);digs(v.top*bd).forEach((d,p)=>{const el=document.getElementById("pq"+(p+1));if(el)el.value=d})}
+  if(v.inv==="muladd"){writeNum("pr",v.res);writeNum("pc",v.rest);writeNum("pf",v.fin);return}
+  writeNum("pr",v.res);
+}
+function pvEndMsg(got){const v=EX.pv;return `La prova torna: hai ritrovato ${got}, ${v.nRes}. L'operazione è giusta! ✅`}
+function checkPvDiv(){
+  const pv=checkPv();
+  if(!pv.ok){EX.tries++;errTag(pv.msg,"prova");$("#op-fb").innerHTML=fbHTML("bad","La prova non torna ancora",[pv.msg]);buzz();return}
+  if(EX.pvOk)return;
+  if(!DV||!DV.fin){$("#op-fb").innerHTML=fbHTML("info","La prova è a posto!",["Ora finisci la divisione passo dopo passo."]);return}
+  EX.pvOk=true;$("#op-fb").innerHTML=fbHTML("good",`Tutto giusto! Divisione e prova. ${EX.tries===0?"Due stelle!":"Una stella!"}`,[pvEndMsg(pv.got)]);ding();done("prova",EX.tries===0?2:1);
+}
+
 /* --- divisione passo dopo passo --- */
 let DV=null;
 function startDiv(){
@@ -840,10 +930,10 @@ function startDiv(){
   let partial=s[0],idx=1,note="";
   if(partial<e.b&&s.length>1){partial=partial*10+s[1];idx=2;note=`La prima cifra, ${s[0]}, è più piccola di ${e.b}: prendo due cifre, ${partial}.`}
   DV={s,d:e.b,partial,idx,note,q:[],log:[],errs:0,used:idx};
-  renderDiv();
+  $("#op-card").innerHTML="";renderDiv();
 }
 function renderDiv(fbh){
-  const e=EX,D=DV;
+  const e=EX,D=DV,keep={};$$("#op-card .pvside input").forEach(i=>{if(i.value)keep[i.id]=i.value});
   const dd=D.s.map((x,i)=>`<span class="${i<D.used?(!D.fin&&i===D.used-1?"now":"used"):""}">${x}</span>`).join("");
   const qq=D.q.map(x=>`<span>${x}</span>`).join("");
   let step="";
@@ -859,6 +949,7 @@ function renderDiv(fbh){
     ${D.log.length?`<ol class="dlog">${D.log.map(l=>`<li>${l}</li>`).join("")}</ol>`:""}${step}</div>`)}
     <div id="op-fb">${fbh||""}</div>${D.fin?`<div class="row"><button class="btn" type="button" id="op-new">Nuova divisione</button></div>`:`<div class="row"><button class="btn ghost" type="button" id="op-new">Nuova divisione</button></div>`}`;
   const card=$("#op-card");wireInputs(card);
+  Object.keys(keep).forEach(id=>{const el=document.getElementById(id);if(el)el.value=keep[id]});
   const dq=$("#dq");if(dq){
     dq.addEventListener("input",()=>{$("#dql").textContent=dq.value||"…";if(dq.value)$("#dp").focus()});
     $("#dp").addEventListener("input",()=>{$("#dpl").textContent=$("#dp").value||"…"});
@@ -888,6 +979,7 @@ function checkDiv(){
     D.log.push(line);D.fin=true;D.used=D.s.length;EX.done=true;
     const Q=Math.floor(EX.a/D.d),R=EX.a%D.d,st=D.errs===0&&!EX.helped?2:1;
     if(EX.prova){renderDiv();provaEnd(Q,st,"",R);return}
+    if(EX.pv){renderDiv(fbHTML("good",`Divisione finita! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`,["Ora completa la prova nella colonna accanto e premi «Controlla la prova»."]));ding();done("div",st);return}
     renderDiv(fbHTML("good",`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`,[`La prova: ${Q} × ${D.d}${R?` + ${R}`:""} = ${EX.a}. La moltiplicazione è l'operazione inversa della divisione.`])+provaBtn(EX));
     ding();done("div",st);provaAuto(`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`);
   }
@@ -912,7 +1004,7 @@ $("#cmb-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-c]
 $("#mul-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-m]");if(!b)return;MULN=+b.dataset.m;$$("#mul-pick [data-m]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
 $("#op-card").addEventListener("click",ev=>{
   const id=ev.target.closest("button")&&ev.target.closest("button").id;
-  if(id==="op-help")helpOp();else if(id==="dv-help")helpDiv();else if(id==="own-help")helpOwn();else if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();else if(id==="op-prova")provaStart();else if(id==="op-prova2")provaNext();
+  if(id==="op-help")helpOp();else if(id==="dv-help")helpDiv();else if(id==="own-help")helpOwn();else if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();else if(id==="op-prova")provaStart();else if(id==="pv-check")checkPvDiv();else if(id==="op-prova2")provaNext();
 });
 
 /* ================= STRATEGIE ================= */
