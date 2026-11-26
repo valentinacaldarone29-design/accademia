@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126h">
+<link rel="stylesheet" href="cuccioli.css?v=1126i">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -402,6 +402,32 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
 .atile:nth-child(2n){transform:rotate(5deg);background:linear-gradient(135deg,#3A86FF,#7A4FC4)}
 .atile:nth-child(3n){transform:rotate(-2deg);background:linear-gradient(135deg,#2EC4B6,#3A86FF)}
 .atile:disabled{opacity:.2}
+/* lavagna grande quanto lo schermo */
+html.atl-lock,html.atl-lock body{overflow:hidden}
+.atfull{position:fixed;inset:0;z-index:9500;background:#FFF6E0;display:grid;grid-template-columns:clamp(170px,19vw,250px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:8px 12px;padding:10px max(10px,env(safe-area-inset-right,0px)) 10px max(10px,env(safe-area-inset-left,0px));overflow:hidden}
+.atfull .pick{grid-column:1;grid-row:1;margin:0;max-height:28vh;overflow:auto}
+.atfull .pick button{font-size:13px;padding:4px 8px}
+.atfull .tools{grid-column:1;grid-row:2;margin:0;display:flex;flex-direction:column;align-items:stretch;flex-wrap:nowrap;overflow:auto;gap:10px}
+.atfull .tools .sz,.atfull .tools .ac{display:grid;grid-template-columns:1fr;gap:6px}
+.atfull .tools .pal{justify-content:flex-start}
+.atfull .easel{grid-column:2;grid-row:1/3;align-self:center;justify-self:center;width:min(100%,calc((100vh - 40px) * 1350 / 960));width:min(100%,calc((100dvh - 40px) * 1350 / 960));border-width:8px}
+.fullb{background:#FFD23F!important;border-color:#E0A400!important;color:#5A3A00!important}
+.atfull .fullb{background:#FF4F8B!important;border-color:#C92A63!important;color:#fff!important}
+@media (orientation:portrait){
+ .atfull{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr)}
+ .atfull .pick{grid-row:1;max-height:none}
+ .atfull .tools{grid-row:2;flex-direction:row;flex-wrap:wrap}
+ .atfull .tools .sz,.atfull .tools .ac{display:flex;flex-wrap:wrap}
+ .atfull .easel{grid-column:1;grid-row:3;width:min(100%,calc((100vh - 300px) * 1350 / 960))}
+}
+/* formato orizzontale: la pagina usa tutta la larghezza e la mappa e la parete stanno nello schermo */
+@media (orientation:landscape) and (min-width:820px){
+ .wrap{max-width:min(1500px,97vw)}
+ .maze.mimg{width:min(100%,calc((100vh - 120px) * 1224 / 818));width:min(100%,calc((100dvh - 120px) * 1224 / 818));margin-inline:auto}
+ .wall{width:min(100%,calc(58vh * 1264 / 765));margin-inline:auto}
+ .atel{grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr)}
+ .stp{max-width:1200px;margin-inline:auto}
+}
 </style>
 
 
@@ -587,7 +613,7 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126h"></script>
+<script src="cuccioli.js?v=1126i"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -1073,12 +1099,12 @@ function atl(){const S=L.state();if(!S.extra.atl)S.extra.atl={f:{},got:{},drew:0
 const DKEY=()=>"labirinto-disegno:"+(CQ.who()||"anon");
 function renderAtelier(){
   const a=atl(),S=L.state(),n=FIELDS.filter(f=>filled(a.f[f.k])).length,arch=S.extra.arch||[];
-  let h=`<div class="atel"><div>
+  let h=`<div class="atel"><div id="atdraw">
       <div class="pick" aria-label="Tavolozza">${Object.keys(PALS).map(k=>`<button type="button" data-pal="${k}" aria-pressed="${PEN.pal===k}">${esc(PALS[k].t)}</button>`).join("")}</div>
       <div class="tools"><div class="pal" id="pal"></div>
         <div class="sz" aria-label="Strumenti">${TOOLS.map((z,n)=>`<button type="button" data-tl="${n}" aria-pressed="${PEN.t===n}" title="${esc(z[2])}"><span aria-hidden="true">${z[0]}</span> ${esc(z[1])}</button>`).join("")}</div>
-        <div class="ac"><button type="button" id="undo">↩︎ Indietro</button><button type="button" id="clr">Foglio nuovo</button></div></div>
-      <div class="easel"><canvas id="cv" width="900" height="640" aria-label="Il foglio da dipingere"></canvas></div>
+        <div class="ac"><button type="button" id="undo">↩︎ Indietro</button><button type="button" id="clr">Foglio nuovo</button><button type="button" id="full" class="fullb">⛶ Lavagna grande</button></div></div>
+      <div class="easel"><canvas id="cv" width="1350" height="960" aria-label="Il foglio da dipingere"></canvas></div>
     </div>
     <div class="sheet">${FIELDS.map(f=>`<div class="box${filled(a.f[f.k])?" done":""}" data-b="${f.k}"><div class="bh"><span class="bt">${esc(f.n)}</span><span class="bi" aria-hidden="true">${filled(a.f[f.k])?"✅":f.i}</span></div>
         ${f.one?`<input type="text" data-f="${f.k}" maxlength="80" value="${esc(a.f[f.k]||"")}" aria-label="${esc(f.n)}">`:`<textarea data-f="${f.k}" maxlength="400" aria-label="${esc(f.n)}">${esc(a.f[f.k]||"")}</textarea>`}
@@ -1094,6 +1120,7 @@ function renderAtelier(){
   $$("[data-tl]").forEach(b=>b.addEventListener("click",()=>setTool(+b.dataset.tl)));
   $("#undo").addEventListener("click",()=>{if(HIST.length){CTX.putImageData(HIST.pop(),0,0);store()}});
   $("#clr").addEventListener("click",()=>{snap();blankCv();store()});
+  $("#full").addEventListener("click",()=>setFull(!$("#atdraw").classList.contains("atfull")));
   $$("[data-f]").forEach(t=>t.addEventListener("input",()=>{atl().f[t.dataset.f]=t.value;L.save();tick(t.dataset.f)}));
   $$("[data-st]").forEach(b=>b.addEventListener("click",()=>{const t=$(`[data-f="${b.dataset.st}"]`);t.value=(t.value&&!/\s$/.test(t.value)?t.value+" ":t.value)+b.dataset.v;t.focus();atl().f[b.dataset.st]=t.value;L.save()}));
   $("#dl").addEventListener("click",download);
@@ -1102,6 +1129,15 @@ function renderAtelier(){
       $("#ny").addEventListener("click",fresh);$("#nn").addEventListener("click",()=>{$("#nwc").innerHTML=""});return}
     fresh()});
 }
+/* la lavagna grande quanto lo schermo */
+function setFull(on){
+  const d=$("#atdraw"),b=$("#full");if(!d)return;
+  d.classList.toggle("atfull",on);document.documentElement.classList.toggle("atl-lock",on);
+  if(b)b.textContent=on?"✕ Chiudi la lavagna grande":"⛶ Lavagna grande";
+  try{if(on&&d.requestFullscreen&&!document.fullscreenElement)d.requestFullscreen().catch(()=>{});else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}
+}
+document.addEventListener("fullscreenchange",()=>{const d=$("#atdraw");if(d&&!document.fullscreenElement&&d.classList.contains("atfull"))setFull(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){const d=$("#atdraw");if(d&&d.classList.contains("atfull"))setFull(false)}});
 function fresh(){const S=L.state();S.extra.atl={f:{},got:{},drew:0};L.save();try{localStorage.removeItem(DKEY())}catch(e){}HIST=[];renderAtelier()}
 function drawPal(){$("#pal").innerHTML=PALS[PEN.pal].c.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="Colore ${c}" aria-pressed="${c===PEN.c&&!PEN.er}"></button>`).join("");
   $$("[data-c]").forEach(b=>b.addEventListener("click",()=>{PEN.c=b.dataset.c;if(PEN.er)setTool(2);$$("[data-c]").forEach(z=>z.setAttribute("aria-pressed",String(z===b)))}))}
@@ -1111,7 +1147,7 @@ function store(){try{localStorage.setItem(DKEY(),CV.toDataURL("image/jpeg",.8))}
 function setupCanvas(){
   CV=$("#cv");CTX=CV.getContext("2d");blankCv();
   let saved=null;try{saved=localStorage.getItem(DKEY())}catch(e){}
-  if(saved){const im=new Image();im.onload=()=>CTX.drawImage(im,0,0);im.src=saved}
+  if(saved){const im=new Image();im.onload=()=>CTX.drawImage(im,0,0,CV.width,CV.height);im.src=saved}
   let down=false,last=null;
   const pos=e=>{const r=CV.getBoundingClientRect();return{x:(e.clientX-r.left)*CV.width/r.width,y:(e.clientY-r.top)*CV.height/r.height}};
   CV.addEventListener("pointerdown",e=>{down=true;CV.setPointerCapture(e.pointerId);snap();last=pos(e);line(last,last)});
@@ -1119,7 +1155,7 @@ function setupCanvas(){
   const up=()=>{if(!down)return;down=false;store();const a=atl();if(!a.drew){a.drew=1;L.save();L.add(1);L.ding();L.toast("Hai cominciato il tuo quadro: una stella!");updProg();checkDone()}};
   CV.addEventListener("pointerup",up);CV.addEventListener("pointercancel",up);
 }
-function line(a,b){const T=TOOLS[PEN.t],pen=T[4]==="pen";CTX.save();CTX.globalAlpha=pen?.85:1;CTX.strokeStyle=PEN.er?"#fff":PEN.c;CTX.lineWidth=T[3];CTX.lineCap="round";CTX.lineJoin="round";CTX.beginPath();CTX.moveTo(a.x,a.y);CTX.lineTo(b.x+.01,b.y);CTX.stroke();CTX.restore()}
+function line(a,b){const T=TOOLS[PEN.t],pen=T[4]==="pen";CTX.save();CTX.globalAlpha=pen?.85:1;CTX.strokeStyle=PEN.er?"#fff":PEN.c;CTX.lineWidth=T[3]*CV.width/900;CTX.lineCap="round";CTX.lineJoin="round";CTX.beginPath();CTX.moveTo(a.x,a.y);CTX.lineTo(b.x+.01,b.y);CTX.stroke();CTX.restore()}
 function updProg(){const a=atl(),bar=$$(".prog i");FIELDS.forEach((f,i)=>{if(bar[i])bar[i].classList.toggle("on",filled(a.f[f.k]))});if(bar[3])bar[3].classList.toggle("on",!!a.drew);const sp=$(".prog span");if(sp)sp.textContent=(FIELDS.filter(f=>filled(a.f[f.k])).length+(a.drew?1:0))+" su 4"}
 function tick(k){
   const a=atl(),box=$(`[data-b="${k}"]`),ok=filled(a.f[k]);
