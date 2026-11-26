@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126d">
+<link rel="stylesheet" href="cuccioli.css?v=1126e">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -400,7 +400,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126d"></script>
+<script src="cuccioli.js?v=1126e"></script>
 <script>
 (function(){
 "use strict";
@@ -525,6 +525,7 @@ function genMul(){
   if(MULN===2){let a,b,t=0;do{a=BIG?rnd(102,499):rnd(12,99);b=rnd(12,BIG?29:79)}while((a*b>9999||b%10===0||!mulCarry(a,b))&&t++<200);return {op:"mul",a,b}}
   let a,b,t=0;do{b=rnd(2,9);a=BIG?rnd(120,Math.floor(9999/b)):rnd(12,Math.floor(999/b))}while((a*b<100||!mulCarry(a,b))&&t++<80);return {op:"mul",a,b};
 }
+function genMulPv(){let a,b,t=0;do{a=rnd(12,99);b=MULN===2?rnd(12,99):rnd(2,9)}while((a%10===0||b%10===0||a*b>9999||mulCarry(a,b)!==CAMBIO||mulCarry(b,a)!==CAMBIO)&&t++<400);return {op:"mul",a,b}}
 function genDiv(){
   const d=rnd(2,9),maxD=BIG?9999:999,minQ=BIG?101:11;
   let q=rnd(minQ,Math.floor((maxD-d)/d));const r=Math.random()<.5?0:rnd(1,d-1);
@@ -603,7 +604,7 @@ function newOp(){
   mix();
   const g={add:genAdd,sub:genSub,mul:genMul,div:genDiv}[OP];
   EX=g();
-  if(PROVA&&OP==="mul"&&MULN===2){let t=0;while(!pvSpec(EX)&&t++<40){BIG=false;EX=g()}}
+  if(PROVA&&OP==="mul"&&!pvSpec(EX))EX=genMulPv();
   EX.tries=0;EX.done=false;EX.pv=PROVA?pvSpec(EX):null;
   if(EX.op==="div")return startDiv();
   renderOp();
@@ -849,10 +850,9 @@ function provaEnd(res,st,steps,rest){
 /* --- la prova accanto: colonna vuota che il bambino riempie da solo --- */
 const PW=4;
 function pvSpec(e){
-  if(e.op==="add"){const R=e.a+e.b;return {inv:"sub",top:R,bot:e.b,res:e.a,nTop:"il risultato dell'addizione",nBot:"il secondo addendo",nRes:"il primo addendo",how:"Fai l'addizione. Nella colonna della prova scrivi il risultato e sotto il secondo addendo, poi fai la sottrazione: devi ritrovare il primo addendo."}}
+  if(e.op==="add"){const R=e.a+e.b;return {inv:"addc",top:e.b,bot:e.a,res:R,nTop:"il secondo addendo",nBot:"il primo addendo",nRes:"lo stesso risultato",how:"Fai l'addizione. Nella colonna della prova scambia gli addendi (proprietà commutativa): in alto il secondo addendo, sotto il primo. Rifai l'addizione: devi ritrovare lo stesso risultato."}}
   if(e.op==="sub"){const R=e.a-e.b;return {inv:"add",top:R,bot:e.b,res:e.a,nTop:"il risultato della sottrazione",nBot:"il sottraendo",nRes:"il minuendo",how:"Fai la sottrazione. Nella colonna della prova scrivi il risultato e sotto il sottraendo, poi fai l'addizione: devi ritrovare il minuendo."}}
-  if(e.op==="mul"&&e.b<10){const R=e.a*e.b;return {inv:"div",top:R,bot:e.b,res:e.a,nTop:"il risultato della moltiplicazione",nBot:"il secondo fattore",nRes:"il primo fattore",how:"Fai la moltiplicazione. Nella prova dividi il risultato per il secondo fattore: devi ritrovare il primo fattore, con resto 0."}}
-  if(e.op==="mul"&&e.a<100&&e.a%10){const R=e.a*e.b;return {inv:"mul",top:e.b,bot:e.a,res:R,two:true,nTop:"il secondo fattore",nBot:"il primo fattore",nRes:"lo stesso risultato",how:"Fai la moltiplicazione. Nella prova scambia i fattori (proprietà commutativa) e rifai la moltiplicazione: devi ritrovare lo stesso risultato."}}
+  if(e.op==="mul"&&e.a<100&&e.a%10){const R=e.a*e.b;return {inv:"mul",top:e.b,bot:e.a,res:R,two:true,nTop:"il secondo fattore",nBot:"il primo fattore",nRes:"lo stesso risultato",how:"Fai la moltiplicazione. Nella colonna della prova scambia i fattori (proprietà commutativa): in alto il secondo fattore, sotto il primo. Rifai la moltiplicazione: devi ritrovare lo stesso risultato."}}
   if(e.op==="div"){const Q=Math.floor(e.a/e.b),r=e.a%e.b;return {inv:"muladd",top:Q,bot:e.b,res:Q*e.b,rest:r,fin:e.a,nTop:"il quoziente",nBot:"il divisore",nRes:"il dividendo",how:"Fai la divisione. Nella prova moltiplica il quoziente per il divisore, poi aggiungi il resto (se non c'è, scrivi 0): devi ritrovare il dividendo."}}
   return null;
 }
@@ -865,7 +865,8 @@ function pvGrid(){
       (EX.op==="div"?`<div class="row"><button class="btn" type="button" id="pv-check">Controlla la prova</button></div>`:"");
   }
   let rows;
-  if(v.inv==="sub")rows=[pvCar(2),inRow("pa",PW,0,"−","Prova, numero in alto"),inRow("pb",PW,0,"=","Prova, numero sotto"),{line:true},inRow("pr",PW,0,"","Prova, risultato")];
+  if(v.inv==="addc")rows=[pvCar(1),inRow("pa",PW,0,"+","Prova, secondo addendo"),inRow("pb",PW,0,"=","Prova, primo addendo"),{line:true},inRow("pr",PW,0,"","Prova, risultato")];
+  else if(v.inv==="sub")rows=[pvCar(2),inRow("pa",PW,0,"−","Prova, numero in alto"),inRow("pb",PW,0,"=","Prova, numero sotto"),{line:true},inRow("pr",PW,0,"","Prova, risultato")];
   else if(v.inv==="add")rows=[pvCar(1),inRow("pa",PW,0,"+","Prova, numero in alto"),inRow("pb",PW,0,"=","Prova, numero sotto"),{line:true},inRow("pr",PW,0,"","Prova, risultato")];
   else if(v.inv==="mul"){const q=inRow("pq",PW,1,"=","Prova, seconda riga");q.cells[0]=`<span class="dash">−</span>`;rows=[pvCar(1),inRow("pa",PW,0,"×","Prova, primo fattore"),inRow("pb",PW,0,"=","Prova, secondo fattore"),{line:true},inRow("pp",PW,0,"+","Prova, prima riga"),q,{line:true},inRow("pr",PW,0,"","Prova, risultato")]}
   else rows=[pvCar(1),inRow("pa",PW,0,"×","Prova, quoziente"),inRow("pb",PW,0,"=","Prova, divisore"),{line:true},inRow("pr",PW,0,"+","Prova, prodotto"),inRow("pc",PW,0,"=","Prova, resto"),{line:true},inRow("pf",PW,0,"","Prova, risultato")];
@@ -885,9 +886,9 @@ function checkPv(){
   const lA=fr?"Nel dividendo della prova":"Nella prova, in alto,",lB=fr?"Nel divisore della prova":"Nella prova, sotto,";
   if(A.err)return {ok:false,msg:`${lA} scrivi ${v.nTop}: il numero ${why[A.err]}.`};
   if(B.err)return {ok:false,msg:`${lB} scrivi ${v.nBot}: il numero ${why[B.err]}.`};
-  const swapOk=(v.inv==="mul"||v.inv==="muladd")&&A.n===v.bot&&B.n===v.top;
+  const swapOk=v.inv==="muladd"&&A.n===v.bot&&B.n===v.top;
   if(!(A.n===v.top&&B.n===v.bot)&&!swapOk){
-    if(A.n!==v.top&&!(swapOk))return {ok:false,msg:A.n===v.bot&&v.inv==="mul"?"Nella prova devi scambiare i fattori: in alto scrivi il secondo fattore, sotto il primo.":`${lA} va ${v.nTop}. Controlla di averlo scritto giusto.`};
+    if(A.n!==v.top&&!(swapOk))return {ok:false,msg:A.n===v.bot&&B.n===v.top&&(v.inv==="mul"||v.inv==="addc")?`Nella prova devi scambiare ${v.inv==="mul"?"i fattori: in alto scrivi il secondo fattore, sotto il primo":"gli addendi: in alto scrivi il secondo addendo, sotto il primo"}.`:`${lA} va ${v.nTop}. Controlla di averlo scritto giusto.`};
     return {ok:false,msg:`${lB} va ${v.nBot}: ${v.bot}.`};
   }
   if(fr){const bq=markNum("dvq",v.res,W,true),z=val("dvz"),zel=document.getElementById("dvz0");const zok=z==null||z===0;if(zel){zel.classList.remove("good","bad");zel.classList.add(zok?"good":"bad")}
@@ -905,7 +906,7 @@ function checkPv(){
   if(markNum("pr",v.res,W))return {ok:false,msg:`Nella prova c'è un errore nel risultato: controlla le caselle rosse. Devi ritrovare ${v.nRes}.`};
   return {ok:true,got:v.res};
 }
-function pvHint(){const v=EX.pv;return `Nella colonna della prova scrivi ${v.inv==="div"?"nel dividendo":"in alto"} ${v.nTop} e ${v.inv==="div"?"nel divisore":"sotto"} ${v.nBot}${v.inv==="mul"?" (i fattori scambiati)":""}. Poi calcola: devi ritrovare ${v.nRes}.`}
+function pvHint(){const v=EX.pv;return `Nella colonna della prova scrivi ${v.inv==="div"?"nel dividendo":"in alto"} ${v.nTop} e ${v.inv==="div"?"nel divisore":"sotto"} ${v.nBot}${v.inv==="mul"?" (i fattori scambiati)":v.inv==="addc"?" (gli addendi scambiati)":""}. Poi calcola: devi ritrovare ${v.nRes}.`}
 function writeNum(g,n,free){const t=String(n);if(free){const N=free===true||free===1?(g==="dvb"||g==="dvz"?1:PW):free;t.split("").forEach((d,i)=>{const el=document.getElementById(g+(N-1-i));if(el)el.value=d});return}digs(n).forEach((d,p)=>{const el=document.getElementById(g+p);if(el)el.value=d})}
 function fillPv(){const v=EX.pv;if(!v)return;
   if(v.inv==="div"){writeNum("dva",v.top,1);writeNum("dvb",v.bot,1);writeNum("dvq",v.res,1);writeNum("dvz",0,1);return}
