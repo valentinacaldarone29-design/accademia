@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126b">
+<link rel="stylesheet" href="cuccioli.css?v=1126c">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -321,10 +321,6 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
       <button class="pillb op" type="button" data-op="mul" aria-pressed="false" aria-label="Moltiplicazione">×</button>
       <button class="pillb op" type="button" data-op="div" aria-pressed="false" aria-label="Divisione">:</button>
     </div>
-    <div class="pills" id="lvl-pick" role="group" aria-label="Livello">
-      <button class="pillb" type="button" data-l="0" aria-pressed="true">Fino a 999</button>
-      <button class="pillb" type="button" data-l="1" aria-pressed="false">Oltre il mille</button>
-    </div>
     <div class="pills" id="src-pick" role="group" aria-label="Da dove vengono i numeri">
       <button class="pillb" type="button" data-src="rnd" aria-pressed="true">🎲 Numeri a caso</button>
       <button class="pillb" type="button" data-src="own" aria-pressed="false">✏️ Colonna vuota: scrivo io i numeri</button>
@@ -332,6 +328,10 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
     <div class="pills" id="cmb-pick" role="group" aria-label="Con il cambio o senza">
       <button class="pillb" type="button" data-c="1" aria-pressed="true">🔁 Con il cambio</button>
       <button class="pillb" type="button" data-c="0" aria-pressed="false">➖ Senza cambio</button>
+    </div>
+    <div class="pills" id="pv-pick" role="group" aria-label="Con la prova o senza">
+      <button class="pillb" type="button" data-pv="1" aria-pressed="true">🔍 Con la prova</button>
+      <button class="pillb" type="button" data-pv="0" aria-pressed="false">Senza prova</button>
     </div>
     <div class="pills" id="mul-pick" role="group" aria-label="Moltiplicatore" hidden>
       <button class="pillb" type="button" data-m="1" aria-pressed="true">× 1 cifra</button>
@@ -396,7 +396,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126b"></script>
+<script src="cuccioli.js?v=1126c"></script>
 <script>
 (function(){
 "use strict";
@@ -477,7 +477,9 @@ function fbHTML(kind,title,lines,extra){
 function allSteps(steps){return `<details><summary>Tutti i passaggi</summary><ol>${steps.map(s=>`<li>${s}</li>`).join("")}</ol></details>`}
 
 /* ================= OPERAZIONI IN COLONNA ================= */
-let OP="add",MULN=1,EX=null,CAMBIO=true,SRC="rnd";
+let OP="add",MULN=1,EX=null,CAMBIO=true,SRC="rnd",PROVA=true;
+/* numeri fino a 9999: ogni volta a caso fino a 999 oppure oltre il mille */
+const mix=()=>{BIG=Math.random()<.55};
 function val(id){const e=document.getElementById(id);if(!e)return null;const v=e.value.trim();return /^\d$/.test(v)?+v:null}
 const dg=(v,p)=>`<span class="dg pl-${PL[p]}">${v}</span>`;
 const inp=(g,p,lab)=>`<input class="in pl-${PL[p]}" id="${g}${p}" data-g="${g}" data-p="${p}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="${lab||"Cifra"} delle ${PN[p]}">`;
@@ -594,6 +596,7 @@ function mulWhy(c,k,shift){
 
 function newOp(){
   if(SRC==="own")return renderOwn();
+  mix();
   const g={add:genAdd,sub:genSub,mul:genMul,div:genDiv}[OP];
   EX=g();EX.tries=0;EX.done=false;
   if(EX.op==="div")return startDiv();
@@ -749,7 +752,7 @@ function checkOp(){
     e.done=true;const st=e.tries===0&&!e.helped?2:1;
     if(e.prova){provaEnd(res,st,allSteps(steps));return}
     $("#op-fb").innerHTML=fbHTML("good",`Esatto! ${e.a} ${sym(e.op)} ${e.b} = ${res}. ${st===2?"Due stelle!":"Una stella!"}`,[prova(e)],allSteps(steps))+provaBtn(e);
-    ding();done(e.op,st);
+    ding();done(e.op,st);provaAuto(`Esatto! ${e.a} ${sym(e.op)} ${e.b} = ${res}. ${st===2?"Due stelle!":"Una stella!"}`);
   }else{
     e.tries++;errTag(first);
     const nBad=marks.filter(m=>!m[1]).length;
@@ -792,7 +795,7 @@ function provaPlan(e){
       next:r?{ex:{op:"add",a:Q*e.b,b:r},exp:e.a,why:`Ora aggiungo il resto: ${Q*e.b} + ${r}. Devo ritrovare il dividendo, ${e.a}.`}:null}}
   return null;
 }
-function provaBtn(e){return provaPlan(e)?`<div class="row"><button class="btn prova" type="button" id="op-prova">🔁 Fai la prova in colonna</button></div>`:""}
+function provaBtn(e){return PROVA&&provaPlan(e)?`<div class="row"><button class="btn prova" type="button" id="op-prova">🔁 Fai la prova in colonna</button></div>`:""}
 function provaBanner(){const P=EX&&EX.prova;if(!P)return "";return `<div class="provab"><b>🔁 La prova di ${P.f} = ${P.res}${P.rest?` con resto ${P.rest}`:""}</b><span>${P.why}</span></div>`}
 function provaGo(P,ex,exp,why,next){EX=Object.assign({},ex,{tries:0,done:false,prova:{f:P.f,res:P.res,rest:P.rest,exp,why,next,orig:P.orig,snap:P.snap}});if(EX.op==="div")return startDiv();renderOp();$("#op-card").scrollIntoView({behavior:"smooth",block:"start"})}
 function provaSnap(){
@@ -806,6 +809,11 @@ function provaSnap(){
 function provaWrap(inner){
   const P=EX&&EX.prova;if(!P)return inner;
   return `<div class="pvwrap"><div class="pvcol"><p class="pvh">✏️ L'operazione</p>${P.snap}</div>${P.snap2?`<div class="pvcol"><p class="pvh">🔁 La prova · prima parte</p>${P.snap2}</div>`:""}<div class="pvcol pvnow"><p class="pvh">🔁 La prova${P.snap2?" · il resto":""}</p>${inner}</div></div>`;
+}
+function provaAuto(msg){
+  if(!PROVA||!provaPlan(EX))return;
+  provaStart();
+  const fb=$("#op-fb");if(fb)fb.innerHTML=fbHTML("good",msg,["Ora fai la prova nella colonna accanto: se ritrovi il numero giusto, l'operazione è corretta."]);
 }
 function provaStart(){
   const e=EX,P=provaPlan(e);if(!P)return;P.snap=provaSnap();
@@ -881,7 +889,7 @@ function checkDiv(){
     const Q=Math.floor(EX.a/D.d),R=EX.a%D.d,st=D.errs===0&&!EX.helped?2:1;
     if(EX.prova){renderDiv();provaEnd(Q,st,"",R);return}
     renderDiv(fbHTML("good",`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`,[`La prova: ${Q} × ${D.d}${R?` + ${R}`:""} = ${EX.a}. La moltiplicazione è l'operazione inversa della divisione.`])+provaBtn(EX));
-    ding();done("div",st);
+    ding();done("div",st);provaAuto(`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`);
   }
 }
 function showDivSol(){
@@ -897,7 +905,7 @@ function showDivSol(){
 }
 
 $("#op-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-op]");if(!b)return;OP=b.dataset.op;$$("#op-pick [data-op]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));syncPicks();newOp()});
-$("#lvl-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-l]");if(!b)return;BIG=b.dataset.l==="1";$$("#lvl-pick [data-l]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp();newDet()});
+$("#pv-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-pv]");if(!b)return;PROVA=b.dataset.pv==="1";$$("#pv-pick [data-pv]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
 function syncPicks(){$("#cmb-pick").hidden=OP==="div"||SRC==="own";$("#mul-pick").hidden=OP!=="mul"||SRC==="own"}
 $("#src-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-src]");if(!b)return;SRC=b.dataset.src;$$("#src-pick [data-src]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));syncPicks();newOp()});
 $("#cmb-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-c]");if(!b)return;CAMBIO=b.dataset.c==="1";$$("#cmb-pick [data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
@@ -1022,7 +1030,7 @@ function prSelUI(){
   const names=(sel.length?sel:[]).map(k=>{const g=PGROUPS.find(x=>x[0]===k);return g[1].toLowerCase()+" della "+g[2]});
   $("#pr-now").textContent=sel.length?"🎯 Oggi ci alleniamo con: "+names.join(", ")+".":"🎯 Oggi ci alleniamo con tutte le proprietà, mescolate.";
 }
-function newPr(){
+function newPr(){mix();
   const al=propAllowed(),one=new Set(al.map(g=>PGROUPS.find(x=>x[0]===g)[1])).size===1,traps=TRAPS.map((t,i)=>i).filter(i=>TRAPK[i].some(k=>al.includes(k)));
   const kind=pick(one?["fill","fill","fill","trap"]:["fill","fill","fill","choose","choose","trap"]);PR={kind,tries:0,done:false};
   if(kind==="trap"&&!traps.length)PR.kind="fill";
@@ -1095,7 +1103,7 @@ function wrongDigits(op,a,b,err){
   if(err==="carryfirst"){let c=0;for(let p=0;p<A.length;p++){const s=(A[p]+c)*b;out.push(s%10);c=Math.floor(s/10)}if(c)String(c).split("").reverse().forEach(x=>out.push(+x));return out}
   const R=digs(a*b),p=rnd(0,Math.min(A.length,R.length)-1);R[p]=(R[p]+pick([1,2,3,7,8,9]))%10;return R;
 }
-function newDet(){
+function newDet(){mix();
   let t=0;
   while(t++<200){
     const op=pick(["add","sub","sub","mul","mul"]);
