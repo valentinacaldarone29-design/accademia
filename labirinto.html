@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126n">
+<link rel="stylesheet" href="cuccioli.css?v=1126o">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -474,6 +474,16 @@ html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;b
 .btn.nextb{background:linear-gradient(135deg,#FF4F8B,#FF8A3D);color:#fff;border:0;font-size:18px;padding:12px 22px;box-shadow:0 5px 0 #C92A63;animation:nxPulse 1.6s ease-in-out infinite}
 @keyframes nxPulse{50%{transform:scale(1.05)}}
 @media (prefers-reduced-motion:reduce){.btn.nextb{animation:none}}
+html.qv-lock,html.qv-lock body{overflow:hidden}
+.qview{position:fixed;inset:0;z-index:9985;background:#16121F;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.qvbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px max(12px,env(safe-area-inset-left,0px));background:rgba(255,255,255,.96)}
+.qvbar b{font:700 18px var(--font-display);color:#5B3F99}
+.btn.qvback{background:linear-gradient(135deg,#FF4F8B,#FF8A3D);color:#fff;border:0;font-size:18px;padding:10px 20px;box-shadow:0 4px 0 #C92A63}
+.qvbody{position:relative;display:grid;place-items:center;overflow:auto;padding:10px;touch-action:pinch-zoom pan-x pan-y}
+.qvbody img{max-width:100%;max-height:100%;object-fit:contain;border:8px solid #C9A227;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,.6);background:#fff}
+.qvload{position:absolute;color:#fff;font:600 18px var(--font-display)}
+.qvalt{display:grid;justify-items:center;gap:10px;text-align:center;color:#fff;background:rgba(255,255,255,.08);padding:24px;border-radius:20px}
+.qvalt .small{color:#ddd}
 </style>
 
 
@@ -660,7 +670,7 @@ html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;b
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126n"></script>
+<script src="cuccioli.js?v=1126o"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -678,6 +688,25 @@ const REAL={
   escher:"https://www.escherinhetpaleis.nl/showpiece/relativity/?lang=en",
   klimt:FP("Klimt_-_Werkvorlage_zum_Stocletfries_-_Der_Lebensbaum.jpg")
 };
+/* il quadro vero si guarda dentro l'app, a tutto schermo, con il pulsante per tornare indietro */
+function openPainting(k){
+  const x=Q.find(y=>y.k===k),url=REAL[k]||IMG(x.t+" "+x.p),isImg=url.indexOf("Special:FilePath")>0;
+  const o=document.createElement("div");o.className="qview";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label","Il quadro "+x.t);
+  o.innerHTML=`<div class="qvbar"><button class="btn qvback" type="button">⬅ Torna alla stanza</button><b>${esc(x.p)} · «${esc(x.t)}»</b></div>
+    <div class="qvbody">${isImg?`<img src="${url}" alt="${esc(x.t)} di ${esc(x.p)}"><p class="qvload">Sto caricando il quadro…</p>`:""}<div class="qvalt"${isImg?" hidden":""}><p>${isImg?"Il quadro non si è caricato qui: aprilo in un'altra finestra.":"Questo quadro si guarda sul sito del museo."}</p><a class="btn" href="${url}" target="_blank" rel="noopener">🖼️ Apri il quadro</a><p class="small">Quando hai finito, chiudi quella pagina e torna qui.</p></div></div>`;
+  document.body.appendChild(o);document.documentElement.classList.add("qv-lock");
+  let closed=false;
+  const close=()=>{if(closed)return;closed=true;o.remove();document.documentElement.classList.remove("qv-lock");window.removeEventListener("popstate",onPop);document.removeEventListener("keydown",onKey)};
+  const onPop=()=>close(),onKey=e=>{if(e.key==="Escape")back()};
+  const back=()=>{if(history.state&&history.state.qv){history.back()}else close()};
+  try{history.pushState({qv:1},"")}catch(e){}
+  window.addEventListener("popstate",onPop);document.addEventListener("keydown",onKey);
+  o.querySelector(".qvback").addEventListener("click",back);
+  const im=o.querySelector("img");
+  if(im){im.addEventListener("load",()=>{const l=o.querySelector(".qvload");if(l)l.remove()});im.addEventListener("error",()=>{im.remove();const l=o.querySelector(".qvload");if(l)l.remove();o.querySelector(".qvalt").hidden=false})}
+  o.querySelector(".qvback").focus();
+}
+document.addEventListener("click",e=>{const a=e.target.closest("[data-qv]");if(!a)return;e.preventDefault();openPainting(a.dataset.qv)});
 /* i 7 quadri del libro */
 const Q=[
  {k:"monet",sh:"Monet",p:"Claude Monet",t:"Papaveri",y:"1873",cap:"Capitoli 1-3",c:"#D2325F",s:"#FBE3EA",g:"linear-gradient(#BFD9F0 0 40%,#9CC27A 40% 70%,#D2325F 70% 74%,#9CC27A 74%)",
@@ -967,7 +996,7 @@ function renderRoom(){
   if(STN==="storia"){
     h.innerHTML=`<div class="story"><p class="lead">${esc(x.story)}</p><p class="lead">${esc(x.art)}</p>
       <div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
-      <p><a class="real" href="${REAL[x.k]||IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p>
+      <p><a class="real" href="${REAL[x.k]||IMG(x.t+" "+x.p)}" target="_blank" rel="noopener" data-qv="${x.k}">🖼️ Guarda il quadro vero</a></p>
       ${isMaestra()?`<div class="tlook"><h4>👩‍🏫 Occhio da artista · domande per la maestra</h4><p class="small" style="margin:0 0 4px">I bambini non le vedono: falle a voce mentre guardate il quadro alla LIM.</p><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul></div>`:""}
       <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"👀 Ho guardato il quadro"}</button><button class="btn" type="button" data-gost="enigmi">Ora gli enigmi 🧩</button></div></div>`;
     $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
