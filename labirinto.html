@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126i">
+<link rel="stylesheet" href="cuccioli.css?v=1126j">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -426,8 +426,37 @@ html.atl-lock,html.atl-lock body{overflow:hidden}
  .maze.mimg{width:min(100%,calc((100vh - 120px) * 1224 / 818));width:min(100%,calc((100dvh - 120px) * 1224 / 818));margin-inline:auto}
  .wall{width:min(100%,calc(58vh * 1264 / 765));margin-inline:auto}
  .atel{grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr)}
- .stp{max-width:1200px;margin-inline:auto}
+ .stp{max-width:1200px;width:100%;margin-inline:auto}
 }
+/* lavagna: il foglio riempie tutto lo schermo, gli strumenti galleggiano sopra */
+.tgl{display:none}
+.atfull{display:block!important;padding:0!important;background:#fff!important}
+.atfull .easel{position:absolute;inset:0;width:auto!important;border:0!important;border-radius:0;box-shadow:none}
+.atfull .easel canvas{width:100%;height:100%;border-radius:0}
+.atfull .pick,.atfull .tools{position:absolute;left:10px;z-index:2;background:rgba(255,248,231,.94);border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:8px;width:clamp(170px,19vw,240px)}
+.atfull .pick{top:62px;max-height:24vh;overflow:auto}
+.atfull .tools{top:calc(62px + min(24vh,240px) + 10px);bottom:10px;max-height:none}
+.atfull .tgl{display:grid;place-items:center;position:absolute;left:10px;top:10px;z-index:3;width:46px;height:46px;border-radius:50%;border:3px solid #fff;background:linear-gradient(135deg,#FF4F8B,#FFD23F);font-size:22px;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer}
+.atfull.tclosed .pick,.atfull.tclosed .tools{display:none}
+@media (orientation:portrait){.atfull .pick{width:calc(100% - 20px);max-height:20vh}.atfull .tools{top:auto;bottom:10px;width:calc(100% - 20px);max-height:30vh;flex-direction:row}}
+/* la stanza: appena si apre la porta c'è solo la parete con le cornici, a tutto schermo */
+html.room-lock,html.room-lock body{overflow:hidden}
+#room.rfull{position:fixed;inset:0;z-index:46;overflow:auto;margin:0;background:#FFF6E0}
+#room.rwall{overflow:hidden;background:#1d1630}
+#room.rwall::before{content:"";position:absolute;inset:-20px;background:var(--wimg) center/cover;filter:blur(14px) brightness(.8)}
+#room.rwall .qcard{background:none!important;padding:0!important;box-shadow:none!important;border:0!important}
+#room.rwall .qhead,#room.rwall .mission,#room.rwall .stp,#room.rwall .stations,#room.rwall #bkwall{display:none!important}
+#room.rwall .qbody{padding:0!important;background:none!important}
+#room.rwall .wall{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;border-radius:0;width:min(100vw,calc(100vh * var(--war,1.65)))!important;width:min(100vw,calc(100dvh * var(--war,1.65)))!important;max-width:none;z-index:1}
+#room.rfull .backmaze{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;padding:10px max(12px,env(safe-area-inset-left,0px));background:rgba(255,246,224,.92);backdrop-filter:blur(4px);padding-right:190px}
+#room.rwall .backmaze{position:fixed;left:0;right:auto;top:0;background:none;backdrop-filter:none;padding-right:12px}
+#room .rtitle{display:none}
+#room.rfull .rtitle{display:inline;font:700 17px var(--font-display);color:#5B3F99}
+#room.rwall .rtitle{background:rgba(255,255,255,.88);border-radius:99px;padding:6px 14px}
+#room.ract .wall{display:none}
+#room.ract .qcard{margin:12px auto;max-width:1200px;width:calc(100% - 24px)}
+#room.rwall .wfr{font-size:clamp(12px,1.6vw,20px)}
+#room.rwall .wfr .wi{font-size:clamp(26px,4vw,54px)}
 </style>
 
 
@@ -613,7 +642,7 @@ html.atl-lock,html.atl-lock body{overflow:hidden}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126i"></script>
+<script src="cuccioli.js?v=1126j"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -812,7 +841,7 @@ function clues(x){
 }
 function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`}
 /* ---------- il labirinto: mappa con le 7 porte e l'avatar che cammina ---------- */
-let INROOM=false,STN=null,WALKING=false,SCHROOM=false;
+let INROOM=false,STN=null,WALKING=false,SCHROOM=false,WALLV=true;
 /* la mappa è il disegno del museo (1536 × 1024): porte e corridoi in coordinate dell'immagine */
 const MW=1224,MH=818,P0=[612,745];
 const MDOOR=[[278,585],[220,345],[312,175],[612,165],[890,175],[1020,345],[957,585]];
@@ -881,7 +910,7 @@ function renderLab(){
   $("#maze").hidden=INROOM;if(INROOM)$$(".mztip").forEach(t=>t.remove());$("#room").hidden=!INROOM;
   if(INROOM==="valuta")renderValuta();else if(INROOM==="exit")renderExit();else if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
 }
-function leaveRoom(){INROOM=false;STN=null;homeSchede();renderLab();$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
+function leaveRoom(){INROOM=false;STN=null;WALLV=true;const rm=$("#room");if(rm){rm.classList.remove("rfull","rwall","ract")}document.documentElement.classList.remove("room-lock");homeSchede();renderLab();$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
 /* le schede possono vivere anche dentro la stanza: spostiamo i loro contenitori */
 function homePanels(){["atelier","valuta"].forEach(k=>{const pn=PANELS[k];if(pn&&pn.parentNode!==$("#sec-"+k))$("#sec-"+k).append(pn)})}
 let PANELS={},BACKSTN=null;
@@ -890,15 +919,19 @@ function homeSchede(){homePanels();SCHROOM=false;const pn=$("#sec-schede .panel"
 function stState(x){const b=lab(),sh=SCH.find(s=>s.k===x.k),S=L.state(),bv=S.best["vf_"+x.k],bc=S.best["col_"+x.k],nc=(b.clue[x.k]||[]).filter(Boolean).length;
   return{storia:!!b.look[x.k],enigmi:nc,scheda:sh&&shDone(sh),giochi:(bv!=null?1:0)+(bc!=null?1:0),porta:!!b.open[x.k],valuta:!!(b.val&&b.val[x.k]&&b.val[x.k].done)}}
 function wallHTML(x,T){const A=ROOMART[x.k],[y0,y1]=A.crop,H=y1-y0,W=1264;
-  return `<div class="wall" style="aspect-ratio:${W}/${H}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${false?`<div class="wfr wpic" aria-hidden="true" style="left:${A.frames[2][0]/W*100}%;top:${(A.frames[2][1]-y0)/H*100}%;width:${(A.frames[2][2]-A.frames[2][0])/W*100}%;height:${(A.frames[2][3]-A.frames[2][1])/H*100}%;background:${x.g}"><b>${esc(x.t)}</b></div>`:""}${T.map((t,j)=>{const f=A.frames[j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
+  return `<div class="wall" style="aspect-ratio:${W}/${H};--war:${(W/H).toFixed(4)}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${false?`<div class="wfr wpic" aria-hidden="true" style="left:${A.frames[2][0]/W*100}%;top:${(A.frames[2][1]-y0)/H*100}%;width:${(A.frames[2][2]-A.frames[2][0])/W*100}%;height:${(A.frames[2][3]-A.frames[2][1])/H*100}%;background:${x.g}"><b>${esc(x.t)}</b></div>`:""}${T.map((t,j)=>{const f=A.frames[j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
 function renderRoom(){
   const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k],ss=stState(x);
   if(!done&&!b.t0[x.k]){b.t0[x.k]=Date.now();L.save()}
   if(!CLUE||CLUE.k!==x.k)CLUE={k:x.k,list:clues(x),open:null};
+  if(!STN)WALLV=true;
   if(!STN)STN=!ss.storia?"storia":ss.enigmi<4?"enigmi":"giochi";
   const T=[["storia","📖","La storia",ss.storia?"osservato":"leggi e guarda",ss.storia],["enigmi","🧩","Gli enigmi",ss.enigmi+" su 4",ss.enigmi===4],["giochi","🎮","I giochi",ss.giochi+" su 2",ss.giochi===2],["valuta","🪞","Come è andata?",ss.valuta?"fatto":"da fare",ss.valuta],["porta","🔒","Il lucchetto",ss.porta?"aperto!":"la password",ss.porta]];
   homeSchede();
-  $("#room").innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button></div>
+  const RF=!!(ROOMART[x.k]&&ROOMART[x.k].wall),rm=$("#room");
+  rm.classList.toggle("rfull",RF);rm.classList.toggle("rwall",RF&&WALLV);rm.classList.toggle("ract",RF&&!WALLV);document.documentElement.classList.toggle("room-lock",RF);
+  if(RF)rm.style.setProperty("--wimg",`url(${ROOMART[x.k].wall})`);
+  rm.innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button>${RF?`<button class="btn" type="button" id="bkwall">🖼️ Torna alla parete</button>`:""}<span class="rtitle">${esc(x.sh)} · «${esc(x.t)}»</span></div>
   <div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
     <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Sei dentro il quadro · stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
     <div class="qbody">
@@ -907,7 +940,8 @@ function renderRoom(){
       <div class="stp" id="stp"></div>
     </div></div>`;
   $("#bk").addEventListener("click",leaveRoom);
-  $$("[data-stn]").forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.stn;renderRoom();$("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  $$("[data-stn]").forEach(z=>z.addEventListener("click",()=>{STN=z.dataset.stn;WALLV=false;renderRoom();if(RF)rm.scrollTop=0;else $("#stp").scrollIntoView({behavior:"smooth",block:"nearest"})}));
+  {const bw=$("#bkwall");if(bw)bw.addEventListener("click",()=>{WALLV=true;CLUE.open=null;renderRoom()})}
   const h=$("#stp");
   if(STN==="storia"){
     h.innerHTML=`<div class="story"><p class="lead">${esc(x.story)}</p><p class="lead">${esc(x.art)}</p>
@@ -939,6 +973,7 @@ function renderRoom(){
 
 /* la sala dell'uscita: il quadro magico, il grande ripasso e l'autovalutazione */
 function renderExit(){
+  {const rm=$("#room");rm.classList.remove("rfull","rwall","ract");document.documentElement.classList.remove("room-lock")}
   homeSchede();const S=L.state(),gen=SCH.filter(sh=>GEN.includes(sh.k)),gd=gen.filter(shDone).length,gg=["quadro","colori","genere"].filter(k=>S.best[k]!=null).length,a=atl();
   if(!STN)STN="x_atelier";
   const T=[["x_atelier","🎨","Il mio quadro magico",a.done?"pronto!":"l'ottavo quadro",!!a.done],["x_schede","📝","Le schede del ripasso",gd+" su "+gen.length,gd===gen.length],["x_giochi","🎮","I giochi del ripasso",gg+" su 3",gg===3],["x_valuta","🪞","Come è andata?",S.valuta.done?"fatto":"da fare",!!S.valuta.done]];
@@ -1103,7 +1138,7 @@ function renderAtelier(){
       <div class="pick" aria-label="Tavolozza">${Object.keys(PALS).map(k=>`<button type="button" data-pal="${k}" aria-pressed="${PEN.pal===k}">${esc(PALS[k].t)}</button>`).join("")}</div>
       <div class="tools"><div class="pal" id="pal"></div>
         <div class="sz" aria-label="Strumenti">${TOOLS.map((z,n)=>`<button type="button" data-tl="${n}" aria-pressed="${PEN.t===n}" title="${esc(z[2])}"><span aria-hidden="true">${z[0]}</span> ${esc(z[1])}</button>`).join("")}</div>
-        <div class="ac"><button type="button" id="undo">↩︎ Indietro</button><button type="button" id="clr">Foglio nuovo</button><button type="button" id="full" class="fullb">⛶ Lavagna grande</button></div></div>
+        <div class="ac"><button type="button" id="undo">↩︎ Indietro</button><button type="button" id="clr">Foglio nuovo</button><button type="button" id="full" class="fullb">⛶ Lavagna grande</button></div></div><button type="button" class="tgl" id="tgl" aria-label="Mostra o nascondi gli strumenti">🎨</button>
       <div class="easel"><canvas id="cv" width="1350" height="960" aria-label="Il foglio da dipingere"></canvas></div>
     </div>
     <div class="sheet">${FIELDS.map(f=>`<div class="box${filled(a.f[f.k])?" done":""}" data-b="${f.k}"><div class="bh"><span class="bt">${esc(f.n)}</span><span class="bi" aria-hidden="true">${filled(a.f[f.k])?"✅":f.i}</span></div>
@@ -1121,6 +1156,7 @@ function renderAtelier(){
   $("#undo").addEventListener("click",()=>{if(HIST.length){CTX.putImageData(HIST.pop(),0,0);store()}});
   $("#clr").addEventListener("click",()=>{snap();blankCv();store()});
   $("#full").addEventListener("click",()=>setFull(!$("#atdraw").classList.contains("atfull")));
+  $("#tgl").addEventListener("click",()=>$("#atdraw").classList.toggle("tclosed"));
   $$("[data-f]").forEach(t=>t.addEventListener("input",()=>{atl().f[t.dataset.f]=t.value;L.save();tick(t.dataset.f)}));
   $$("[data-st]").forEach(b=>b.addEventListener("click",()=>{const t=$(`[data-f="${b.dataset.st}"]`);t.value=(t.value&&!/\s$/.test(t.value)?t.value+" ":t.value)+b.dataset.v;t.focus();atl().f[b.dataset.st]=t.value;L.save()}));
   $("#dl").addEventListener("click",download);
@@ -1130,9 +1166,14 @@ function renderAtelier(){
     fresh()});
 }
 /* la lavagna grande quanto lo schermo */
+function fitCanvas(w,h){
+  if(!CV)return;const old=document.createElement("canvas");old.width=CV.width;old.height=CV.height;old.getContext("2d").drawImage(CV,0,0);
+  CV.width=w;CV.height=h;blankCv();const r=Math.min(w/old.width,h/old.height),dw=old.width*r,dh=old.height*r;CTX.drawImage(old,(w-dw)/2,(h-dh)/2,dw,dh);HIST=[];store();
+}
 function setFull(on){
   const d=$("#atdraw"),b=$("#full");if(!d)return;
-  d.classList.toggle("atfull",on);document.documentElement.classList.toggle("atl-lock",on);
+  d.classList.toggle("atfull",on);d.classList.remove("tclosed");
+  setTimeout(()=>{if(on){const W=Math.max(window.innerWidth,1),H=Math.max(window.innerHeight,1),k=1600/Math.max(W,H);fitCanvas(Math.round(W*k),Math.round(H*k))}else if(CV.width!==1350||CV.height!==960)fitCanvas(1350,960)},on?250:0);document.documentElement.classList.toggle("atl-lock",on);
   if(b)b.textContent=on?"✕ Chiudi la lavagna grande":"⛶ Lavagna grande";
   try{if(on&&d.requestFullscreen&&!document.fullscreenElement)d.requestFullscreen().catch(()=>{});else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}
 }
@@ -1147,7 +1188,7 @@ function store(){try{localStorage.setItem(DKEY(),CV.toDataURL("image/jpeg",.8))}
 function setupCanvas(){
   CV=$("#cv");CTX=CV.getContext("2d");blankCv();
   let saved=null;try{saved=localStorage.getItem(DKEY())}catch(e){}
-  if(saved){const im=new Image();im.onload=()=>CTX.drawImage(im,0,0,CV.width,CV.height);im.src=saved}
+  if(saved){const im=new Image();im.onload=()=>{const r=Math.min(CV.width/im.width,CV.height/im.height),dw=im.width*r,dh=im.height*r;CTX.drawImage(im,(CV.width-dw)/2,(CV.height-dh)/2,dw,dh)};im.src=saved}
   let down=false,last=null;
   const pos=e=>{const r=CV.getBoundingClientRect();return{x:(e.clientX-r.left)*CV.width/r.width,y:(e.clientY-r.top)*CV.height/r.height}};
   CV.addEventListener("pointerdown",e=>{down=true;CV.setPointerCapture(e.pointerId);snap();last=pos(e);line(last,last)});
