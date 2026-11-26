@@ -1,5 +1,5 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.stiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.stile{display:grid;justify-items:center;gap:4px;text-align:center;padding:12px 10px 14px;border-radius:20px;border:3px solid var(--c);background:color-mix(in srgb,var(--c) 18%,#fff);color:var(--ink);text-decoration:none;transition:transform .15s}
+<!doctype html><html lang="it" data-theme="light"><head><meta charset=utf8><meta name="color-scheme" content="light only"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.stiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.stile{display:grid;justify-items:center;gap:4px;text-align:center;padding:12px 10px 14px;border-radius:20px;border:3px solid var(--c);background:#fff;background:color-mix(in srgb,var(--c) 18%,#fff);color:var(--ink);text-decoration:none;transition:transform .15s}
 .stile:hover,.stile:focus-visible{transform:translateY(-3px)}
 .stile .sti{display:grid;place-items:center;height:120px;width:100%;overflow:hidden}
 .stile .sti svg{width:56px;height:56px}
@@ -9,12 +9,12 @@
 .subjnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 14px}
 .subjnav .sj{text-decoration:none;color:var(--ink,#2A2140)}
 .subjnav .sj[aria-current="true"]{background:var(--c);color:#fff}
-.spage{border-radius:24px;border:3px solid var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface,#fff));padding:16px}
+.spage{border-radius:24px;border:3px solid var(--c);background:var(--surface,#fff);background:color-mix(in srgb,var(--c) 10%,var(--surface,#fff));padding:16px}
 .sphead{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
 .sphead h2{margin:0;font-size:34px;color:var(--c)}
 .spav{width:130px;max-height:210px;overflow:hidden;display:grid;place-items:center}.spav img{max-height:200px;width:auto}.spav svg{max-width:100%}
 .cgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
-.cpc{position:relative;display:grid;justify-items:center;gap:4px;text-align:center;padding:12px 10px;border-radius:18px;background:var(--paper,#FBF3E0);border:2px solid color-mix(in srgb,var(--c) 50%,#fff)}
+.cpc{position:relative;display:grid;justify-items:center;gap:4px;text-align:center;padding:12px 10px;border-radius:18px;background:var(--paper,#FBF3E0);border:2px solid var(--c);border:2px solid color-mix(in srgb,var(--c) 50%,#fff)}
 .cpc .rk{position:absolute;top:8px;left:10px;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700}
 .cpc .cav{display:grid;place-items:center;height:130px;width:100%;overflow:hidden;text-decoration:none}
 .cpc strong{font-size:17px}.cpc small{color:var(--muted);font-weight:700}
@@ -265,7 +265,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 .rtab tr.none td{color:var(--muted);font-style:italic}
 .rtab tfoot td{background:var(--sea-soft);border-bottom:0}
 </style>
-<link rel="stylesheet" href="cuccioli.css?v=1126l">
+<link rel="stylesheet" href="cuccioli.css?v=1126m">
 <style id="magia">
 /* ===== Tema "scuola di magia": cielo notturno, pergamena, oro ===== */
 :root:not(#_){
@@ -357,7 +357,7 @@ h2,h3{font-family:var(--font-display);letter-spacing:.01em}
 
 /* scheda allievo */
 .mp{border-radius:22px}
-.mband{background:radial-gradient(1.5px 1.5px at 15% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 80% 25%,#fff,transparent),radial-gradient(1.2px 1.2px at 60% 60%,#fff,transparent),linear-gradient(135deg,color-mix(in srgb,var(--mc) 55%,#2E2266),#2E2266)}
+.mband{background:radial-gradient(1.5px 1.5px at 15% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 80% 25%,#fff,transparent),radial-gradient(1.2px 1.2px at 60% 60%,#fff,transparent),linear-gradient(135deg,var(--mc),#2E2266);background:radial-gradient(1.5px 1.5px at 15% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 80% 25%,#fff,transparent),radial-gradient(1.2px 1.2px at 60% 60%,#fff,transparent),linear-gradient(135deg,color-mix(in srgb,var(--mc) 55%,#2E2266),#2E2266)}
 .mband h2{font-family:var(--font-magic);color:var(--gold-l)}
 .xpline{font-family:var(--font-display);color:var(--violet)}
 .path .cur small{color:var(--violet)}
@@ -392,9 +392,9 @@ h2,h3{font-family:var(--font-display);letter-spacing:.01em}
 .game.isoff{filter:grayscale(.85);opacity:.75}
 .sfil{margin:0 0 14px}.sfil .sj small{opacity:.7;font-weight:800}
 .sgroup{margin-top:6px}.sgroup+.sgroup{margin-top:20px}
-.sgh{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid color-mix(in srgb,var(--c) 45%,transparent);font:700 20px/1.2 var(--font-display);color:var(--ink)}
+.sgh{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid transparent;border-bottom:2px solid color-mix(in srgb,var(--c) 45%,transparent);font:700 20px/1.2 var(--font-display);color:var(--ink)}
 .sgh small{margin-left:auto;font:700 13px/1 var(--font-body);color:var(--muted)}
-.sgi{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--edge),0 0 10px color-mix(in srgb,var(--c) 60%,transparent)}
+.sgi{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--edge),0 0 10px var(--c);box-shadow:0 0 0 1.5px var(--edge),0 0 10px color-mix(in srgb,var(--c) 60%,transparent)}
 .sgi svg{width:62%;height:62%}
 .gby{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}.gby .cq-tw{width:26px;height:26px}
 .tgroup+.tgroup{margin-top:18px}
@@ -463,7 +463,7 @@ details.fold>.fbody{padding:14px 18px 18px}
 </div>
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126l"></script>
+<script src="cuccioli.js?v=1126m"></script>
 <script src="stagioni.js"></script>
 <script>
 (function(){
@@ -618,7 +618,7 @@ function bySubj(list,card,key){
     return '<div class="sgroup" style="--c:'+x.s.c+'"><p class="sgh"><span class="sgi">'+C.icon(x.s.k)+'</span><span>'+esc(x.s.n)+'</span><small>'+x.g.length+(x.g.length===1?' app':' app')+'</small></p><div class="games">'+x.g.map(function(g){return card(g,x.s)}).join("")+'</div></div>'}).join("");
 }
 function gameCard(g,extra,cta){var sd=C.subjOf(g.s)||C.subjOf("imp");
-  return '<a class="game" href="'+esc(g.href)+'"'+(g.ext?' target="_blank" rel="noopener"':'')+' style="--c:'+sd.c+';background:color-mix(in srgb,'+sd.c+' 30%,#fff)"><b>'+esc(g.t)+(g.ext?' <small class="lnk">link</small>':'')+'</b><span>'+esc(g.d)+'</span>'+extra+'<em>'+cta+'</em></a>'}
+  return '<a class="game" href="'+esc(g.href)+'"'+(g.ext?' target="_blank" rel="noopener"':'')+' style="--c:'+sd.c+';background:#fff;background:color-mix(in srgb,'+sd.c+' 30%,#fff)"><b>'+esc(g.t)+(g.ext?' <small class="lnk">link</small>':'')+'</b><span>'+esc(g.d)+'</span>'+extra+'<em>'+cta+'</em></a>'}
 function tbar(){var me=C.me();return '<div class="tbar"><b class="tme">'+C.tAvatar(me)+'<span>'+(me?'Maestra '+esc(me.n):'Area maestra')+'</span></b><div class="row"><a class="btn sm" href="#maestre">Maestre</a><a class="btn sm" href="#maestra">La classe</a><a class="btn sm" href="#alunni">Alunni</a><a class="btn sm" href="#codici">Codici</a><a class="btn sm" href="#risultati">Risultati</a><a class="btn sm" href="#backup">Backup</a><button class="btn sm" data-act="tout">Esci dall\'area maestra</button></div></div>'}
 function viewPupils(){
   var ids=C.sortedIds(),n=ids.length,h=tbar();
