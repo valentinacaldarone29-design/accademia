@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126j">
+<link rel="stylesheet" href="cuccioli.css?v=1126k">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -457,6 +457,18 @@ html.room-lock,html.room-lock body{overflow:hidden}
 #room.ract .qcard{margin:12px auto;max-width:1200px;width:calc(100% - 24px)}
 #room.rwall .wfr{font-size:clamp(12px,1.6vw,20px)}
 #room.rwall .wfr .wi{font-size:clamp(26px,4vw,54px)}
+/* il labirinto a schermo intero, in primo piano */
+.mzlez{display:none}
+html.lab-full,html.lab-full body{overflow:hidden}
+html.lab-full #sec-labirinto>.panel{position:fixed;inset:0;z-index:45;margin:0;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;background:#2b2350!important;display:grid;place-items:center;overflow:hidden}
+html.lab-full #sec-labirinto>.panel::before{content:"";position:absolute;inset:-30px;background:url(img/museo-labirinto3.webp) center/cover;filter:blur(16px) brightness(.75)}
+html.lab-full #sec-labirinto>.panel>.eyebrow,html.lab-full #sec-labirinto>.panel>h2,html.lab-full #sec-labirinto>.panel>.lead{display:none}
+html.lab-full #maze{position:relative;margin:0!important;width:min(100vw,calc(100vh * 1224 / 818))!important;width:min(100vw,calc(100dvh * 1224 / 818))!important;border-radius:0!important;border-width:0!important;box-shadow:none!important;z-index:1}
+html.lab-full #kids{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:3;margin:0;width:min(360px,50vw);background:rgba(255,255,255,.92);border-radius:99px;padding:6px 14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+html.lab-full .mztip{position:fixed;left:50%;top:58px;transform:translateX(-50%);z-index:3;margin:0;max-width:min(640px,calc(100vw - 24px));font-size:15px;padding:4px 14px}
+@media (orientation:portrait){html.lab-full .mztip{top:auto;bottom:14px}}
+html.lab-full .mzlez:not([hidden]){display:inline-flex;position:fixed;top:10px;left:10px;z-index:3;align-items:center;min-height:44px;padding:6px 16px;border-radius:99px;background:#fff;color:#5B3F99;font:700 16px var(--font-display);text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;background:#FFF6E0;padding:12px}
 </style>
 
 
@@ -584,6 +596,7 @@ html.room-lock,html.room-lock body{overflow:hidden}
     <p class="eyebrow">Escape room</p>
     <h2>Fuga dal labirinto dei 7 quadri</h2>
     <p class="lead">Sei chiuso nel labirinto del custode-mago! Tocca la porta che brilla: il tuo avatar ci cammina davanti, la porta si apre ed entri nel quadro. Dentro trovi la storia, gli enigmi e i giochi di quel pittore. Scopri la password per aprire la porta dopo.</p>
+    <a class="mzlez" href="#lezione" data-teacher hidden>👩‍🏫 Lezione</a>
     <div class="kids" id="kids"></div>
     <div class="maze" id="maze"></div>
     <div id="room"></div>
@@ -642,7 +655,7 @@ html.room-lock,html.room-lock body{overflow:hidden}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126j"></script>
+<script src="cuccioli.js?v=1126k"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -903,14 +916,17 @@ function goDoor(i){
     if(Math.abs(pt.x-lastX)>.5)w.classList.toggle("flip",pt.x<lastX);lastX=pt.x;placeWalker(pt);
     if(k<1)requestAnimationFrame(step);else fin()})(t0);
 }
+function labFull(){const sec=$("#sec-labirinto");document.documentElement.classList.toggle("lab-full",!!sec&&!sec.hidden&&INROOM!=="exit"&&INROOM!=="valuta")}
+new MutationObserver(labFull).observe(document.getElementById("sec-labirinto"),{attributes:true,attributeFilter:["hidden"]});
 function renderLab(){
   const b=lab(),n=Q.filter(x=>b.open[x.k]).length;
   curRoom();
   $("#kids").innerHTML=`<span aria-hidden="true">🗝️</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><i style="width:${Math.round(n/7*100)}%"></i></span><span>${n} porte su 7</span>`;
   $("#maze").hidden=INROOM;if(INROOM)$$(".mztip").forEach(t=>t.remove());$("#room").hidden=!INROOM;
+  labFull();
   if(INROOM==="valuta")renderValuta();else if(INROOM==="exit")renderExit();else if(INROOM)renderRoom();else{$("#room").innerHTML="";renderMaze()}
 }
-function leaveRoom(){INROOM=false;STN=null;WALLV=true;const rm=$("#room");if(rm){rm.classList.remove("rfull","rwall","ract")}document.documentElement.classList.remove("room-lock");homeSchede();renderLab();$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
+function leaveRoom(){INROOM=false;STN=null;WALLV=true;const rm=$("#room");if(rm){rm.classList.remove("rfull","rwall","ract")}document.documentElement.classList.remove("room-lock");homeSchede();renderLab();if(!document.documentElement.classList.contains("lab-full"))$("#maze").scrollIntoView({behavior:"smooth",block:"center"})}
 /* le schede possono vivere anche dentro la stanza: spostiamo i loro contenitori */
 function homePanels(){["atelier","valuta"].forEach(k=>{const pn=PANELS[k];if(pn&&pn.parentNode!==$("#sec-"+k))$("#sec-"+k).append(pn)})}
 let PANELS={},BACKSTN=null;
