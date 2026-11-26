@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1125d">
+<link rel="stylesheet" href="cuccioli.css?v=1126a">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -102,6 +102,9 @@ section.view{display:grid;gap:16px;min-width:0}
 @media (min-width:700px) and (hover:none){:root{--cw:60px}}
 
 /* spiegazioni */
+.provab{display:grid;gap:4px;background:#E8F0FF;border:3px dashed #3A86FF;border-radius:16px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.provab b{color:#1F5FCC}
+.btn.prova{background:#3A86FF;color:#fff}
 .fb{border-radius:14px;padding:14px 16px;display:grid;gap:8px}
 .btn.help{border-color:#F2C230!important;background:#FFF8DC!important}
 .in.hint{box-shadow:0 0 0 4px #F2C230,0 0 16px 4px rgba(242,194,48,.7)!important;animation:hintPulse 1s ease-in-out 3}
@@ -382,7 +385,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1125d"></script>
+<script src="cuccioli.js?v=1126a"></script>
 <script>
 (function(){
 "use strict";
@@ -440,6 +443,7 @@ const BADGES=[
   {id:"div",n:"Divisore",how:"3 divisioni",ok:()=>S.cnt.div>=3},
   {id:"prop",n:"Custode delle proprietà",how:"6 proprietà giuste",ok:()=>S.cnt.prop>=6},
   {id:"det",n:"Detective",how:"5 errori scoperti",ok:()=>S.cnt.det>=5},
+  {id:"prova",n:"Controllore",how:"3 prove in colonna",ok:()=>(S.cnt.prova||0)>=3},
   {id:"capo",n:"Capo officina",how:"Tutti i badge e la scheda",ok:()=>["stratega","riporto","cambio","molt","div","prop","det"].every(k=>S.badges[k])&&S.valuta.done}
 ];
 function renderBoard(){
@@ -608,7 +612,7 @@ function renderOp(){
     title="Moltiplicazione per due cifre";
     e.note=`Prima riga: ${e.a} × ${bu} (unità). Seconda riga: ${e.a} × ${bd} (decine), si comincia sotto le decine: nelle unità c'è il trattino.`;
   }
-  card.innerHTML=`<h3>${title}</h3>${e.note&&e.op==="mul"&&e.b>=10?`<p class="lead">${e.note}</p>`:""}<div class="stage">${grid(W,rows)}</div>
+  card.innerHTML=`${provaBanner()}<h3>${title}</h3>${e.note&&e.op==="mul"&&e.b>=10?`<p class="lead">${e.note}</p>`:""}<div class="stage">${grid(W,rows)}</div>
     <div class="row"><button class="btn" type="button" id="op-check">Controlla</button><button class="btn ghost help" type="button" id="op-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button><button class="btn ghost" type="button" id="op-new">Nuova operazione</button></div><div id="op-fb"></div>`;
   wireInputs(card);
   const first=card.querySelector('[data-g="r"][data-p="0"],[data-g="p"][data-p="0"]');
@@ -732,7 +736,8 @@ function checkOp(){
   const res=resultOf(e);
   if(!first){
     e.done=true;const st=e.tries===0&&!e.helped?2:1;
-    $("#op-fb").innerHTML=fbHTML("good",`Esatto! ${e.a} ${sym(e.op)} ${e.b} = ${res}. ${st===2?"Due stelle!":"Una stella!"}`,[prova(e)],allSteps(steps));
+    if(e.prova){provaEnd(res,st,allSteps(steps));return}
+    $("#op-fb").innerHTML=fbHTML("good",`Esatto! ${e.a} ${sym(e.op)} ${e.b} = ${res}. ${st===2?"Due stelle!":"Una stella!"}`,[prova(e)],allSteps(steps))+provaBtn(e);
     ding();done(e.op,st);
   }else{
     e.tries++;errTag(first);
@@ -759,7 +764,42 @@ function showSol(){
   else{const bu=e.b%10,bd=Math.floor(e.b/10),p1=mulPlan(e.a,bu),p2=mulPlan(e.a,bd),ad=addPlan(e.a*bu,e.a*bd*10);fill(p1,"p",0);fill(p2,"q",1);fill(ad,"r",0);
     p1.cols.forEach((c,i)=>steps.push("Prima riga · "+mulText(c,0,i===p1.cols.length-1)));p2.cols.forEach((c,i)=>steps.push("Seconda riga · "+mulText(c,1,i===p2.cols.length-1)));ad.cols.forEach((c,i)=>steps.push("Somma · "+addText(c,i===ad.cols.length-1)))}
   e.done=true;
-  $("#op-fb").innerHTML=fbHTML("info",`Ecco la soluzione: ${e.a} ${sym(e.op)} ${e.b} = ${resultOf(e)}`,["Leggi i passaggi, poi prova con una nuova operazione per conquistare le stelle."],allSteps(steps));
+  $("#op-fb").innerHTML=fbHTML("info",`Ecco la soluzione: ${e.a} ${sym(e.op)} ${e.b} = ${resultOf(e)}`,[e.prova?provaVerdict(resultOf(e),0):"Leggi i passaggi, poi prova con una nuova operazione per conquistare le stelle."],allSteps(steps))+(e.prova&&e.prova.next?`<div class="row"><button class="btn" type="button" id="op-prova2">Continua la prova ➜</button></div>`:"");
+}
+
+/* --- la prova in colonna: dopo un'operazione giusta il bambino può controllarla con l'operazione inversa --- */
+function provaPlan(e){
+  const f=`${e.a} ${sym(e.op)} ${e.b}`;
+  if(e.op==="add"){const R=e.a+e.b;return {f,res:R,ex:{op:"sub",a:R,b:e.b},exp:e.a,why:`Al risultato (${R}) tolgo il secondo addendo (${e.b}): devo ritrovare il primo addendo, ${e.a}.`,inv:"la sottrazione"}}
+  if(e.op==="sub"){const R=e.a-e.b;if(R<1)return null;return {f,res:R,ex:{op:"add",a:R,b:e.b},exp:e.a,why:`Al risultato (${R}) aggiungo il sottraendo (${e.b}): devo ritrovare il minuendo, ${e.a}.`,inv:"l'addizione"}}
+  if(e.op==="mul"){const R=e.a*e.b;
+    if(e.b<10)return {f,res:R,ex:{op:"div",a:R,b:e.b},exp:e.a,why:`Divido il risultato (${R}) per il secondo fattore (${e.b}): devo ritrovare il primo fattore, ${e.a}.`,inv:"la divisione"};
+    if(e.a<100&&e.a%10)return {f,res:R,ex:{op:"mul",a:e.b,b:e.a},exp:R,why:`Scambio i fattori: ${e.b} × ${e.a}. Per la proprietà commutativa devo ritrovare lo stesso risultato, ${R}.`,inv:"la proprietà commutativa"};
+    return null}
+  if(e.op==="div"){const Q=Math.floor(e.a/e.b),r=e.a%e.b;
+    return {f,res:Q,ex:{op:"mul",a:Q,b:e.b},exp:Q*e.b,why:`Moltiplico il quoziente (${Q}) per il divisore (${e.b})${r?`, poi aggiungo il resto (${r})`:""}: devo ritrovare il dividendo, ${e.a}.`,inv:"la moltiplicazione",
+      next:r?{ex:{op:"add",a:Q*e.b,b:r},exp:e.a,why:`Ora aggiungo il resto: ${Q*e.b} + ${r}. Devo ritrovare il dividendo, ${e.a}.`}:null}}
+  return null;
+}
+function provaBtn(e){return provaPlan(e)?`<div class="row"><button class="btn prova" type="button" id="op-prova">🔁 Fai la prova in colonna</button></div>`:""}
+function provaBanner(){const P=EX&&EX.prova;if(!P)return "";return `<div class="provab"><b>🔁 La prova di ${P.f} = ${P.res}${P.rest?` con resto ${P.rest}`:""}</b><span>${P.why}</span></div>`}
+function provaGo(P,ex,exp,why,next){EX=Object.assign({},ex,{tries:0,done:false,prova:{f:P.f,res:P.res,rest:P.rest,exp,why,next,orig:P.orig}});if(EX.op==="div")return startDiv();renderOp();$("#op-card").scrollIntoView({behavior:"smooth",block:"start"})}
+function provaStart(){
+  const e=EX,P=provaPlan(e);if(!P)return;
+  P.rest=e.op==="div"?e.a%e.b:0;P.orig={op:e.op,a:e.a,b:e.b};
+  provaGo(P,P.ex,P.exp,P.why,P.next);
+}
+function provaNext(){const P=EX.prova;if(!P||!P.next)return;const n=P.next;provaGo(P,n.ex,n.exp,n.why,null)}
+function provaVerdict(res,rest){
+  const P=EX.prova,ok=res===P.exp&&!rest;
+  if(P.next)return `${res} è il primo pezzo della prova. Ora manca l'ultimo passaggio: aggiungere il resto.`;
+  return ok?`Il risultato della prova è ${res}: è proprio il numero che dovevamo ritrovare. L'operazione ${P.f} era giusta! ✅`:`Il risultato della prova è ${res}, ma dovevamo ritrovare ${P.exp}: ricontrolla l'operazione.`;
+}
+function provaEnd(res,st,steps,rest){
+  const P=EX.prova,fb=$("#op-fb");
+  if(P.next){fb.innerHTML=fbHTML("good",`Giusto: ${EX.a} ${sym(EX.op)} ${EX.b} = ${res}`,[provaVerdict(res,rest)],steps)+`<div class="row"><button class="btn" type="button" id="op-prova2">Continua la prova ➜</button></div>`;ding();return}
+  fb.innerHTML=fbHTML("good",`Prova riuscita! ${st===2?"Due stelle!":"Una stella!"}`,[`${EX.a} ${sym(EX.op)} ${EX.b} = ${res}${rest?` con resto ${rest}`:""}.`,provaVerdict(res,rest)],steps)+`<div class="row"><button class="btn" type="button" id="op-new">Nuova operazione</button></div>`;
+  ding();done("prova",st);
 }
 
 /* --- divisione passo dopo passo --- */
@@ -783,7 +823,7 @@ function renderDiv(fbh){
       <label>${D.partial} − <span id="dpl">…</span> = <input class="bx" id="dr" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off"> <span class="lead" style="font-size:15px">(resto)</span></label>
       <div class="row"><button class="btn" type="button" id="dv-check">Controlla il passaggio</button><button class="btn ghost help" type="button" id="dv-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button></div></div>`;
   }
-  $("#op-card").innerHTML=`<h3>Divisione con una cifra al divisore</h3><p class="lead">Filastrocca: quante volte ci sta? · moltiplico · sottraggo · abbasso.</p>
+  $("#op-card").innerHTML=`${provaBanner()}<h3>Divisione con una cifra al divisore</h3><p class="lead">Filastrocca: quante volte ci sta? · moltiplico · sottraggo · abbasso.</p>
     <div class="divbox"><div class="dvline"><div class="dvd">${dd}</div><div class="dvs"><div class="ds">${D.d}</div><div class="qq">${qq}</div></div></div>
     ${D.log.length?`<ol class="dlog">${D.log.map(l=>`<li>${l}</li>`).join("")}</ol>`:""}${step}</div>
     <div id="op-fb">${fbh||""}</div>${D.fin?`<div class="row"><button class="btn" type="button" id="op-new">Nuova divisione</button></div>`:`<div class="row"><button class="btn ghost" type="button" id="op-new">Nuova divisione</button></div>`}`;
@@ -816,7 +856,8 @@ function checkDiv(){
   }else{
     D.log.push(line);D.fin=true;D.used=D.s.length;EX.done=true;
     const Q=Math.floor(EX.a/D.d),R=EX.a%D.d,st=D.errs===0&&!EX.helped?2:1;
-    renderDiv(fbHTML("good",`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`,[`La prova: ${Q} × ${D.d}${R?` + ${R}`:""} = ${EX.a}. La moltiplicazione è l'operazione inversa della divisione.`]));
+    if(EX.prova){renderDiv();provaEnd(Q,st,"",R);return}
+    renderDiv(fbHTML("good",`Fatto! ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}. ${st===2?"Due stelle!":"Una stella!"}`,[`La prova: ${Q} × ${D.d}${R?` + ${R}`:""} = ${EX.a}. La moltiplicazione è l'operazione inversa della divisione.`])+provaBtn(EX));
     ding();done("div",st);
   }
 }
@@ -829,7 +870,7 @@ function showDivSol(){
   }
   D.used=D.s.length;EX.done=true;
   const Q=Math.floor(EX.a/D.d),R=EX.a%D.d;
-  renderDiv(fbHTML("info",`Ecco la soluzione: ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}`,["Rileggi i passaggi, poi prova con una nuova divisione per conquistare le stelle."]));
+  renderDiv(fbHTML("info",`Ecco la soluzione: ${EX.a} : ${D.d} = ${Q}${R?` con resto ${R}`:""}`,[EX.prova?provaVerdict(Q,R):"Rileggi i passaggi, poi prova con una nuova divisione per conquistare le stelle."]));
 }
 
 $("#op-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-op]");if(!b)return;OP=b.dataset.op;$$("#op-pick [data-op]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));syncPicks();newOp()});
@@ -840,7 +881,7 @@ $("#cmb-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-c]
 $("#mul-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-m]");if(!b)return;MULN=+b.dataset.m;$$("#mul-pick [data-m]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));newOp()});
 $("#op-card").addEventListener("click",ev=>{
   const id=ev.target.closest("button")&&ev.target.closest("button").id;
-  if(id==="op-help")helpOp();else if(id==="dv-help")helpDiv();else if(id==="own-help")helpOwn();else if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();
+  if(id==="op-help")helpOp();else if(id==="dv-help")helpDiv();else if(id==="own-help")helpOwn();else if(id==="own-go")ownGo();else if(id==="own-clear")renderOwn();else if(id==="op-check")checkOp();else if(id==="op-sol")(EX.op==="div"?showDivSol():showSol());else if(id==="op-new")newOp();else if(id==="dv-check")checkDiv();else if(id==="op-prova")provaStart();else if(id==="op-prova2")provaNext();
 });
 
 /* ================= STRATEGIE ================= */
