@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126k">
+<link rel="stylesheet" href="cuccioli.css?v=1126l">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -469,6 +469,7 @@ html.lab-full .mztip{position:fixed;left:50%;top:58px;transform:translateX(-50%)
 @media (orientation:portrait){html.lab-full .mztip{top:auto;bottom:14px}}
 html.lab-full .mzlez:not([hidden]){display:inline-flex;position:fixed;top:10px;left:10px;z-index:3;align-items:center;min-height:44px;padding:6px 16px;border-radius:99px;background:#fff;color:#5B3F99;font:700 16px var(--font-display);text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;background:#FFF6E0;padding:12px}
+.tlook{border:3px dashed #7A4FC4;border-radius:16px;padding:10px 14px;background:#F3EEFF}
 </style>
 
 
@@ -655,7 +656,7 @@ html.lab-full #room:not(.rfull){position:fixed;inset:0;z-index:4;overflow:auto;b
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126k"></script>
+<script src="cuccioli.js?v=1126l"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -963,8 +964,8 @@ function renderRoom(){
     h.innerHTML=`<div class="story"><p class="lead">${esc(x.story)}</p><p class="lead">${esc(x.art)}</p>
       <div class="sw" aria-label="I colori del quadro">${x.col.map(c=>`<i style="background:${c}"></i>`).join("")}<span>I colori del quadro</span></div>
       <p><a class="real" href="${REAL[x.k]||IMG(x.t+" "+x.p)}" target="_blank" rel="noopener">🖼️ Guarda il quadro vero</a></p>
-      <h4>Occhio da artista</h4><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
-      <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"Ho guardato e risposto con la classe"}</button><button class="btn" type="button" data-gost="enigmi">Ora gli enigmi 🧩</button></div></div>`;
+      ${isMaestra()?`<div class="tlook"><h4>👩‍🏫 Occhio da artista · domande per la maestra</h4><p class="small" style="margin:0 0 4px">I bambini non le vedono: falle a voce mentre guardate il quadro alla LIM.</p><ul class="look">${x.look.map(l=>`<li>${esc(l)}</li>`).join("")}</ul></div>`:""}
+      <div class="row" style="margin-top:8px"><button class="btn ghost" type="button" id="lk"${b.look[x.k]?" disabled":""}>${b.look[x.k]?"✅ Ho osservato il quadro":"👀 Ho guardato il quadro"}</button><button class="btn" type="button" data-gost="enigmi">Ora gli enigmi 🧩</button></div></div>`;
     $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
   }else if(STN==="enigmi"){
     const got=b.clue[x.k]||[];
