@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126e">
+<link rel="stylesheet" href="cuccioli.css?v=1126f">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -367,6 +367,41 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
 .lockmodal{position:fixed;inset:0;z-index:9990;display:grid;place-items:center;padding:16px;background:rgba(43,35,80,.55);backdrop-filter:blur(3px)}
 .lmcard{position:relative;width:min(520px,100%);background:#fff;border-radius:28px;padding:20px;border:6px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--rainbow,linear-gradient(90deg,#FF4F8B,#3A86FF)) border-box;box-shadow:0 20px 40px rgba(0,0,0,.25);animation:gPop .45s cubic-bezier(.3,1.6,.5,1)}
 .lmx{position:absolute;right:12px;top:10px;border:0;background:#FFE3EE;color:#C92A63;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer}
+.wfr.wpic{display:grid;place-items:end center;padding:6px;border:0;pointer-events:none;box-shadow:inset 0 0 0 4px rgba(0,0,0,.15)}
+.wfr.wpic b{background:rgba(255,255,255,.85);border-radius:8px;padding:2px 6px;font:600 clamp(9px,1.4vw,14px) var(--font-display);color:#3A2B20;text-align:center}
+.mago{margin:2px 0 8px;font:600 16px var(--font-display);color:#7A4FC4}
+.cpanel.cwin{animation:cWin .9s ease}
+.cpanel.cshake{animation:lkShake .45s}
+@keyframes cWin{0%{transform:scale(1)}30%{transform:scale(1.04);box-shadow:0 0 0 8px rgba(255,210,63,.8)}100%{transform:scale(1)}}
+.sand{display:flex;align-items:center;gap:8px;margin:0 0 4px}
+.sand i{flex:1;height:14px;border-radius:99px;background:linear-gradient(90deg,#FFD23F,#FF8A3D);transform-origin:left;animation:sandGo linear forwards;border:2px solid #E0A400}
+.sand b{font:700 20px var(--font-display);min-width:30px;text-align:right}
+.sand.over i{background:#ddd}.sand.over b{color:var(--muted)}
+@keyframes sandGo{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.palbig{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+.palbig i{width:64px;height:64px;border-radius:18px;border:3px solid rgba(0,0,0,.2);box-shadow:0 4px 0 rgba(0,0,0,.15);animation:gPop .4s both}
+.count{text-align:center;font:700 44px var(--font-display);color:var(--rc);margin:0}
+.swpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:10px;max-width:420px;margin:8px auto}
+.swb{aspect-ratio:1;border-radius:18px;border:3px solid rgba(0,0,0,.2);cursor:pointer;position:relative}
+.swb.on{outline:5px solid #3A86FF;outline-offset:3px;transform:scale(.92)}
+.swb.on::after{content:"✔";position:absolute;inset:0;display:grid;place-items:center;font:700 26px var(--font-display);color:#fff;text-shadow:0 0 4px #000}
+.swb.wrong{outline-color:var(--bad);animation:lkShake .4s}.swb.right{outline-color:var(--good)}
+.dec{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+.dcol{display:grid;gap:6px;justify-items:center}
+.dsym{font-size:36px;line-height:1}
+.dbox,.aslot{width:56px;height:62px;border-radius:14px;border:3px dashed var(--rc);background:var(--surface);font:700 30px var(--font-display);color:var(--ink);cursor:pointer}
+.dbox.on,.aslot.on{border-style:solid;background:#FFF7D6}
+.dbox.wrong,.aslot.wrong{border-color:var(--bad);background:var(--bad-soft);animation:lkShake .4s}
+.aslot.right{border-color:var(--good);background:var(--good-soft)}
+.keypad{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.kb{display:grid;justify-items:center;gap:2px;min-width:58px;padding:6px 8px;border-radius:14px;border:3px solid var(--line);background:#fff;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.kb span{font-size:24px;line-height:1}.kb b{font:700 22px var(--font-display);color:#7A4FC4}
+.kb:active,.atile:active{transform:translateY(3px);box-shadow:none}
+.ana{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.atile{width:56px;height:56px;border-radius:14px;border:0;background:linear-gradient(135deg,#FF4F8B,#FF8A3D);color:#fff;font:700 28px var(--font-display);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.18);transform:rotate(-4deg)}
+.atile:nth-child(2n){transform:rotate(5deg);background:linear-gradient(135deg,#3A86FF,#7A4FC4)}
+.atile:nth-child(3n){transform:rotate(-2deg);background:linear-gradient(135deg,#2EC4B6,#3A86FF)}
+.atile:disabled{opacity:.2}
 </style>
 
 
@@ -493,7 +528,7 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
   <div class="panel">
     <p class="eyebrow">Escape room</p>
     <h2>Fuga dal labirinto dei 7 quadri</h2>
-    <p class="lead">Sei chiuso nel labirinto del custode-mago! Tocca la porta che brilla: il tuo avatar ci cammina davanti, la porta si apre ed entri nel quadro. Dentro trovi la storia, gli enigmi, la scheda e i giochi di quel pittore. Scopri la password per aprire la porta dopo.</p>
+    <p class="lead">Sei chiuso nel labirinto del custode-mago! Tocca la porta che brilla: il tuo avatar ci cammina davanti, la porta si apre ed entri nel quadro. Dentro trovi la storia, gli enigmi e i giochi di quel pittore. Scopri la password per aprire la porta dopo.</p>
     <div class="kids" id="kids"></div>
     <div class="maze" id="maze"></div>
     <div id="room"></div>
@@ -552,7 +587,7 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126e"></script>
+<script src="cuccioli.js?v=1126f"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -733,19 +768,20 @@ function roomNote(id,what){const h=$("#"+id);if(!h)return;const x=curRoom(),i=CU
 function lab(){const S=L.state();if(!S.extra.lab)S.extra.lab={open:{},look:{},tries:{}};const b=S.extra.lab;b.clue=b.clue||{};b.miss=b.miss||{};b.t0=b.t0||{};b.time=b.time||{};return b}
 function unlocked(i){const b=lab();return i===0||!!b.open[Q[i-1].k]}
 function clues(x){
-  const e=ESC[x.k],own=SETS.quadro.items.filter(it=>it.a===x.k),oth=L.shuffle(SETS.quadro.items.filter(it=>it.a!==x.k));
-  const pc=e.pw[2];
+  const e=ESC[x.k],pc=e.pw[2];
   // il codice del custode: ogni lettera è un simbolo
   const letters=[...new Set(pc.split(""))],extra=L.shuffle("AEIOURSTLNMC".split("").filter(c=>letters.indexOf(c)<0)).slice(0,3),keyL=L.shuffle(letters.concat(extra));
   const map={};keyL.forEach((c,i)=>map[c]=SYM[(i*7+x.k.length)%SYM.length]);
-  const wrong=new Set();const alts=Object.keys(ESC).map(k=>ESC[k].pw[2]).filter(v=>v!==pc);
-  L.shuffle(alts).forEach(v=>{if(wrong.size<2)wrong.add(v)});
-  wrong.add(pc.split("").reverse().join("")!==pc?pc.split("").reverse().join(""):pc+"A");
+  // i colori: quelli del quadro più colori di altri quadri ben diversi
+  const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),far=(a,b)=>{const A=hx(a),B=hx(b);return Math.abs(A[0]-B[0])+Math.abs(A[1]-B[1])+Math.abs(A[2]-B[2])>140};
+  const pal=[...new Set(x.col.map(c=>c.toUpperCase()))],dis=[];
+  L.shuffle([].concat(...Q.filter(y=>y.k!==x.k).map(y=>y.col)).map(c=>c.toUpperCase()).concat(["#E63946","#FF8FAB","#8E44AD","#00B4D8","#FFD60A","#6A994E","#8D5524"])).forEach(c=>{if(dis.length<4&&pal.every(p=>far(p,c))&&dis.every(d=>far(d,c)))dis.push(c)});
+  const name=norm(x.sh);let tiles;do{tiles=L.shuffle(name.split(""))}while(tiles.join("")===name&&name.length>1);
   return [
-    {n:1,t:"La storia",i:"📖",q:x.q,o:x.o.map((t,j)=>({t,ok:j===0})),w:x.w},
-    {n:2,t:"Lo stile",i:"🎨",q:e.sq,o:e.so.map((t,j)=>({t,ok:j===0})),w:x.art},
-    {n:3,t:"Il codice del custode",i:"🔐",q:`Il custode ha scritto il pezzo 3 in codice: <span class="code">${pc.split("").map(c=>map[c]).join(" ")}</span><span class="key">${keyL.map(c=>`<b>${map[c]} = ${c}</b>`).join("")}</span>Che cosa c'è scritto?`,html:1,o:[{t:pc,ok:true}].concat([...wrong].slice(0,3).map(t=>({t,ok:false}))),w:`Ogni simbolo è una lettera: ${pc.split("").map(c=>map[c]+" = "+c).join(", ")}.`},
-    {n:4,t:"Chi abita qui?",i:"🔎",q:"Quale di queste scene succede proprio in questo quadro?",o:[{t:own[(x.k.length)%own.length].t,ok:true}].concat(oth.slice(0,3).map(it=>({t:it.t,ok:false}))),w:"Rileggi «Che cosa succede nel libro»."}
+    {n:1,ty:"quiz",t:"La storia a tempo",i:"⏳",q:x.q,o:x.o.map((t,j)=>({t,ok:j===0})),w:x.w},
+    {n:2,ty:"colori",t:"I colori nascosti",i:"🎨",pal,sw:L.shuffle(pal.concat(dis)),ph:"look",sel:[]},
+    {n:3,ty:"codice",t:"Il codice del custode",i:"🔐",pc,map,keyL,fill:[]},
+    {n:4,ty:"nome",t:"Il pittore scombinato",i:"🔤",name,tiles,fill:[]}
   ];
 }
 function mmss(s){s=Math.round(s);const m=Math.floor(s/60);return m?`${m} min ${s%60} s`:`${s} s`}
@@ -828,19 +864,19 @@ function homeSchede(){homePanels();SCHROOM=false;const pn=$("#sec-schede .panel"
 function stState(x){const b=lab(),sh=SCH.find(s=>s.k===x.k),S=L.state(),bv=S.best["vf_"+x.k],bc=S.best["col_"+x.k],nc=(b.clue[x.k]||[]).filter(Boolean).length;
   return{storia:!!b.look[x.k],enigmi:nc,scheda:sh&&shDone(sh),giochi:(bv!=null?1:0)+(bc!=null?1:0),porta:!!b.open[x.k],valuta:!!(b.val&&b.val[x.k]&&b.val[x.k].done)}}
 function wallHTML(x,T){const A=ROOMART[x.k],[y0,y1]=A.crop,H=y1-y0,W=1264;
-  return `<div class="wall" style="aspect-ratio:${W}/${H}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${T.map((t,j)=>{const f=A.frames[j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
+  return `<div class="wall" style="aspect-ratio:${W}/${H}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${T.length===4?`<div class="wfr wpic" aria-hidden="true" style="left:${A.frames[2][0]/W*100}%;top:${(A.frames[2][1]-y0)/H*100}%;width:${(A.frames[2][2]-A.frames[2][0])/W*100}%;height:${(A.frames[2][3]-A.frames[2][1])/H*100}%;background:${x.g}"><b>${esc(x.t)}</b></div>`:""}${T.map((t,j)=>{const f=A.frames[T.length===4?[0,1,3,4][j]:j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
 function renderRoom(){
   const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k],ss=stState(x);
   if(!done&&!b.t0[x.k]){b.t0[x.k]=Date.now();L.save()}
   if(!CLUE||CLUE.k!==x.k)CLUE={k:x.k,list:clues(x),open:null};
-  if(!STN)STN=!ss.storia?"storia":ss.enigmi<4?"enigmi":"scheda";
-  const T=[["storia","📖","La storia",ss.storia?"osservato":"leggi e guarda",ss.storia],["enigmi","🧩","Gli enigmi",ss.enigmi+" su 4",ss.enigmi===4],["scheda","📝","La scheda",ss.scheda?"completa":"da fare",ss.scheda],["giochi","🎮","I giochi",ss.giochi+" su 2",ss.giochi===2],["valuta","🪞","Come è andata?",ss.valuta?"fatto":"da fare",ss.valuta]];
+  if(!STN)STN=!ss.storia?"storia":ss.enigmi<4?"enigmi":"giochi";
+  const T=[["storia","📖","La storia",ss.storia?"osservato":"leggi e guarda",ss.storia],["enigmi","🧩","Gli enigmi",ss.enigmi+" su 4",ss.enigmi===4],["giochi","🎮","I giochi",ss.giochi+" su 2",ss.giochi===2],["valuta","🪞","Come è andata?",ss.valuta?"fatto":"da fare",ss.valuta]];
   homeSchede();
   $("#room").innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button></div>
   <div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
     <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Sei dentro il quadro · stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
     <div class="qbody">
-      <div class="mission"><b>🗝️ Missione</b> Esplora la stanza: leggi la storia, risolvi i 4 enigmi per trovare i pezzi della password, fai la scheda e i giochi di ${esc(x.sh)}. Con la password apri il lucchetto e corri alla porta dopo!</div>
+      <div class="mission"><b>🗝️ Missione</b> Esplora la stanza: leggi la storia, risolvi i 4 enigmi del custode-mago per trovare i pezzi della password e fai i giochi di ${esc(x.sh)}. La password ti servirà per aprire la porta dopo!</div>
       ${ROOMART[x.k]&&ROOMART[x.k].wall?wallHTML(x,T):""}<div class="stations"${ROOMART[x.k]&&ROOMART[x.k].wall?" hidden":""}>${T.map((t,j)=>`<button class="stn${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}"><span class="n">${j+1}</span><span class="si" aria-hidden="true">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div>
       <div class="stp" id="stp"></div>
     </div></div>`;
@@ -906,10 +942,10 @@ function renderValuta(){
 /* autovalutazione di ogni stanza */
 const VSCALE=[["bene","😀","Ci riesco bene"],["abb","🙂","Abbastanza"],["eserc","😟","Devo ancora esercitarmi"]];
 const VMOOD=[["felice","😊","Felice"],["curioso","🤩","Curioso"],["stanco","😴","Stanco"],["confuso","😕","Confuso"]];
-function vQs(x){return [`Ho capito la storia di Marco e Juliane nel quadro di ${x.sh}.`,`So dire com'è lo stile di ${x.sh}.`,`Ho risolto gli enigmi ragionando.`,`Ho fatto la scheda e i giochi con impegno.`]}
+function vQs(x){return [`Ho capito la storia di Marco e Juliane nel quadro di ${x.sh}.`,`So dire com'è lo stile di ${x.sh}.`,`Ho risolto gli enigmi ragionando.`,`Ho fatto i giochi con impegno.`]}
 function renderValRoom(x,h){
   const b=lab();b.val=b.val||{};const v=b.val[x.k]=b.val[x.k]||{a:{},like:"",mood:"",done:false};
-  const Q4=vQs(x),T=["La storia","Gli enigmi","La scheda","I giochi","Il lucchetto"];
+  const Q4=vQs(x),T=["La storia","Gli enigmi","I giochi"];
   h.innerHTML=`<div class="vroom"><h3>🪞 Come è andata nel quadro di ${esc(x.sh)}?</h3><p class="lead" style="margin:0 0 8px">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
     ${Q4.map((q,i)=>`<fieldset class="vq"><legend>${esc(q)}</legend><div class="vopts">${VSCALE.map(o=>`<button type="button" class="vop" data-q="q${i+1}" data-v="${o[0]}" aria-pressed="${v.a["q"+(i+1)]===o[0]}"><span>${o[1]}</span>${o[2]}</button>`).join("")}</div></fieldset>`).join("")}
     <fieldset class="vq"><legend>Cosa mi è piaciuto di più in questa stanza?</legend><div class="vopts">${T.map(t=>`<button type="button" class="vop" data-like="${t}" aria-pressed="${v.like===t}">${t}</button>`).join("")}</div></fieldset>
@@ -935,24 +971,64 @@ function askLock(pi,cb){
   o.querySelector("#lmback").addEventListener("click",()=>{LOCKCB=null;close();goDoor(pi)});
   renderLock();setTimeout(()=>{const pw=$("#pwin");if(pw&&!pw.disabled)pw.focus()},120);
 }
+function clueWin(x,j,c,bonus){
+  const b=lab(),g=b.clue[x.k]=b.clue[x.k]||[];g[j]=1;const first=!(b.miss[x.k+j]);L.save();if(first)L.add(1);if(bonus)L.add(1);L.ding();
+  const p=$("#cbox .cpanel");if(p)p.classList.add("cwin");
+  L.toast(`Pezzo ${c.n}: «${ESC[x.k].pw[j]}»`+(bonus?" · ⚡ stella bonus!":first?" · una stella!":""));
+  setTimeout(()=>{CLUE.open=null;renderRoom()},1500);
+}
+function clueMiss(x,j,msg){const b=lab(),S=L.state();L.buzz();b.miss[x.k+j]=(b.miss[x.k+j]||0)+1;S.err["Enigma: "+x.p]=(S.err["Enigma: "+x.p]||0)+1;L.save();const f=$("#cfb");if(f)f.innerHTML=L.fb("bad",msg[0],msg.slice(1));const p=$("#cbox .cpanel");if(p){p.classList.remove("cshake");void p.offsetWidth;p.classList.add("cshake")}}
+const MAGO=["🧙 «Ah ah! Credevi che fosse facile?»","🧙 «Il mio labirinto non si arrende così!»","🧙 «Vediamo se sei un vero esploratore d'arte…»","🧙 «Questo enigma l'ho inventato di notte!»"];
+let CTIMER=null;
 function renderClue(){
-  const x=Q[CUR],b=lab(),host=$("#cbox");if(CLUE.open==null){host.innerHTML="";return}
+  const x=Q[CUR],b=lab(),host=$("#cbox");clearInterval(CTIMER);if(CLUE.open==null){host.innerHTML="";return}
   const j=CLUE.open,c=CLUE.list[j],got=b.clue[x.k]||[];
   if(got[j]){host.innerHTML=L.fb("good",`Enigma ${c.n} risolto: il pezzo ${c.n} è «${ESC[x.k].pw[j]}».`,[]);return}
-  if(!c.order)c.order=L.shuffle(c.o.map((o,i)=>i));
-  host.innerHTML=`<div class="cpanel"><p class="eyebrow">${c.i} Enigma ${c.n} · ${esc(c.t)}</p><p class="cq">${c.html?c.q:esc(c.q)}</p><div class="opts">${c.order.map(i=>`<button class="opt" type="button" data-co="${i}">${esc(c.o[i].t)}</button>`).join("")}</div><div id="cfb"></div></div>`;
-  $$("[data-co]",host).forEach(bt=>bt.addEventListener("click",()=>{
-    const o=c.o[+bt.dataset.co],b=lab(),S=L.state();
-    if(o.ok){
-      bt.classList.add("right");$$("[data-co]",host).forEach(z=>z.disabled=true);
-      const g=b.clue[x.k]=b.clue[x.k]||[];g[j]=1;const first=!(b.miss[x.k+j]);L.save();if(first)L.add(1);L.ding();
-      L.toast(`Pezzo ${c.n}: «${ESC[x.k].pw[j]}»`+(first?" · una stella!":""));
-      setTimeout(()=>{CLUE.open=null;renderRoom()},1100);
+  const head=`<p class="eyebrow">${c.i} Enigma ${c.n} · ${esc(c.t)}</p><p class="mago">${MAGO[j]}</p>`;
+  if(c.ty==="quiz"){
+    if(!c.order)c.order=L.shuffle(c.o.map((o,i)=>i));if(!c.start)c.start=Date.now();
+    const left=Math.max(0,30-(Date.now()-c.start)/1000);
+    host.innerHTML=`<div class="cpanel">${head}<div class="sand"><span>⏳</span><i style="animation-duration:${left}s"></i><b id="sandt">${Math.ceil(left)}</b></div><p class="small" style="margin:0">Rispondi prima che finisca la sabbia: stella bonus!</p><p class="cq">${esc(c.q)}</p><div class="opts">${c.order.map(i=>`<button class="opt" type="button" data-co="${i}">${esc(c.o[i].t)}</button>`).join("")}</div><div id="cfb"></div></div>`;
+    CTIMER=setInterval(()=>{const t=$("#sandt");if(!t){clearInterval(CTIMER);return}const l=Math.max(0,30-(Date.now()-c.start)/1000);t.textContent=Math.ceil(l);if(!l){clearInterval(CTIMER);t.parentNode.classList.add("over");t.textContent="0"}},500);
+    $$("[data-co]",host).forEach(bt=>bt.addEventListener("click",()=>{const o=c.o[+bt.dataset.co];
+      if(o.ok){clearInterval(CTIMER);bt.classList.add("right");$$("[data-co]",host).forEach(z=>z.disabled=true);clueWin(x,j,c,(Date.now()-c.start)<30000&&!b.miss[x.k+j])}
+      else{bt.classList.add("wrong");bt.disabled=true;clueMiss(x,j,["Non è questo.",c.w?esc(c.w):""].filter(Boolean))}}));
+  }else if(c.ty==="colori"){
+    if(c.ph==="look"){
+      host.innerHTML=`<div class="cpanel">${head}<p class="cq">Guarda bene i colori del quadro «${esc(x.t)}»: tra poco spariscono!</p><div class="palbig">${c.pal.map(h=>`<i style="background:${h}"></i>`).join("")}</div><p class="count" id="cnt">5</p><div id="cfb"></div></div>`;
+      let n=5;CTIMER=setInterval(()=>{n--;const t=$("#cnt");if(!t){clearInterval(CTIMER);return}if(n>0)t.textContent=n;else{clearInterval(CTIMER);c.ph="pick";c.sel=[];renderClue()}},1000);
     }else{
-      bt.classList.add("wrong");bt.disabled=true;L.buzz();b.miss[x.k+j]=(b.miss[x.k+j]||0)+1;S.err["Enigma: "+x.p]=(S.err["Enigma: "+x.p]||0)+1;L.save();
-      $("#cfb").innerHTML=L.fb("bad","Non è questo.",[c.w?esc(c.w):""].filter(Boolean));
+      host.innerHTML=`<div class="cpanel">${head}<p class="cq">Tocca i <b>${c.pal.length}</b> colori che erano nel quadro. Attento ai colori intrusi del custode!</p><div class="swpick">${c.sw.map((h,i)=>`<button type="button" class="swb${c.sel.includes(i)?" on":""}" data-sw="${i}" style="background:${h}" aria-pressed="${c.sel.includes(i)}" aria-label="Colore ${i+1}"></button>`).join("")}</div><p class="small" style="text-align:center">Scelti: ${c.sel.length} su ${c.pal.length}</p><div class="row"><button class="btn" type="button" id="swok"${c.sel.length!==c.pal.length?" disabled":""}>Ecco i colori!</button><button class="btn ghost" type="button" id="swlook">👀 Fammeli rivedere</button></div><div id="cfb"></div></div>`;
+      $$("[data-sw]",host).forEach(bt=>bt.addEventListener("click",()=>{const i=+bt.dataset.sw,k=c.sel.indexOf(i);if(k>=0)c.sel.splice(k,1);else if(c.sel.length<c.pal.length)c.sel.push(i);L.tap&&L.tap();renderClue()}));
+      $("#swlook").addEventListener("click",()=>{c.ph="look";renderClue()});
+      $("#swok").addEventListener("click",()=>{const bad=c.sel.filter(i=>!c.pal.includes(c.sw[i]));
+        if(!bad.length){$$("[data-sw]",host).forEach(z=>{z.disabled=true;if(c.sel.includes(+z.dataset.sw))z.classList.add("right")});clueWin(x,j,c)}
+        else{bad.forEach(i=>{const z=host.querySelector(`[data-sw="${i}"]`);if(z)z.classList.add("wrong")});clueMiss(x,j,[`${bad.length===1?"Un colore è un intruso":bad.length+" colori sono intrusi"}! Toglilo e scegli ancora.`,"Se non ti ricordi, premi «Fammeli rivedere»."]);c.sel=c.sel.filter(i=>!bad.includes(i));setTimeout(()=>{if(CLUE.open===j)renderClue()},1400)}});
     }
-  }));
+  }else if(c.ty==="codice"){
+    const N=c.pc.length;
+    host.innerHTML=`<div class="cpanel">${head}<p class="cq">Il custode ha scritto il pezzo 3 con i suoi simboli segreti. Usa la chiave e scrivi le lettere!</p>
+      <div class="dec">${c.pc.split("").map((ch,i)=>`<div class="dcol"><span class="dsym">${c.map[ch]}</span><button type="button" class="dbox${c.fill[i]?" on":""}" data-db="${i}" aria-label="Lettera ${i+1}">${c.fill[i]||""}</button></div>`).join("")}</div>
+      <p class="small" style="text-align:center;margin:6px 0 2px">🗝️ La chiave del custode: tocca la lettera giusta</p>
+      <div class="keypad">${c.keyL.map(ch=>`<button type="button" class="kb" data-kl="${ch}"><span>${c.map[ch]}</span><b>${ch}</b></button>`).join("")}</div><div id="cfb"></div></div>`;
+    $$("[data-db]",host).forEach(bt=>bt.addEventListener("click",()=>{c.fill[+bt.dataset.db]="";renderClue()}));
+    $$("[data-kl]",host).forEach(bt=>bt.addEventListener("click",()=>{const k=[...Array(N).keys()].find(i=>!c.fill[i]);if(k==null)return;c.fill[k]=bt.dataset.kl;
+      if([...Array(N).keys()].every(i=>c.fill[i])){const word=c.fill.slice(0,N).join("");
+        if(word===c.pc){renderClue();clueWin(x,j,c)}
+        else{const wr=[...Array(N).keys()].filter(i=>c.fill[i]!==c.pc[i]);renderClue();wr.forEach(i=>{const z=host.querySelector(`[data-db="${i}"]`);if(z)z.classList.add("wrong")});clueMiss(x,j,["Il messaggio non ha senso…",`Guarda di nuovo i simboli sopra le caselle rosse e cerca nella chiave.`]);setTimeout(()=>{wr.forEach(i=>c.fill[i]="");if(CLUE.open===j)renderClue()},1300)}
+      }else renderClue()}));
+  }else{
+    const N=c.name.length,used=c.fill.map(f=>f.t);
+    host.innerHTML=`<div class="cpanel">${head}<p class="cq">Il custode ha mescolato le lettere del nome del pittore di questa stanza. Rimettile in ordine!</p>
+      <div class="ana">${[...Array(N).keys()].map(i=>`<button type="button" class="aslot${c.fill[i]?" on":""}" data-as="${i}" aria-label="Casella ${i+1}">${c.fill[i]?c.fill[i].ch:""}</button>`).join("")}</div>
+      <div class="ana tiles">${c.tiles.map((ch,t)=>`<button type="button" class="atile" data-at="${t}"${used.includes(t)?" disabled":""}>${ch}</button>`).join("")}</div><div id="cfb"></div></div>`;
+    $$("[data-as]",host).forEach(bt=>bt.addEventListener("click",()=>{const i=+bt.dataset.as;if(!c.fill[i])return;c.fill.splice(i,1);renderClue()}));
+    $$("[data-at]",host).forEach(bt=>bt.addEventListener("click",()=>{const t=+bt.dataset.at;c.fill.push({t,ch:c.tiles[t]});
+      if(c.fill.length===N){const w=c.fill.map(f=>f.ch).join("");
+        if(w===c.name){renderClue();$$(".aslot",host).forEach(z=>z.classList.add("right"));clueWin(x,j,c)}
+        else{renderClue();$$(".aslot",host).forEach(z=>z.classList.add("wrong"));clueMiss(x,j,["Non è il nome giusto!",`Suggerimento: comincia con la lettera ${c.name[0]}.`]);setTimeout(()=>{c.fill=[];if(CLUE.open===j)renderClue()},1300)}
+      }else renderClue()}));
+  }
 }
 function renderLock(){
   const x=Q[CUR],b=lab(),e=ESC[x.k],got=b.clue[x.k]||[],n=got.filter(Boolean).length,host=$("#lockbox");
