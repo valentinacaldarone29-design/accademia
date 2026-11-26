@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126a">
+<link rel="stylesheet" href="cuccioli.css?v=1126b">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -102,6 +102,17 @@ section.view{display:grid;gap:16px;min-width:0}
 @media (min-width:700px) and (hover:none){:root{--cw:60px}}
 
 /* spiegazioni */
+.pvwrap{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:14px}
+.pvcol{display:grid;justify-items:center;gap:4px;padding:8px 10px;border-radius:18px;background:var(--surface);border:2px solid var(--line);--cw:40px}
+.pvcol .stage{padding:4px 0}
+.pvcol.pvnow{border:3px dashed #3A86FF;background:#F4F8FF;--cw:50px}
+.pvh{margin:0;font:700 15px var(--font-display);color:#1F5FCC}
+.pvcol:not(.pvnow) .pvh{color:var(--muted)}
+.pvcol .dg,.pvcol .dvd span{font-size:30px}.pvcol .in{font-size:28px}.pvcol .sg{font-size:28px}.pvcol .dvline{font-size:32px}
+.pvcol:not(.pvnow) .dg,.pvcol:not(.pvnow) .in{font-size:24px}.pvcol:not(.pvnow) .sg{font-size:22px}.pvcol:not(.pvnow) .dvline{font-size:26px}
+span.in.snap{display:grid;place-items:center;background:var(--good-soft)}
+span.car.snap{display:grid;place-items:center}
+.pvcol .divbox .dvd span{width:var(--cw)}
 .provab{display:grid;gap:4px;background:#E8F0FF;border:3px dashed #3A86FF;border-radius:16px;padding:10px 14px;margin:0 0 12px;font-size:17px}
 .provab b{color:#1F5FCC}
 .btn.prova{background:#3A86FF;color:#fff}
@@ -385,7 +396,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126a"></script>
+<script src="cuccioli.js?v=1126b"></script>
 <script>
 (function(){
 "use strict";
@@ -612,7 +623,7 @@ function renderOp(){
     title="Moltiplicazione per due cifre";
     e.note=`Prima riga: ${e.a} × ${bu} (unità). Seconda riga: ${e.a} × ${bd} (decine), si comincia sotto le decine: nelle unità c'è il trattino.`;
   }
-  card.innerHTML=`${provaBanner()}<h3>${title}</h3>${e.note&&e.op==="mul"&&e.b>=10?`<p class="lead">${e.note}</p>`:""}<div class="stage">${grid(W,rows)}</div>
+  card.innerHTML=`${provaBanner()}<h3>${title}</h3>${e.note&&e.op==="mul"&&e.b>=10?`<p class="lead">${e.note}</p>`:""}${provaWrap(`<div class="stage">${grid(W,rows)}</div>`)}
     <div class="row"><button class="btn" type="button" id="op-check">Controlla</button><button class="btn ghost help" type="button" id="op-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button><button class="btn ghost" type="button" id="op-new">Nuova operazione</button></div><div id="op-fb"></div>`;
   wireInputs(card);
   const first=card.querySelector('[data-g="r"][data-p="0"],[data-g="p"][data-p="0"]');
@@ -783,13 +794,25 @@ function provaPlan(e){
 }
 function provaBtn(e){return provaPlan(e)?`<div class="row"><button class="btn prova" type="button" id="op-prova">🔁 Fai la prova in colonna</button></div>`:""}
 function provaBanner(){const P=EX&&EX.prova;if(!P)return "";return `<div class="provab"><b>🔁 La prova di ${P.f} = ${P.res}${P.rest?` con resto ${P.rest}`:""}</b><span>${P.why}</span></div>`}
-function provaGo(P,ex,exp,why,next){EX=Object.assign({},ex,{tries:0,done:false,prova:{f:P.f,res:P.res,rest:P.rest,exp,why,next,orig:P.orig}});if(EX.op==="div")return startDiv();renderOp();$("#op-card").scrollIntoView({behavior:"smooth",block:"start"})}
+function provaGo(P,ex,exp,why,next){EX=Object.assign({},ex,{tries:0,done:false,prova:{f:P.f,res:P.res,rest:P.rest,exp,why,next,orig:P.orig,snap:P.snap}});if(EX.op==="div")return startDiv();renderOp();$("#op-card").scrollIntoView({behavior:"smooth",block:"start"})}
+function provaSnap(){
+  const src=$("#op-card .pvnow")||$("#op-card .stage")||$("#op-card .divbox");if(!src)return "";
+  const c=src.cloneNode(true);c.classList.remove("pvcol","pvnow");
+  c.querySelectorAll(".pvh,.dstep,.dlog").forEach(x=>x.remove());
+  c.querySelectorAll("input").forEach(i=>{const sp=document.createElement("span");sp.className=i.className.replace(/\b(good|bad)\b/g,"")+" snap";sp.textContent=i.value;i.replaceWith(sp)});
+  c.querySelectorAll("[id]").forEach(x=>x.removeAttribute("id"));
+  return c.outerHTML;
+}
+function provaWrap(inner){
+  const P=EX&&EX.prova;if(!P)return inner;
+  return `<div class="pvwrap"><div class="pvcol"><p class="pvh">✏️ L'operazione</p>${P.snap}</div>${P.snap2?`<div class="pvcol"><p class="pvh">🔁 La prova · prima parte</p>${P.snap2}</div>`:""}<div class="pvcol pvnow"><p class="pvh">🔁 La prova${P.snap2?" · il resto":""}</p>${inner}</div></div>`;
+}
 function provaStart(){
-  const e=EX,P=provaPlan(e);if(!P)return;
+  const e=EX,P=provaPlan(e);if(!P)return;P.snap=provaSnap();
   P.rest=e.op==="div"?e.a%e.b:0;P.orig={op:e.op,a:e.a,b:e.b};
   provaGo(P,P.ex,P.exp,P.why,P.next);
 }
-function provaNext(){const P=EX.prova;if(!P||!P.next)return;const n=P.next;provaGo(P,n.ex,n.exp,n.why,null)}
+function provaNext(){const P=EX.prova;if(!P||!P.next)return;const n=P.next,s2=provaSnap();provaGo(P,n.ex,n.exp,n.why,null);EX.prova.snap2=s2;renderOp()}
 function provaVerdict(res,rest){
   const P=EX.prova,ok=res===P.exp&&!rest;
   if(P.next)return `${res} è il primo pezzo della prova. Ora manca l'ultimo passaggio: aggiungere il resto.`;
@@ -798,7 +821,7 @@ function provaVerdict(res,rest){
 function provaEnd(res,st,steps,rest){
   const P=EX.prova,fb=$("#op-fb");
   if(P.next){fb.innerHTML=fbHTML("good",`Giusto: ${EX.a} ${sym(EX.op)} ${EX.b} = ${res}`,[provaVerdict(res,rest)],steps)+`<div class="row"><button class="btn" type="button" id="op-prova2">Continua la prova ➜</button></div>`;ding();return}
-  fb.innerHTML=fbHTML("good",`Prova riuscita! ${st===2?"Due stelle!":"Una stella!"}`,[`${EX.a} ${sym(EX.op)} ${EX.b} = ${res}${rest?` con resto ${rest}`:""}.`,provaVerdict(res,rest)],steps)+`<div class="row"><button class="btn" type="button" id="op-new">Nuova operazione</button></div>`;
+  fb.innerHTML=fbHTML("good",`Prova riuscita! ${st===2?"Due stelle!":"Una stella!"}`,[`${EX.a} ${sym(EX.op)} ${EX.b} = ${res}${rest?` con resto ${rest}`:""}.`,provaVerdict(res,rest)],steps)+(EX.op==="div"?"":`<div class="row"><button class="btn" type="button" id="op-new">Nuova operazione</button></div>`);
   ding();done("prova",st);
 }
 
@@ -824,8 +847,8 @@ function renderDiv(fbh){
       <div class="row"><button class="btn" type="button" id="dv-check">Controlla il passaggio</button><button class="btn ghost help" type="button" id="dv-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button></div></div>`;
   }
   $("#op-card").innerHTML=`${provaBanner()}<h3>Divisione con una cifra al divisore</h3><p class="lead">Filastrocca: quante volte ci sta? · moltiplico · sottraggo · abbasso.</p>
-    <div class="divbox"><div class="dvline"><div class="dvd">${dd}</div><div class="dvs"><div class="ds">${D.d}</div><div class="qq">${qq}</div></div></div>
-    ${D.log.length?`<ol class="dlog">${D.log.map(l=>`<li>${l}</li>`).join("")}</ol>`:""}${step}</div>
+    ${provaWrap(`<div class="divbox"><div class="dvline"><div class="dvd">${dd}</div><div class="dvs"><div class="ds">${D.d}</div><div class="qq">${qq}</div></div></div>
+    ${D.log.length?`<ol class="dlog">${D.log.map(l=>`<li>${l}</li>`).join("")}</ol>`:""}${step}</div>`)}
     <div id="op-fb">${fbh||""}</div>${D.fin?`<div class="row"><button class="btn" type="button" id="op-new">Nuova divisione</button></div>`:`<div class="row"><button class="btn ghost" type="button" id="op-new">Nuova divisione</button></div>`}`;
   const card=$("#op-card");wireInputs(card);
   const dq=$("#dq");if(dq){
