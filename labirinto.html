@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126f">
+<link rel="stylesheet" href="cuccioli.css?v=1126g">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -587,7 +587,7 @@ nav .tabs a.on,nav .tabs a[aria-current="page"]{background:linear-gradient(#FF6F
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126f"></script>
+<script src="cuccioli.js?v=1126g"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -864,19 +864,19 @@ function homeSchede(){homePanels();SCHROOM=false;const pn=$("#sec-schede .panel"
 function stState(x){const b=lab(),sh=SCH.find(s=>s.k===x.k),S=L.state(),bv=S.best["vf_"+x.k],bc=S.best["col_"+x.k],nc=(b.clue[x.k]||[]).filter(Boolean).length;
   return{storia:!!b.look[x.k],enigmi:nc,scheda:sh&&shDone(sh),giochi:(bv!=null?1:0)+(bc!=null?1:0),porta:!!b.open[x.k],valuta:!!(b.val&&b.val[x.k]&&b.val[x.k].done)}}
 function wallHTML(x,T){const A=ROOMART[x.k],[y0,y1]=A.crop,H=y1-y0,W=1264;
-  return `<div class="wall" style="aspect-ratio:${W}/${H}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${T.length===4?`<div class="wfr wpic" aria-hidden="true" style="left:${A.frames[2][0]/W*100}%;top:${(A.frames[2][1]-y0)/H*100}%;width:${(A.frames[2][2]-A.frames[2][0])/W*100}%;height:${(A.frames[2][3]-A.frames[2][1])/H*100}%;background:${x.g}"><b>${esc(x.t)}</b></div>`:""}${T.map((t,j)=>{const f=A.frames[T.length===4?[0,1,3,4][j]:j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
+  return `<div class="wall" style="aspect-ratio:${W}/${H}"><img class="wimg" src="${A.wall}" alt="La sala del quadro con cinque cornici dorate" style="top:${-y0/H*100}%;height:${W/H*100}%">${false?`<div class="wfr wpic" aria-hidden="true" style="left:${A.frames[2][0]/W*100}%;top:${(A.frames[2][1]-y0)/H*100}%;width:${(A.frames[2][2]-A.frames[2][0])/W*100}%;height:${(A.frames[2][3]-A.frames[2][1])/H*100}%;background:${x.g}"><b>${esc(x.t)}</b></div>`:""}${T.map((t,j)=>{const f=A.frames[j];return `<button class="wfr${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}" style="left:${f[0]/W*100}%;top:${(f[1]-y0)/H*100}%;width:${(f[2]-f[0])/W*100}%;height:${(f[3]-f[1])/H*100}%"><span class="wn">${j+1}</span><span class="wi">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`}).join("")}</div>`}
 function renderRoom(){
   const x=Q[CUR],b=lab(),done=!!b.open[x.k],e=ESC[x.k],ss=stState(x);
   if(!done&&!b.t0[x.k]){b.t0[x.k]=Date.now();L.save()}
   if(!CLUE||CLUE.k!==x.k)CLUE={k:x.k,list:clues(x),open:null};
   if(!STN)STN=!ss.storia?"storia":ss.enigmi<4?"enigmi":"giochi";
-  const T=[["storia","📖","La storia",ss.storia?"osservato":"leggi e guarda",ss.storia],["enigmi","🧩","Gli enigmi",ss.enigmi+" su 4",ss.enigmi===4],["giochi","🎮","I giochi",ss.giochi+" su 2",ss.giochi===2],["valuta","🪞","Come è andata?",ss.valuta?"fatto":"da fare",ss.valuta]];
+  const T=[["storia","📖","La storia",ss.storia?"osservato":"leggi e guarda",ss.storia],["enigmi","🧩","Gli enigmi",ss.enigmi+" su 4",ss.enigmi===4],["giochi","🎮","I giochi",ss.giochi+" su 2",ss.giochi===2],["valuta","🪞","Come è andata?",ss.valuta?"fatto":"da fare",ss.valuta],["porta","🔒","Il lucchetto",ss.porta?"aperto!":"la password",ss.porta]];
   homeSchede();
   $("#room").innerHTML=`<div class="row backmaze"><button class="btn ghost" type="button" id="bk">⬅ Torna nel labirinto</button></div>
   <div class="qcard" style="--rc:${x.c};--rs:${x.s};--rg:${x.g}">
     <div class="qhead"><span class="fr" aria-hidden="true"></span><div><p>Sei dentro il quadro · stanza ${CUR+1} di 7 · ${esc(x.cap)}</p><h3>${esc(x.t)}</h3><p>${esc(x.p)} · ${esc(x.y)}</p></div></div>
     <div class="qbody">
-      <div class="mission"><b>🗝️ Missione</b> Esplora la stanza: leggi la storia, risolvi i 4 enigmi del custode-mago per trovare i pezzi della password e fai i giochi di ${esc(x.sh)}. La password ti servirà per aprire la porta dopo!</div>
+      <div class="mission"><b>🗝️ Missione</b> Esplora la stanza: leggi la storia, risolvi i 4 enigmi del custode-mago per trovare i pezzi della password e fai i giochi di ${esc(x.sh)}. Poi scrivi la password nel lucchetto e corri alla porta dopo!</div>
       ${ROOMART[x.k]&&ROOMART[x.k].wall?wallHTML(x,T):""}<div class="stations"${ROOMART[x.k]&&ROOMART[x.k].wall?" hidden":""}>${T.map((t,j)=>`<button class="stn${t[4]?" ok":""}" type="button" data-stn="${t[0]}" aria-pressed="${STN===t[0]}"><span class="n">${j+1}</span><span class="si" aria-hidden="true">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div>
       <div class="stp" id="stp"></div>
     </div></div>`;
@@ -892,7 +892,7 @@ function renderRoom(){
     $("#lk").addEventListener("click",()=>{const b=lab();if(b.look[x.k])return;b.look[x.k]=1;L.save();L.add(1);L.ding();L.toast("Occhio da artista: una stella!");renderRoom()});
   }else if(STN==="enigmi"){
     const got=b.clue[x.k]||[];
-    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4?`<div class="mission" style="margin-top:12px">🗝️ Hai tutti i pezzi della password: <b>${e.pw.map((p,k)=>(k+1)+". "+p).join(" · ")}</b>. Ricordali! Ti serviranno per aprire ${CUR<6?"la porta "+(CUR+2):"l'uscita"}.</div>`+(done?"":`<div class="row"><button class="btn" type="button" id="gonext">🏃 Vai ${CUR<6?"alla porta "+(CUR+2):"all'uscita"}</button></div>`):"");
+    h.innerHTML=`<div class="enigmi">${CLUE.list.map((c,j)=>`<button class="enigma${got[j]?" got":""}" type="button" data-cl="${j}" aria-expanded="${CLUE.open===j}"><span class="ei" aria-hidden="true">${got[j]?"✅":c.i}</span><b>Enigma ${c.n}</b><small>${esc(c.t)}</small><span class="piece">${got[j]?`pezzo ${c.n}: <b>${e.pw[j]}</b>`:"pezzo ?"}</span></button>`).join("")}</div><div id="cbox"></div>`+(got.filter(Boolean).length===4?`<div class="mission" style="margin-top:12px">🗝️ Hai tutti i pezzi della password: <b>${e.pw.map((p,k)=>(k+1)+". "+p).join(" · ")}</b>. Mettili nel lucchetto della quinta cornice per aprire ${CUR<6?"la porta "+(CUR+2):"l'uscita"}.</div>`+(done?"":`<div class="row"><button class="btn" type="button" data-gost="porta">🔒 Vai al lucchetto</button></div>`):"");
     {const gn=$("#gonext");if(gn)gn.addEventListener("click",()=>{const t=CUR+1;leaveRoom();setTimeout(()=>goDoor(t),500)})}
     $$("[data-cl]").forEach(bt=>bt.addEventListener("click",()=>{const j=+bt.dataset.cl;CLUE.open=CLUE.open===j?null:j;renderRoom();const cb=$("#cbox");if(cb&&CLUE.open!=null)cb.scrollIntoView({behavior:"smooth",block:"nearest"})}));
     renderClue();
@@ -1034,11 +1034,11 @@ function renderLock(){
   const x=Q[CUR],b=lab(),e=ESC[x.k],got=b.clue[x.k]||[],n=got.filter(Boolean).length,host=$("#lockbox");
   if(b.open[x.k]&&LOCKCB){const cb=LOCKCB;LOCKCB=null;host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Password giusta: «${PW(x.k)}»! La porta si apre. 🗝️`,[]);setTimeout(cb,1500);return}
   if(b.open[x.k]){
-    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">🏃 Corri alla porta ${CUR+2}</button><button class="btn ghost" type="button" data-gost="scheda">Prima finisco scheda e giochi</button></div>`:`<div class="row"><button class="btn" type="button" id="nx2">🏆 Corri all'uscita!</button></div>`);
+    host.innerHTML=`<div class="dooropen" aria-hidden="true"><span class="leaf"></span></div>`+L.fb("good",`Porta aperta! La password era «${PW(x.k)}». 🗝️`,[esc(x.w)].concat(b.time[x.k]?[`Sei uscito dalla stanza in ${mmss(b.time[x.k])}.`]:[]))+(CUR<Q.length-1?`<div class="row"><button class="btn" type="button" id="nx">🏃 Corri alla porta ${CUR+2}</button><button class="btn ghost" type="button" data-gost="giochi">Prima finisco i giochi</button></div>`:`<div class="row"><button class="btn" type="button" id="nx2">🏆 Corri all'uscita!</button></div>`);
     const n2=$("#nx2");if(n2)n2.addEventListener("click",()=>{leaveRoom();setTimeout(()=>goDoor(7),500)});
     const nx=$("#nx");if(nx)nx.addEventListener("click",()=>{const t=CUR+1;leaveRoom();setTimeout(()=>goDoor(t),500)});return}
   const tries=b.tries[x.k]||0;
-  host.innerHTML=`<h4>🔒 Il lucchetto ${LOCKCB?(CUR<6?"della porta "+(CUR+2):"dell'uscita"):"della porta "+(CUR+1)}</h4>
+  host.innerHTML=`<h4>🔒 Il lucchetto ${CUR<6?"della porta "+(CUR+2):"dell'uscita"}</h4>
     <div class="slots" aria-label="I pezzi trovati">${e.pw.map((p,i)=>`<span class="slot${got[i]?" on":""}"><small>${i+1}</small>${got[i]?p:"?"}</span>`).join("")}</div>
     <p class="hint">${n<4?`Hai trovato ${n} pezzi su 4. Risolvi gli enigmi che mancano.`:"Hai tutti i pezzi! Mettili in ordine, 1-2-3-4, e scrivi la password."}</p>
     <form class="lockf" id="lockf" autocomplete="off"><label class="l" for="pwin">Password</label><input id="pwin" class="pwin" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" maxlength="20" placeholder="scrivi qui" ${n<4?"disabled":""}><button class="btn" type="submit" ${n<4?"disabled":""}>Apri la porta</button></form>
