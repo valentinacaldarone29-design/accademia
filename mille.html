@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1126g">
+<link rel="stylesheet" href="cuccioli.css?v=1126h">
 <style>
 :root{
   /* Layout: banco da lavoro per la LIM e per il telefono. Testata con il 1000 a colori (uM, c, d, u),
@@ -266,6 +266,12 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 .tick b{margin-top:4px;font:700 11px var(--font-body);color:var(--muted);font-variant-numeric:tabular-nums}
 .arc{position:absolute;top:30px;height:30px;border:3px solid var(--accent);border-bottom:0;border-radius:999px 999px 0 0;opacity:.8}
 .hop{position:absolute;top:52px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--u);border:3px solid var(--ink);transition:left .45s cubic-bezier(.3,1.4,.5,1)}
+.hop{cursor:grab;touch-action:none;z-index:2}
+.hop::before{content:"";position:absolute;inset:-14px;border-radius:50%}
+.hop.drag{cursor:grabbing;transition:none;transform:scale(1.25);box-shadow:0 0 0 6px rgba(255,210,63,.6)}
+.track{cursor:pointer;touch-action:pan-y}
+.tick b{cursor:pointer}
+.shint{margin:-4px 0 6px;color:var(--muted)}
 .sstat{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline}
 .sstat b{font:700 44px/1 var(--font-display);font-variant-numeric:tabular-nums}
 .trail{color:var(--muted);word-break:break-word;font-variant-numeric:tabular-nums}
@@ -691,6 +697,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
     <p class="eyebrow">Attività 2 · Movimento</p>
     <h2>Salti da cento</h2>
     <p class="lead" id="s-lead">Fai saltare il pallino sulla linea. Ogni salto vale 100.</p>
+    <p class="small shint">👆 Trascina il pallino (o tocca un numero della linea) per partire da dove ti chiede la sfida.</p>
     <div class="lvl" id="s-lvl" role="group" aria-label="Grandezza del salto"><button type="button" data-s="100" aria-pressed="true">Salti da 100</button><button type="button" data-s="1000" aria-pressed="false">Salti da 1000</button></div>
     <div class="track" id="track"><div class="line"></div><div id="arcs"></div><div class="hop" id="hop" style="left:0%"></div></div>
     <div class="sstat"><span>Sei sul numero <b id="s-pos">0</b></span><span>Salti fatti <b id="s-count">0</b></span></div>
@@ -761,7 +768,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1126g"></script>
+<script src="cuccioli.js?v=1126h"></script>
 <script>
 (function(){
 'use strict';
@@ -1069,6 +1076,23 @@ function jump(d){
 $('#s-fwd').addEventListener('click',function(){jump(STEP)});
 $('#s-back').addEventListener('click',function(){jump(-STEP)});
 $('#s-reset').addEventListener('click',function(){pos=0;trail=[0];renderS()});
+/* il pallino si sposta: trascinandolo o toccando la linea si sceglie il numero di partenza */
+function setStart(v){
+  pos=v;trail=[v];renderS();
+  var fb=$('#q-fb');
+  if(q&&!answered&&v===q.s){fb.className='fb good';fb.textContent='Sei sul '+v+', il punto di partenza. Ora fai i salti '+(q.dir>0?'in avanti':'indietro')+'!'}
+}
+function nearest(clientX){var r=$('#track').getBoundingClientRect(),f=(clientX-r.left)/r.width;f=Math.max(0,Math.min(1,f));return Math.round(f*10)*STEP}
+(function(){
+  var hop=$('#hop'),track=$('#track'),drag=false,moved=false;
+  hop.setAttribute('role','slider');hop.setAttribute('tabindex','0');hop.setAttribute('aria-label','Pallino: trascinalo sul numero di partenza');
+  hop.addEventListener('pointerdown',function(e){drag=true;moved=false;hop.setPointerCapture(e.pointerId);hop.classList.add('drag');e.preventDefault()});
+  hop.addEventListener('pointermove',function(e){if(!drag)return;moved=true;var v=nearest(e.clientX);hop.style.left=(v/(STEP*10)*100)+'%';$('#s-pos').textContent=v});
+  function up(e){if(!drag)return;drag=false;hop.classList.remove('drag');setStart(nearest(e.clientX))}
+  hop.addEventListener('pointerup',up);hop.addEventListener('pointercancel',function(){drag=false;hop.classList.remove('drag');renderS()});
+  track.addEventListener('click',function(e){if(e.target===hop||moved){moved=false;return}setStart(nearest(e.clientX))});
+  hop.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?STEP:e.key==='ArrowLeft'?-STEP:0;if(!d)return;e.preventDefault();var v=pos+d;if(v>=0&&v<=STEP*10)setStart(v)});
+})();
 
 var q=null,answered=false;
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
