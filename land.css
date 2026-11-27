@@ -52,6 +52,7 @@
 
 /* ---- un'attività per volta ---- */
 .lp-off{display:none!important}
+@media (orientation:landscape) and (min-width:800px){.lp-bar{padding-right:min(250px,28vw)!important}}
 .lp-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:10px 16px;border-radius:18px;background:#FFF4D6;border:2px solid #F2C94C;font:700 17px var(--font-display,system-ui);color:#5A3A00}
 .lp-bar .lp-dots{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
 .lp-bar .lp-dots button{width:30px;height:30px;border-radius:50%;border:2px solid #E0B43C;background:#fff;font:700 13px var(--font-display,system-ui);color:#8A6100;cursor:pointer;padding:0}

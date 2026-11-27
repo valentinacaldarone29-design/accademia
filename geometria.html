@@ -1,0 +1,545 @@
+<!doctype html><html lang="it" data-theme="light"><head><meta charset="utf-8"><meta name="color-scheme" content="light only"><meta http-equiv="Cache-Control" content="no-cache"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#5B3F99"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="img/app-192.png"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Il Regno della Geometria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css?v=1127l">
+<link rel="stylesheet" href="land.css?v=1127l">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* colori della geometria: blu righello, arancio compasso */
+:root{--gb:#2F6FDE;--gb-d:#1B4BA8;--gb-soft:#E4EEFF;--go:#F2862E;--go-soft:#FFEBD9}
+.gsv{width:100%;height:auto;display:block}
+.scard .emo .gsv{width:min(240px,60vw)}
+.scard .emo{line-height:0}
+.dcards{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.dc{display:grid;gap:6px;align-content:start;padding:12px;border-radius:18px;border:2px solid var(--gb);background:var(--surface)}
+.dc .gsv{background:var(--gb-soft);border-radius:12px}
+.dc b{font:400 26px/1.05 var(--font-hand);color:var(--gb-d)}
+.dc span{font-size:15px;color:var(--muted)}
+.dc .num{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:14px;font-weight:700;color:var(--ink)}
+.rule{margin:10px 0 0;padding:10px 14px;border-radius:14px;background:var(--go-soft);border-left:6px solid var(--go);font-weight:700}
+/* griglia a quadretti */
+.qg{display:grid;gap:0;justify-content:center;margin:10px auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.qg i{width:var(--q,34px);height:var(--q,34px);border:1px solid #BFD2F5;background:#fff;display:block}
+.qg i.on{background:var(--gb);border-color:var(--gb-d)}
+.qg i.fix{background:var(--go);border-color:#C4621A}
+.qg i.ok{background:#2E9E5B;border-color:#1E7A45}
+.qg i.ko{background:#E5484D;border-color:#B03030}
+.qg.tap i{cursor:pointer}
+.qg i.ax{border-left:4px dashed #D2325F}
+.cnt{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:6px 0}
+.cnt span{padding:8px 16px;border-radius:14px;background:var(--surface2);font:700 18px var(--font-display)}
+.cnt span b{color:var(--gb-d);font-size:22px}
+.ask{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:center;align-items:center;margin:8px 0}
+.ask label{display:flex;align-items:center;gap:8px;font:700 18px var(--font-display)}
+.ask input{width:90px;min-height:50px;border-radius:12px;border:2px solid var(--gb);font:700 24px var(--font-display);text-align:center}
+.target{display:inline-block;padding:8px 16px;border-radius:14px;background:var(--gb-soft);color:var(--gb-d);font:700 20px var(--font-display)}
+/* angolo da costruire */
+.angbox{display:grid;justify-items:center;gap:8px}
+.angbox svg{width:min(420px,90vw);touch-action:none;background:var(--gb-soft);border-radius:18px}
+.angctl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.angctl button{min-width:64px;min-height:54px;font-size:22px}
+.tabs a .ti{margin-right:4px}
+</style>
+<link rel="stylesheet" href="gioco.css?v=1">
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <path d="M30 140 L100 30 L170 140 Z" fill="none" stroke="#2F6FDE" stroke-width="6" stroke-linejoin="round" opacity=".8"/>
+    <rect x="70" y="90" width="44" height="44" fill="none" stroke="#F2862E" stroke-width="6" opacity=".8"/>
+    <circle cx="150" cy="50" r="22" fill="none" stroke="#2E9E5B" stroke-width="6" opacity=".8"/>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Matematica · Geometria · Classe terza</p>
+        <h1>Il Regno della Geometria</h1>
+        <p class="lead">Linee, rette, angoli, poligoni, quadretti, simmetrie e solidi.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Esploratore: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Argomenti" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#linee"><span class="ti" aria-hidden="true">〰️</span>Le linee</a>
+    <a href="#rette"><span class="ti" aria-hidden="true">📏</span>Rette</a>
+    <a href="#angoli"><span class="ti" aria-hidden="true">📐</span>Angoli</a>
+    <a href="#poligoni"><span class="ti" aria-hidden="true">🔷</span>Poligoni</a>
+    <a href="#misure"><span class="ti" aria-hidden="true">🟦</span>Perimetro e area</a>
+    <a href="#simmetria"><span class="ti" aria-hidden="true">🦋</span>Simmetria</a>
+    <a href="#solidi"><span class="ti" aria-hidden="true">🧊</span>Solidi</a>
+    <a href="#valuta"><span class="ti" aria-hidden="true">🪞</span>Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE (solo maestra) -->
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda attività · Geometria in terza</p>
+    <h2>Il Regno della Geometria</h2>
+    <p class="rule">👩‍🏫 Per scegliere gli argomenti da presentare usa il riquadro <b>«Sezioni per i bambini»</b> (a sinistra, o sotto le sezioni con il tablet in verticale): tocca un argomento per spegnerlo o riaccenderlo. Vale per tutta la classe. I bambini vedono solo gli argomenti accesi, in un percorso numerato.</p>
+    <dl class="facts" style="margin-top:12px">
+      <div><dt>Metodologia attiva</dt><dd>Gamification con Cooperative Learning e Outdoor Education: si scopre con il corpo e con oggetti veri, poi ci si allena nell'app a coppie (uno tocca, l'altro spiega perché).</dd></div>
+      <div><dt>Argomenti</dt><dd>Le linee (rette, curve, spezzate, miste; aperte e chiuse), rette, semirette e segmenti, rette parallele, incidenti e perpendicolari, gli angoli, i poligoni, perimetro e area contando i quadretti, la simmetria, i solidi.</dd></div>
+      <div><dt>In ogni argomento</dt><dd>«Scopri» con disegni e una regola da ricordare, poi il gioco a carte (8 carte, fino a 3 stelle). In angoli, quadretti e simmetria c'è anche un'attività da costruire con le mani.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Arte (simmetrie, mosaici di quadretti), Scienze motorie (linee e angoli con il corpo), Tecnologia (solidi negli oggetti di casa), Geografia (percorsi sul reticolo).</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>Il messaggio del Re Righello</h3>
+    <p>La maestra entra con una busta sigillata: «Il Re Righello ha perso il suo regno. Per ritrovarlo dobbiamo superare sette prove: una per ogni argomento». Ogni prova superata in classe fa accendere una torre del castello alla lavagna.</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step (per ogni argomento)</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>8</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Con il corpo</h3><p>Linee: camminare dritti, a zig-zag, in curva. Angoli: braccia aperte poco (acuto), a squadra (retto), tanto (ottuso), in fila (piatto). Simmetria: lo specchio a coppie.</p></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>Scopri</h3><p>Alla LIM si apre «Scopri»: si guardano i disegni e si legge la regola da ricordare.</p></div></li>
+      <li class="lstep"><div class="mins"><b>12</b><small>min</small></div><div><span class="chip">Gioco</span><h3>A coppie con l'app</h3><p>Il gioco a carte e l'attività da costruire: uno tocca la risposta, l'altro dice il perché. Poi ci si scambia.</p></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Manuale</span><h3>Sul quaderno a quadretti</h3><p>Si disegna una figura e si contano perimetro e area, oppure si completa una figura simmetrica.</p></div></li>
+    </ol>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, badge e imprevisti</h3>
+      <ul class="tight">
+        <li><b>Giochi a carte:</b> fino a 3 stelle ciascuno, migliorando il proprio record.</li>
+        <li><b>Costruisci:</b> una stella per ogni angolo, figura o simmetria giusta.</li>
+        <li><b>Badge:</b> uno per ogni argomento e «Geometra riflessivo» per l'autovalutazione.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti a esplorare?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>Geometria in palestra</h3>
+    <ul class="tight">
+      <li><b>Le linee con la corda:</b> a squadre si forma con una corda la linea chiamata dalla maestra (chiusa, spezzata, curva aperta…).</li>
+      <li><b>Angoli con le braccia:</b> la maestra dice un angolo e tutti lo fanno con le braccia; chi sbaglia fa un giro su se stesso (l'angolo giro!).</li>
+      <li><b>Poligoni umani:</b> 3, 4, 5 o 6 bambini diventano i vertici di un poligono e una corda fa i lati.</li>
+      <li><b>Lo specchio:</b> a coppie, uno fa un movimento e l'altro lo copia come in uno specchio.</li>
+    </ul></div>
+</section>
+
+<!-- LE LINEE -->
+<section class="view" id="sec-linee" data-lp="on" hidden>
+  <div class="panel" data-lpt="Scopri le linee">
+    <p class="eyebrow">Scopri</p>
+    <h2>Le linee</h2>
+    <div class="dcards" id="d-linee"></div>
+    <p class="rule">Una linea può essere <b>retta, curva, spezzata o mista</b>. Può essere <b>aperta</b> o <b>chiusa</b>, <b>semplice</b> o <b>intrecciata</b>.</p>
+  </div>
+  <div class="panel" data-lpt="Gioca: che linea è?">
+    <p class="eyebrow">Gioca</p>
+    <h2>Che linea è?</h2>
+    <div id="sort-linee"></div>
+  </div>
+</section>
+
+<!-- RETTE -->
+<section class="view" id="sec-rette" data-lp="on" hidden>
+  <div class="panel" data-lpt="Retta, semiretta, segmento">
+    <p class="eyebrow">Scopri</p>
+    <h2>Retta, semiretta, segmento</h2>
+    <div class="dcards" id="d-rette"></div>
+    <p class="rule">La <b>retta</b> non ha inizio né fine. La <b>semiretta</b> ha un inizio ma non una fine. Il <b>segmento</b> ha un inizio e una fine: si può misurare!</p>
+  </div>
+  <div class="panel" data-lpt="Come stanno due rette">
+    <p class="eyebrow">Scopri</p>
+    <h2>Come stanno due rette</h2>
+    <div class="dcards" id="d-pos"></div>
+    <p class="rule">Le rette <b>parallele</b> non si incontrano mai. Le rette <b>incidenti</b> si incontrano in un punto. Le <b>perpendicolari</b> si incontrano formando 4 angoli retti.</p>
+  </div>
+  <div class="panel" data-lpt="Gioca con le rette">
+    <p class="eyebrow">Gioca</p>
+    <h2>Rette in gioco</h2>
+    <div id="sort-rette"></div>
+  </div>
+</section>
+
+<!-- ANGOLI -->
+<section class="view" id="sec-angoli" data-lp="on" hidden>
+  <div class="panel" data-lpt="Scopri gli angoli">
+    <p class="eyebrow">Scopri</p>
+    <h2>Gli angoli</h2>
+    <div class="dcards" id="d-angoli"></div>
+    <p class="rule">Un angolo è la parte di piano tra due semirette che partono dallo stesso punto, il <b>vertice</b>. Per riconoscere l'angolo <b>retto</b> usa la squadra o l'angolo di un foglio.</p>
+  </div>
+  <div class="panel" data-lpt="Costruisci l'angolo">
+    <p class="eyebrow">Costruisci</p>
+    <h2>Apri l'angolo</h2>
+    <p class="lead">Ruota il lato rosso con i pulsanti (o trascinalo) fino a formare l'angolo richiesto.</p>
+    <div id="ang-build"></div>
+  </div>
+  <div class="panel" data-lpt="Gioca: che angolo è?">
+    <p class="eyebrow">Gioca</p>
+    <h2>Che angolo è?</h2>
+    <div id="sort-angoli"></div>
+  </div>
+</section>
+
+<!-- POLIGONI -->
+<section class="view" id="sec-poligoni" data-lp="on" hidden>
+  <div class="panel" data-lpt="Scopri i poligoni">
+    <p class="eyebrow">Scopri</p>
+    <h2>I poligoni</h2>
+    <div class="dcards" id="d-poli"></div>
+    <p class="rule">Un <b>poligono</b> è una figura chiusa da una linea <b>spezzata</b>, chiusa e semplice. Ha <b>lati, vertici e angoli</b>: tanti lati quanti vertici e angoli.</p>
+  </div>
+  <div class="panel" data-lpt="Gioca con i poligoni">
+    <p class="eyebrow">Gioca</p>
+    <h2>Poligono o no? Come si chiama?</h2>
+    <div id="sort-poli"></div>
+  </div>
+</section>
+
+<!-- PERIMETRO E AREA -->
+<section class="view" id="sec-misure" data-lp="on" hidden>
+  <div class="panel" data-lpt="Perimetro e area">
+    <p class="eyebrow">Scopri</p>
+    <h2>Perimetro e area con i quadretti</h2>
+    <div class="dcards" id="d-misure"></div>
+    <p class="rule">Il <b>perimetro</b> è il contorno: conto i lati dei quadretti sul bordo. L'<b>area</b> è la superficie: conto i quadretti dentro la figura.</p>
+  </div>
+  <div class="panel" data-lpt="Conta perimetro e area">
+    <p class="eyebrow">Conta</p>
+    <h2>Quanto misura questa figura?</h2>
+    <div id="pa-count"></div>
+  </div>
+  <div class="panel" data-lpt="Costruisci la figura">
+    <p class="eyebrow">Costruisci</p>
+    <h2>Costruisci la figura</h2>
+    <div id="pa-build"></div>
+  </div>
+</section>
+
+<!-- SIMMETRIA -->
+<section class="view" id="sec-simmetria" data-lp="on" hidden>
+  <div class="panel" data-lpt="Scopri la simmetria">
+    <p class="eyebrow">Scopri</p>
+    <h2>La simmetria</h2>
+    <div class="dcards" id="d-sim"></div>
+    <p class="rule">Una figura è <b>simmetrica</b> se, piegandola lungo una linea, le due metà si sovrappongono perfettamente. Quella linea è l'<b>asse di simmetria</b>.</p>
+  </div>
+  <div class="panel" data-lpt="Completa allo specchio">
+    <p class="eyebrow">Costruisci</p>
+    <h2>Completa la figura allo specchio</h2>
+    <div id="sim-build"></div>
+  </div>
+  <div class="panel" data-lpt="Gioca: è simmetrica?">
+    <p class="eyebrow">Gioca</p>
+    <h2>È simmetrica?</h2>
+    <div id="sort-sim"></div>
+  </div>
+</section>
+
+<!-- SOLIDI -->
+<section class="view" id="sec-solidi" data-lp="on" hidden>
+  <div class="panel" data-lpt="Scopri i solidi">
+    <p class="eyebrow">Scopri</p>
+    <h2>I solidi</h2>
+    <div class="dcards" id="d-solidi"></div>
+    <p class="rule">I solidi occupano spazio: hanno lunghezza, larghezza e altezza. I solidi con le superfici tutte piatte <b>non rotolano</b>; quelli con una superficie curva <b>rotolano</b>.</p>
+  </div>
+  <div class="panel" data-lpt="Gioca con i solidi">
+    <p class="eyebrow">Gioca</p>
+    <h2>Solidi intorno a noi</h2>
+    <div id="sort-solidi"></div>
+  </div>
+</section>
+
+<!-- VALUTAZIONE -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andata nel Regno della Geometria?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Matematica.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js?v=1127l"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,$=L.$,$$=L.$$,esc=L.esc,CQ=window.Cuccioli;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[Math.floor(Math.random()*a.length)],rad=d=>d*Math.PI/180;
+const B="#2F6FDE",O="#F2862E",R="#D2325F",K="#1D3640";
+const sv=(inner,w,h)=>`<svg class="gsv" viewBox="0 0 ${w||120} ${h||80}" aria-hidden="true">${inner}</svg>`;
+const ln=(x1,y1,x2,y2,c,w)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c||B}" stroke-width="${w||4}" stroke-linecap="round"/>`;
+const pl=(pts,c,closed,fill)=>`<${closed?"polygon":"polyline"} points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="${fill||"none"}" stroke="${c||B}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`;
+const pa=(d,c,fill)=>`<path d="${d}" fill="${fill||"none"}" stroke="${c||B}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+const dot=(x,y,c)=>`<circle cx="${x}" cy="${y}" r="4.5" fill="${c||K}"/>`;
+function arrow(x,y,ang,c){const a=rad(ang),s=9;const p1=[x-s*Math.cos(a-0.45),y-s*Math.sin(a-0.45)],p2=[x-s*Math.cos(a+0.45),y-s*Math.sin(a+0.45)];return `<polygon points="${x},${y} ${p1[0].toFixed(1)},${p1[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}" fill="${c||B}"/>`}
+
+/* ---------- le linee ---------- */
+const LN={
+  retta:()=>{const y1=rnd(15,65),y2=rnd(15,65);return sv(ln(12,y1,108,y2))},
+  curva:()=>{const up=rnd(0,1),a=up?rnd(-10,15):rnd(65,90),b=up?rnd(65,90):rnd(-10,15);return sv(pa(`M10 ${rnd(30,50)} C 40 ${a}, 80 ${b}, 110 ${rnd(30,50)}`))},
+  spezzata:()=>{const n=rnd(4,6),pts=[];for(let i=0;i<n;i++)pts.push([10+i*100/(n-1),i%2?rnd(12,30):rnd(50,68)]);return sv(pl(pts))},
+  mista:()=>{const y=rnd(20,60);return sv(pa(`M10 ${y} L40 ${rnd(10,70)} L60 ${y} C 75 ${rnd(0,20)}, 95 ${rnd(60,80)}, 110 ${y}`))},
+  aperta:()=>pick([LN.curva,LN.spezzata,LN.mista])(),
+  chiusa:()=>pick([()=>sv(pa(`M60 10 C 110 10, 115 70, 60 72 C 10 74, 5 12, 60 10 Z`)),()=>{const n=rnd(3,6),pts=[];for(let i=0;i<n;i++){const t=i/n*6.283-1.57,r=rnd(26,34);pts.push([60+r*1.3*Math.cos(t),40+r*Math.sin(t)])}return sv(pl(pts,B,true))},()=>sv(pa(`M20 40 L45 12 L70 40 C 90 70, 110 20, 100 10 C 120 60, 60 80, 20 40 Z`))])(),
+  intrecciata:()=>sv(pa(`M15 60 C 40 -10, 70 90, 100 20 C 110 0, 120 50, 80 60 C 50 70, 40 30, 15 60`)),
+  semplice:()=>sv(pa(`M15 40 C 30 10, 60 10, 70 40 S 100 70, 108 30`))
+};
+
+/* ---------- rette ---------- */
+function seg3(kind){const ang=rnd(-25,25),cx=60,cy=40,L2=44,a=rad(ang),x1=cx-L2*Math.cos(a),y1=cy-L2*Math.sin(a),x2=cx+L2*Math.cos(a),y2=cy+L2*Math.sin(a);
+  let h=ln(x1,y1,x2,y2,B,3.5);
+  if(kind==="retta")h+=arrow(x2,y2,ang)+arrow(x1,y1,ang+180);
+  if(kind==="semiretta")h+=dot(x1,y1)+arrow(x2,y2,ang);
+  if(kind==="segmento")h+=dot(x1,y1)+dot(x2,y2);
+  return sv(h)}
+function pos2(kind){const base=rnd(-20,20);let h="";
+  if(kind==="parallele"){const a=rad(base),dx=Math.cos(a)*50,dy=Math.sin(a)*50,off=rnd(16,24);[-off,off].forEach(o=>{h+=ln(60-dx,40-dy+o,60+dx,40+dy+o)})}
+  else{const b2=kind==="perpendicolari"?base+90:base+pick([35,45,55,125,135,145]);[base,b2].forEach(g=>{const a=rad(g),dx=Math.cos(a)*42,dy=Math.sin(a)*34;h+=ln(60-dx,40-dy,60+dx,40+dy,g===base?B:O)});
+    if(kind==="perpendicolari"){const a=rad(base),b=rad(base+90),s=9;h+=`<polygon points="60,40 ${60+s*Math.cos(a)},${40+s*Math.sin(a)} ${60+s*Math.cos(a)+s*Math.cos(b)},${40+s*Math.sin(a)+s*Math.sin(b)} ${60+s*Math.cos(b)},${40+s*Math.sin(b)}" fill="none" stroke="${R}" stroke-width="2.5"/>`}
+    h+=dot(60,40,R)}
+  return sv(h)}
+
+/* ---------- angoli ---------- */
+function angSvg(deg,rot,w){rot=rot||0;const W=w||120,H=w?w*.75:90,vx=deg>90&&deg<360?W/2:W*.28,vy=H*.72,Lr=deg>90&&deg<360?W*.4:W*.55,a0=rad(-rot),a1=rad(-rot-deg);
+  const p0=[vx+Lr*Math.cos(a0),vy+Lr*Math.sin(a0)],p1=[vx+Lr*Math.cos(a1),vy+Lr*Math.sin(a1)];let h="";
+  if(deg===360){h+=`<circle cx="${vx}" cy="${vy}" r="${W*.13}" fill="rgba(242,134,46,.25)" stroke="${O}" stroke-width="3"/>`}
+  else if(deg===90){const s=W*.09,b0=[Math.cos(a0),Math.sin(a0)],b1=[Math.cos(a1),Math.sin(a1)];h+=`<polygon points="${vx},${vy} ${vx+s*b0[0]},${vy+s*b0[1]} ${vx+s*(b0[0]+b1[0])},${vy+s*(b0[1]+b1[1])} ${vx+s*b1[0]},${vy+s*b1[1]}" fill="rgba(242,134,46,.3)" stroke="${O}" stroke-width="3"/>`}
+  else{const r=W*.14,q0=[vx+r*Math.cos(a0),vy+r*Math.sin(a0)],q1=[vx+r*Math.cos(a1),vy+r*Math.sin(a1)];h+=`<path d="M${vx} ${vy} L${q0[0]} ${q0[1]} A ${r} ${r} 0 ${deg>180?1:0} 0 ${q1[0]} ${q1[1]} Z" fill="rgba(242,134,46,.3)" stroke="${O}" stroke-width="3"/>`}
+  h+=ln(vx,vy,p0[0],p0[1],B)+(deg===360?"":ln(vx,vy,p1[0],p1[1],deg===360?B:R))+dot(vx,vy);
+  return sv(h,W,H)}
+const ANG={acuto:()=>angSvg(rnd(2,5)*15,rnd(0,1)?0:rnd(0,3)*15),retto:()=>angSvg(90,pick([0,0,15,30,45])),ottuso:()=>angSvg(rnd(7,11)*15,pick([0,0,15])),piatto:()=>angSvg(180,0),giro:()=>angSvg(360,0)};
+
+/* ---------- poligoni ---------- */
+function ngon(n,jit){const pts=[],r0=32,rot=Math.random()*6.28;for(let i=0;i<n;i++){const t=rot+i/n*6.283,r=r0*(1-(jit?Math.random()*.25:0));pts.push([60+r*1.35*Math.cos(t),42+r*Math.sin(t)])}return pts}
+const POLY={
+  poligono:()=>sv(pl(ngon(rnd(3,6),true),B,true,"rgba(47,111,222,.15)")),
+  non:()=>pick([
+    ()=>sv(pl(ngon(rnd(4,6),true).slice(0,-1),B,false)),
+    ()=>sv(pa(`M25 65 L25 25 L70 15 C 115 25, 115 60, 70 68 Z`,B,"rgba(47,111,222,.15)")),
+    ()=>sv(pl([[20,15],[100,65],[100,15],[20,65]],B,true,"rgba(47,111,222,.15)")),
+    ()=>sv(`<circle cx="60" cy="40" r="30" fill="rgba(47,111,222,.15)" stroke="${B}" stroke-width="4"/>`)])(),
+  n:n=>sv(pl(ngon(n,true),B,true,"rgba(47,111,222,.15)"))
+};
+
+/* ---------- simmetria ---------- */
+const SYM={
+  si:()=>pick([
+    ()=>sv(pa(`M60 70 C 20 45, 25 10, 60 28 C 95 10, 100 45, 60 70 Z`,R,"rgba(210,50,95,.2)")),
+    ()=>sv(pl([[60,8],[95,70],[25,70]],B,true,"rgba(47,111,222,.15)")),
+    ()=>sv(`<rect x="25" y="18" width="70" height="44" fill="rgba(47,111,222,.15)" stroke="${B}" stroke-width="4"/>`),
+    ()=>sv(pa(`M60 20 C 40 0, 10 10, 20 40 C 30 60, 50 50, 60 40 C 70 50, 90 60, 100 40 C 110 10, 80 0, 60 20 Z`,O,"rgba(242,134,46,.25)")+ln(60,15,60,70,K,3)),
+    ()=>sv(`<text x="60" y="66" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="64" fill="${B}">${pick(["A","H","M","T","U","V","W","X","O","Y"])}</text>`)])(),
+  no:()=>pick([
+    ()=>sv(pl([[20,70],[100,70],[35,15]],B,true,"rgba(47,111,222,.15)")),
+    ()=>sv(pl([[15,60],[50,20],[105,30],[90,70],[40,72]].map(p=>[p[0]+rnd(-5,5),p[1]+rnd(-5,5)]),O,true,"rgba(242,134,46,.2)")),
+    ()=>sv(`<text x="60" y="66" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="64" fill="${R}">${pick(["F","G","J","L","N","P","R","S","Z"])}</text>`),
+    ()=>sv(pa(`M20 60 C 30 10, 60 10, 70 40 C 80 70, 100 60, 105 20`,B))])()
+};
+
+/* ---------- solidi ---------- */
+const SOL={
+  cubo:()=>sv(`<polygon points="30,35 70,35 70,75 30,75" fill="#BFD4FA" stroke="${B}" stroke-width="3"/><polygon points="30,35 48,20 88,20 70,35" fill="#E4EEFF" stroke="${B}" stroke-width="3"/><polygon points="70,35 88,20 88,60 70,75" fill="#8FB2F2" stroke="${B}" stroke-width="3"/>`,120,85),
+  parallelepipedo:()=>sv(`<polygon points="15,40 75,40 75,72 15,72" fill="#FFD9B8" stroke="${O}" stroke-width="3"/><polygon points="15,40 35,24 95,24 75,40" fill="#FFEBD9" stroke="${O}" stroke-width="3"/><polygon points="75,40 95,24 95,56 75,72" fill="#F7B37B" stroke="${O}" stroke-width="3"/>`,120,85),
+  piramide:()=>sv(`<polygon points="25,66 80,66 98,52 60,10" fill="#FFE7A3" stroke="#C99A00" stroke-width="3"/><polygon points="25,66 80,66 60,10" fill="#FFD45C" stroke="#C99A00" stroke-width="3"/><line x1="43" y1="52" x2="98" y2="52" stroke="#C99A00" stroke-width="2" stroke-dasharray="4 4"/><line x1="25" y1="66" x2="43" y2="52" stroke="#C99A00" stroke-width="2" stroke-dasharray="4 4"/><line x1="43" y1="52" x2="60" y2="10" stroke="#C99A00" stroke-width="2" stroke-dasharray="4 4"/>`,120,85),
+  prisma:()=>sv(`<polygon points="20,70 50,70 35,40" fill="#C8F0D8" stroke="#2E9E5B" stroke-width="3"/><polygon points="50,70 95,58 80,28 35,40" fill="#9EE0B8" stroke="#2E9E5B" stroke-width="3"/><polygon points="35,40 80,28 65,58 20,70" fill="none" stroke="#2E9E5B" stroke-width="2" stroke-dasharray="4 4"/>`,120,85),
+  cilindro:()=>sv(`<path d="M30 20 L30 65 A30 10 0 0 0 90 65 L90 20" fill="#F7C6D6" stroke="${R}" stroke-width="3"/><ellipse cx="60" cy="20" rx="30" ry="10" fill="#FCE2EA" stroke="${R}" stroke-width="3"/>`,120,85),
+  cono:()=>sv(`<path d="M30 65 L60 10 L90 65" fill="#D9CCF7" stroke="#7A4FC4" stroke-width="3"/><ellipse cx="60" cy="65" rx="30" ry="10" fill="#C3B0F2" stroke="#7A4FC4" stroke-width="3"/>`,120,85),
+  sfera:()=>sv(`<circle cx="60" cy="42" r="34" fill="#BEE6F5" stroke="#1C8FB5" stroke-width="3"/><ellipse cx="60" cy="42" rx="34" ry="10" fill="none" stroke="#1C8FB5" stroke-width="2" stroke-dasharray="4 4"/><circle cx="48" cy="30" r="7" fill="#fff" opacity=".7"/>`,120,85)
+};
+const SOLINFO={cubo:["Cubo","6 facce quadrate uguali","f6 s12 v8",false],parallelepipedo:["Parallelepipedo","6 facce rettangolari","f6 s12 v8",false],piramide:["Piramide","base quadrata e 4 facce triangolari","f5 s8 v5",false],prisma:["Prisma","2 basi triangolari e 3 facce rettangolari","f5 s9 v6",false],cilindro:["Cilindro","2 basi tonde e una superficie curva","",true],cono:["Cono","1 base tonda, una superficie curva e un vertice","",true],sfera:["Sfera","solo una superficie curva","",true]};
+
+/* ---------- carte dei giochi ---------- */
+const it=(fn,t,a,w,n)=>Array.from({length:n||3},()=>({i:fn(),t,a,w}));
+const BIN=(k,t,c,d)=>({k,t,c,d});
+function buildSets(){return {
+  linee:{t:"Retta, curva, spezzata o mista?",d:"Riconosci il tipo di linea",ask:"Che linea è?",emo:"〰️",n:8,move:"Cammina nella classe seguendo una linea spezzata: a zig-zag, con gli angoli ben fatti!",
+    bins:[BIN("retta","Retta",B),BIN("curva","Curva",R),BIN("spezzata","Spezzata",O),BIN("mista","Mista","#2E9E5B")],
+    items:[].concat(it(LN.retta,"Questa linea","retta","Va sempre dritta, senza curve né angoli: è una linea retta."),it(LN.curva,"Questa linea","curva","Si piega dolcemente, senza angoli: è una linea curva."),it(LN.spezzata,"Questa linea","spezzata","È fatta di pezzi dritti uniti da angoli: è una linea spezzata."),it(LN.mista,"Questa linea","mista","Ha pezzi dritti e pezzi curvi: è una linea mista."))},
+  chiuse:{t:"Aperta o chiusa?",d:"La linea racchiude uno spazio?",ask:"La linea è aperta o chiusa?",emo:"⭕",n:8,move:"Linea chiusa: date la mano ai compagni vicini e fate un cerchio. Linea aperta: lasciate le mani!",
+    bins:[BIN("aperta","Aperta",O,"ha un inizio e una fine"),BIN("chiusa","Chiusa",B,"racchiude uno spazio")],
+    items:[].concat(it(LN.aperta,"Questa linea","aperta","Ha un inizio e una fine che non si toccano: è aperta.",5),it(LN.chiusa,"Questa linea","chiusa","Il punto di arrivo torna al punto di partenza: è chiusa e racchiude una regione.",5))},
+  tratti:{t:"Retta, semiretta o segmento?",d:"Guarda le frecce e i punti",ask:"Che cos'è?",emo:"📏",n:8,move:"Retta: allunga le braccia da tutte e due le parti. Semiretta: un braccio piegato e uno allungato. Segmento: tutti e due i pugni chiusi!",
+    bins:[BIN("retta","Retta",B,"nessun inizio né fine"),BIN("semiretta","Semiretta",O,"un inizio, nessuna fine"),BIN("segmento","Segmento",R,"un inizio e una fine")],
+    items:[].concat(it(()=>seg3("retta"),"Questa linea","retta","Le frecce ai due lati dicono che continua all'infinito: è una retta.",4),it(()=>seg3("semiretta"),"Questa linea","semiretta","Ha un punto di inizio e una freccia: è una semiretta.",4),it(()=>seg3("segmento"),"Questa linea","segmento","Ha due punti, un inizio e una fine: è un segmento.",4))},
+  posizioni:{t:"Parallele, incidenti o perpendicolari?",d:"Come stanno le due rette?",ask:"Come sono queste due rette?",emo:"✖️",n:8,move:"Fai con le braccia due rette parallele, poi incidenti e infine perpendicolari!",
+    bins:[BIN("parallele","Parallele",B,"non si incontrano mai"),BIN("incidenti","Incidenti",O,"si incontrano in un punto"),BIN("perpendicolari","Perpendicolari",R,"si incontrano con 4 angoli retti")],
+    items:[].concat(it(()=>pos2("parallele"),"Queste rette","parallele","Hanno sempre la stessa distanza: non si incontrano mai, sono parallele.",4),it(()=>pos2("incidenti"),"Queste rette","incidenti","Si incontrano in un punto, ma gli angoli non sono retti: sono incidenti.",4),it(()=>pos2("perpendicolari"),"Queste rette","perpendicolari","Si incontrano formando angoli retti (guarda il quadratino): sono perpendicolari.",4))},
+  angoli:{t:"Che angolo è?",d:"Acuto, retto, ottuso o piatto",ask:"Che angolo è?",emo:"📐",n:8,move:"Fai l'angolo con le braccia: acuto (poco aperte), retto (a squadra), ottuso (molto aperte), piatto (in fila)!",
+    bins:[BIN("acuto","Acuto",B,"più piccolo del retto"),BIN("retto","Retto","#2E9E5B","come l'angolo di un foglio"),BIN("ottuso","Ottuso",O,"più grande del retto"),BIN("piatto","Piatto",R,"i lati in fila")],
+    items:[].concat(it(ANG.acuto,"Questo angolo","acuto","È più chiuso dell'angolo retto: è acuto.",4),it(ANG.retto,"Questo angolo","retto","Il quadratino dice che è come l'angolo di un foglio: è retto.",3),it(ANG.ottuso,"Questo angolo","ottuso","È più aperto dell'angolo retto, ma i lati non sono in fila: è ottuso.",4),it(ANG.piatto,"Questo angolo","piatto","I due lati sono in fila sulla stessa retta: è piatto.",2))},
+  poligono:{t:"È un poligono?",d:"Spezzata chiusa e semplice",ask:"È un poligono?",emo:"🔷",n:8,move:"Sì: stai in piedi come un grattacielo dritto. No: diventa una palla tonda!",
+    bins:[BIN("si","È un poligono",B,"spezzata, chiusa, semplice"),BIN("no","Non è un poligono",R,"aperta, curva o intrecciata")],
+    items:[].concat(it(POLY.poligono,"Questa figura","si","È chiusa da una linea spezzata semplice: è un poligono.",6),it(POLY.non,"Questa figura","no","Non è un poligono: è aperta, ha una curva oppure i lati si incrociano.",6))},
+  nomi:{t:"Come si chiama il poligono?",d:"Conta i lati",ask:"Quanti lati ha? Come si chiama?",emo:"🔢",n:8,move:"Conta i lati battendo le mani: una battuta per ogni lato!",
+    bins:[BIN("3","Triangolo",B,"3 lati"),BIN("4","Quadrilatero",O,"4 lati"),BIN("5","Pentagono",R,"5 lati"),BIN("6","Esagono","#2E9E5B","6 lati")],
+    items:[3,4,5,6].reduce((a,n)=>a.concat(it(()=>POLY.n(n),"Questo poligono",String(n),`Ha ${n} lati e ${n} vertici: è un ${["","","","triangolo","quadrilatero","pentagono","esagono"][n]}.`,3)),[])},
+  sim:{t:"È simmetrica?",d:"Si può piegare a metà in due parti uguali?",ask:"Ha un asse di simmetria?",emo:"🦋",n:8,move:"Fai lo specchio con il compagno: uno si muove, l'altro copia!",
+    bins:[BIN("si","Simmetrica",B,"ha un asse di simmetria"),BIN("no","Non simmetrica",R,"le metà non sono uguali")],
+    items:[].concat(it(SYM.si,"Questa figura","si","Piegandola a metà, le due parti si sovrappongono: è simmetrica.",6),it(SYM.no,"Questa figura","no","In nessun modo le due metà diventano uguali: non è simmetrica.",6))},
+  solidi:{t:"Che solido è?",d:"Guarda la forma dell'oggetto",ask:"A quale solido somiglia?",emo:"🧊",n:8,move:"Cerca in classe un oggetto che somiglia al solido della carta e toccalo!",
+    bins:[BIN("cubo","Cubo",B),BIN("parallelepipedo","Parallelepipedo",O),BIN("cilindro","Cilindro",R),BIN("sfera","Sfera","#1C8FB5"),BIN("cono","Cono","#7A4FC4"),BIN("piramide","Piramide","#C99A00")],
+    items:[["🎲","Il dado","cubo"],["🧊","Il cubetto di ghiaccio","cubo"],["📦","La scatola delle scarpe","parallelepipedo"],["🧱","Il mattone","parallelepipedo"],["🥫","La lattina","cilindro"],["🕯️","La candela","cilindro"],["🔋","La pila","cilindro"],["⚽","Il pallone","sfera"],["🍊","L'arancia","sfera"],["🍦","Il cono del gelato","cono"],["🥳","Il cappellino della festa","cono"],["🔺","La piramide d'Egitto","piramide"]].map(x=>({i:x[0],t:x[1],a:x[2],w:x[1]+" ha la forma di un"+(x[2]==="sfera"||x[2]==="piramide"?"a ":" ")+x[2]+"."}))},
+  rotola:{t:"Rotola o non rotola?",d:"Superfici piatte o curve?",ask:"Questo solido rotola?",emo:"🛞",n:8,move:"Rotola: fai una capriola con le mani (o gira su te stesso). Non rotola: stai fermo come una statua!",
+    bins:[BIN("si","Rotola",B,"ha una superficie curva"),BIN("no","Non rotola",R,"ha solo facce piatte")],
+    items:Object.keys(SOL).reduce((a,k)=>a.concat(it(SOL[k],SOLINFO[k][0],SOLINFO[k][3]?"si":"no",SOLINFO[k][0]+(SOLINFO[k][3]?" ha una superficie curva: rotola.":" ha solo facce piatte: non rotola."),2)),[])}
+}}
+let SETS=buildSets();
+
+/* ---------- scopri ---------- */
+const card=(svgh,t,d,num)=>`<div class="dc">${svgh}<b>${esc(t)}</b>${d?`<span>${esc(d)}</span>`:""}${num?`<span class="num">${num}</span>`:""}</div>`;
+function renderScopri(){
+  $("#d-linee").innerHTML=card(LN.retta(),"Retta","va sempre dritta")+card(LN.curva(),"Curva","si piega dolcemente")+card(LN.spezzata(),"Spezzata","pezzi dritti uniti da angoli")+card(LN.mista(),"Mista","pezzi dritti e curvi")+card(LN.aperta(),"Aperta","ha un inizio e una fine")+card(LN.chiusa(),"Chiusa","racchiude uno spazio")+card(LN.semplice(),"Semplice","non si incrocia mai")+card(LN.intrecciata(),"Intrecciata","si incrocia");
+  $("#d-rette").innerHTML=card(seg3("retta"),"Retta","non ha inizio né fine")+card(seg3("semiretta"),"Semiretta","ha un inizio, non una fine")+card(seg3("segmento"),"Segmento","ha un inizio e una fine")+card(sv(ln(15,40,105,40)+ln(60,8,60,72,O)+ln(20,70,100,12,R)),"Orizzontale, verticale, obliqua","blu orizzontale, arancio verticale, rossa obliqua");
+  $("#d-pos").innerHTML=card(pos2("parallele"),"Parallele","non si incontrano mai")+card(pos2("incidenti"),"Incidenti","si incontrano in un punto")+card(pos2("perpendicolari"),"Perpendicolari","si incontrano con 4 angoli retti");
+  $("#d-angoli").innerHTML=card(angSvg(45),"Acuto","più chiuso del retto")+card(angSvg(90),"Retto","come l'angolo di un foglio")+card(angSvg(135),"Ottuso","più aperto del retto")+card(angSvg(180),"Piatto","i lati sono in fila")+card(angSvg(360),"Giro","i lati si sovrappongono: un giro intero");
+  $("#d-poli").innerHTML=[3,4,5,6].map(n=>card(POLY.n(n),["","","","Triangolo","Quadrilatero","Pentagono","Esagono"][n],"",`<span>${n} lati</span><span>${n} vertici</span><span>${n} angoli</span>`)).join("")+card(POLY.non(),"Non è un poligono","è aperto, curvo o intrecciato");
+  const fig=[[0,0],[1,0],[2,0],[0,1],[1,1]];
+  $("#d-misure").innerHTML=card(sv(gridSvg(fig,4,3,"per")),"Il perimetro","conto i lati sul bordo: 10")+card(sv(gridSvg(fig,4,3,"area")),"L'area","conto i quadretti: 5");
+  $("#d-sim").innerHTML=card(sv(pa(`M60 20 C 40 0, 10 10, 20 40 C 30 60, 50 50, 60 40 C 70 50, 90 60, 100 40 C 110 10, 80 0, 60 20 Z`,O,"rgba(242,134,46,.25)")+`<line x1="60" y1="5" x2="60" y2="75" stroke="${R}" stroke-width="3" stroke-dasharray="6 5"/>`),"Simmetrica","la farfalla ha un asse di simmetria")+card(sv(`<text x="60" y="66" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="64" fill="${B}">A</text><line x1="60" y1="5" x2="60" y2="75" stroke="${R}" stroke-width="3" stroke-dasharray="6 5"/>`),"Lettere simmetriche","A, H, M, T, U, V, W, X, O")+card(SYM.no(),"Non simmetrica","le due metà non sono uguali");
+  $("#d-solidi").innerHTML=Object.keys(SOL).map(k=>{const s=SOLINFO[k],m=s[2].match(/f(\d+) s(\d+) v(\d+)/);return card(SOL[k](),s[0],s[1],(m?`<span>${m[1]} facce</span><span>${m[2]} spigoli</span><span>${m[3]} vertici</span>`:"")+`<span>${s[3]?"🛞 rotola":"🚫 non rotola"}</span>`)}).join("");
+}
+
+/* ---------- quadretti: disegno, perimetro e area ---------- */
+const Q=10;
+function gridSvg(cells,w,h,mode){const set=new Set(cells.map(c=>c[0]+","+c[1])),s=Math.min(100/w,70/h),ox=(120-w*s)/2,oy=(80-h*s)/2;let g="";
+  for(let x=0;x<=w;x++)g+=`<line x1="${ox+x*s}" y1="${oy}" x2="${ox+x*s}" y2="${oy+h*s}" stroke="#BFD2F5" stroke-width="1"/>`;
+  for(let y=0;y<=h;y++)g+=`<line x1="${ox}" y1="${oy+y*s}" x2="${ox+w*s}" y2="${oy+y*s}" stroke="#BFD2F5" stroke-width="1"/>`;
+  cells.forEach(([x,y])=>{g+=`<rect x="${ox+x*s}" y="${oy+y*s}" width="${s}" height="${s}" fill="${mode==="area"?"rgba(47,111,222,.45)":"rgba(47,111,222,.12)"}"/>`});
+  if(mode==="per")cells.forEach(([x,y])=>{const X=ox+x*s,Y=oy+y*s;if(!set.has(x+","+(y-1)))g+=ln(X,Y,X+s,Y,O,3);if(!set.has(x+","+(y+1)))g+=ln(X,Y+s,X+s,Y+s,O,3);if(!set.has((x-1)+","+y))g+=ln(X,Y,X,Y+s,O,3);if(!set.has((x+1)+","+y))g+=ln(X+s,Y,X+s,Y+s,O,3)});
+  return g}
+const per=set=>{let p=0;set.forEach(k=>{const [x,y]=k.split(",").map(Number);[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{if(!set.has((x+dx)+","+(y+dy)))p++})});return p};
+const linked=set=>{if(!set.size)return true;const a=[...set],seen=new Set([a[0]]),st=[a[0]];while(st.length){const [x,y]=st.pop().split(",").map(Number);[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const k=(x+dx)+","+(y+dy);if(set.has(k)&&!seen.has(k)){seen.add(k);st.push(k)}})}return seen.size===set.size};
+function polyomino(n,W,H){const set=new Set([Math.floor(W/2)+","+Math.floor(H/2)]);let t=0;while(set.size<n&&t++<500){const [x,y]=pick([...set]).split(",").map(Number),[dx,dy]=pick([[1,0],[-1,0],[0,1],[0,-1]]),nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<W&&ny<H)set.add(nx+","+ny)}return set}
+function gridHTML(W,H,cls,fn){let h=`<div class="qg ${cls||""}" style="grid-template-columns:repeat(${W},var(--q,34px))">`;for(let y=0;y<H;y++)for(let x=0;x<W;x++)h+=`<i data-x="${x}" data-y="${y}" class="${fn?fn(x,y):""}"></i>`;return h+"</div>"}
+function qsize(W){return Math.max(26,Math.min(44,Math.floor((Math.min(window.innerWidth,1100)-120)/W)))}
+const EX=()=>{const S=L.state();S.extra=S.extra||{};return S.extra};
+function win(key,msg){const e=EX();e[key]=(e[key]||0)+1;L.save();L.add(1);L.ding();L.toast(msg||"Giusto! Una stella.");L.checkBadges()}
+function miss(key){const S=L.state();S.err[key]=(S.err[key]||0)+1;L.save();L.buzz()}
+
+let PC=null;
+function renderCount(){
+  const W=8,H=6;if(!PC)PC={set:polyomino(rnd(4,10),W,H)};const set=PC.set;
+  $("#pa-count").innerHTML=`<p class="lead">Conta i quadretti blu (area) e i lati dei quadretti sul bordo (perimetro).</p>
+    <div style="--q:${qsize(W)}px">${gridHTML(W,H,"",(x,y)=>set.has(x+","+y)?"on":"")}</div>
+    <div class="ask"><label>Perimetro <input type="number" inputmode="numeric" id="pc-p" min="0" max="99" aria-label="Perimetro in lati di quadretto"></label><label>Area <input type="number" inputmode="numeric" id="pc-a" min="0" max="99" aria-label="Area in quadretti"></label></div>
+    <div class="row"><button class="btn" type="button" id="pc-ok">Controlla</button><button class="btn ghost" type="button" id="pc-new">Nuova figura</button></div><div id="pc-fb"></div>`;
+  $("#pc-new").addEventListener("click",()=>{PC=null;renderCount()});
+  $("#pc-ok").addEventListener("click",()=>{const p=+$("#pc-p").value,a=+$("#pc-a").value,P=per(set),A=set.size,okP=p===P,okA=a===A;
+    if(okP&&okA){$("#pc-fb").innerHTML=L.fb("good",`Esatto! Perimetro ${P} lati di quadretto, area ${A} quadretti.`,[]);win("pa","Perimetro e area giusti! Una stella.");PC=null;setTimeout(()=>{if(!$("#pc-fb").closest("[hidden]"))renderCount()},2200);return}
+    miss("Perimetro e area");$("#pc-fb").innerHTML=L.fb("bad","Ricontrolla",[okA?"L'area è giusta.":"Area: conta di nuovo i quadretti blu, uno per uno.",okP?"Il perimetro è giusto.":"Perimetro: segui il bordo con il dito e conta ogni lato di quadretto che tocca il bianco."])});
+}
+let PB=null;
+function renderBuild(){
+  const W=8,H=6;if(!PB){const lv=rnd(0,2),a=rnd(4,10);PB={set:new Set(),a,p:lv===2?per(polyomino(a,W,H)):null}}
+  const set=PB.set;
+  $("#pa-build").innerHTML=`<p class="lead">Tocca i quadretti per colorarli. Tocca di nuovo per cancellare.</p>
+    <p style="text-align:center"><span class="target">🎯 Area ${PB.a} quadretti${PB.p?` · perimetro ${PB.p}`:""}</span></p>
+    <div style="--q:${qsize(W)}px">${gridHTML(W,H,"tap",(x,y)=>set.has(x+","+y)?"on":"")}</div>
+    <div class="cnt"><span>Area: <b id="pb-a">${set.size}</b></span><span>Perimetro: <b id="pb-p">${per(set)}</b></span></div>
+    <div class="row"><button class="btn" type="button" id="pb-ok">Controlla</button><button class="btn ghost" type="button" id="pb-clr">Cancella tutto</button><button class="btn ghost" type="button" id="pb-new">Nuova sfida</button></div><div id="pb-fb"></div>`;
+  $$("#pa-build .qg i").forEach(c=>c.addEventListener("click",()=>{const k=c.dataset.x+","+c.dataset.y;if(set.has(k))set.delete(k);else set.add(k);c.classList.toggle("on");$("#pb-a").textContent=set.size;$("#pb-p").textContent=per(set);$("#pb-fb").innerHTML=""}));
+  $("#pb-clr").addEventListener("click",()=>{set.clear();renderBuild()});
+  $("#pb-new").addEventListener("click",()=>{PB=null;renderBuild()});
+  $("#pb-ok").addEventListener("click",()=>{const A=set.size,P=per(set);
+    if(!linked(set)){miss("Costruisci la figura");$("#pb-fb").innerHTML=L.fb("bad","La figura deve essere tutta unita",["I quadretti devono toccarsi con un lato."]);return}
+    if(A===PB.a&&(!PB.p||P===PB.p)){$("#pb-fb").innerHTML=L.fb("good","Bravissimo! La figura è giusta.",[`Area ${A} quadretti, perimetro ${P}.`]);win("build","Figura costruita! Una stella.");PB=null;setTimeout(()=>{if(!$("#pb-fb").closest("[hidden]"))renderBuild()},2400);return}
+    miss("Costruisci la figura");$("#pb-fb").innerHTML=L.fb("bad","Non ancora",[A!==PB.a?`Ora l'area è ${A}: ${A<PB.a?"aggiungi":"togli"} ${Math.abs(PB.a-A)} quadretti.`:"L'area è giusta!",PB.p&&P!==PB.p?`Il perimetro è ${P}: ${P>PB.p?"metti i quadretti più vicini tra loro, a blocco":"allunga la figura, in fila"}.`:""].filter(Boolean))});
+}
+
+/* ---------- simmetria: completa allo specchio ---------- */
+let SM=null;
+function renderSim(){
+  const W=10,H=8,half=W/2;
+  if(!SM){const left=new Set();const st=polyomino(rnd(6,10),half,H);st.forEach(k=>left.add(k));
+    // tocca l'asse: almeno un quadretto nella colonna vicino all'asse
+    if(![...left].some(k=>+k.split(",")[0]===half-1)){const y=rnd(1,H-2);left.add((half-1)+","+y)}
+    SM={left,right:new Set()}}
+  const L0=SM.left,R0=SM.right;
+  $("#sim-build").innerHTML=`<p class="lead">La linea rossa è lo specchio. Colora a destra i quadretti per completare la figura simmetrica.</p>
+    <div style="--q:${qsize(W)}px">${gridHTML(W,H,"tap",(x,y)=>(x===half?"ax ":"")+(x<half?(L0.has(x+","+y)?"fix":""):(R0.has(x+","+y)?"on":"")))}</div>
+    <div class="row"><button class="btn" type="button" id="sm-ok">Controlla</button><button class="btn ghost" type="button" id="sm-clr">Cancella</button><button class="btn ghost" type="button" id="sm-new">Nuova figura</button></div><div id="sm-fb"></div>`;
+  $$("#sim-build .qg i").forEach(c=>c.addEventListener("click",()=>{const x=+c.dataset.x;if(x<half)return;const k=x+","+c.dataset.y;if(R0.has(k))R0.delete(k);else R0.add(k);c.classList.toggle("on");c.classList.remove("ok","ko");$("#sm-fb").innerHTML=""}));
+  $("#sm-clr").addEventListener("click",()=>{R0.clear();renderSim()});
+  $("#sm-new").addEventListener("click",()=>{SM=null;renderSim()});
+  $("#sm-ok").addEventListener("click",()=>{const want=new Set([...L0].map(k=>{const [x,y]=k.split(",").map(Number);return (W-1-x)+","+y}));let bad=0,miss2=0;
+    $$("#sim-build .qg i").forEach(c=>{const x=+c.dataset.x;if(x<half)return;const k=x+","+c.dataset.y,w=want.has(k),h=R0.has(k);c.classList.remove("ok","ko");if(h&&w)c.classList.add("ok");else if(h&&!w){c.classList.add("ko");bad++}else if(!h&&w)miss2++});
+    if(!bad&&!miss2){$("#sm-fb").innerHTML=L.fb("good","Perfetto! La figura è simmetrica.",["Le due metà sono una lo specchio dell'altra."]);win("sim","Simmetria perfetta! Una stella.");SM=null;setTimeout(()=>{if(!$("#sm-fb").closest("[hidden]"))renderSim()},2400);return}
+    miss("Completa la simmetria");$("#sm-fb").innerHTML=L.fb("bad","Non ancora",[bad?`${bad} quadretti rossi sono di troppo.`:"",miss2?`Mancano ${miss2} quadretti.`:"","Conta quanti quadretti è lontano dallo specchio ogni quadretto arancione: dall'altra parte deve essere alla stessa distanza."].filter(Boolean))});
+}
+
+/* ---------- costruisci l'angolo ---------- */
+let AB=null;
+const ATYPE=a=>a<90?"acuto":a===90?"retto":a<180?"ottuso":a===180?"piatto":"giro";
+function renderAng(){
+  if(!AB)AB={want:pick(["acuto","retto","ottuso","piatto"]),a:pick([30,60,120,150])};
+  const draw=()=>{$("#ab-svg").innerHTML=angSvg(AB.a,0,160).replace(/^<svg[^>]*>|<\/svg>$/g,"");$("#ab-fb").innerHTML=""};
+  $("#ang-build").innerHTML=`<div class="angbox"><span class="target">🎯 Costruisci un angolo ${AB.want.toUpperCase()}</span>
+    <svg id="ab-svg" viewBox="0 0 160 120" aria-label="Angolo da costruire"></svg>
+    <div class="angctl"><button class="btn ghost" type="button" id="ab-m" aria-label="Chiudi l'angolo">↻</button><button class="btn ghost" type="button" id="ab-p" aria-label="Apri l'angolo">↺</button></div>
+    <div class="row"><button class="btn" type="button" id="ab-ok">Controlla</button><button class="btn ghost" type="button" id="ab-new">Nuova sfida</button></div><div id="ab-fb" style="width:100%"></div></div>`;
+  draw();
+  $("#ab-p").addEventListener("click",()=>{AB.a=Math.min(180,AB.a+15);draw()});
+  $("#ab-m").addEventListener("click",()=>{AB.a=Math.max(15,AB.a-15);draw()});
+  const svg=$("#ab-svg");let drag=false;
+  const setFrom=e=>{const r=svg.getBoundingClientRect(),vx=AB.a>90?r.width/2:r.width*.28,vy=r.height*.72,x=e.clientX-r.left-vx,y=vy-(e.clientY-r.top);let d=Math.atan2(y,x)*180/Math.PI;if(d<0)d=d<-90?180:15;AB.a=Math.max(15,Math.min(180,Math.round(d/15)*15));draw()};
+  svg.addEventListener("pointerdown",e=>{drag=true;try{svg.setPointerCapture(e.pointerId)}catch(x){}setFrom(e)});
+  svg.addEventListener("pointermove",e=>{if(drag)setFrom(e)});
+  svg.addEventListener("pointerup",()=>{drag=false});
+  $("#ab-new").addEventListener("click",()=>{AB=null;renderAng()});
+  $("#ab-ok").addEventListener("click",()=>{const t=ATYPE(AB.a);
+    if(t===AB.want){$("#ab-fb").innerHTML=L.fb("good",`Sì! È un angolo ${t}.`,[]);win("ang","Angolo giusto! Una stella.");AB=null;setTimeout(()=>{if(!$("#ab-fb").closest("[hidden]"))renderAng()},2000);return}
+    miss("Costruisci l'angolo");$("#ab-fb").innerHTML=L.fb("bad",`Questo è un angolo ${t}.`,[{acuto:"L'angolo acuto è più chiuso dell'angolo retto.",retto:"L'angolo retto è come l'angolo di un foglio: compare il quadratino.",ottuso:"L'angolo ottuso è più aperto del retto, ma i lati non sono in fila.",piatto:"Nell'angolo piatto i due lati sono in fila, sulla stessa retta."}[AB.want]])});
+}
+
+L.init({
+  key:"geometria-v1",col:"geometria",subj:"mat",src:"geometria",title:"Il Regno della Geometria",
+  tabs:["lezione","linee","rette","angoli","poligoni","misure","simmetria","solidi","valuta"],home:"linee",sets:SETS,
+  badges:[
+    {id:"linee",n:"Esperto di linee",d:"Almeno 7 su 8 in un gioco delle linee",ok:S=>(S.best.linee||0)>=7||(S.best.chiuse||0)>=7},
+    {id:"rette",n:"Signore delle rette",d:"Almeno 7 su 8 in un gioco delle rette",ok:S=>(S.best.tratti||0)>=7||(S.best.posizioni||0)>=7},
+    {id:"angoli",n:"Cacciatore di angoli",d:"7 su 8 in «Che angolo è?» o 3 angoli costruiti",ok:S=>(S.best.angoli||0)>=7||((S.extra||{}).ang||0)>=3},
+    {id:"poligoni",n:"Re dei poligoni",d:"Almeno 7 su 8 in un gioco dei poligoni",ok:S=>(S.best.poligono||0)>=7||(S.best.nomi||0)>=7},
+    {id:"quadretti",n:"Mago dei quadretti",d:"3 figure misurate o costruite",ok:S=>(((S.extra||{}).pa||0)+((S.extra||{}).build||0))>=3},
+    {id:"specchio",n:"Specchio magico",d:"2 figure simmetriche completate",ok:S=>((S.extra||{}).sim||0)>=2},
+    {id:"solidi",n:"Costruttore di solidi",d:"Almeno 7 su 8 in un gioco dei solidi",ok:S=>(S.best.solidi||0)>=7||(S.best.rotola||0)>=7},
+    {id:"riflessivo",n:"Geometra riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So riconoscere linee rette, curve, spezzate e miste, aperte e chiuse.","So distinguere retta, semiretta e segmento.","So riconoscere rette parallele, incidenti e perpendicolari.","So riconoscere angoli acuti, retti, ottusi e piatti.","So riconoscere un poligono e contarne i lati.","So calcolare perimetro e area contando i quadretti.","So completare una figura simmetrica.","So riconoscere i solidi negli oggetti intorno a me."],
+  likes:["Le linee","Le rette","Gli angoli","I poligoni","Perimetro e area","La simmetria","I solidi"],
+  imprevisti:[["Geometria muta","Per un minuto si risponde solo con i gesti delle mani."],["Squadra al contrario","Chi tocca la risposta è il compagno che di solito spiega."],["Caccia in classe","Trovate in classe tre oggetti con un angolo retto prima che scada il minuto."],["Righello magico","Ogni risposta giusta vale il doppio per un minuto!"]],
+  onEnter:()=>{Object.assign(SETS,buildSets());renderScopri();PC=PB=SM=AB=null},
+  onRoute:h=>{
+    if(h==="linee")L.sortChooser($("#sort-linee"),["linee","chiuse"]);
+    if(h==="rette")L.sortChooser($("#sort-rette"),["tratti","posizioni"]);
+    if(h==="angoli"){renderAng();L.sortChooser($("#sort-angoli"),["angoli"])}
+    if(h==="poligoni")L.sortChooser($("#sort-poli"),["poligono","nomi"]);
+    if(h==="misure"){renderCount();renderBuild()}
+    if(h==="simmetria"){renderSim();L.sortChooser($("#sort-sim"),["sim"])}
+    if(h==="solidi")L.sortChooser($("#sort-solidi"),["solidi","rotola"]);
+  }
+});
+renderScopri();
+})();
+</script>
+<script src="land.js?v=1127l"></script>
+</body></html>

@@ -20,13 +20,14 @@
   function tabOf(sec){return tabs().filter(function(t){var h=(t.getAttribute("href")||"").slice(1);return (h&&("sec-"+h===sec.id||h===sec.id))||t.getAttribute("aria-controls")===sec.id})[0]||null}
   function nextTab(sec){var ts=tabs(),t=tabOf(sec),i=ts.indexOf(t);return i>=0?ts[i+1]||null:null}
   function tabName(t){var c=t.cloneNode(true);$$(".cq-n",c).forEach(function(x){x.remove()});return txt(c)}
-  function title(p){var h=$(".eyebrow,h2,h3,.q",p);var t=txt(h);if(/^attivit/i.test(t)){var h2=$("h2,h3",p);if(h2)t=txt(h2)}return t.replace(/^[^A-Za-zÀ-ú0-9]+/,"").slice(0,44)||"Attività"}
+  function title(p){if(p.dataset&&p.dataset.lpt)return p.dataset.lpt;var h=$(".eyebrow,h2,h3,.q",p);var t=txt(h);if(/^attivit/i.test(t)){var h2=$("h2,h3",p);if(h2)t=txt(h2)}return t.replace(/^[^A-Za-zÀ-ú0-9]+/,"").slice(0,44)||"Attività"}
 
   /* un'attività per volta: sezioni con tanti riquadri */
   var NOPAGE=document.body&&document.body.dataset.lp==="off";
   function pages(sec){
     if(NOPAGE||sec.dataset.lp==="off"||teacherSec(sec))return [];
     var ps=$$(":scope>.panel",sec).filter(function(p){return !p.hidden&&!p.classList.contains("sfboard")&&!p.classList.contains("lp-bar")});
+    if(sec.dataset.lp==="on")return ps.length>=2?ps:[];
     if(ps.length<4)return [];
     /* il primo riquadro senza esercizio (impostazioni, titolo) resta sempre visibile */
     if(!$(".fb,[role=status],[aria-live]",ps[0]))ps=ps.slice(1);
