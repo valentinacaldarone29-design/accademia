@@ -33,11 +33,19 @@
     if(!$(".fb,[role=status],[aria-live]",ps[0]))ps=ps.slice(1);
     return ps.length>=3?ps:[];
   }
+  function seen(sec){return JSON.parse(sec.dataset.lpseen||"{}")}
+  function finished(el,wins,need){var again=$$('[data-q="again"]',el).filter(vis).length>0;if(again)return true;var sort=!!$('.bins,[data-q="exit"]',el);return !sort&&wins>=need}
+  function concluded(sec){
+    if(sec.dataset.lpend==="1")return true;var ps=pages(sec),ok;
+    if(ps.length){var s=seen(sec),d=JSON.parse(sec.dataset.lpdone||"{}"),L=ps.length-1;ok=ps.every(function(p,k){return s[k]})&&finished(ps[L],d[L]||0,1)}
+    else ok=finished(sec,+sec.dataset.lpw||0,5);
+    if(ok)sec.dataset.lpend="1";return ok;
+  }
   function go(sec,i){sec.dataset.lpi=i;render(sec,true);var m=$("main")||sec;(sec.closest("main")||sec).scrollTop=0;sec.scrollIntoView({block:"start"});hideWin()}
   function render(sec,force){
     var ps=pages(sec);
     if(!ps.length){sec.classList.remove("lp-on");$$(".lp-off",sec).forEach(function(p){p.classList.remove("lp-off")});return}
-    var i=Math.min(+sec.dataset.lpi||0,ps.length-1),sig=i+"/"+ps.length;
+    var i=Math.min(+sec.dataset.lpi||0,ps.length-1),sn=seen(sec);if(!sn[i]){sn[i]=1;sec.dataset.lpseen=JSON.stringify(sn)}var end=concluded(sec),sig=i+"/"+ps.length+(end?"e":"");
     sec.classList.add("lp-on");
     ps.forEach(function(p,k){p.classList.toggle("lp-off",k!==i)});
     var bar=$(":scope>.lp-bar",sec),nav=$(":scope>.lp-nav",sec);
@@ -50,7 +58,7 @@
       bar.innerHTML='<span>📍 Attività '+(i+1)+' di '+ps.length+': '+title(ps[i])+'</span><span class="lp-dots">'+ps.map(function(p,k){return '<button type="button" class="'+(k===i?"on ":"")+(done[k]?"ok":"")+'" data-lpk="'+k+'" aria-label="Attività '+(k+1)+': '+title(p)+'">'+(done[k]&&k!==i?"✓":k+1)+'</button>'}).join("")+'</span>';
       var nt=nextTab(sec),last=i===ps.length-1;
       nav.innerHTML='<button type="button" class="lp-back"'+(i===0?" disabled":"")+'>◀ Indietro</button>'+
-        (last?(nt?'<button type="button" class="lp-go">Prossima sezione: '+tabName(nt)+' ▶</button>':''):'<button type="button" class="lp-go">Prossima attività: '+title(ps[i+1])+' ▶</button>');
+        (last?(nt?(end?'<button type="button" class="lp-go lp-pulse">🏁 Argomento finito! Prossima sezione: '+tabName(nt)+' ▶</button>':'<span class="lp-note">🏁 Finisci questa attività: poi si apre la prossima sezione.</span>'):''):'<button type="button" class="lp-go">Prossima attività: '+title(ps[i+1])+' ▶</button>');
     }
   }
   document.addEventListener("click",function(e){
@@ -66,12 +74,12 @@
   /* attività finita: suggerisci la prossima */
   var win=null,winKey="";
   function hideWin(){if(win){win.remove();win=null}}
-  function onWin(){
+  function onWin(noCount){
     var sec=curSec();if(!sec||teacherSec(sec))return;
     var ps=pages(sec),i=+sec.dataset.lpi||0,label,act;
-    if(ps.length){var d=JSON.parse(sec.dataset.lpdone||"{}");d[i]=1;sec.dataset.lpdone=JSON.stringify(d);render(sec,true)}
+    if(noCount!==true){if(ps.length){var d=JSON.parse(sec.dataset.lpdone||"{}");d[i]=(d[i]||0)+1;sec.dataset.lpdone=JSON.stringify(d);render(sec,true)}else sec.dataset.lpw=(+sec.dataset.lpw||0)+1}
     if(ps.length&&i<ps.length-1){label="Prossima attività: "+title(ps[i+1]);act=function(){go(sec,i+1)}}
-    else{var nt=nextTab(sec);if(!nt)return;label="Prossima sezione: "+tabName(nt);act=function(){nt.click();topNow()}}
+    else{var nt=nextTab(sec);if(!nt||!concluded(sec))return;if(sec.dataset.lpann)return;sec.dataset.lpann="1";if(ps.length)render(sec,true);label="🏁 Argomento finito! Prossima sezione: "+tabName(nt);act=function(){nt.click();topNow()}}
     var key=sec.id+"|"+i;if(win&&winKey===key)return;hideWin();winKey=key;
     win=document.createElement("div");win.className="lp-win";win.setAttribute("role","status");
     win.innerHTML='<span>🎉 Ben fatto!</span><button type="button" class="lp-wgo">'+label+' ▶</button><button type="button" class="lp-wx">Resto qui</button>';
@@ -80,10 +88,10 @@
     document.body.appendChild(win);
   }
   /* segnali di «fatto»: stelle assegnate o un messaggio verde di risposta giusta */
-  function hookAward(){var C=window.Cuccioli;if(!C||C._lpHook||!C.award)return;C._lpHook=1;var o=C.award;C.award=function(){try{setTimeout(onWin,900)}catch(e){}return o.apply(this,arguments)}}
+  function hookAward(){var C=window.Cuccioli;if(!C||C._lpHook||!C.award)return;C._lpHook=1;var o=C.award;C.award=function(){try{setTimeout(function(){onWin()},900)}catch(e){}return o.apply(this,arguments)}}
   var lastGood=0;
   function goodCount(){var sec=curSec();if(!sec)return 0;return $$(".fb.good,.fb.ok,.fb-good,.okbox,[role=status].good,[aria-live].good",sec).filter(vis).length}
-  var mo=new MutationObserver(function(){var n=goodCount();if(n>lastGood)setTimeout(onWin,900);lastGood=n});
+  var mo=new MutationObserver(function(){var n=goodCount();if(n>lastGood)setTimeout(function(){onWin()},900);lastGood=n});
 
   var lastSec=null;
   function tick(){
@@ -91,6 +99,7 @@
     var sec=curSec();
     if(sec!==lastSec){lastSec=sec;hideWin();lastGood=goodCount()}
     $$("section.view,section[role=tabpanel]").forEach(function(s){if(!s.hidden)render(s)});
+    if(sec&&!teacherSec(sec)&&!sec.dataset.lpann){var ps=pages(sec);if((!ps.length||(+sec.dataset.lpi||0)===ps.length-1)&&concluded(sec)){if(ps.length)render(sec,true);onWin(true)}}
   }
   function init(){
     if($("body>nav")&&$("body>main"))H.classList.add("land-nav");else if($(".app>.tabs"))H.classList.add("land-app");

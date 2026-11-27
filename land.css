@@ -60,6 +60,8 @@
 .lp-bar .lp-dots button.ok:not(.on){background:#D9F2E2;border-color:#2E9E5B;color:#14532D}
 .lp-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .lp-nav button{appearance:none;min-height:52px;padding:10px 20px;border-radius:16px;font:700 18px var(--font-display,system-ui);cursor:pointer;border:2px solid var(--line,#ccc);background:var(--surface,#fff);color:var(--ink,#222)}
+.lp-nav .lp-note{margin-left:auto;font:600 16px var(--font-display,system-ui);color:var(--muted,#666);background:var(--surface2,#f3f3f3);border-radius:14px;padding:10px 14px}
+.lp-nav .lp-go.lp-pulse{animation:lpPulse 1.4s ease-in-out infinite}
 .lp-nav .lp-go{margin-left:auto;background:#1E8A4C;border-color:#1E8A4C;color:#fff}
 .lp-nav button:disabled{opacity:.35;cursor:default}
 .lp-on .cq-nextwrap{display:none!important}
