@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1127j">
+<link rel="stylesheet" href="cuccioli.css?v=1127k">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -489,6 +489,17 @@ html.qv-lock,html.qv-lock body{overflow:hidden}
 .atfull .bstyle{position:absolute;right:12px;top:10px;z-index:3;margin:0;background:rgba(255,255,255,.9);border-radius:99px;padding:6px 14px;max-width:min(520px,60vw);box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .atfull.tclosed .bstyle{display:none}
 .bver{margin:0;font-size:11px;color:#9a8fb5}.atfull .bver{position:absolute;right:12px;bottom:6px;z-index:3}
+.pal .bpopen{width:auto;min-width:64px;padding:0 10px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;background:conic-gradient(#ff5252,#ffd23f,#4cc9a0,#3a86ff,#7a4fc4,#ff5252);color:#fff;font:700 18px var(--font-display);text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.pal .bpopen i{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #fff;display:inline-block}
+.bigpal{position:absolute;z-index:9600;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:22px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.35);border:4px solid #FFD23F}
+#atdraw:not(.atfull) .bigpal{position:fixed}
+.bphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font:700 20px var(--font-display);color:#5B3F99}
+.bpx{border:0;background:#FFE3EE;color:#C92A63;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer}
+.bpgrid{display:grid;grid-template-columns:repeat(13,1fr);gap:6px}
+.bpgrid button{aspect-ratio:1;min-width:0;border-radius:10px;border:2px solid rgba(0,0,0,.12);cursor:pointer;padding:0}
+.bpgrid button[aria-pressed="true"]{outline:4px solid #3A86FF;outline-offset:2px}
+.bpmix{display:flex;align-items:center;gap:10px;margin-top:12px;font:600 16px var(--font-display)}
+.bpmix input{width:64px;height:44px;border:0;background:none;cursor:pointer}
 </style>
 
 
@@ -675,7 +686,7 @@ html.qv-lock,html.qv-lock body{overflow:hidden}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127j"></script>
+<script src="cuccioli.js?v=1127k"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -1254,7 +1265,24 @@ window.addEventListener("resize",refit);window.addEventListener("orientationchan
 document.addEventListener("fullscreenchange",refit);document.addEventListener("webkitfullscreenchange",refit);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){const d=$("#atdraw");if(d&&d.classList.contains("atfull"))setFull(false)}});
 function fresh(){const S=L.state();S.extra.atl={f:{},got:{},drew:0};L.save();try{localStorage.removeItem(DKEY())}catch(e){}HIST=[];renderAtelier()}
-function drawPal(){const sh=$("#bstyle");if(sh)sh.textContent=BRUSHTXT[PEN.pal]?"🖌️ "+BRUSHTXT[PEN.pal]:"🖌️ Tratto normale: scegli un artista per dipingere come lui.";$("#pal").innerHTML=PALS[PEN.pal].c.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="Colore ${c}" aria-pressed="${c===PEN.c&&!PEN.er}"></button>`).join("");
+/* la tavolozza grande: 12 tinte × 5 sfumature + bianco, grigi e nero */
+const BIGPAL=(()=>{const hs=[0,18,32,45,60,90,130,165,195,215,250,285,320],out=[];
+  const hsl=(h,s,l)=>{s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return "#"+[f(0),f(8),f(4)].map(x=>Math.round(x*255).toString(16).padStart(2,"0")).join("").toUpperCase()};
+  [88,74,58,42,28].forEach(l=>{hs.forEach(h=>out.push(hsl(h,l>80?70:85,l)))});
+  ["#FFFFFF","#E6E6E6","#BDBDBD","#8C8C8C","#5E5E5E","#333333","#000000","#F5DEB3","#D2A679","#A0522D","#6B3E1F","#FFD1DC","#B5EAD7"].forEach(c=>out.push(c));return out})();
+function openBigPal(){
+  let o=$("#bigpal");if(o){o.remove();return}
+  o=document.createElement("div");o.id="bigpal";o.className="bigpal";o.setAttribute("role","dialog");o.setAttribute("aria-label","Tutti i colori");
+  o.innerHTML=`<div class="bphead"><b>🎨 Tutti i colori</b><button type="button" class="bpx" aria-label="Chiudi">✕</button></div><div class="bpgrid">${BIGPAL.map(c=>`<button type="button" data-bc="${c}" style="background:${c}" aria-label="Colore ${c}"${c===PEN.c?' aria-pressed="true"':""}></button>`).join("")}</div>
+    <label class="bpmix">Mescola un colore tutto tuo: <input type="color" id="bpin" value="${/^#[0-9A-F]{6}$/i.test(PEN.c)?PEN.c:"#D2325F"}"></label>`;
+  ($("#atdraw")||document.body).appendChild(o);
+  const pickC=c=>{PEN.c=c;if(PEN.er)setTool(2);$$("[data-c]").forEach(z=>z.setAttribute("aria-pressed",String(z.dataset.c===c)));const cur=$("#curc");if(cur)cur.style.background=c;o.remove()};
+  o.querySelector(".bpx").addEventListener("click",()=>o.remove());
+  $$("[data-bc]",o).forEach(b=>b.addEventListener("click",()=>pickC(b.dataset.bc)));
+  o.querySelector("#bpin").addEventListener("change",e=>pickC(e.target.value.toUpperCase()));
+}
+function drawPal(){const sh=$("#bstyle");if(sh)sh.textContent=BRUSHTXT[PEN.pal]?"🖌️ "+BRUSHTXT[PEN.pal]:"🖌️ Tratto normale: scegli un artista per dipingere come lui.";$("#pal").innerHTML=PALS[PEN.pal].c.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="Colore ${c}" aria-pressed="${c===PEN.c&&!PEN.er}"></button>`).join("")+`<button type="button" class="bpopen" id="bpopen" aria-label="Apri tutti i colori" title="Tutti i colori"><i id="curc" style="background:${PEN.c}"></i>➕</button>`;
+  $("#bpopen").addEventListener("click",openBigPal);
   $$("[data-c]").forEach(b=>b.addEventListener("click",()=>{PEN.c=b.dataset.c;if(PEN.er)setTool(2);$$("[data-c]").forEach(z=>z.setAttribute("aria-pressed",String(z===b)))}))}
 function blankCv(){CTX.fillStyle="#fff";CTX.fillRect(0,0,CV.width,CV.height)}
 function snap(){HIST.push(CTX.getImageData(0,0,CV.width,CV.height));if(HIST.length>8)HIST.shift()}
@@ -1265,7 +1293,7 @@ function setupCanvas(){
   if(saved){const im=new Image();im.onload=()=>{const r=Math.min(CV.width/im.width,CV.height/im.height),dw=im.width*r,dh=im.height*r;CTX.drawImage(im,(CV.width-dw)/2,(CV.height-dh)/2,dw,dh)};im.src=saved}
   let down=false,last=null;
   const pos=e=>{const r=CV.getBoundingClientRect();return{x:(e.clientX-r.left)*CV.width/r.width,y:(e.clientY-r.top)*CV.height/r.height}};
-  const DG={d:0,m:0,c:0};const dg=()=>{const v=$(".bver");if(v)v.textContent="versione "+(CQ.BUILD||"")+" · tocchi "+DG.d+"/"+DG.m+(DG.c?" · interrotti "+DG.c:"")};
+  const DG={d:0,m:0,c:0};const dg=()=>{};
   CV.addEventListener("pointerdown",()=>{DG.d++;dg()});CV.addEventListener("pointermove",()=>{if(down){DG.m++;if(DG.m%10===0)dg()}});CV.addEventListener("pointercancel",()=>{DG.c++;dg()});
   const start=e=>{down=true;snap();last=pos(e);line(last,last)},move=e=>{if(!down)return;const p=pos(e);line(last,p);last=p};
   /* iPad: blocca i gesti di scorrimento/zoom sul foglio, che altrimenti interrompono il tratto */
