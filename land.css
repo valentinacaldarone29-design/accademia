@@ -22,7 +22,7 @@
   html.land body>nav{grid-column:1;grid-row:2;position:static;border:0;border-right:2px solid var(--line);overflow-y:auto;display:flex;flex-direction:column}
   html.land body>nav .wrap{max-width:none;padding:0 10px 10px;display:flex;flex-direction:column;flex:1}
   html.land body>nav .tabs{flex-direction:column;overflow:visible;gap:8px;padding-block:6px}
-  html.land body>nav .tabs a{display:flex;align-items:center;justify-content:flex-start;min-height:54px;padding:8px 16px;font-size:19px;border-radius:16px;white-space:nowrap}
+  html.land body>nav .tabs a{display:flex;align-items:center;justify-content:flex-start;min-height:54px;padding:8px 12px;font-size:18px;border-radius:16px;white-space:normal;line-height:1.15;text-align:left}
   html.land body>main{grid-column:2;grid-row:1/span 9;max-width:none;margin:0;overflow-y:auto;padding:16px 24px 24px;padding-right:max(24px,env(safe-area-inset-right,0px))}
   html.land body>main section.view{max-width:1300px;margin-inline:auto}
   html.land body>.gate{grid-column:1/3;grid-row:1/span 9;max-width:none;overflow:auto;padding-block:24px}
@@ -73,3 +73,10 @@
 @keyframes lpPulse{50%{transform:scale(1.06)}}
 @media (orientation:landscape) and (min-width:800px){.lp-win{left:calc(50% + clamp(100px,9.5vw,130px))}}
 @media (prefers-reduced-motion:reduce){.lp-win,.lp-win .lp-wgo{animation:none}}
+
+/* in verticale: i pulsanti dell'Accademia in alto a destra non coprono più il titolo */
+@media not all and (orientation:landscape) and (min-width:800px){
+  html.land body>header{padding-top:62px}
+  html.land body>header .deco{display:none}
+  html.land .app>header.top{padding-top:62px}
+}
