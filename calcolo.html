@@ -3,8 +3,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1127f">
-<link rel="stylesheet" href="land.css?v=1127f">
+<link rel="stylesheet" href="cuccioli.css?v=1127g">
+<link rel="stylesheet" href="land.css?v=1127g">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -161,13 +161,27 @@ span.car.snap{display:grid;place-items:center}
 .dvd span{display:grid;place-items:center;width:var(--cw);height:calc(var(--cw) + 6px);border-radius:10px}
 .dvd span.used{background:var(--accent-soft)}
 .dvd span.now{background:var(--warn-soft);outline:3px solid var(--m)}
-.dvs{display:grid;grid-template-rows:auto auto;padding:6px 0 0 14px}
+.dvs{display:grid;grid-template-rows:auto auto;align-content:start;padding:6px 0 0 14px}
 .dvs .ds{border-bottom:4px solid var(--ink);padding-bottom:6px;text-align:left}
 .dvs .qq{display:flex;gap:4px;padding-top:6px;min-height:calc(var(--cw) + 6px);color:var(--good)}
 .dvs .qq span{display:grid;place-items:center;width:calc(var(--cw) - 8px)}
 .dstep{display:grid;gap:10px;padding:14px;border-radius:14px;border:2px solid var(--m);background:var(--surface2);width:100%;max-width:640px}
 .dstep .q{font:600 22px/1.3 var(--font-display)}
 .dstep label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 22px var(--font-display)}
+.dvd.dwork{display:grid;gap:4px 6px;align-content:start;padding-left:0}
+.dwork .wc{display:grid;place-items:center;width:var(--cw);height:calc(var(--cw) + 6px);border-radius:10px;position:relative}
+.dwork .wc.used{background:var(--accent-soft)}
+.dwork .wc.wait{color:var(--muted)}
+.dwork .wc.now{background:var(--warn-soft);outline:3px solid var(--m)}
+.dwork .wc.sg{color:var(--bad);font-size:.8em}
+.dwork .wc.pr{color:var(--bad);border-bottom:4px solid var(--ink);border-radius:10px 10px 0 0}
+.dwork .wc.rs{color:#1F5FCC}
+.dwork .wc.rfin{background:#E6F5EC;color:var(--good);outline:3px solid var(--good)}
+.dwork .wc.low{color:#7A4FC4;background:#F3EEFF}
+.dwork .wc.low i{position:absolute;top:-16px;font-size:18px;font-style:normal;color:#7A4FC4}
+.dwork .wc.rlab{width:auto;font:600 15px var(--font-display);color:var(--good);justify-self:start}
+.dlegend{display:flex;flex-wrap:wrap;gap:6px 14px;font:600 14px var(--font-display);color:var(--muted)}
+.dlegend b{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:4px}
 .dlog{margin:0;padding-left:22px;display:grid;gap:4px;color:var(--muted);width:100%;max-width:640px}
 
 /* detective */
@@ -405,7 +419,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127f"></script>
+<script src="cuccioli.js?v=1127g"></script>
 <script>
 (function(){
 "use strict";
@@ -935,12 +949,20 @@ function startDiv(){
   const e=EX,s=String(e.a).split("").map(Number);
   let partial=s[0],idx=1,note="";
   if(partial<e.b&&s.length>1){partial=partial*10+s[1];idx=2;note=`La prima cifra, ${s[0]}, è più piccola di ${e.b}: prendo due cifre, ${partial}.`}
-  DV={s,d:e.b,partial,idx,note,q:[],log:[],errs:0,used:idx};
+  DV={s,d:e.b,partial,idx,note,q:[],log:[],errs:0,used:idx,steps:[]};
   $("#op-card").innerHTML="";renderDiv();
 }
 function renderDiv(fbh){
   const e=EX,D=DV,keep={};$$("#op-card .pvside input").forEach(i=>{if(i.value)keep[i.id]=i.value});
-  const dd=D.s.map((x,i)=>`<span class="${i<D.used?(!D.fin&&i===D.used-1?"now":"used"):""}">${x}</span>`).join("");
+  const n=D.s.length,ST=D.steps||[],cur=!D.fin,wc=(r,c,t,cls)=>`<span class="wc ${cls||""}" style="grid-row:${r};grid-column:${c+2}">${t}</span>`;
+  let dd=D.s.map((x,i)=>wc(1,i,x,(cur&&!ST.length&&i<D.used?"now":i<D.used?"used":"")+(i>=D.used?" wait":""))).join("");
+  ST.forEach((st,k)=>{const r=2+2*k,pd=String(st.prod),a=st.end-pd.length+1,last=k===ST.length-1;
+    dd+=wc(r,a-1,"−","sg");pd.split("").forEach((x,i)=>{dd+=wc(r,a+i,x,"pr")});
+    const rd=String(st.rem),b=st.end-rd.length+1,isNow=cur&&last;
+    rd.split("").forEach((x,i)=>{dd+=wc(r+1,b+i,x,"rs"+(isNow?" now":"")+(st.low==null?" rfin":""))});
+    if(st.low!=null)dd+=wc(r+1,st.end+1,`<i aria-hidden="true">↓</i>${st.low}`,"low"+(isNow?" now":""));
+    else dd+=`<span class="wc rlab" style="grid-row:${r+1};grid-column:${st.end+3}">resto</span>`;
+  });
   const qq=D.q.map(x=>`<span>${x}</span>`).join("");
   let step="";
   if(!D.fin){
@@ -951,7 +973,8 @@ function renderDiv(fbh){
       <div class="row"><button class="btn" type="button" id="dv-check">Controlla il passaggio</button><button class="btn ghost help" type="button" id="dv-help">💡 Aiuto</button><button class="btn ghost" type="button" id="op-sol">Mostra la soluzione</button></div></div>`;
   }
   $("#op-card").innerHTML=`${provaBanner()}<h3>Divisione con una cifra al divisore</h3><p class="lead">Filastrocca: quante volte ci sta? · moltiplico · sottraggo · abbasso.</p>
-    ${provaWrap(`<div class="divbox"><div class="dvline"><div class="dvd">${dd}</div><div class="dvs"><div class="ds">${D.d}</div><div class="qq">${qq}</div></div></div>
+    ${provaWrap(`<div class="divbox"><div class="dvline"><div class="dvd dwork" style="grid-template-columns:repeat(${n+2},var(--cw))">${dd}</div><div class="dvs"><div class="ds">${D.d}</div><div class="qq">${qq}</div></div></div>
+    ${ST.length?`<p class="dlegend"><span><b style="background:var(--bad)"></b>quello che tolgo (− prodotto)</span><span><b style="background:#1F5FCC"></b>il resto</span><span><b style="background:#7A4FC4"></b>↓ la cifra che abbasso</span></p>`:""}
     ${D.log.length?`<ol class="dlog">${D.log.map(l=>`<li>${l}</li>`).join("")}</ol>`:""}${step}</div>`)}
     <div id="op-fb">${fbh||""}</div>${D.fin?`<div class="row"><button class="btn" type="button" id="op-new">Nuova divisione</button></div>`:`<div class="row"><button class="btn ghost" type="button" id="op-new">Nuova divisione</button></div>`}`;
   const card=$("#op-card");wireInputs(card);
@@ -976,7 +999,7 @@ function checkDiv(){
     D.errs++;errTag(why);["dq","dp","dr"].forEach(id=>{const el=$("#"+id);if(el)el.style.borderColor=id===bad?"var(--bad)":""});
     $("#op-fb").innerHTML=fbHTML("bad","Guasto in questo passaggio",[why]);buzz();$("#"+bad).focus();return;
   }
-  D.q.push(eq);
+  D.q.push(eq);D.steps.push({end:D.idx-1,prod:ep,rem:er,low:D.idx<D.s.length?D.s[D.idx]:null});
   let line=`${D.partial} : ${D.d} → ci sta ${eq} ${eq===1?"volta":"volte"}; ${eq} × ${D.d} = ${ep}; ${D.partial} − ${ep} = ${er}`;
   if(D.idx<D.s.length){
     const nd=D.s[D.idx];line+=`; abbasso il ${nd}`;D.partial=er*10+nd;D.idx++;D.used=D.idx;D.note=er===0&&nd<D.d?`Ho abbassato il ${nd}. Attenzione: ${nd} è più piccolo di ${D.d}.`:"";
@@ -993,7 +1016,7 @@ function checkDiv(){
 function showDivSol(){
   const D=DV;if(!D||D.fin)return;
   while(D.idx<=D.s.length&&!D.fin){
-    const eq=Math.floor(D.partial/D.d),ep=eq*D.d,er=D.partial-ep;D.q.push(eq);
+    const eq=Math.floor(D.partial/D.d),ep=eq*D.d,er=D.partial-ep;D.q.push(eq);D.steps.push({end:D.idx-1,prod:ep,rem:er,low:D.idx<D.s.length?D.s[D.idx]:null});
     let line=`${D.partial} : ${D.d} → ${eq}; ${eq} × ${D.d} = ${ep}; resto ${er}`;
     if(D.idx<D.s.length){line+=`; abbasso il ${D.s[D.idx]}`;D.partial=er*10+D.s[D.idx];D.idx++;D.log.push(line)}else{D.log.push(line);D.fin=true}
   }
@@ -1354,5 +1377,5 @@ renderStPick();renderBoard();
 openGate();
 })();
 </script>
-<script src="land.js?v=1127f"></script>
+<script src="land.js?v=1127g"></script>
 </body></html>
