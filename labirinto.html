@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1127i">
+<link rel="stylesheet" href="cuccioli.css?v=1127j">
 <link rel="stylesheet" href="lab.css">
 <style>
 /* colori dell'arte: viola della tavolozza */
@@ -432,7 +432,8 @@ html.atl-lock,html.atl-lock body{overflow:hidden}
 .tgl{display:none}
 .atfull{display:block!important;padding:0!important;background:#fff!important}
 .atfull .easel{position:absolute;top:0;right:0;bottom:0;left:0;width:auto!important;border:0!important;border-radius:0;box-shadow:none}
-.atfull .easel canvas{width:100%;height:100%;border-radius:0}
+.atfull .easel{display:flex;align-items:center;justify-content:center;background:#fff}
+.atfull .easel canvas{border-radius:0;flex:none;box-shadow:0 0 0 1px #eee}
 .atfull .pick,.atfull .tools{position:absolute;left:10px;z-index:2;background:rgba(255,248,231,.94);border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:8px;width:clamp(170px,19vw,240px)}
 .atfull .pick{top:62px;max-height:24vh;overflow:auto}
 .atfull .tools{top:calc(62px + min(24vh,240px) + 10px);bottom:10px;max-height:none}
@@ -674,7 +675,7 @@ html.qv-lock,html.qv-lock body{overflow:hidden}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127i"></script>
+<script src="cuccioli.js?v=1127j"></script>
 <script src="lab.js"></script>
 <script>
 (function(){
@@ -1234,7 +1235,7 @@ function setFull(on){
   if(on&&d.parentNode!==document.body){const ph=document.createElement("div");ph.id="atdraw-ph";d.before(ph);document.body.appendChild(d)}
   if(!on){const ph=$("#atdraw-ph");if(ph){ph.replaceWith(d)}}
   d.classList.toggle("atfull",on);d.classList.remove("tclosed");
-  setTimeout(()=>{if(on){const W=Math.max(window.innerWidth,1),H=Math.max(window.innerHeight,1),k=1600/Math.max(W,H);fitCanvas(Math.round(W*k),Math.round(H*k))}else if(CV.width!==1350||CV.height!==960)fitCanvas(1350,960)},on?250:0);document.documentElement.classList.toggle("atl-lock",on);
+  setTimeout(sizeFull,on?120:0);document.documentElement.classList.toggle("atl-lock",on);
   if(b)b.textContent=on?"✕ Chiudi la lavagna grande":"⛶ Lavagna grande";
   const H=document.documentElement,fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement;
   const iOS=/iP(ad|hone|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -1243,7 +1244,12 @@ function setFull(on){
   FSBYBOARD=on&&!fsEl();
 }
 let FSBYBOARD=false,FITT=null;
-function refit(){const d=$("#atdraw");if(!d||!d.classList.contains("atfull")||!CV)return;clearTimeout(FITT);FITT=setTimeout(()=>{const W=Math.max(window.innerWidth,1),H=Math.max(window.innerHeight,1),k=1600/Math.max(W,H),w=Math.round(W*k),h=Math.round(H*k);if(Math.abs(CV.width/CV.height-w/h)>.02)fitCanvas(w,h)},300)}
+function sizeFull(){const d=$("#atdraw");if(!CV)return;
+  if(!d||!d.classList.contains("atfull")){CV.style.width="";CV.style.height="";return}
+  const W=Math.max(window.innerWidth,1),H=Math.max(window.innerHeight,1),r=Math.min(W/CV.width,H/CV.height);
+  CV.style.width=Math.floor(CV.width*r)+"px";CV.style.height=Math.floor(CV.height*r)+"px";
+}
+function refit(){sizeFull();return;const d=$("#atdraw");if(!d||!d.classList.contains("atfull")||!CV)return;clearTimeout(FITT);FITT=setTimeout(()=>{const W=Math.max(window.innerWidth,1),H=Math.max(window.innerHeight,1),k=1600/Math.max(W,H),w=Math.round(W*k),h=Math.round(H*k);if(Math.abs(CV.width/CV.height-w/h)>.02)fitCanvas(w,h)},300)}
 window.addEventListener("resize",refit);window.addEventListener("orientationchange",refit);
 document.addEventListener("fullscreenchange",refit);document.addEventListener("webkitfullscreenchange",refit);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){const d=$("#atdraw");if(d&&d.classList.contains("atfull"))setFull(false)}});
@@ -1251,7 +1257,7 @@ function fresh(){const S=L.state();S.extra.atl={f:{},got:{},drew:0};L.save();try
 function drawPal(){const sh=$("#bstyle");if(sh)sh.textContent=BRUSHTXT[PEN.pal]?"🖌️ "+BRUSHTXT[PEN.pal]:"🖌️ Tratto normale: scegli un artista per dipingere come lui.";$("#pal").innerHTML=PALS[PEN.pal].c.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="Colore ${c}" aria-pressed="${c===PEN.c&&!PEN.er}"></button>`).join("");
   $$("[data-c]").forEach(b=>b.addEventListener("click",()=>{PEN.c=b.dataset.c;if(PEN.er)setTool(2);$$("[data-c]").forEach(z=>z.setAttribute("aria-pressed",String(z===b)))}))}
 function blankCv(){CTX.fillStyle="#fff";CTX.fillRect(0,0,CV.width,CV.height)}
-function snap(){HIST.push(CTX.getImageData(0,0,CV.width,CV.height));if(HIST.length>15)HIST.shift()}
+function snap(){HIST.push(CTX.getImageData(0,0,CV.width,CV.height));if(HIST.length>8)HIST.shift()}
 function store(){try{localStorage.setItem(DKEY(),CV.toDataURL("image/jpeg",.8))}catch(e){}}
 function setupCanvas(){
   CV=$("#cv");CTX=CV.getContext("2d");blankCv();
@@ -1259,6 +1265,8 @@ function setupCanvas(){
   if(saved){const im=new Image();im.onload=()=>{const r=Math.min(CV.width/im.width,CV.height/im.height),dw=im.width*r,dh=im.height*r;CTX.drawImage(im,(CV.width-dw)/2,(CV.height-dh)/2,dw,dh)};im.src=saved}
   let down=false,last=null;
   const pos=e=>{const r=CV.getBoundingClientRect();return{x:(e.clientX-r.left)*CV.width/r.width,y:(e.clientY-r.top)*CV.height/r.height}};
+  const DG={d:0,m:0,c:0};const dg=()=>{const v=$(".bver");if(v)v.textContent="versione "+(CQ.BUILD||"")+" · tocchi "+DG.d+"/"+DG.m+(DG.c?" · interrotti "+DG.c:"")};
+  CV.addEventListener("pointerdown",()=>{DG.d++;dg()});CV.addEventListener("pointermove",()=>{if(down){DG.m++;if(DG.m%10===0)dg()}});CV.addEventListener("pointercancel",()=>{DG.c++;dg()});
   const start=e=>{down=true;snap();last=pos(e);line(last,last)},move=e=>{if(!down)return;const p=pos(e);line(last,p);last=p};
   /* iPad: blocca i gesti di scorrimento/zoom sul foglio, che altrimenti interrompono il tratto */
   CV.addEventListener("touchstart",e=>{if(e.touches.length===1)e.preventDefault()},{passive:false});
