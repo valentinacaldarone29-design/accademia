@@ -3,8 +3,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1127e">
-<link rel="stylesheet" href="land.css?v=1127e">
+<link rel="stylesheet" href="cuccioli.css?v=1127f">
+<link rel="stylesheet" href="land.css?v=1127f">
 <style>
 /* Layout: officina. Testata con la chiave inglese e le quattro operazioni, schede a pillola,
    operazioni in colonna su una griglia grande con i colori del valore posizionale (come in Missione Mille). */
@@ -352,10 +352,12 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
     <p class="eyebrow">Le proprietà delle operazioni</p>
     <h2>Gli attrezzi segreti</h2>
     <p class="lead">Le proprietà rendono i calcoli più facili. Il risultato non cambia.</p>
-    <details><summary><b>Ripassa le proprietà</b></summary>
+    <details open><summary><b>Le proprietà che impariamo in terza</b></summary>
       <div class="defs" style="margin-top:10px">
         <div class="def"><b>Commutativa · addizione e moltiplicazione</b><span>Puoi cambiare l'ordine dei numeri: il risultato non cambia. 3 + 5 = 5 + 3 · 4 × 7 = 7 × 4.</span></div>
         <div class="def"><b>Associativa · addizione e moltiplicazione</b><span>Puoi raggruppare i numeri come vuoi, con le parentesi: il risultato non cambia. (4 + 6) + 7 = 4 + (6 + 7) · (3 × 2) × 5 = 3 × (2 × 5).</span></div>
+        <div class="def"><b>Dissociativa · addizione e moltiplicazione</b><span>Puoi scomporre un numero in due o più numeri: il risultato non cambia. 37 + 8 = 37 + 3 + 5 · 12 × 6 = 12 × 2 × 3.</span></div>
+        <div class="def"><b>Distributiva · moltiplicazione</b><span>Puoi scomporre un fattore e moltiplicare ogni pezzo, poi sommare i risultati. 14 × 3 = (10 × 3) + (4 × 3) = 30 + 12.</span></div>
         <div class="def"><b>Invariantiva · sottrazione</b><span>Se aggiungi o togli lo stesso numero a tutti e due i termini, la differenza non cambia. 52 − 19 = 53 − 20.</span></div>
         <div class="def"><b>Invariantiva · divisione</b><span>Se moltiplichi o dividi tutti e due i termini per lo stesso numero, il quoziente non cambia. 60 : 15 = 12 : 3.</span></div></div>
     </details>
@@ -377,6 +379,8 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
       <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="34" r="22" fill="#FFD9B3" stroke="#14213D" stroke-width="2.5"/><path d="M12 26Q14 8 32 8Q50 8 52 26Z" fill="#7B4FD6" stroke="#14213D" stroke-width="2.5"/><circle cx="24" cy="34" r="6" fill="#fff" stroke="#14213D" stroke-width="2"/><circle cx="40" cy="34" r="6" fill="#fff" stroke="#14213D" stroke-width="2"/><path d="M30 34h4" stroke="#14213D" stroke-width="2"/><circle cx="25" cy="35" r="2" fill="#14213D"/><circle cx="41" cy="33" r="2" fill="#14213D"/><path d="M24 47q8 -5 16 2" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round"/></svg>
       <p>Il <b>Professor Pasticcio</b> ha fatto i suoi calcoli in fretta e ha sbagliato. Trova la cifra sbagliata nel risultato, toccala, e poi scegli il perché.</p>
     </div>
+    <div id="det-teach" data-teacher hidden style="margin-top:10px"><p style="margin:0 0 6px">👩‍🏫 <b>Solo per la maestra:</b> scegli le operazioni da presentare. Vale per tutta la classe.</p><div class="pills" id="det-pick" role="group" aria-label="Operazioni della caccia all'errore"></div><p class="small" id="det-saved" aria-live="polite"></p></div>
+    <p id="det-now" class="small" style="margin:6px 0 0;font-weight:700"></p>
   </div>
   <div class="panel" id="det-card"></div>
 </section>
@@ -401,7 +405,7 @@ ul.tight{margin:0;padding-left:20px;display:grid;gap:6px}
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127e"></script>
+<script src="cuccioli.js?v=1127f"></script>
 <script>
 (function(){
 "use strict";
@@ -1085,11 +1089,11 @@ $("#st-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-s]"
 $("#st-card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;if(b.id==="st-check")checkSt();if(b.id==="st-help")helpSt();if(b.id==="st-new")newSt()});
 
 /* ================= PROPRIETÀ ================= */
-const PROPS=["Commutativa","Associativa","Invariantiva"];
+const PROPS=["Commutativa","Associativa","Dissociativa","Distributiva","Invariantiva"];
 /* solo commutativa e associativa per addizione e moltiplicazione, invariantiva per sottrazione e divisione */
-const PGROUPS=[["comm_add","Commutativa","addizione","+"],["comm_mul","Commutativa","moltiplicazione","×"],["assoc_add","Associativa","addizione","+"],["assoc_mul","Associativa","moltiplicazione","×"],["inv_sub","Invariantiva","sottrazione","−"],["inv_div","Invariantiva","divisione",":"]];
-const PKEYS={comm_add:["comm_add"],comm_mul:["comm_mul"],assoc_add:["assoc_add"],assoc_mul:["assoc_mul"],inv_sub:["inv_sub_add","inv_sub_tog"],inv_div:["inv_div_div","inv_div_mol"]};
-const TRAPK=[["comm_add","comm_mul"],["comm_add","comm_mul"],["comm_add"],["comm_mul"],["assoc_add","assoc_mul"],["assoc_mul"],["assoc_add"],["inv_sub"],["inv_sub"],["inv_div"],["inv_div"]];
+const PGROUPS=[["comm_add","Commutativa","addizione","+"],["comm_mul","Commutativa","moltiplicazione","×"],["assoc_add","Associativa","addizione","+"],["assoc_mul","Associativa","moltiplicazione","×"],["diss_add","Dissociativa","addizione","+"],["diss_mul","Dissociativa","moltiplicazione","×"],["distr_mul","Distributiva","moltiplicazione","×"],["inv_sub","Invariantiva","sottrazione","−"],["inv_div","Invariantiva","divisione",":"]];
+const PKEYS={comm_add:["comm_add"],comm_mul:["comm_mul"],assoc_add:["assoc_add"],assoc_mul:["assoc_mul"],diss_add:["diss_add"],diss_mul:["diss_mul"],distr_mul:["distr_mul"],inv_sub:["inv_sub_add","inv_sub_tog"],inv_div:["inv_div_div","inv_div_mol"]};
+const TRAPK=[["comm_add","comm_mul"],["comm_add","comm_mul"],["comm_add"],["comm_mul"],["assoc_add","assoc_mul"],["assoc_mul"],["assoc_add"],["inv_sub"],["inv_sub"],["inv_div"],["inv_div"],["diss_add"],["diss_mul"],["distr_mul"],["distr_mul"]];
 function propSel(){const v=(CQ.settings&&CQ.settings.propSel)||[];return Array.isArray(v)?v.filter(k=>PKEYS[k]):[]}
 function propAllowed(){const v=propSel();return v.length?v:PGROUPS.map(g=>g[0])}
 function propGen(){
@@ -1098,6 +1102,9 @@ function propGen(){
   if(k==="comm_mul"){const x=rnd(3,12),y=rnd(3,12);return {prop:"Commutativa",op:"moltiplicazione",L:`${x} × ${y}`,lv:x*y,R:`${y} × []`,a:x,rhs:v=>y*v,eq:`${x} × ${y} = ${y} × ${x}`,why:`Commutativa della moltiplicazione: cambiando l'ordine dei fattori il prodotto non cambia. ${x} × ${y} = ${x*y} e ${y} × ${x} = ${x*y}.`}}
   if(k==="assoc_add"){const x=rnd(11,BIG?399:59),y=rnd(1,9),z=10-y+(Math.random()<.5?0:10);return {prop:"Associativa",op:"addizione",L:`(${x} + ${y}) + ${z}`,lv:x+y+z,R:`${x} + (${y} + [])`,a:z,rhs:v=>x+y+v,eq:`(${x} + ${y}) + ${z} = ${x} + (${y} + ${z})`,why:`Associativa dell'addizione: puoi raggruppare gli addendi come vuoi. Conviene fare prima ${y} + ${z} = ${y+z}, che è un numero tondo: ${x} + ${y+z} = ${x+y+z}.`}}
   if(k==="assoc_mul"){const pair=pick([[2,5],[5,2],[4,5],[5,4],[2,10],[10,2],[5,6]]),x=rnd(2,BIG?19:9),y=pair[0],z=pair[1];return {prop:"Associativa",op:"moltiplicazione",L:`(${x} × ${y}) × ${z}`,lv:x*y*z,R:`${x} × (${y} × [])`,a:z,rhs:v=>x*y*v,eq:`(${x} × ${y}) × ${z} = ${x} × (${y} × ${z})`,why:`Associativa della moltiplicazione: puoi raggruppare i fattori come vuoi. Conviene fare prima ${y} × ${z} = ${y*z}: ${x} × ${y*z} = ${x*y*z}.`}}
+  if(k==="diss_add"){const x=rnd(2,BIG?39:8)*10+rnd(3,8),y=rnd(4,9),a1=near10(x)-x;if(a1>=y||a1<1)return propGen();return {prop:"Dissociativa",op:"addizione",L:`${x} + ${y}`,lv:x+y,R:`${x} + ${a1} + []`,a:y-a1,rhs:v=>x+a1+v,eq:`${x} + ${y} = ${x} + ${a1} + ${y-a1}`,why:`Dissociativa dell'addizione: scompongo ${y} in ${a1} + ${y-a1}. Così ${x} + ${a1} = ${x+a1}, un numero tondo, e poi ${x+a1} + ${y-a1} = ${x+y}.`}}
+  if(k==="diss_mul"){const pr=pick([[6,2,3],[8,2,4],[9,3,3],[10,2,5],[12,3,4],[4,2,2],[6,3,2]]),x=rnd(3,BIG?25:12);return {prop:"Dissociativa",op:"moltiplicazione",L:`${x} × ${pr[0]}`,lv:x*pr[0],R:`${x} × ${pr[1]} × []`,a:pr[2],rhs:v=>x*pr[1]*v,eq:`${x} × ${pr[0]} = ${x} × ${pr[1]} × ${pr[2]}`,why:`Dissociativa della moltiplicazione: scompongo ${pr[0]} in ${pr[1]} × ${pr[2]}. ${x} × ${pr[1]} = ${x*pr[1]}, poi ${x*pr[1]} × ${pr[2]} = ${x*pr[0]}.`}}
+  if(k==="distr_mul"){const d=rnd(1,BIG?9:4)*10,u=rnd(1,9),b=rnd(2,9),x=d+u;return {prop:"Distributiva",op:"moltiplicazione",L:`${x} × ${b}`,lv:x*b,R:`(${d} × ${b}) + ([] × ${b})`,a:u,rhs:v=>d*b+v*b,eq:`${x} × ${b} = (${d} × ${b}) + (${u} × ${b})`,why:`Distributiva della moltiplicazione: scompongo ${x} in ${d} + ${u} e moltiplico ogni pezzo per ${b}: ${d} × ${b} = ${d*b}, ${u} × ${b} = ${u*b}. Poi sommo: ${d*b} + ${u*b} = ${x*b}.`}}
   if(k==="inv_sub_add"){const y=rnd(2,8)*10+pick([7,8,9]),add=near10(y)-y,x=rnd(y+12,BIG?400:99);return {prop:"Invariantiva",op:"sottrazione",L:`${x} − ${y}`,lv:x-y,R:`${x+add} − []`,a:y+add,rhs:v=>x+add-v,eq:`${x} − ${y} = ${x+add} − ${y+add}`,why:`Invariantiva della sottrazione: aggiungi ${add} a tutti e due i termini. ${x} + ${add} = ${x+add} e ${y} + ${add} = ${y+add}. La differenza non cambia ed è più facile: ${x+add} − ${y+add} = ${x-y}.`}}
   if(k==="inv_sub_tog"){const t=pick([1,2,3]),y=rnd(2,8)*10+t,x=rnd(y+12,BIG?400:99);return {prop:"Invariantiva",op:"sottrazione",L:`${x} − ${y}`,lv:x-y,R:`${x-t} − []`,a:y-t,rhs:v=>x-t-v,eq:`${x} − ${y} = ${x-t} − ${y-t}`,why:`Invariantiva della sottrazione: togli ${t} a tutti e due i termini. ${x} − ${t} = ${x-t} e ${y} − ${t} = ${y-t}. La differenza non cambia: ${x-t} − ${y-t} = ${x-y}.`}}
   if(k==="inv_div_div"){const f=pick([2,5,10]),q=rnd(2,9),y=pick([2,3,4,5])*f,x=q*y;return {prop:"Invariantiva",op:"divisione",L:`${x} : ${y}`,lv:q,R:`${x/f} : []`,a:y/f,rhs:v=>v?(x/f)/v:NaN,eq:`${x} : ${y} = ${x/f} : ${y/f}`,why:`Invariantiva della divisione: dividi tutti e due i termini per ${f}. ${x} : ${f} = ${x/f} e ${y} : ${f} = ${y/f}. Il quoziente non cambia: ${x/f} : ${y/f} = ${q}.`}}
@@ -1114,7 +1121,11 @@ const TRAPS=[
   ()=>{const b=rnd(12,29),a=b+rnd(10,40),k=pick([1,2,3]);return {s:`${a} − ${b} = ${a+k} − ${b+k}`,ok:true,why:`Vero. È la proprietà invariantiva della sottrazione: aggiungendo ${k} a tutti e due i termini la differenza resta ${a-b}.`}},
   ()=>{const b=rnd(12,29),a=b+rnd(10,40),k=pick([1,2,3]);return {s:`${a} − ${b} = ${a+k} − ${b}`,ok:false,why:`Falso. Per l'invariantiva bisogna cambiare tutti e due i termini: ${a} − ${b} = ${a-b}, ma ${a+k} − ${b} = ${a+k-b}.`}},
   ()=>{const q=rnd(2,9),b=pick([2,4,6,8]),a=q*b;return {s:`${a} : ${b} = ${a/2} : ${b/2}`,ok:true,why:`Vero. È la proprietà invariantiva della divisione: dividendo tutti e due i termini per 2 il quoziente resta ${q}.`}},
-  ()=>{const q=rnd(2,9),b=pick([2,4,6,8]),a=q*b;return {s:`${a} : ${b} = ${a+2} : ${b+2}`,ok:false,why:`Falso. Nella divisione l'invariantiva funziona moltiplicando o dividendo, non aggiungendo: ${a} : ${b} = ${q}, ma ${a+2} : ${b+2} non dà ${q}.`}}
+  ()=>{const q=rnd(2,9),b=pick([2,4,6,8]),a=q*b;return {s:`${a} : ${b} = ${a+2} : ${b+2}`,ok:false,why:`Falso. Nella divisione l'invariantiva funziona moltiplicando o dividendo, non aggiungendo: ${a} : ${b} = ${q}, ma ${a+2} : ${b+2} non dà ${q}.`}},
+  ()=>{const x=rnd(21,58),y=rnd(4,9),a=rnd(1,y-1);return {s:`${x} + ${y} = ${x} + ${a} + ${y-a}`,ok:true,why:`Vero. È la proprietà dissociativa dell'addizione: ${y} = ${a} + ${y-a}, e il risultato resta ${x+y}.`}},
+  ()=>{const x=rnd(3,9);return {s:`${x} × 6 = ${x} × 2 × 3`,ok:true,why:`Vero. È la proprietà dissociativa della moltiplicazione: 6 = 2 × 3, e il prodotto resta ${x*6}.`}},
+  ()=>{const u=rnd(1,9),b=rnd(2,9);return {s:`${10+u} × ${b} = (10 × ${b}) + (${u} × ${b})`,ok:true,why:`Vero. È la proprietà distributiva: ${10*b} + ${u*b} = ${(10+u)*b}.`}},
+  ()=>{const u=rnd(1,9),b=rnd(2,9);return {s:`${10+u} × ${b} = (10 × ${b}) + ${u}`,ok:false,why:`Falso. Con la distributiva bisogna moltiplicare per ${b} tutti e due i pezzi: (10 × ${b}) + (${u} × ${b}) = ${(10+u)*b}, invece (10 × ${b}) + ${u} = ${10*b+u}.`}}
 ];
 let PR=null;
 function prSelUI(){
@@ -1135,7 +1146,7 @@ function newPr(){mix();
       <div class="row"><button class="btn" type="button" id="pr-check">Controlla</button><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
   }else if(PR.kind==="choose"){
     Object.assign(PR,propGen());
-    c.innerHTML=`<p class="eyebrow">Quale proprietà è stata usata in questa ${PR.op}?</p><div class="eqline"><span>${PR.eq}</span></div><div class="opts">${PROPS.map(p=>`<button class="opt" type="button" data-p="${p}">${p}</button>`).join("")}</div>
+    c.innerHTML=`<p class="eyebrow">Quale proprietà è stata usata in questa ${PR.op}?</p><div class="eqline"><span>${PR.eq}</span></div><div class="opts">${PROPS.filter(p=>p!=="Distributiva"||PR.op==="moltiplicazione").map(p=>`<button class="opt" type="button" data-p="${p}">${p}</button>`).join("")}</div>
       <div class="row"><button class="btn ghost" type="button" id="pr-new">Un'altra</button></div><div id="pr-fb"></div>`;
   }else{
     Object.assign(PR,TRAPS[pick(TRAPS.map((t,i)=>i).filter(i=>TRAPK[i].some(k=>al.includes(k))))]());
@@ -1172,6 +1183,8 @@ $("#pr-card").addEventListener("click",ev=>{
 function hintProp(p){return ({
   Commutativa:"La commutativa cambia solo l'ordine dei numeri. Qui succede qualcos'altro?",
   Associativa:"L'associativa sposta le parentesi, cioè raggruppa i numeri in modo diverso. Qui ci sono parentesi spostate?",
+  Dissociativa:"La dissociativa scompone un numero in pezzi più piccoli, senza parentesi tra due numeri spostate. Qui un numero è stato spezzato?",
+  Distributiva:"La distributiva spezza un fattore e moltiplica ogni pezzo per l'altro fattore, poi somma. Qui ci sono due moltiplicazioni sommate?",
   Invariantiva:"L'invariantiva (sottrazione e divisione) cambia tutti e due i numeri allo stesso modo. Qui sono cambiati tutti e due?"
 })[p]}
 
@@ -1197,10 +1210,23 @@ function wrongDigits(op,a,b,err){
   if(err==="carryfirst"){let c=0;for(let p=0;p<A.length;p++){const s=(A[p]+c)*b;out.push(s%10);c=Math.floor(s/10)}if(c)String(c).split("").reverse().forEach(x=>out.push(+x));return out}
   const R=digs(a*b),p=rnd(0,Math.min(A.length,R.length)-1);R[p]=(R[p]+pick([1,2,3,7,8,9]))%10;return R;
 }
+const DOPS=[["add","Addizioni","+"],["sub","Sottrazioni","−"],["mul","Moltiplicazioni","×"]];
+function detSel(){const v=(CQ.settings&&CQ.settings.detOps)||[];const ok=Array.isArray(v)?v.filter(k=>DOPS.some(d=>d[0]===k)):[];return ok.length?ok:DOPS.map(d=>d[0])}
+function detSelUI(){
+  const sel=detSel(),T=CQ.teacher&&CQ.teacher(),pk=$("#det-pick");
+  if(pk)pk.innerHTML=DOPS.map(d=>`<button class="pillb" type="button" data-dop="${d[0]}" aria-pressed="${sel.includes(d[0])}">${d[2]} ${d[1]}</button>`).join("");
+  $("#det-teach").hidden=!T;
+  $("#det-now").textContent="🔍 Il Professor Pasticcio sbaglia: "+DOPS.filter(d=>sel.includes(d[0])).map(d=>d[1].toLowerCase()).join(", ")+".";
+}
+$("#det-pick").addEventListener("click",ev=>{const b=ev.target.closest("[data-dop]");if(!b||!(CQ.teacher&&CQ.teacher()))return;
+  const cur=(CQ.settings&&CQ.settings.detOps)||[],sel=cur.length?cur.slice():DOPS.map(d=>d[0]),k=b.dataset.dop,nv=sel.includes(k)?sel.filter(x=>x!==k):sel.concat([k]);
+  if(!nv.length){$("#det-saved").textContent="Lascia almeno un'operazione.";return}
+  CQ.saveSettings({detOps:nv});$("#det-saved").textContent="Salvato per tutta la classe.";detSelUI();newDet()});
+CQ.on&&CQ.on(()=>{try{const before=$("#det-now").textContent;detSelUI();if($("#det-now").textContent!==before)newDet()}catch(e){}});
 function newDet(){mix();
-  let t=0;
+  let t=0;const allowed=detSel(),bag=["add","sub","sub","mul","mul"].filter(o=>allowed.includes(o));
   while(t++<200){
-    const op=pick(["add","sub","sub","mul","mul"]);
+    const op=pick(bag);
     MULN=MULN;const e=op==="add"?genAdd(true):op==="sub"?genSub(true):(()=>{let a,b;do{b=rnd(3,9);a=BIG?rnd(120,Math.floor(9999/b)):rnd(23,Math.floor(999/b))}while(a*b<100);return {op:"mul",a,b}})();
     const err=op==="add"?"nocarry":op==="sub"?pick(["inverted","noreduce"]):pick(["nocarry","carryfirst","table"]);
     const W=wrongDigits(op,e.a,e.b,err),C=digs(resultOf(e));
@@ -1316,7 +1342,7 @@ async function enter(r){
   }
   $("nav").hidden=false;$("main").hidden=false;$("#who").hidden=false;
   applyTeacher();renderBoard();buildV();
-  newSt();newOp();prSelUI();newPr();newDet();
+  newSt();newOp();prSelUI();newPr();detSelUI();newDet();
   if(!location.hash)location.hash=CQ.teacher()?"#lezione":"#strategie";else route();
   window.scrollTo(0,0);
 }
@@ -1328,5 +1354,5 @@ renderStPick();renderBoard();
 openGate();
 })();
 </script>
-<script src="land.js?v=1127e"></script>
+<script src="land.js?v=1127f"></script>
 </body></html>
