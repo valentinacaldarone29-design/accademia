@@ -11,10 +11,34 @@
 .mdots .md{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font:700 15px var(--font-display);color:var(--muted);cursor:pointer;padding:0}
 .mdots .md.ok{background:var(--good);border-color:var(--good);color:#fff}
 .mdots .md.cur{outline:3px solid var(--m);outline-offset:2px;color:var(--ink)}
+.sfcard{border:3px solid #7A4FC4;background:linear-gradient(180deg,#F3EEFF,var(--surface))}
+.sfcard .eyebrow{color:#5B3F99;font-size:14px}
+.sfcard .q{font-size:clamp(22px,2.6vw,30px)}
+/* tutto in uno schermo: compiti in alto, abaco compatto */
+#sec-abaco>.mcard{order:-2}#sec-abaco>.sfcard{order:-1}
+#sec-abaco>.panel:not(.mcard):not(.sfcard):not(.mislist) .eyebrow,#sec-abaco .lead,#sec-abaco .rod small{display:none}
+#sec-abaco h2{font-size:24px;margin:0}
+#sec-abaco .readout{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+#sec-abaco .bignum{font-size:46px}
+@media (orientation:portrait){#sec-abaco .post{min-height:clamp(140px,calc(100vh - 1000px),290px)}}
+.sfdone{margin:0 0 6px;padding:8px 12px;border-radius:12px;background:#E6F5EC;color:#14532D;font-weight:700}
+.btn.nextm{background:var(--m);border-color:var(--m);color:#fff}
+@media (orientation:landscape) and (min-width:800px){
+  #sec-abaco>.sfcard{grid-column:2;grid-row:1/span 3;position:sticky;top:58px;margin-top:58px}
+  #sec-abaco:not(.sfmode)>.sfcard:not([hidden])~.mcard{grid-row:auto}
+  #sec-abaco>.panel:first-of-type:not(.mcard) .eyebrow{display:none}
+  #sec-abaco .lead{display:none}
+  #sec-abaco h2{font-size:24px;margin:0}
+  #sec-abaco .readout{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  #sec-abaco .bignum{font-size:46px}
+  #sec-abaco .post{min-height:clamp(130px,calc(100vh - 570px),290px)}
+  #sec-abaco .rod small{display:none}
+  #sec-abaco .cambio{margin:0;padding:8px 12px}
+}
 .mislist summary{cursor:pointer;font-weight:700;list-style:revert}
 @media (orientation:landscape) and (min-width:800px){
   #sec-abaco{grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr);align-items:start}
-  #sec-abaco>.panel:not(.mcard),#sec-abaco>.mislist{grid-column:1}
+  #sec-abaco>.panel:not(.mcard):not(.sfcard),#sec-abaco>.mislist{grid-column:1}
   #sec-abaco>.mcard{grid-column:2;grid-row:1/span 3;position:sticky;top:58px;margin-top:58px}
   #sec-abaco .mcard .mx{font-size:clamp(18px,1.8vw,22px)}
 }
@@ -26,8 +50,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1127c">
-<link rel="stylesheet" href="land.css?v=1127c">
+<link rel="stylesheet" href="cuccioli.css?v=1127d">
+<link rel="stylesheet" href="land.css?v=1127d">
 <style>
 :root{
   /* Layout: banco da lavoro per la LIM e per il telefono. Testata con il 1000 a colori (uM, c, d, u),
@@ -609,8 +633,9 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
       <button class="btn ghost" id="ab-reset" type="button">Azzera</button>
     </div>
   </div>
-  <div class="panel">
-    <p class="eyebrow">Mini sfida</p>
+  <div class="panel sfcard" id="sfpan" hidden>
+    <p class="sfdone" id="sfdone" hidden>🏆 Hai completato tutte le 8 missioni! Ora tante mini sfide. <button class="link" type="button" data-mgo="0">Rifai le missioni</button></p>
+    <p class="eyebrow">⭐ Mini sfida</p>
     <p class="q" id="ab-q"></p>
     <p class="decomp" id="ab-words"></p>
     <div class="row">
@@ -618,6 +643,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
       <button class="btn ghost" id="ab-next" type="button">Altro numero</button>
     </div>
     <p class="fb" id="ab-fb" role="status" aria-live="polite"></p>
+    <div class="row" id="ab-tomis-row" hidden><button class="btn nextm" id="ab-tomis" type="button">🎯 Prossima missione ▶</button></div>
   </div>
   <details class="panel mislist">
     <summary><span class="eyebrow">Tutte le missioni dell'abaco</span> · completate <span id="ms-n">0</span> su <span id="ms-tot">8</span></summary>
@@ -791,7 +817,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127c"></script>
+<script src="cuccioli.js?v=1127d"></script>
 <script>
 (function(){
 'use strict';
@@ -1314,6 +1340,16 @@ $('#abaco').addEventListener('click',function(e){
 });
 $('#ab-999').addEventListener('click',function(){var prev=ab;ab=999;renderAb(prev);abSay('Siamo a 999. Aggiungi 1 unità e guarda che cosa succede.');});
 $('#ab-reset').addEventListener('click',function(){var prev=ab;ab=0;renderAb(prev);abSay('');});
+/* una cosa per volta: missione → mini sfida → missione successiva */
+function showSfida(on){
+  var all=MISSIONS.every(function(m){return (S.missioni||{})[m.id]});
+  $('#sfpan').hidden=!on;$('#mcard').hidden=on&&!all;
+  if(on){newTarget();var prev=ab;ab=0;renderAb(prev);abSay('Abaco azzerato: forma il numero della mini sfida.')}
+  $('#ab-tomis-row').hidden=true;
+  var sec=$('#sec-abaco');if(sec)sec.classList.toggle('sfmode',on&&!all);
+  var tgt=on?$('#sfpan'):$('#mcard');if(tgt&&!tgt.hidden)tgt.scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('#ab-tomis').addEventListener('click',function(){showSfida(false);renderMCard();var prev=ab;ab=0;renderAb(prev);abSay('')});
 function newTarget(){
   var t;do{t=Math.random()<0.5?101+Math.floor(Math.random()*899):1001+Math.floor(Math.random()*8999)}while(t===abTarget);
   abTarget=t;abSolved=false;
@@ -1329,6 +1365,7 @@ $('#ab-check').addEventListener('click',function(){
     abSolved=true;this.disabled=true;
     fb.className='fb good';fb.textContent='Esatto! '+abTarget+' si legge '+parole(abTarget)+'. Una stella in più.';
     S.abaco=(S.abaco||0)+1;addStars(1);tone([[659,.1],[880,.2]]);
+    if(!MISSIONS.every(function(m){return (S.missioni||{})[m.id]}))$('#ab-tomis-row').hidden=false;
   }else{
     var d=dig(ab),t=dig(abTarget),names={m:'le migliaia',c:'le centinaia',d:'le decine',u:'le unità'},bad=null;
     ['m','c','d','u'].forEach(function(k){if(bad===null&&d[k]!==t[k])bad=k;});
@@ -1711,7 +1748,8 @@ function mIdx(){var m0=S.missioni||{};if(MCUR!=null)return MCUR;var i=MISSIONS.f
 function renderMCard(){
   var box=$('#mcard');if(!box)return;var m0=S.missioni||{},i=mIdx();
   var dots='<div class="mdots">'+MISSIONS.map(function(m,k){return '<button type="button" class="md'+(m0[m.id]?' ok':'')+(k===i?' cur':'')+'" data-mgo="'+k+'" aria-label="Missione '+(k+1)+(m0[m.id]?', fatta':'')+'">'+(m0[m.id]?'✓':k+1)+'</button>'}).join('')+'</div>';
-  if(i<0){box.innerHTML='<p class="eyebrow">🎯 Missioni dell\'abaco</p><h2 class="mt">🏆 Hai completato tutte le 8 missioni!</h2><p class="mx">Bravissimo! Ora prova la <b>Mini sfida</b> qui sotto, oppure rifai una missione toccando il suo numero.</p>'+dots;return}
+  $('#sfdone').hidden=i>=0;if(i>=0&&$('#sfpan').hidden)box.hidden=false;
+  if(i<0){$('#sfpan').hidden=false;box.hidden=true;if(!abTarget)newTarget();box.innerHTML='<p class="eyebrow">🎯 Missioni dell\'abaco</p><h2 class="mt">🏆 Hai completato tutte le 8 missioni!</h2><p class="mx">Bravissimo! Ora continua con le <b>Mini sfide</b>, oppure rifai una missione toccando il suo numero.</p>'+dots;return}
   var m=MISSIONS[i],ok=!!m0[m.id];
   box.className='panel mcard'+(ok?' mdone':'')+(MWIN?' mwin':'');
   box.innerHTML='<div class="mhead"><p class="eyebrow">🎯 Missione '+(i+1)+' di '+MISSIONS.length+'</p>'+dots+'</div>'+
@@ -1720,6 +1758,7 @@ function renderMCard(){
     '<div class="row"><button class="btn ghost" type="button" data-mgo="'+(i-1)+'"'+(i===0?' disabled':'')+'>◀ Indietro</button><button class="btn'+(ok?'':' ghost')+'" type="button" data-mgo="'+(i+1<MISSIONS.length?i+1:-2)+'">'+(i+1<MISSIONS.length?'Prossima missione ▶':'Fine ▶')+'</button></div>';
 }
 document.addEventListener('click',function(e){var b=e.target.closest('[data-mgo]');if(!b)return;var k=+b.dataset.mgo;MWIN=false;
+  $('#sfpan').hidden=true;$('#mcard').hidden=false;$('#sec-abaco').classList.remove('sfmode');
   if(k===-2){MCUR=null;var m0=S.missioni||{},f=MISSIONS.findIndex(function(m){return !m0[m.id]});MCUR=f<0?null:f}else if(k>=0&&k<MISSIONS.length)MCUR=k;
   renderMCard();if(b.closest('.mislist')){b.closest('.mislist').open=false}$('#mcard').scrollIntoView({behavior:'smooth',block:'start'});});
 function checkMissions(prev){
@@ -1735,7 +1774,7 @@ function checkMissions(prev){
   if(got){
     MWIN=curB>=0&&!!S.missioni[MISSIONS[curB].id];if(MWIN)MCUR=curB;
     renderMissions();
-    if(MWIN)setTimeout(function(){MWIN=false;var m0=S.missioni||{},f=MISSIONS.findIndex(function(m){return !m0[m.id]});MCUR=f<0?null:f;renderMCard()},2600);
+    if(MWIN)setTimeout(function(){MWIN=false;var m0=S.missioni||{},f=MISSIONS.findIndex(function(m){return !m0[m.id]});MCUR=f<0?null:f;renderMCard();showSfida(true)},2600);
     if(MISSIONS.every(function(m){return S.missioni[m.id]}))award('abachista');
   }
 }
@@ -1839,5 +1878,5 @@ renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV(
 })();
 </script>
 
-<script src="land.js?v=1127c"></script>
+<script src="land.js?v=1127d"></script>
 </body></html>

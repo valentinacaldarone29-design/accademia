@@ -44,7 +44,7 @@ C.GAMES=[
   {k:"cervello",by:"t1",t:"La Palestra del Cervello",s:"mat",href:"cervello.html",d:"Hai finito prima? Sei sfide di numeri e logica a tre livelli: sequenze, piramidi, bilance magiche, indovinelli, Sudoku e bersagli."},
   {k:"stati",by:"t1",t:"La Danza delle Particelle",s:"sci",href:"stati.html",d:"Solido, liquido, gassoso: scalda, raffredda e scopri le trasformazioni."}
 ];
-C.BUILD="1127c";C.GAMES.forEach(function(g){if(!g.ext&&/\.html$/.test(g.href))g.href+="?v="+C.BUILD});
+C.BUILD="1127d";C.GAMES.forEach(function(g){if(!g.ext&&/\.html$/.test(g.href))g.href+="?v="+C.BUILD});
 var WORDS=["LUPO","ORSO","GATTO","VOLPE","TIGRE","PANDA","KOALA","DRAGO","FALCO","LEONE","ZEBRA","RICCIO","CERVO","FOCA","GUFO","TASSO","PUMA","LINCE","MERLO","PONY","DELFINO","AQUILA","CIGNO","LONTRA"];
 
 /* ---------- utilità ---------- */
