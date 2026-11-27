@@ -2,7 +2,7 @@
 /* Accademia dei Talenti: stili condivisi (avatar, costumi, poteri, accesso, evoluzione) */
 .cq-av{position:relative;width:100%;aspect-ratio:1/1;--rc:#4B97AB}
 .cq-av>*{position:absolute}
-.cq-bub{inset:0;border-radius:50%;background:#E3F2F5;border:4px solid var(--rc);z-index:1}
+.cq-bub{top:0;right:0;bottom:0;left:0;border-radius:50%;background:#E3F2F5;border:4px solid var(--rc);z-index:1}
 .cq-aura{z-index:1;border-radius:50%;background:radial-gradient(closest-side,var(--ec),transparent 60%,transparent);background:radial-gradient(closest-side,color-mix(in srgb,var(--ec) 70%,transparent),color-mix(in srgb,var(--ec) 25%,transparent) 60%,transparent);pointer-events:none}
 .cq-wings{z-index:1;pointer-events:none}
 .cq-wings svg,.cq-cape svg,.cq-hat svg{display:block;width:100%;height:100%}
@@ -16,11 +16,11 @@
 .cq-item svg{width:66%;height:66%}
 .cq-s3 .cq-bub{border-width:6px;box-shadow:0 0 0 3px #fff,0 0 0 5px #9FB3C2}
 .cq-s4 .cq-bub{border-color:#F2C230;border-width:6px;box-shadow:0 0 0 3px #fff,0 0 0 5px #F2C230,0 0 18px 4px rgba(242,194,48,.55)}
-.cq-rays{inset:-12%;border-radius:50%;z-index:0;background:repeating-conic-gradient(var(--ec) 0 7deg,transparent 7deg 18deg);background:repeating-conic-gradient(color-mix(in srgb,var(--ec) 55%,transparent) 0 7deg,transparent 7deg 18deg);-webkit-mask:radial-gradient(circle,transparent 44%,#000 46%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 44%,#000 46%,#000 70%,transparent 72%)}
+.cq-rays{top:-12%;right:-12%;bottom:-12%;left:-12%;border-radius:50%;z-index:0;background:repeating-conic-gradient(var(--ec) 0 7deg,transparent 7deg 18deg);background:repeating-conic-gradient(color-mix(in srgb,var(--ec) 55%,transparent) 0 7deg,transparent 7deg 18deg);-webkit-mask:radial-gradient(circle,transparent 44%,#000 46%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 44%,#000 46%,#000 70%,transparent 72%)}
 .cq-crown{width:26%;height:auto;transform:translateX(-50%) rotate(-6deg);z-index:5}
 .cq-spk{z-index:5;pointer-events:none}
 .cq-spk svg{width:100%;height:100%;display:block}
-.cq-orbit{inset:0;z-index:6;pointer-events:none}
+.cq-orbit{top:0;right:0;bottom:0;left:0;z-index:6;pointer-events:none}
 .cq-orb{position:absolute;width:15%;height:15%;border-radius:50%;display:grid;place-items:center;border:2px solid #fff;box-shadow:0 0 0 1.5px #1F3A56}
 .cq-orb svg{width:66%;height:66%}
 .cq-orb.o0{left:-4%;top:12%}.cq-orb.o1{right:-5%;top:30%}.cq-orb.o2{left:8%;bottom:6%}
@@ -61,7 +61,7 @@
 @media (max-width:520px){.cq-chip{grid-template-columns:64px 1fr}.cq-chav{width:64px}.cq-chbt{grid-column:1/-1;flex-direction:row;justify-content:flex-end}}
 
 /* accesso */
-.cq-gate{position:fixed;inset:0;z-index:50;background:rgba(16,32,46,.82);display:grid;place-items:center;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.cq-gate{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;background:rgba(16,32,46,.82);display:grid;place-items:center;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .cq-gc{width:min(100%,460px);background:#fff;color:#1F3A56;border:3px solid #1F3A56;border-radius:26px;padding:24px 20px;text-align:center;display:grid;gap:12px;font-family:'Open Sans',system-ui,sans-serif}
 .cq-gc h2{font:700 30px/1.1 'Delius Unicase','Trebuchet MS',system-ui,sans-serif;margin:0}
 .cq-gc p{margin:0}
@@ -74,7 +74,7 @@
 .cq-gav{width:160px;margin:0 auto}
 
 /* evoluzione */
-.cq-ov{position:fixed;inset:0;z-index:60;background:rgba(16,32,46,.8);display:grid;place-items:center;padding:16px;overflow:auto}
+.cq-ov{position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;background:rgba(16,32,46,.8);display:grid;place-items:center;padding:16px;overflow:auto}
 .cq-ov[hidden],.cq-toast[hidden]{display:none}
 .cq-ovc{width:min(100%,480px);max-height:100%;overflow:auto;background:#fff;color:#1F3A56;border:3px solid #1F3A56;border-radius:26px;padding:22px 18px;text-align:center;font-family:'Open Sans',system-ui,sans-serif}
 .cq-ovc h2{font:700 34px/1.1 'Delius Unicase','Trebuchet MS',system-ui,sans-serif;color:#D2325F;margin:0 0 6px}
@@ -128,7 +128,7 @@
 
 /* avatar delle maestre: magico e animato */
 .cq-tw{position:relative;display:inline-grid;place-items:center;width:44px;height:44px;flex:none;vertical-align:middle;animation:cqFloat 3.6s ease-in-out infinite}
-.cq-tw .cq-ring{position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(from 0deg,#F5DE8C,#9B6EF0,#5EC8E8,#F48FB1,#F5DE8C);animation:cqSpin 4s linear infinite;filter:drop-shadow(0 0 6px rgba(233,194,78,.8))}
+.cq-tw .cq-ring{position:absolute;top:-3px;right:-3px;bottom:-3px;left:-3px;border-radius:50%;background:conic-gradient(from 0deg,#F5DE8C,#9B6EF0,#5EC8E8,#F48FB1,#F5DE8C);animation:cqSpin 4s linear infinite;filter:drop-shadow(0 0 6px rgba(233,194,78,.8))}
 .cq-tav{position:relative;display:grid;place-items:center;width:100%;height:100%;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 35%,#FFF6DD,#EFE0FF);border:2px solid #FFF6DD}
 .cq-tav img{width:100%;height:100%;object-fit:cover;object-position:50% 4%;transform:scale(1.9);transform-origin:50% 10%}
 .cq-tav.init{font:700 20px/1 'Cinzel',Georgia,serif;color:#4B2E8F}
@@ -147,7 +147,7 @@
 .cq-tw.full{width:96px;height:160px;animation:cqFloat 4s ease-in-out infinite}
 .cq-tfull{position:relative;height:160px;width:auto;max-width:none;z-index:1;filter:drop-shadow(0 0 10px rgba(245,222,140,.75)) drop-shadow(0 6px 10px rgba(0,0,0,.35))}
 .cq-glow{position:absolute;left:50%;bottom:2%;width:130%;height:26%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(245,222,140,.85),rgba(155,110,240,.45) 45%,transparent 72%);animation:cqPulse 2.6s ease-in-out infinite}
-.cq-trail{position:absolute;inset:-8% -20%;border-radius:50%;border:2px dashed rgba(245,222,140,.55);transform:rotateX(70deg);animation:cqSpin 9s linear infinite}
+.cq-trail{position:absolute;top:-8%;right:-20%;bottom:-8%;left:-20%;border-radius:50%;border:2px dashed rgba(245,222,140,.55);transform:rotateX(70deg);animation:cqSpin 9s linear infinite}
 .cq-tw.full .cq-sp{font-size:20px;z-index:2}
 .cq-tw.full .s1{top:2%;right:-6%}.cq-tw.full .s2{top:30%;left:-14%}.cq-tw.full .s3{top:58%;right:-16%;font-size:14px}
 .cq-tw.full .s4{top:-6%;left:18%;font-size:34px}.cq-tw.full .s5{bottom:22%;left:-8%;animation-delay:.9s;font-size:14px}.cq-tw.full .s6{top:12%;right:30%;animation-delay:1.5s;font-size:12px;color:#C9B2FF}
@@ -269,7 +269,7 @@ html.cq-vtapping main p,html.cq-vtapping main li,html.cq-vtapping main h2,html.c
 
 /* icone in alto a destra: istruzioni della maestra e vocabolario (non coprono mai i giochi) */
 .cq-dock{position:fixed;top:max(8px,env(safe-area-inset-top,0px));right:max(8px,env(safe-area-inset-right,0px));z-index:48;display:flex;gap:8px;align-items:center}
-.cq-gbtn,.cq-dock .cq-vbtn{position:relative;appearance:none;display:grid;place-items:center;width:52px;height:52px;min-height:0;padding:0;border-radius:50%;border:2px solid #D4AF37;background:linear-gradient(#7A4FC4,#4B2E8F);color:#F5DE8C;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);inset:auto}
+.cq-gbtn,.cq-dock .cq-vbtn{position:relative;appearance:none;display:grid;place-items:center;width:52px;height:52px;min-height:0;padding:0;border-radius:50%;border:2px solid #D4AF37;background:linear-gradient(#7A4FC4,#4B2E8F);color:#F5DE8C;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);top:auto;right:auto;bottom:auto;left:auto}
 .cq-dock .cq-vbtn{font-size:24px}
 .cq-dock .cq-navb{text-decoration:none;font-weight:700}.cq-dock .cq-navb[hidden]{display:none}
 .cq-gbtn .cq-tw{width:46px;height:46px;animation:none}
@@ -307,7 +307,7 @@ html.cq-app:not(.cq-teach) .move,html.cq-app:not(.cq-teach) .movebox,html.cq-app
 .cq-fig.cq-old{animation:cqEvoOut 1.1s ease-in forwards;z-index:3}
 @keyframes cqEvoOut{0%{opacity:1;filter:brightness(1)}60%{opacity:1;filter:brightness(3)}100%{opacity:0;filter:brightness(4) blur(3px)}}
 @keyframes cqEvoIn{0%,45%{opacity:0;scale:.75;filter:brightness(3)}75%{opacity:1;scale:1.08;filter:brightness(1.4)}100%{opacity:1;scale:1;filter:none}}
-.cq-magic{position:absolute;inset:0;z-index:5;pointer-events:none}
+.cq-magic{position:absolute;top:0;right:0;bottom:0;left:0;z-index:5;pointer-events:none}
 .cq-flash{position:absolute;left:50%;top:55%;width:90%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:radial-gradient(circle,#fff 0,#FFF3B0 30%,rgba(180,140,255,.5) 55%,rgba(255,255,255,0) 72%);animation:cqEvoFlash 2.2s ease-out forwards;opacity:0}
 @keyframes cqEvoFlash{0%{opacity:0;scale:.2}40%{opacity:1;scale:1}60%{opacity:.9;scale:1.1}100%{opacity:0;scale:1.3}}
 .cq-ringm{position:absolute;left:50%;top:55%;width:40%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;border:3px solid #FFD34D;box-shadow:0 0 12px #FFD34D,inset 0 0 10px #B98CFF;animation:cqEvoRing 1.6s ease-out .45s forwards;opacity:0}
@@ -321,7 +321,7 @@ html.cq-app:not(.cq-teach) .move,html.cq-app:not(.cq-teach) .movebox,html.cq-app
 .cq-tchip{align-self:center;background:#fff;color:#22304A;border:3px solid #FFC93C;border-radius:99px;padding:4px 12px;font:700 16px/1.2 system-ui,sans-serif;box-shadow:0 3px 0 rgba(0,0,0,.18);white-space:nowrap}
 .cq-tchip.low{border-color:#FF5D8F;background:#FFF0F3;animation:cqTPulse 1s ease-in-out infinite}
 @keyframes cqTPulse{50%{transform:scale(1.08)}}
-.cq-tlock{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 50% 30%,rgba(60,40,110,.92),rgba(20,14,40,.97))}
+.cq-tlock{position:fixed;top:0;right:0;bottom:0;left:0;z-index:9999;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 50% 30%,rgba(60,40,110,.92),rgba(20,14,40,.97))}
 .cq-tlock[hidden]{display:none}
 html.cq-tlocked body{overflow:hidden}
 .cq-tcard{max-width:460px;width:100%;background:#FFFDF6;border-radius:28px;border:5px solid #FFC93C;padding:22px;text-align:center;color:#22304A;box-shadow:0 20px 50px rgba(0,0,0,.4);display:grid;gap:10px;justify-items:center}
