@@ -1,11 +1,33 @@
-<!doctype html><html lang="it" data-theme="light"><head><meta charset=utf8><meta name="color-scheme" content="light only"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#5B3F99"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Accademia"><link rel="apple-touch-icon" href="img/app-192.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="it" data-theme="light"><head><meta charset=utf8><meta name="color-scheme" content="light only"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#5B3F99"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Accademia"><link rel="apple-touch-icon" href="img/app-192.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.mcard{border:3px solid var(--m);background:linear-gradient(180deg,#FFF4E6,var(--surface));gap:8px}
+.mcard .mhead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.mcard .eyebrow{margin:0;color:var(--m2);font-size:14px}
+.mcard .mt{margin:0;font-size:clamp(24px,3vw,32px)}
+.mcard .mx{margin:0;font-size:clamp(19px,2.2vw,23px);line-height:1.4;color:var(--ink);font-weight:600}
+.mcard .mhow{margin:0;color:var(--muted);font-size:15px}
+.mcard.mdone{border-color:var(--good)}
+.mcard.mwin{animation:mWin 1s ease}
+@keyframes mWin{30%{transform:scale(1.03);box-shadow:0 0 0 10px rgba(30,138,76,.25)}}
+.mdots{display:flex;gap:6px;flex-wrap:wrap}
+.mdots .md{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font:700 15px var(--font-display);color:var(--muted);cursor:pointer;padding:0}
+.mdots .md.ok{background:var(--good);border-color:var(--good);color:#fff}
+.mdots .md.cur{outline:3px solid var(--m);outline-offset:2px;color:var(--ink)}
+.mislist summary{cursor:pointer;font-weight:700;list-style:revert}
+@media (orientation:landscape) and (min-width:800px){
+  #sec-abaco{grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr);align-items:start}
+  #sec-abaco>.panel:not(.mcard),#sec-abaco>.mislist{grid-column:1}
+  #sec-abaco>.mcard{grid-column:2;grid-row:1/span 3;position:sticky;top:58px;margin-top:58px}
+  #sec-abaco .mcard .mx{font-size:clamp(18px,1.8vw,22px)}
+}
+.mislist .mis li{align-items:center;grid-template-columns:32px 1fr auto}
+.mislist .mgo{margin-left:auto;min-height:40px;padding:6px 12px;font-size:14px}
+</style></head><body>
 <title>Missione Mille</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="cuccioli.css?v=1127b">
-<link rel="stylesheet" href="land.css?v=1127b">
+<link rel="stylesheet" href="cuccioli.css?v=1127c">
+<link rel="stylesheet" href="land.css?v=1127c">
 <style>
 :root{
   /* Layout: banco da lavoro per la LIM e per il telefono. Testata con il 1000 a colori (uM, c, d, u),
@@ -570,6 +592,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <!-- ABACO -->
 <section class="view" id="sec-abaco" hidden>
+  <div class="panel mcard" id="mcard" aria-live="polite"></div>
   <div class="panel">
     <p class="eyebrow">Strumento · Valore posizionale</p>
     <h2>L'abaco del cambio</h2>
@@ -596,11 +619,10 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
     </div>
     <p class="fb" id="ab-fb" role="status" aria-live="polite"></p>
   </div>
-  <div class="panel">
-    <p class="eyebrow">Missioni dell'abaco</p>
-    <h3>Completate: <span id="ms-n">0</span> su <span id="ms-tot">8</span></h3>
+  <details class="panel mislist">
+    <summary><span class="eyebrow">Tutte le missioni dell'abaco</span> · completate <span id="ms-n">0</span> su <span id="ms-tot">8</span></summary>
     <ul class="mis" id="mis"></ul>
-  </div>
+  </details>
 </section>
 
 <!-- NUMERI -->
@@ -769,7 +791,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127b"></script>
+<script src="cuccioli.js?v=1127c"></script>
 <script>
 (function(){
 'use strict';
@@ -1679,11 +1701,29 @@ function renderMissions(){
   $('#ms-n').textContent=done;$('#ms-tot').textContent=MISSIONS.length;
   $('#mis').innerHTML=MISSIONS.map(function(m){
     var ok=!!m0[m.id];
-    return '<li'+(ok?' class="done"':'')+'><span class="ck" aria-hidden="true">'+(ok?'✓':'')+'</span><div><b>'+m.t+'</b><p>'+m.x+(ok?' <span class="lbl">Fatta!</span>':'')+'</p></div></li>';
+    return '<li'+(ok?' class="done"':'')+'><span class="ck" aria-hidden="true">'+(ok?'✓':'')+'</span><div><b>'+m.t+'</b><p>'+m.x+(ok?' <span class="lbl">Fatta!</span>':'')+'</p></div><button class="btn ghost mgo" type="button" data-mgo="'+MISSIONS.indexOf(m)+'">Fai questa</button></li>';
   }).join('');
+  renderMCard();
 }
+/* la missione di adesso, in alto sopra l'abaco: una alla volta */
+var MCUR=null,MWIN=false;
+function mIdx(){var m0=S.missioni||{};if(MCUR!=null)return MCUR;var i=MISSIONS.findIndex(function(m){return !m0[m.id]});return i<0?-1:i}
+function renderMCard(){
+  var box=$('#mcard');if(!box)return;var m0=S.missioni||{},i=mIdx();
+  var dots='<div class="mdots">'+MISSIONS.map(function(m,k){return '<button type="button" class="md'+(m0[m.id]?' ok':'')+(k===i?' cur':'')+'" data-mgo="'+k+'" aria-label="Missione '+(k+1)+(m0[m.id]?', fatta':'')+'">'+(m0[m.id]?'✓':k+1)+'</button>'}).join('')+'</div>';
+  if(i<0){box.innerHTML='<p class="eyebrow">🎯 Missioni dell\'abaco</p><h2 class="mt">🏆 Hai completato tutte le 8 missioni!</h2><p class="mx">Bravissimo! Ora prova la <b>Mini sfida</b> qui sotto, oppure rifai una missione toccando il suo numero.</p>'+dots;return}
+  var m=MISSIONS[i],ok=!!m0[m.id];
+  box.className='panel mcard'+(ok?' mdone':'')+(MWIN?' mwin':'');
+  box.innerHTML='<div class="mhead"><p class="eyebrow">🎯 Missione '+(i+1)+' di '+MISSIONS.length+'</p>'+dots+'</div>'+
+    '<h2 class="mt">'+m.t+(ok?' <span class="lbl">✅ Fatta!</span>':'')+'</h2><p class="mx">'+m.x+'</p>'+
+    '<p class="mhow">👆 Usa l\'abaco: tocca <b>+</b> e <b>−</b> sotto le aste. '+(ok?'Missione compiuta: passa alla prossima!':'Quando ci riesci, la missione si completa da sola.')+'</p>'+
+    '<div class="row"><button class="btn ghost" type="button" data-mgo="'+(i-1)+'"'+(i===0?' disabled':'')+'>◀ Indietro</button><button class="btn'+(ok?'':' ghost')+'" type="button" data-mgo="'+(i+1<MISSIONS.length?i+1:-2)+'">'+(i+1<MISSIONS.length?'Prossima missione ▶':'Fine ▶')+'</button></div>';
+}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-mgo]');if(!b)return;var k=+b.dataset.mgo;MWIN=false;
+  if(k===-2){MCUR=null;var m0=S.missioni||{},f=MISSIONS.findIndex(function(m){return !m0[m.id]});MCUR=f<0?null:f}else if(k>=0&&k<MISSIONS.length)MCUR=k;
+  renderMCard();if(b.closest('.mislist')){b.closest('.mislist').open=false}$('#mcard').scrollIntoView({behavior:'smooth',block:'start'});});
 function checkMissions(prev){
-  if(!S.missioni)S.missioni={};
+  if(!S.missioni)S.missioni={};var curB=mIdx();
   var got=false;
   MISSIONS.forEach(function(m){
     if(!S.missioni[m.id]&&m.ok(prev,ab)){
@@ -1693,7 +1733,9 @@ function checkMissions(prev){
     }
   });
   if(got){
+    MWIN=curB>=0&&!!S.missioni[MISSIONS[curB].id];if(MWIN)MCUR=curB;
     renderMissions();
+    if(MWIN)setTimeout(function(){MWIN=false;var m0=S.missioni||{},f=MISSIONS.findIndex(function(m){return !m0[m.id]});MCUR=f<0?null:f;renderMCard()},2600);
     if(MISSIONS.every(function(m){return S.missioni[m.id]}))award('abachista');
   }
 }
@@ -1797,5 +1839,5 @@ renderBoard();renderF(0);renderS();renderNotes();renderB();renderFound();buildV(
 })();
 </script>
 
-<script src="land.js?v=1127b"></script>
+<script src="land.js?v=1127c"></script>
 </body></html>
