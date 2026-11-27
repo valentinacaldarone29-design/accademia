@@ -43,9 +43,10 @@ C.GAMES=[
   {k:"verifica",by:"t1",t:"Verifica: le migliaia",s:"mat",href:"verifica.html",d:"La verifica sui numeri fino a 9999: leggere, scrivere, comporre, scomporre, confrontare e ordinare. Correzione automatica."},
   {k:"cervello",by:"t1",t:"La Palestra del Cervello",s:"mat",href:"cervello.html",d:"Hai finito prima? Sei sfide di numeri e logica a tre livelli: sequenze, piramidi, bilance magiche, indovinelli, Sudoku e bersagli."},
   {k:"geometria",by:"t1",t:"Il Regno della Geometria",s:"mat",href:"geometria.html",d:"Linee, rette, angoli, poligoni, perimetro e area con i quadretti, simmetria e solidi. La maestra sceglie gli argomenti."},
+  {k:"problemi",by:"t1",t:"Gli Investigatori dei Problemi",s:"mat",href:"problemi.html",d:"Leggi il caso, trova dati e domanda, scegli l'operazione e risolvi. Con la domanda nascosta e i problemi da inventare."},
   {k:"stati",by:"t1",t:"La Danza delle Particelle",s:"sci",href:"stati.html",d:"Solido, liquido, gassoso: scalda, raffredda e scopri le trasformazioni."}
 ];
-C.BUILD="1127n";C.GAMES.forEach(function(g){if(!g.ext&&/\.html$/.test(g.href))g.href+="?v="+C.BUILD});
+C.BUILD="1127o";C.GAMES.forEach(function(g){if(!g.ext&&/\.html$/.test(g.href))g.href+="?v="+C.BUILD});
 var WORDS=["LUPO","ORSO","GATTO","VOLPE","TIGRE","PANDA","KOALA","DRAGO","FALCO","LEONE","ZEBRA","RICCIO","CERVO","FOCA","GUFO","TASSO","PUMA","LINCE","MERLO","PONY","DELFINO","AQUILA","CIGNO","LONTRA"];
 
 /* ---------- utilità ---------- */
@@ -266,7 +267,7 @@ C.saveSettings=function(patch){
 C.newId=function(){return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)};
 
 /* ===== backup: copia di tutti i dati della classe e di tutte le app ===== */
-var BKCOLS=["pupils","meta","alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello","verifica","geometria"],BKLS="accademia-backup-v1",BKCHUNK=200000,BKKEEP=25,BKEVERY=20*60*1000;
+var BKCOLS=["pupils","meta","alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello","verifica","geometria","problemi"],BKLS="accademia-backup-v1",BKCHUNK=200000,BKKEEP=25,BKEVERY=20*60*1000;
 C.BK_EVERY_MIN=BKEVERY/60000;C.BK_KEEP=BKKEEP;
 function colDocs(col){
   return new Promise(function(res,rej){

@@ -1,0 +1,446 @@
+<!doctype html><html lang="it" data-theme="light"><head><meta charset="utf-8"><meta name="color-scheme" content="light only"><meta http-equiv="Cache-Control" content="no-cache"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#5B3F99"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="img/app-192.png"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gli Investigatori dei Problemi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="cuccioli.css?v=1127o">
+<link rel="stylesheet" href="land.css?v=1127o">
+<link rel="stylesheet" href="lab.css">
+<style>
+:root{--pb:#7A4FC4;--pb-d:#5B3F99;--pb-soft:#F1EAFF;--py:#F2B705;--py-soft:#FFF4CC}
+.ptext{font:600 clamp(20px,2.4vw,25px)/1.6 var(--font-display);background:#fff;border:3px solid var(--pb);border-radius:20px;padding:16px 18px;color:var(--ink)}
+.ptext .tk{border-radius:8px;padding:0 3px;cursor:pointer;transition:background .15s}
+.ptext .num{background:var(--py-soft);border-bottom:3px dotted var(--py)}
+.ptext .num.sel{background:#2E9E5B;color:#fff;border-bottom-color:#1E7A45}
+.ptext .num.bad{background:#E5484D;color:#fff}
+.ptext .qs{border-radius:8px}
+.ptext .qs.sel{background:var(--pb);color:#fff}
+.ptext.static .tk{cursor:default}
+.ptext .em{font-size:1.2em}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.steps span{padding:6px 12px;border-radius:99px;background:var(--surface2);font:700 14px var(--font-display);color:var(--muted)}
+.steps span.on{background:var(--pb);color:#fff}
+.steps span.ok{background:#D8F0E3;color:#14532D}
+.ops4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0}
+.ops4 button{min-height:74px;border-radius:18px;border:3px solid var(--line);background:#fff;font:700 38px var(--font-display);color:var(--pb-d);cursor:pointer}
+.ops4 button:disabled{opacity:.35}
+.ops4 button.right{background:#D8F0E3;border-color:#2E9E5B}
+.ops4 button.wrong{background:#FADDDD;border-color:#B03030}
+.ops4 button small{display:block;font:600 13px var(--font-display);color:var(--muted)}
+.eqrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:10px 0;font:700 34px var(--font-display);color:var(--pb-d)}
+.eqrow input{width:110px;min-height:60px;border-radius:14px;border:3px solid var(--pb);font:700 30px var(--font-display);text-align:center;color:var(--ink)}
+.eqrow input.good{border-color:#2E9E5B;background:#D8F0E3}.eqrow input.bad{border-color:#B03030;background:#FADDDD}
+.eqrow .lab{font:600 16px var(--font-display);color:var(--muted)}
+.ans{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 20px var(--font-display);justify-content:center}
+.ans input{width:110px;min-height:54px;border-radius:12px;border:3px solid var(--pb);font:700 26px var(--font-display);text-align:center}
+.scene{font-size:44px;letter-spacing:4px;text-align:center;line-height:1.3;margin:6px 0}
+.opbig{display:inline-block;padding:8px 18px;border-radius:16px;background:var(--pb-soft);color:var(--pb-d);font:700 32px var(--font-display)}
+.inv textarea{width:100%;min-height:130px;border-radius:14px;border:2px solid #CDBDF0;padding:10px 12px;font:400 24px/1.35 var(--font-hand);background:repeating-linear-gradient(#fff 0 33px,#E5DAFA 33px 35px)}
+.starters{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.starters button{appearance:none;border:1.5px solid var(--pb);background:var(--pb-soft);color:var(--pb-d);border-radius:99px;padding:6px 12px;font:700 14px var(--font-body);cursor:pointer;min-height:38px}
+.arch{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.arch li{padding:8px 12px;border-radius:12px;background:var(--surface2);font:400 20px/1.3 var(--font-hand)}
+.tset{display:grid;gap:10px;margin-top:10px}
+.tset .pills{display:flex;flex-wrap:wrap;gap:8px}
+.rule{margin:10px 0 0;padding:10px 14px;border-radius:14px;background:var(--py-soft);border-left:6px solid var(--py);font-weight:700}
+.howto{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.howto div{padding:12px;border-radius:16px;border:2px solid var(--pb);background:#fff}
+.howto b{display:block;font:400 24px/1.1 var(--font-hand);color:var(--pb-d)}
+.howto .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--pb);color:#fff;font:700 16px var(--font-display);margin-right:6px}
+</style>
+<link rel="stylesheet" href="gioco.css?v=1">
+</head><body>
+
+<header>
+  <svg class="deco" viewBox="0 0 200 170" aria-hidden="true">
+    <circle cx="80" cy="70" r="40" fill="none" stroke="#7A4FC4" stroke-width="8" opacity=".8"/><path d="M108 98l40 40" stroke="#7A4FC4" stroke-width="12" stroke-linecap="round" opacity=".8"/>
+    <text x="62" y="86" font-family="sans-serif" font-size="44" font-weight="700" fill="#F2B705" opacity=".9">?</text>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <p class="eyebrow">Matematica · Problemi · Classe terza</p>
+        <h1>Gli Investigatori dei Problemi</h1>
+        <p class="lead">Leggi, trova gli indizi, scegli l'operazione e risolvi il caso!</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="stars"><b id="stars">0</b><small>stelle</small></div>
+      <ul class="badges" id="badges" aria-label="Badge"></ul>
+    </div>
+    <div id="cq-chip"></div>
+    <div class="who" id="who" hidden><span>Investigatore: <b id="who-name"></b></span><button class="link" id="switch" type="button">Cambia alunno</button><a class="link" href="index.html">Accademia dei Talenti</a></div>
+  </div>
+</header>
+
+<nav aria-label="Argomenti" hidden>
+  <div class="wrap"><div class="tabs">
+    <a href="#lezione" data-teacher hidden>Lezione</a>
+    <a href="#leggo"><span aria-hidden="true">🔍 </span>Leggo e capisco</a>
+    <a href="#indizi"><span aria-hidden="true">🧩 </span>Parole indizio</a>
+    <a href="#risolvo"><span aria-hidden="true">✏️ </span>Risolvo</a>
+    <a href="#nascosta"><span aria-hidden="true">🕵️ </span>Domanda nascosta</a>
+    <a href="#dati"><span aria-hidden="true">⚖️ </span>Dati utili e mancanti</a>
+    <a href="#inventa"><span aria-hidden="true">💡 </span>Inventa il problema</a>
+    <a href="#valuta"><span aria-hidden="true">🪞 </span>Come è andata?</a>
+  </div></div>
+</nav>
+
+<main class="wrap" hidden>
+
+<!-- LEZIONE (solo maestra) -->
+<section class="view" id="sec-lezione" hidden>
+  <div class="panel">
+    <p class="eyebrow">Impostazioni della maestra</p>
+    <h2>Gli Investigatori dei Problemi</h2>
+    <p class="rule">👩‍🏫 Gli <b>argomenti</b> si accendono e si spengono dal riquadro «Sezioni per i bambini». Qui sotto scegli <b>le operazioni</b> e <b>i numeri</b> dei problemi: vale per tutta la classe.</p>
+    <div class="tset">
+      <div><b>Operazioni nei problemi</b><div class="pills" id="t-ops" role="group" aria-label="Operazioni"></div></div>
+      <div><b>Numeri</b><div class="pills" id="t-max" role="group" aria-label="Numeri"></div></div>
+      <p class="small" id="t-saved" aria-live="polite"></p>
+    </div>
+  </div>
+  <div class="panel">
+    <dl class="facts">
+      <div><dt>Metodologia attiva</dt><dd>Role-playing e Gamification: i bambini sono investigatori che risolvono «casi». Cooperative Learning a coppie: il lettore legge il caso, il detective trova gli indizi, poi ci si scambia.</dd></div>
+      <div><dt>Obiettivi</dt><dd>Leggere e comprendere il testo di un problema; individuare dati e domanda; riconoscere dati utili, inutili e mancanti; scegliere l'operazione; risolvere problemi con una e due operazioni (domanda nascosta); scrivere la risposta; inventare un problema.</dd></div>
+      <div><dt>Il metodo dell'investigatore</dt><dd>1. Leggo e capisco. 2. Trovo i dati. 3. Trovo la domanda. 4. Scelgo l'operazione. 5. Calcolo. 6. Scrivo la risposta.</dd></div>
+      <div><dt>Collegamenti</dt><dd>Italiano (comprensione del testo), Geografia (problemi del quartiere), Scienze motorie (staffetta dei problemi), Tecnologia (il mercato e gli euro).</dd></div>
+    </dl>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">L'aggancio · 3 minuti</p>
+    <h3>Il caso della torta sparita</h3>
+    <p>Sulla cattedra una scatola vuota con un biglietto: «Nonna Rosa ha preparato 24 biscotti. Ne sono spariti 9. Quanti ne sono rimasti?» La maestra, con una lente d'ingrandimento, chiede: «Quali sono gli indizi? Che cosa ci chiede il caso?» I bambini diventano investigatori.</p>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">Svolgimento a micro-step</p>
+    <ol class="lsteps">
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Riflessione</span><h3>Leggo e capisco</h3><p>Alla LIM: si legge il caso, si toccano i dati e la domanda. Si spiega perché un dato è inutile.</p></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Movimento</span><h3>Parole indizio in piedi</h3><p>La maestra legge una frase: + braccia in alto, − accovacciati, × braccia incrociate, : braccia aperte orizzontali.</p></div></li>
+      <li class="lstep"><div class="mins"><b>15</b><small>min</small></div><div><span class="chip">Gioco</span><h3>A coppie con l'app</h3><p>«Risolvo» e «Domanda nascosta»: uno sceglie l'operazione, l'altro calcola; poi si scambiano.</p></div></li>
+      <li class="lstep"><div class="mins"><b>10</b><small>min</small></div><div><span class="chip">Manuale</span><h3>Inventa il caso</h3><p>Ogni coppia inventa un problema sul quaderno e lo dà da risolvere a un'altra coppia.</p></div></li>
+    </ol>
+  </div>
+  <div class="cols">
+    <div class="panel"><p class="eyebrow">Gamification</p><h3>Stelle, badge e imprevisti</h3>
+      <ul class="tight">
+        <li><b>Ogni caso risolto:</b> una stella (due nella domanda nascosta).</li>
+        <li><b>Giochi a carte:</b> fino a 3 stelle ciascuno.</li>
+        <li><b>Badge:</b> Occhio di lince, Fiuto per le parole, Risolutore, Detective esperto, Giudice dei dati, Inventore di casi, Investigatore riflessivo.</li>
+      </ul></div>
+    <div class="panel"><p class="eyebrow">Imprevisti</p><h3>Pesca una carta</h3>
+      <div class="imp" id="imp"><b>Pronti a indagare?</b><span>Ogni imprevisto cambia le regole per un minuto.</span></div>
+      <div class="row"><button class="btn" id="draw" type="button">Pesca un imprevisto</button></div></div>
+  </div>
+  <div class="panel"><p class="eyebrow">Variante di movimento</p><h3>La staffetta dei casi</h3>
+    <ul class="tight">
+      <li>Quattro cerchi a terra con +, −, ×, :. La maestra legge un caso: il primo della fila corre nel cerchio dell'operazione giusta.</li>
+      <li>Al ritorno dice il risultato al compagno, che parte con il caso successivo.</li>
+    </ul></div>
+</section>
+
+<!-- LEGGO E CAPISCO -->
+<section class="view" id="sec-leggo" data-lp="on" hidden>
+  <div class="panel" data-lpt="Il metodo dell'investigatore">
+    <p class="eyebrow">Scopri</p>
+    <h2>Il metodo dell'investigatore</h2>
+    <div class="howto">
+      <div><span class="n">1</span><b>Leggo</b>e capisco la storia</div>
+      <div><span class="n">2</span><b>I dati</b>sono i numeri che servono</div>
+      <div><span class="n">3</span><b>La domanda</b>dice che cosa devo trovare</div>
+      <div><span class="n">4</span><b>L'operazione</b>+ − × :</div>
+      <div><span class="n">5</span><b>Calcolo</b>con attenzione</div>
+      <div><span class="n">6</span><b>La risposta</b>con la parola giusta</div>
+    </div>
+    <p class="rule">Non tutti i numeri sono dati utili: a volte il caso contiene un numero che non serve!</p>
+  </div>
+  <div class="panel" data-lpt="Trova i dati e la domanda">
+    <p class="eyebrow">Indaga</p>
+    <h2>Trova i dati e la domanda</h2>
+    <div id="lg"></div>
+  </div>
+</section>
+
+<!-- PAROLE INDIZIO -->
+<section class="view" id="sec-indizi" hidden>
+  <div class="panel">
+    <p class="eyebrow">Gioca</p>
+    <h2>Parole indizio e operazioni</h2>
+    <p class="lead">Leggi la frase o il caso e scegli l'operazione giusta.</p>
+    <div id="sort-indizi"></div>
+  </div>
+</section>
+
+<!-- RISOLVO -->
+<section class="view" id="sec-risolvo" hidden>
+  <div class="panel">
+    <p class="eyebrow">Risolvi il caso</p>
+    <h2>Un caso, un'operazione</h2>
+    <div id="rs"></div>
+  </div>
+</section>
+
+<!-- DOMANDA NASCOSTA -->
+<section class="view" id="sec-nascosta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Caso difficile</p>
+    <h2>La domanda nascosta</h2>
+    <p class="lead">Per rispondere servono due operazioni: prima trova la domanda nascosta!</p>
+    <div id="ns"></div>
+  </div>
+</section>
+
+<!-- DATI -->
+<section class="view" id="sec-dati" hidden>
+  <div class="panel">
+    <p class="eyebrow">Gioca</p>
+    <h2>Si può risolvere?</h2>
+    <p class="lead">Il caso ha tutti i dati? Ne manca uno? C'è un dato che non serve?</p>
+    <div id="sort-dati"></div>
+  </div>
+</section>
+
+<!-- INVENTA -->
+<section class="view" id="sec-inventa" hidden>
+  <div class="panel">
+    <p class="eyebrow">Crea</p>
+    <h2>Inventa il problema</h2>
+    <div id="iv"></div>
+  </div>
+</section>
+
+<!-- VALUTAZIONE -->
+<section class="view" id="sec-valuta" hidden>
+  <div class="panel">
+    <p class="eyebrow">Scheda di autovalutazione</p>
+    <h2>Come è andata la mia indagine?</h2>
+    <p class="lead">Scegli il gradino giusto per te. Non ci sono risposte sbagliate.</p>
+    <form id="vform" autocomplete="off">
+      <div id="vitems"></div>
+      <fieldset class="item"><legend>Che cosa mi è piaciuto di più?</legend><div class="likes" id="vlikes"></div></fieldset>
+    </form>
+    <div class="row"><button class="btn" id="v-done" type="button" disabled>Ho finito</button></div>
+    <div class="summary" id="v-sum" hidden></div>
+  </div>
+</section>
+
+<p class="foot">Le stelle fanno crescere il tuo avatar dell'Accademia dei Talenti in Matematica.</p>
+</main>
+
+<script src="config.js"></script>
+<script src="registro.js"></script>
+<script src="cuccioli.js?v=1127o"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+"use strict";
+const L=window.Lab,$=L.$,$$=L.$$,esc=L.esc,CQ=window.Cuccioli;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[Math.floor(Math.random()*a.length)];
+const SYM={add:"+",sub:"−",mul:"×",div:":"},OPN={add:"addizione",sub:"sottrazione",mul:"moltiplicazione",div:"divisione"};
+const NM=["Leo","Sofia","Tommaso","Giulia","Emma","Luca","Nina","Pietro","nonna Rosa","il signor Mario"];
+
+/* ---------- impostazioni della maestra ---------- */
+function OPS(){const v=(CQ.settings&&CQ.settings.probOps)||[];const ok=Array.isArray(v)?v.filter(k=>SYM[k]):[];return ok.length?ok:["add","sub","mul","div"]}
+function MAX(){const m=+((CQ.settings&&CQ.settings.probMax)||100);return [100,1000,9999].includes(m)?m:100}
+function nums(op){const M=MAX();let a,b;
+  if(op==="add"){a=rnd(Math.round(M*.1),Math.round(M*.55));b=rnd(Math.round(M*.05),M-a-1)}
+  else if(op==="sub"){a=rnd(Math.round(M*.3),M-1);b=rnd(Math.round(a*.15),a-1)}
+  else if(op==="mul"){b=rnd(2,9);a=rnd(2,Math.max(3,Math.min(M===100?11:M===1000?99:999,Math.floor(M/b))))}
+  else{b=rnd(2,9);const q=rnd(2,Math.max(3,Math.min(M===100?11:M===1000?99:999,Math.floor(M/b))));a=q*b}
+  return [a,b]}
+const calc=(op,a,b)=>op==="add"?a+b:op==="sub"?a-b:op==="mul"?a*b:a/b;
+
+/* ---------- casi: una operazione ---------- */
+const T1={
+  add:[
+    (a,b,n)=>({t:`In biblioteca ci sono ${a} libri di avventura e ${b} libri di fiabe.`,q:"Quanti libri ci sono in tutto?",u:"libri",kw:"in tutto"}),
+    (a,b,n)=>({t:`${n} ha ${a} figurine. Il papà gliene regala altre ${b}.`,q:`Quante figurine ha ora ${n}?`,u:"figurine",kw:"altre"}),
+    (a,b,n)=>({t:`Al mattino nel parco ci sono ${a} bambini. Nel pomeriggio ne arrivano ancora ${b}.`,q:"Quanti bambini ci sono nel pomeriggio?",u:"bambini",kw:"ancora"}),
+    (a,b,n)=>({t:`Il fruttivendolo vende ${a} mele al mattino e ${b} mele al pomeriggio.`,q:"Quante mele vende in tutto?",u:"mele",kw:"in tutto"})],
+  sub:[
+    (a,b,n)=>({t:`${n} ha ${a} figurine e ne regala ${b} a un amico.`,q:`Quante figurine restano a ${n}?`,u:"figurine",kw:"restano"}),
+    (a,b,n)=>({t:`Sul treno viaggiano ${a} persone. Alla stazione ne scendono ${b}.`,q:"Quante persone rimangono sul treno?",u:"persone",kw:"rimangono"}),
+    (a,b,n)=>({t:`Il libro di ${n} ha ${a} pagine. Ne ha già lette ${b}.`,q:"Quante pagine mancano alla fine?",u:"pagine",kw:"mancano"}),
+    (a,b,n)=>({t:`La squadra rossa ha ${a} punti, la squadra blu ne ha ${b}.`,q:"Quanti punti ha in più la squadra rossa?",u:"punti",kw:"in più"})],
+  mul:[
+    (a,b,n)=>({t:`Ci sono ${b} scatole. In ogni scatola ci sono ${a} pastelli.`,q:"Quanti pastelli ci sono in tutto?",u:"pastelli",kw:"in ogni",ord:[a,b]}),
+    (a,b,n)=>({t:`${n} compra ${b} quaderni. Ogni quaderno costa ${a} euro.`,q:"Quanto spende in tutto?",u:"euro",kw:"ogni",ord:[a,b]}),
+    (a,b,n)=>({t:`Nel giardino ci sono ${b} file di piantine. In ciascuna fila ci sono ${a} piantine.`,q:"Quante piantine ci sono?",u:"piantine",kw:"ciascuna",ord:[a,b]}),
+    (a,b,n)=>({t:`Un ragno ha 8 zampe? No: questo è un caso di ${n}! Ci sono ${b} tavoli con ${a} sedie ciascuno.`,q:"Quante sedie ci sono in tutto?",u:"sedie",kw:"ciascuno",ord:[a,b]})],
+  div:[
+    (a,b,n)=>({t:`${n} ha ${a} caramelle e le divide in parti uguali fra ${b} amici.`,q:"Quante caramelle riceve ciascun amico?",u:"caramelle",kw:"in parti uguali"}),
+    (a,b,n)=>({t:`La maestra ha ${a} fogli da distribuire a ${b} gruppi, in parti uguali.`,q:"Quanti fogli riceve ogni gruppo?",u:"fogli",kw:"distribuire"}),
+    (a,b,n)=>({t:`Ci sono ${a} uova da mettere in confezioni da ${b} uova ciascuna.`,q:"Quante confezioni servono?",u:"confezioni",kw:"confezioni da"}),
+    (a,b,n)=>({t:`${a} bambini si dividono in squadre da ${b}.`,q:"Quante squadre si formano?",u:"squadre",kw:"si dividono"})]
+};
+T1.mul[3]=(a,b,n)=>({t:`Nella mensa ci sono ${b} tavoli. A ogni tavolo ci sono ${a} sedie.`,q:"Quante sedie ci sono in tutto?",u:"sedie",kw:"a ogni",ord:[a,b]});
+const USELESS=[n=>`La lezione comincia alle ${n} e un quarto.`,n=>`Fuori ci sono ${n} gradi.`,n=>`Oggi è il giorno ${n} del mese.`,n=>`L'autobus numero ${n} passa davanti a scuola.`];
+function mk1(op,extra){op=op||pick(OPS());const [a,b]=nums(op),n=pick(NM),tp=pick(T1[op])(a,b,n),ans=calc(op,a,b);
+  const ord=tp.ord||[a,b];let u=null;if(extra){do{u=rnd(2,28)}while(u===a||u===b)}
+  let text=tp.t;if(u!=null){const s=pick(USELESS)(u);text=Math.random()<.5?s+" "+text:text+" "+s}
+  return {op,a:ord[0],b:ord[1],ans,text,q:tp.q,u:tp.u,kw:tp.kw,useless:u,n:[a,b]}}
+
+/* ---------- casi: due operazioni (domanda nascosta) ---------- */
+function mk2(){const ops=OPS(),M=MAX(),n=pick(NM),list=[];
+  if(ops.includes("add")&&ops.includes("sub"))list.push(()=>{const a=rnd(Math.round(M*.1),Math.round(M*.4)),b=rnd(Math.round(M*.1),Math.round(M*.4)),c=rnd(2,a+b-1);return {t:`${n} raccoglie ${a} conchiglie al mattino e ${b} al pomeriggio. Ne regala ${c} alla sorella.`,q:"Quante conchiglie le restano?",h:"Quante conchiglie raccoglie in tutto?",s1:["add",a,b],s2:["sub",a+b,c],u:"conchiglie",wrong:["Quante conchiglie regala?","Quante sorelle ha?"]}});
+  if(ops.includes("mul")&&ops.includes("sub"))list.push(()=>{const b=rnd(2,9),a=rnd(2,Math.max(3,Math.min(M===100?9:30,Math.floor((M-1)/b)))),c=rnd(1,a*b-1);return {t:`Ci sono ${b} scatole con ${a} biscotti ciascuna. Ne mangiamo ${c}.`,q:"Quanti biscotti restano?",h:"Quanti biscotti ci sono in tutto?",s1:["mul",a,b],s2:["sub",a*b,c],u:"biscotti",wrong:["Quante scatole ci sono?","Quanti biscotti mangiamo?"]}});
+  if(ops.includes("mul")&&ops.includes("add"))list.push(()=>{const b=rnd(2,6),a=rnd(2,9),c=rnd(2,Math.max(3,Math.round(M*.2)));return {t:`${n} compra ${b} pacchi da ${a} figurine e trova ${c} figurine nel cassetto.`,q:"Quante figurine ha in tutto?",h:"Quante figurine ci sono nei pacchi?",s1:["mul",a,b],s2:["add",a*b,c],u:"figurine",wrong:["Quanti cassetti ci sono?","Quanto costa un pacco?"]}});
+  if(ops.includes("div")&&ops.includes("mul"))list.push(()=>{const b=rnd(2,6),q=rnd(2,8),a=q*b,c=rnd(2,5);return {t:`${a} bambini si dividono in squadre da ${b}. Ogni squadra riceve ${c} palloni.`,q:"Quanti palloni servono?",h:"Quante squadre si formano?",s1:["div",a,b],s2:["mul",q,c],u:"palloni",wrong:["Quanti bambini ci sono?","Di che colore sono i palloni?"]}});
+  if(ops.includes("sub")&&ops.includes("mul"))list.push(()=>{const p=rnd(2,6),k=rnd(2,5),a=rnd(p*k+1,Math.max(p*k+2,Math.min(M-1,p*k+40)));return {t:`${n} ha ${a} euro. Compra ${k} quaderni da ${p} euro l'uno.`,q:"Quanti euro le restano?",h:"Quanto spende per i quaderni?",s1:["mul",p,k],s2:["sub",a,p*k],u:"euro",wrong:["Quanti euro ha?","Quanti negozi ci sono?"]}});
+  if(!list.length)list.push(()=>{const a=rnd(10,40),b=rnd(10,40),c=rnd(5,30);return {t:`In un cestino ci sono ${a} mele rosse e ${b} mele verdi. Ne aggiungiamo ancora ${c}.`,q:"Quante mele ci sono adesso?",h:"Quante mele ci sono all'inizio?",s1:["add",a,b],s2:["add",a+b,c],u:"mele",wrong:["Quante mele verdi ci sono?","Di che colore è il cestino?"]}});
+  return pick(list)()}
+
+/* ---------- testo cliccabile ---------- */
+function tokens(text){return text.split(/(\s+)/).map(w=>{if(/^\s+$/.test(w))return w;const m=w.match(/^(\d+)([.,]?)$/);return m?`<span class="tk num" data-v="${m[1]}">${m[1]}</span>${m[2]}`:esc(w)}).join("")}
+const EX=()=>{const S=L.state();S.extra=S.extra||{};return S.extra};
+function win(key,n,msg){const e=EX();e[key]=(e[key]||0)+1;L.save();L.add(n||1);L.ding();L.toast(msg||"Caso risolto! Una stella.");L.checkBadges()}
+function miss(key){const S=L.state();S.err[key]=(S.err[key]||0)+1;L.save();L.buzz()}
+
+/* ---------- 1. Leggo e capisco ---------- */
+let LG=null;
+function renderLeggo(){
+  if(!LG){const c=mk1(null,Math.random()<.6);LG={c,step:1,sel:new Set(),qsel:false}}
+  const c=LG.c;
+  const need=c.n.map(String),hasU=c.useless!=null;
+  $("#lg").innerHTML=`<div class="steps"><span class="${LG.step===1?"on":"ok"}">1. Tocca i dati utili</span><span class="${LG.step===2?"on":LG.step>2?"ok":""}">2. Tocca la domanda</span></div>
+    <div class="ptext" id="lg-t">${tokens(c.text)} <span class="tk qs" id="lg-q">${esc(c.q)}</span></div>
+    <p class="small" style="margin:8px 0 0">${LG.step===1?`🔍 Tocca i numeri che servono per rispondere${hasU?" (attento: c'è un numero che non serve!)":""}. Tocca di nuovo per togliere.`:LG.step===2?"❓ Ora tocca la domanda: che cosa devi trovare?":""}</p>
+    <div class="row">${LG.step===1?`<button class="btn" type="button" id="lg-ok">Controlla i dati</button>`:""}${LG.step>2?`<button class="btn" type="button" id="lg-new">Nuovo caso</button>`:""}</div><div id="lg-fb"></div>`;
+  $$("#lg-t .num").forEach(s=>{if(LG.sel.has(s.dataset.v))s.classList.add("sel");if(LG.step!==1)return;s.addEventListener("click",()=>{const v=s.dataset.v;if(LG.sel.has(v))LG.sel.delete(v);else LG.sel.add(v);s.classList.toggle("sel")})});
+  if(LG.step>=3)$("#lg-q").classList.add("sel");
+  if(LG.step===2)$("#lg-q").addEventListener("click",()=>{LG.step=3;renderLeggo();$("#lg-fb").innerHTML=L.fb("good","Caso capito!",[`I dati sono ${c.n.join(" e ")}. La domanda è: «${esc(c.q)}»`,c.useless!=null?`Il numero ${c.useless} non serve: è un dato inutile.`:""].filter(Boolean));win("leggo",1,"Dati e domanda trovati! Una stella.")});
+  const ok=$("#lg-ok");if(ok)ok.addEventListener("click",()=>{const sel=[...LG.sel],good=need.every(v=>LG.sel.has(v))&&sel.every(v=>need.includes(v));
+    if(good){LG.step=2;L.ding();renderLeggo();return}
+    miss("Trovare i dati");$$("#lg-t .num").forEach(s=>{if(LG.sel.has(s.dataset.v)&&!need.includes(s.dataset.v))s.classList.add("bad")});
+    $("#lg-fb").innerHTML=L.fb("bad","Ricontrolla gli indizi",[sel.some(v=>!need.includes(v))?"Hai scelto un numero che non serve per rispondere alla domanda.":"Manca un dato: rileggi il caso.","Leggi la domanda: quali numeri ti servono davvero?"])});
+  const nw=$("#lg-new");if(nw)nw.addEventListener("click",()=>{LG=null;renderLeggo()});
+}
+
+/* ---------- 3. Risolvo ---------- */
+let RS=null;
+function renderRisolvo(){
+  if(!RS)RS={c:mk1(),step:1,tries:0};
+  const c=RS.c,st=RS.step,ops=["add","sub","mul","div"];
+  let h=`<div class="steps"><span class="${st===1?"on":"ok"}">1. Scelgo l'operazione</span><span class="${st===2?"on":st>2?"ok":""}">2. Calcolo</span><span class="${st===3?"on":st>3?"ok":""}">3. Rispondo</span></div>
+    <div class="ptext static">${tokens(c.text)} <b>${esc(c.q)}</b></div>`;
+  if(st===1)h+=`<p style="margin:10px 0 0"><b>Quale operazione risolve il caso?</b></p><div class="ops4">${ops.map(o=>`<button type="button" data-op="${o}">${SYM[o]}<small>${OPN[o]}</small></button>`).join("")}</div>`;
+  if(st===2)h+=`<p style="margin:10px 0 0"><b>Scrivi l'operazione con i dati e calcola:</b></p><div class="eqrow"><input inputmode="numeric" id="rs-a" aria-label="Primo numero"><span>${SYM[c.op]}</span><input inputmode="numeric" id="rs-b" aria-label="Secondo numero"><span>=</span><input inputmode="numeric" id="rs-r" aria-label="Risultato"></div><div class="row"><button class="btn" type="button" id="rs-ok">Controlla</button></div>`;
+  if(st===3)h+=`<p style="margin:10px 0 0"><b>Scrivi la risposta:</b></p><div class="ans"><span>Risposta:</span><input inputmode="numeric" id="rs-n" aria-label="Numero della risposta"><span>${esc(c.u)}</span></div><div class="row"><button class="btn" type="button" id="rs-ok3">Controlla</button></div>`;
+  if(st===4)h+=L.fb("good","Caso risolto! 🕵️",[`${c.a} ${SYM[c.op]} ${c.b} = ${c.ans}`,`Risposta: ${c.ans} ${esc(c.u)}.`])+`<div class="row"><button class="btn" type="button" id="rs-new">Nuovo caso</button></div>`;
+  h+=`<div id="rs-fb"></div>`;
+  $("#rs").innerHTML=h;
+  $$("[data-op]",$("#rs")).forEach(b=>b.addEventListener("click",()=>{if(b.dataset.op===c.op){b.classList.add("right");L.ding();setTimeout(()=>{RS.step=2;renderRisolvo()},500)}else{RS.tries++;b.classList.add("wrong");b.disabled=true;miss("Scegliere l'operazione");$("#rs-fb").innerHTML=L.fb("bad","Non è questa",[`Cerca la parola indizio: «${esc(c.kw)}».`])}}));
+  const ok=$("#rs-ok");if(ok)ok.addEventListener("click",()=>{const a=+$("#rs-a").value,b=+$("#rs-b").value,r=+$("#rs-r").value,okN=(a===c.a&&b===c.b)||((c.op==="add"||c.op==="mul")&&a===c.b&&b===c.a),okR=okN&&r===calc(c.op,a,b);
+    $("#rs-a").className=$("#rs-b").className=okN?"good":"bad";$("#rs-r").className=okR?"good":"bad";
+    if(okN&&okR){L.ding();setTimeout(()=>{RS.step=3;renderRisolvo()},500);return}
+    RS.tries++;miss(okN?"Calcolo":"Scrivere l'operazione");$("#rs-fb").innerHTML=L.fb("bad",okN?"Ricontrolla il calcolo":"Ricontrolla i dati",[okN?"I numeri sono giusti: rifai il calcolo con calma.":c.op==="sub"||c.op==="div"?"Nella "+OPN[c.op]+" il numero più grande va per primo.":"Usa i due numeri del caso."])});
+  const ok3=$("#rs-ok3");if(ok3)ok3.addEventListener("click",()=>{if(+$("#rs-n").value===c.ans){RS.step=4;renderRisolvo();win("risolvo",1)}else{RS.tries++;miss("Scrivere la risposta");$("#rs-fb").innerHTML=L.fb("bad","La risposta deve usare il risultato dell'operazione",[])}});
+  const nw=$("#rs-new");if(nw)nw.addEventListener("click",()=>{RS=null;renderRisolvo()});
+}
+
+/* ---------- 4. Domanda nascosta ---------- */
+let NS=null;
+function renderNascosta(){
+  if(!NS){const c=mk2();NS={c,step:1,hq:L.shuffle([c.h].concat(c.wrong))}}
+  const c=NS.c,st=NS.step,r1=calc(c.s1[0],c.s1[1],c.s1[2]),r2=calc(c.s2[0],c.s2[1],c.s2[2]);
+  let h=`<div class="steps"><span class="${st===1?"on":"ok"}">1. Domanda nascosta</span><span class="${st===2?"on":st>2?"ok":""}">2. Prima operazione</span><span class="${st===3?"on":st>3?"ok":""}">3. Seconda operazione</span><span class="${st===4?"on":st>4?"ok":""}">4. Risposta</span></div>
+    <div class="ptext static">${tokens(c.t)} <b>${esc(c.q)}</b></div>`;
+  if(st===1)h+=`<p style="margin:10px 0 0"><b>🕵️ Prima di rispondere, che cosa devo scoprire?</b></p><div class="opts">${NS.hq.map(q=>`<button class="opt" type="button" data-hq="${esc(q)}">${esc(q)}</button>`).join("")}</div>`;
+  const eq=(s,id)=>`<p style="margin:10px 0 0"><b>${id==="1"?"Domanda nascosta: "+esc(c.h):"Ora rispondi alla domanda del caso"}</b></p><div class="eqrow"><input inputmode="numeric" id="ns-a" aria-label="Primo numero"><span>${SYM[s[0]]}</span><input inputmode="numeric" id="ns-b" aria-label="Secondo numero"><span>=</span><input inputmode="numeric" id="ns-r" aria-label="Risultato"></div><div class="row"><button class="btn" type="button" id="ns-ok">Controlla</button></div>`;
+  if(st===2)h+=eq(c.s1,"1");
+  if(st===3)h+=`<p class="small">✅ ${c.s1[1]} ${SYM[c.s1[0]]} ${c.s1[2]} = ${r1}</p>`+eq(c.s2,"2");
+  if(st===4)h+=`<p class="small">✅ ${c.s1[1]} ${SYM[c.s1[0]]} ${c.s1[2]} = ${r1} · ${c.s2[1]} ${SYM[c.s2[0]]} ${c.s2[2]} = ${r2}</p><div class="ans"><span>Risposta:</span><input inputmode="numeric" id="ns-n" aria-label="Risposta"><span>${esc(c.u)}</span></div><div class="row"><button class="btn" type="button" id="ns-ok4">Controlla</button></div>`;
+  if(st===5)h+=L.fb("good","Caso difficile risolto! 🕵️🕵️",[`${c.s1[1]} ${SYM[c.s1[0]]} ${c.s1[2]} = ${r1}`,`${c.s2[1]} ${SYM[c.s2[0]]} ${c.s2[2]} = ${r2}`,`Risposta: ${r2} ${esc(c.u)}.`])+`<div class="row"><button class="btn" type="button" id="ns-new">Nuovo caso</button></div>`;
+  h+=`<div id="ns-fb"></div>`;$("#ns").innerHTML=h;
+  $$("[data-hq]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.hq===c.h){b.classList.add("right");L.ding();setTimeout(()=>{NS.step=2;renderNascosta()},600)}else{b.classList.add("wrong");b.disabled=true;miss("Domanda nascosta");$("#ns-fb").innerHTML=L.fb("bad","Questa non serve per risolvere il caso",["Che cosa devi sapere prima di poter rispondere?"])}}));
+  const ok=$("#ns-ok");if(ok)ok.addEventListener("click",()=>{const s=st===2?c.s1:c.s2,a=+$("#ns-a").value,b=+$("#ns-b").value,r=+$("#ns-r").value,okN=(a===s[1]&&b===s[2])||((s[0]==="add"||s[0]==="mul")&&a===s[2]&&b===s[1]),okR=okN&&r===calc(s[0],a,b);
+    $("#ns-a").className=$("#ns-b").className=okN?"good":"bad";$("#ns-r").className=okR?"good":"bad";
+    if(okN&&okR){L.ding();setTimeout(()=>{NS.step++;renderNascosta()},500);return}
+    miss(okN?"Calcolo":"Scrivere l'operazione");$("#ns-fb").innerHTML=L.fb("bad",okN?"Ricontrolla il calcolo":"Quali numeri servono qui?",[st===3?"Usa il risultato della prima operazione!":"Rileggi la domanda nascosta."])});
+  const ok4=$("#ns-ok4");if(ok4)ok4.addEventListener("click",()=>{if(+$("#ns-n").value===r2){NS.step=5;renderNascosta();win("nascosta",2,"Caso difficile risolto! Due stelle.")}else{miss("Scrivere la risposta");$("#ns-fb").innerHTML=L.fb("bad","Usa il risultato della seconda operazione",[])}});
+  const nw=$("#ns-new");if(nw)nw.addEventListener("click",()=>{NS=null;renderNascosta()});
+}
+
+/* ---------- 6. Inventa ---------- */
+const SCENE={add:["🍎","mele"],sub:["🎈","palloncini"],mul:["🍪","biscotti"],div:["🍬","caramelle"]};
+let IV=null;
+function renderInventa(){
+  if(!IV){const op=pick(OPS()),M=Math.min(MAX(),100);let a,b;if(op==="mul"){a=rnd(2,6);b=rnd(2,5)}else if(op==="div"){b=rnd(2,4);a=b*rnd(2,5)}else if(op==="sub"){a=rnd(6,15);b=rnd(1,a-2)}else{a=rnd(2,9);b=rnd(2,9)}IV={op,a,b}}
+  const {op,a,b}=IV,em=SCENE[op][0],ex=EX(),arch=ex.inv||[];
+  let scene=op==="mul"?Array.from({length:b},()=>em.repeat(a)).join(" ｜ "):op==="div"?em.repeat(a)+" ➜ "+"🧒".repeat(b):op==="sub"?em.repeat(a-b)+"<s style='opacity:.4'>"+em.repeat(b)+"</s>":em.repeat(a)+" ➕ "+em.repeat(b);
+  $("#iv").innerHTML=`<p class="lead">Guarda la scena e l'operazione. Inventa un caso: scrivi una storia con i dati e una domanda.</p>
+    <div class="scene" aria-hidden="true">${scene}</div><p style="text-align:center"><span class="opbig">${a} ${SYM[op]} ${b} = ${calc(op,a,b)}</span></p>
+    <div class="inv"><div class="starters">${["C'era una volta ","Nel cortile ","Al mercato ","In classe ","Quanti ","Quante "].map(s=>`<button type="button" data-st="${esc(s)}">${esc(s.trim())}…</button>`).join("")}</div>
+    <textarea id="iv-t" maxlength="400" aria-label="Il mio problema" placeholder="Scrivi qui il tuo caso. Ricorda: i numeri ${a} e ${b} e una domanda con il punto interrogativo.">${esc(ex.ivDraft||"")}</textarea></div>
+    <div class="row"><button class="btn" type="button" id="iv-ok">Ho finito il mio caso</button><button class="btn ghost" type="button" id="iv-new">Altra scena</button></div><div id="iv-fb"></div>
+    ${arch.length?`<p class="eyebrow" style="margin-top:14px">I miei casi inventati</p><ul class="arch">${arch.slice(-5).reverse().map(x=>`<li>${esc(x.t)}</li>`).join("")}</ul>`:""}`;
+  const ta=$("#iv-t");ta.addEventListener("input",()=>{EX().ivDraft=ta.value;L.save()});
+  $$("[data-st]",$("#iv")).forEach(b=>b.addEventListener("click",()=>{ta.value=(ta.value&&!/\s$/.test(ta.value)?ta.value+" ":ta.value)+b.dataset.st;ta.focus();EX().ivDraft=ta.value;L.save()}));
+  $("#iv-new").addEventListener("click",()=>{IV=null;renderInventa()});
+  $("#iv-ok").addEventListener("click",()=>{const t=ta.value.trim(),has=n=>new RegExp("(^|\\D)"+n+"(\\D|$)").test(t),q=/\?/.test(t);
+    const miss2=[!has(a)?`il numero ${a}`:"",!has(b)?`il numero ${b}`:"",!q?"la domanda con il punto interrogativo":""].filter(Boolean);
+    if(t.length<20||miss2.length){miss("Inventare il problema");$("#iv-fb").innerHTML=L.fb("bad","Manca ancora qualcosa",[miss2.length?"Nel tuo caso manca: "+miss2.join(", ")+".":"Scrivi una storia un po' più lunga."]);return}
+    const e=EX();e.inv=(e.inv||[]).concat([{t,op,at:Date.now()}]).slice(-10);e.ivDraft="";L.save();
+    $("#iv-fb").innerHTML=L.fb("good","Che bel caso!",["Leggilo a un compagno: riesce a risolverlo?"]);win("inventa",1,"Caso inventato! Una stella.");IV=null;setTimeout(()=>{if(!$("#iv-fb").closest("[hidden]"))renderInventa()},2600)});
+}
+
+/* ---------- giochi a carte ---------- */
+const BINS=()=>OPS().map(o=>({k:o,t:SYM[o]+" "+OPN[o].charAt(0).toUpperCase()+OPN[o].slice(1),c:{add:"#2E9E5B",sub:"#D2325F",mul:"#2F6FDE",div:"#F2862E"}[o]}));
+function buildSets(){
+  const ops=OPS();
+  const KW={add:["in tutto","aggiunge","ne arrivano ancora","complessivamente","altri ancora"],sub:["restano","rimangono","ne regala","quanti in più","quanti mancano"],mul:["in ogni scatola","ciascuno ne ha","il doppio","il triplo","per ogni fila"],div:["in parti uguali","la metà","distribuisce fra","a ciascuno tocca","in gruppi da"]};
+  const items=[];ops.forEach(o=>{KW[o].forEach(k=>items.push({i:"🔎",t:"«"+k+"»",a:o,w:`«${k}» fa pensare alla ${OPN[o]}.`}));for(let i=0;i<3;i++){const c=mk1(o);items.push({i:"📜",t:c.text+" "+c.q,a:o,w:`Si risolve con la ${OPN[o]}: ${c.a} ${SYM[o]} ${c.b} = ${c.ans}.`})}});
+  const dati=[];for(let i=0;i<5;i++){const c=mk1();dati.push({i:"📜",t:c.text+" "+c.q,a:"ok",w:"Ci sono tutti i dati e nessun numero inutile: si può risolvere."})}
+  for(let i=0;i<5;i++){const c=mk1(null,true);dati.push({i:"📜",t:c.text+" "+c.q,a:"inutile",w:`Il numero ${c.useless} non serve: è un dato inutile.`})}
+  for(let i=0;i<5;i++){const c=mk1();const t=c.text.replace(new RegExp("\\b"+c.n[pick([0,1])]+"\\b"),pick(["alcune","molti","un po' di","tante"]));dati.push({i:"📜",t:t+" "+c.q,a:"manca",w:"Manca un numero: non si può risolvere."})}
+  return {
+    indizi:{t:"Che operazione?",d:"Parole indizio e casi brevi",ask:"Quale operazione ti serve?",emo:"🧩",n:8,move:"+ braccia in alto, − accovacciati, × braccia incrociate, : braccia aperte!",bins:BINS(),items},
+    dati:{t:"Si può risolvere?",d:"Dati giusti, inutili o mancanti",ask:"Che cosa succede in questo caso?",emo:"⚖️",n:8,move:"Tutto giusto: pollice su! Dato inutile: scuoti la testa. Manca un dato: mani sulla fronte!",
+      bins:[{k:"ok",t:"Si risolve",c:"#2E9E5B",d:"tutti i dati che servono"},{k:"inutile",t:"C'è un dato inutile",c:"#F2862E",d:"un numero non serve"},{k:"manca",t:"Manca un dato",c:"#D2325F",d:"non si può risolvere"}],items:dati}
+  };
+}
+const SETS=buildSets();
+
+/* ---------- impostazioni (solo maestra) ---------- */
+function setUI(){
+  const ops=OPS(),M=MAX(),T=CQ.teacher&&CQ.teacher();
+  $("#t-ops").innerHTML=["add","sub","mul","div"].map(o=>`<button class="pillb" type="button" data-to="${o}" aria-pressed="${ops.includes(o)}">${SYM[o]} ${OPN[o]}</button>`).join("");
+  $("#t-max").innerHTML=[[100,"Entro il 100"],[1000,"Entro il 1000"],[9999,"Entro il 9999"]].map(m=>`<button class="pillb" type="button" data-tm="${m[0]}" aria-pressed="${M===m[0]}">${m[1]}</button>`).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-to],[data-tm]");if(!b||!(CQ.teacher&&CQ.teacher()))return;
+  if(b.dataset.to){const cur=OPS(),k=b.dataset.to,nv=cur.includes(k)?cur.filter(x=>x!==k):cur.concat([k]);if(!nv.length){$("#t-saved").textContent="Lascia almeno un'operazione.";return}CQ.saveSettings({probOps:nv})}
+  else CQ.saveSettings({probMax:+b.dataset.tm});
+  $("#t-saved").textContent="Salvato per tutta la classe.";setTimeout(()=>{setUI();Object.assign(SETS,buildSets());LG=RS=NS=IV=null},50)});
+let lastSig="";CQ.on&&CQ.on(()=>{const sig=JSON.stringify([OPS(),MAX()]);if(sig!==lastSig){lastSig=sig;try{setUI();Object.assign(SETS,buildSets());LG=RS=NS=IV=null}catch(e){}}});
+
+L.init({
+  key:"problemi-v1",col:"problemi",subj:"mat",src:"problemi",title:"Gli Investigatori dei Problemi",
+  tabs:["lezione","leggo","indizi","risolvo","nascosta","dati","inventa","valuta"],home:"leggo",sets:SETS,
+  badges:[
+    {id:"lince",n:"Occhio di lince",d:"Trova dati e domanda in 3 casi",ok:S=>((S.extra||{}).leggo||0)>=3},
+    {id:"fiuto",n:"Fiuto per le parole",d:"Almeno 7 su 8 in «Che operazione?»",ok:S=>(S.best.indizi||0)>=7},
+    {id:"risolutore",n:"Risolutore",d:"Risolvi 5 casi",ok:S=>((S.extra||{}).risolvo||0)>=5},
+    {id:"esperto",n:"Detective esperto",d:"Risolvi 3 casi con la domanda nascosta",ok:S=>((S.extra||{}).nascosta||0)>=3},
+    {id:"giudice",n:"Giudice dei dati",d:"Almeno 7 su 8 in «Si può risolvere?»",ok:S=>(S.best.dati||0)>=7},
+    {id:"inventore",n:"Inventore di casi",d:"Inventa 2 problemi",ok:S=>((S.extra||{}).inventa||0)>=2},
+    {id:"riflessivo",n:"Investigatore riflessivo",d:"Compila la scheda di autovalutazione",ok:S=>S.valuta.done}
+  ],
+  vq:["So leggere un problema e capire che cosa racconta.","So trovare i dati e la domanda.","So riconoscere un dato inutile o mancante.","So scegliere l'operazione giusta.","So trovare la domanda nascosta.","So scrivere la risposta completa.","So inventare un problema."],
+  likes:["Leggo e capisco","Parole indizio","Risolvo","Domanda nascosta","Dati utili e mancanti","Inventa il problema"],
+  imprevisti:[["Lettura a staffetta","Ogni bambino legge solo una parola del caso, poi passa al compagno."],["Investigatori muti","Per un minuto si indicano dati e domanda solo con il dito."],["Caso al contrario","Si parte dalla risposta: che domanda poteva esserci?"],["Doppia stella","Il prossimo caso risolto vale il doppio!"]],
+  onEnter:()=>{Object.assign(SETS,buildSets());LG=RS=NS=IV=null;setUI()},
+  onRoute:h=>{
+    if(h==="lezione")setUI();
+    if(h==="leggo")renderLeggo();
+    if(h==="indizi")L.sortChooser($("#sort-indizi"),["indizi"]);
+    if(h==="risolvo")renderRisolvo();
+    if(h==="nascosta")renderNascosta();
+    if(h==="dati")L.sortChooser($("#sort-dati"),["dati"]);
+    if(h==="inventa")renderInventa();
+  }
+});
+})();
+</script>
+<script src="land.js?v=1127o"></script>
+</body></html>

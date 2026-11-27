@@ -265,7 +265,7 @@ button,.btn,.tab,.pill,.opt,.chip,.gcard,.cmd,.tile,.pslot,.pdrag{-webkit-user-s
 .rtab tr.none td{color:var(--muted);font-style:italic}
 .rtab tfoot td{background:var(--sea-soft);border-bottom:0}
 </style>
-<link rel="stylesheet" href="cuccioli.css?v=1127n">
+<link rel="stylesheet" href="cuccioli.css?v=1127o">
 <style id="magia">
 /* ===== Tema "scuola di magia": cielo notturno, pergamena, oro ===== */
 :root:not(#_){
@@ -463,7 +463,7 @@ details.fold>.fbody{padding:14px 18px 18px}
 </div>
 <script src="config.js"></script>
 <script src="registro.js"></script>
-<script src="cuccioli.js?v=1127n"></script>
+<script src="cuccioli.js?v=1127o"></script>
 <script src="stagioni.js"></script>
 <script>
 (function(){
@@ -518,7 +518,7 @@ function skills(p){
   }).join("")+'</div>';
 }
 function logPanel(p){
-  var lg=(p.log||[]).slice(-8).reverse(),GN={mille:"Missione Mille",mondo:"Io nel mondo",calcolo:"Officina dei Calcoli",tabelline:"Arcipelago delle Tabelline",materia:"Detective della Materia",stati:"Danza delle Particelle",metodo:"Scienziati in 6 mosse",labirinto:"Nel labirinto dei quadri",suoni:"Suoni e Silenzi",cervello:"Palestra del Cervello",verifica:"Verifica: le migliaia",geometria:"Il Regno della Geometria",maestra:"dalla maestra"};
+  var lg=(p.log||[]).slice(-8).reverse(),GN={mille:"Missione Mille",mondo:"Io nel mondo",calcolo:"Officina dei Calcoli",tabelline:"Arcipelago delle Tabelline",materia:"Detective della Materia",stati:"Danza delle Particelle",metodo:"Scienziati in 6 mosse",labirinto:"Nel labirinto dei quadri",suoni:"Suoni e Silenzi",cervello:"Palestra del Cervello",verifica:"Verifica: le migliaia",geometria:"Il Regno della Geometria",problemi:"Gli Investigatori dei Problemi",maestra:"dalla maestra"};
   return '<div class="panel"><p class="sec">Ultime stelle</p>'+(lg.length?'<ul class="log">'+lg.map(function(l){var sd=C.subjOf(l.s);var at=l.a&&C.attOf(l.a),tm=l.m&&C.tById(l.m),dm=tm?'dalla '+C.tName(tm):'dalla maestra';if(at)return '<li><span>'+at.i+' '+esc(at.n)+' · '+esc(dm)+'</span><b>+'+(l.ap||l.p)+'</b></li>';return '<li><span>'+(sd?sd.n:"")+(l.g&&GN[l.g]?' · '+GN[l.g]:'')+'</span><b>+'+l.p+'</b></li>'}).join("")+'</ul>':'<p style="color:var(--muted)">Ancora nessuna stella. Gioca per cominciare!</p>')+'</div>';
 }
 
@@ -723,7 +723,7 @@ function attPeriod(k){
 }
 
 /* ---------- fogli dei risultati ---------- */
-var RES={loaded:false,alunni:{},mondo:{},calcolo:{},tabelline:{},materia:{},stati:{},metodo:{},labirinto:{},suoni:{},cervello:{},verifica:{},geometria:{}},RS={app:"accademia",key:"n",dir:1};
+var RES={loaded:false,alunni:{},mondo:{},calcolo:{},tabelline:{},materia:{},stati:{},metodo:{},labirinto:{},suoni:{},cervello:{},verifica:{},geometria:{},problemi:{}},RS={app:"accademia",key:"n",dir:1};
 var ERRL={riporto:"Dimentica il riporto",riportoprima:"Riporto prima di moltiplicare",inverso:"Inverte la sottrazione",cambio:"Dimentica il cambio",riportoscritto:"Scrive il riporto nel risultato",tabellina:"Tabelline",mancante:"Caselle vuote",quoziente:"Divisione: quante volte ci sta",calcolo:"Errori di calcolo",strategia:"Passaggi delle strategie",proprieta:"Proprietà"};
 var QM=["So costruire 1000 con 10 centinaia","So contare di 100 in 100, avanti e indietro","So scrivere 1000 in cifre e in lettere","Ho lavorato bene con la mia squadra"];
 var QW=["So dire in ordine i cerchi, da Io fino al pianeta","So distinguere la destra dalla sinistra","Ho collaborato con i miei compagni","Ho ascoltato quando parlava un compagno","Ho provato anche quando era difficile"];
@@ -747,10 +747,11 @@ function loadResults(){
       var cv=rd("palestra-cervello-v1:"+id);if(cv)RES.cervello[id]=cv;
       var vf=rd("verifica-migliaia-v1:"+id);if(vf)RES.verifica[id]=vf;
       var ge=rd("geometria-v1:"+id);if(ge)RES.geometria[id]=ge;
+      var pr=rd("problemi-v1:"+id);if(pr)RES.problemi[id]=pr;
     });return;
   }
   if(RES.loaded)return;RES.loaded=true;
-  ["alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello","verifica","geometria"].forEach(function(col){
+  ["alunni","mondo","calcolo","tabelline","materia","stati","metodo","labirinto","suoni","cervello","verifica","geometria","problemi"].forEach(function(col){
     C.db.collection(col).onSnapshot(function(snap){var m={};snap.docs.forEach(function(d){m[d.id]=d.data()});RES[col]=m;if(hash()==="risultati")render()},function(){RES.err=true;if(hash()==="risultati")render()});
   });
 }
@@ -803,6 +804,17 @@ function sheetDef(app){
       r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
       Q.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
     legend=Q;
+  }else if(app==="problemi"){
+    var QPR=["Capire il problema","Dati e domanda","Dati inutili o mancanti","Scegliere l'operazione","Domanda nascosta","Risposta completa","Inventare un problema"];
+    title="Gli Investigatori dei Problemi";
+    cols=[{k:"n",h:"Alunno"},{k:"stelle",h:"Stelle",num:1},{k:"leggo",h:"Dati e domanda trovati",num:1},{k:"b_indizi",h:"Che operazione? (su 8)",num:1},{k:"risolvo",h:"Casi risolti",num:1},{k:"nascosta",h:"Domande nascoste",num:1},{k:"b_dati",h:"Si può risolvere? (su 8)",num:1},{k:"inventa",h:"Problemi inventati",num:1},{k:"inv",h:"Ultimo problema inventato",wide:1},{k:"badge",h:"Badge",num:1},{k:"errs",h:"Più difficili",wide:1}]
+      .concat(QPR.map(function(q,i){return {k:"q"+(i+1),h:"Autoval. "+(i+1),num:1}})).concat([{k:"like",h:"Preferito"},{k:"last",h:"Ultimo accesso"}]);
+    rows=ids.map(function(id){var s=RES.problemi[id],r={n:P(id).n};if(!s){r._none=1;return r}var b=s.best||{},x=s.extra||{},va=(s.valuta||{}).a||{},e=s.err||{};
+      r.stelle=s.stars||0;r.leggo=x.leggo||0;r.b_indizi=b.indizi!=null?b.indizi:"";r.risolvo=x.risolvo||0;r.nascosta=x.nascosta||0;r.b_dati=b.dati!=null?b.dati:"";r.inventa=x.inventa||0;r.inv=((x.inv||[]).slice(-1)[0]||{}).t||"";
+      r.badge=Object.keys(s.badges||{}).filter(function(k){return s.badges[k]}).length;
+      r.errs=Object.keys(e).sort(function(a,b){return e[b]-e[a]}).slice(0,4).map(function(k){return k+" ("+e[k]+")"}).join(", ");
+      QPR.forEach(function(q,i){r["q"+(i+1)]=va["q"+(i+1)]||""});r.like=(s.valuta||{}).like||"";r.last=fmtDate(s.ts);r._t=s.ts||0;return r});
+    legend=QPR;
   }else if(app==="geometria"){
     var QGE=["Linee","Retta, semiretta, segmento","Parallele e perpendicolari","Angoli","Poligoni","Perimetro e area","Simmetria","Solidi"],GS={linee:"Che linea è?",chiuse:"Aperta o chiusa?",tratti:"Retta, semiretta, segmento",posizioni:"Posizioni delle rette",angoli:"Che angolo è?",poligono:"È un poligono?",nomi:"Nomi dei poligoni",sim:"È simmetrica?",solidi:"Che solido è?",rotola:"Rotola?"};
     title="Il Regno della Geometria";
@@ -934,7 +946,7 @@ function sortedRows(def){
 }
 function viewResults(){
   loadResults();
-  var myId=C.teacherId()||"t1",apps=[["accademia","Accademia"]].concat([["mille","Missione Mille"],["mondo","Io nel mondo"],["calcolo","Officina dei Calcoli"],["tabelline","Arcipelago delle Tabelline"],["materia","Detective della Materia"],["stati","Danza delle Particelle"],["metodo","Scienziati in 6 mosse"],["labirinto","Nel labirinto dei quadri"],["suoni","Suoni e Silenzi"],["cervello","La Palestra del Cervello"],["verifica","Verifica: le migliaia"],["geometria","Il Regno della Geometria"]].filter(function(a){return C.appOwner(a[0])===myId})).concat([["atteggiamenti","Atteggiamenti"]]);
+  var myId=C.teacherId()||"t1",apps=[["accademia","Accademia"]].concat([["mille","Missione Mille"],["mondo","Io nel mondo"],["calcolo","Officina dei Calcoli"],["tabelline","Arcipelago delle Tabelline"],["materia","Detective della Materia"],["stati","Danza delle Particelle"],["metodo","Scienziati in 6 mosse"],["labirinto","Nel labirinto dei quadri"],["suoni","Suoni e Silenzi"],["cervello","La Palestra del Cervello"],["verifica","Verifica: le migliaia"],["geometria","Il Regno della Geometria"],["problemi","Gli Investigatori dei Problemi"]].filter(function(a){return C.appOwner(a[0])===myId})).concat([["atteggiamenti","Atteggiamenti"]]);
   if(!apps.some(function(a){return a[0]===RS.app}))RS.app="accademia";
   var def=sheetDef(RS.app),rows=sortedRows(def),played=def.rows.filter(function(r){return !r._none});
   var h=tbar()+'<div class="panel"><h3>Fogli dei risultati</h3><p style="color:var(--muted);margin:6px 0 12px">Un foglio per ogni app. Si aggiorna da solo quando i bambini giocano. Tocca il titolo di una colonna per ordinare.</p>'+
@@ -1040,7 +1052,7 @@ async function bkRestoreFlow(payload){
 /* ---------- instradamento ---------- */
 function route(){
   var h=hash();
-  if(h==="gioca-mille"||h==="gioca-mondo"||h==="gioca-calcolo"||h==="gioca-tabelline"||h==="gioca-materia"||h==="gioca-stati"||h==="gioca-metodo"||h==="gioca-labirinto"||h==="gioca-suoni"||h==="gioca-cervello"||h==="gioca-verifica"||h==="gioca-geometria"){location.href=({"gioca-geometria":"geometria.html","gioca-mille":"mille.html","gioca-mondo":"mondo.html","gioca-calcolo":"calcolo.html","gioca-tabelline":"tabelline.html","gioca-materia":"materia.html","gioca-stati":"stati.html","gioca-metodo":"metodo.html","gioca-labirinto":"labirinto.html","gioca-suoni":"ritmo.html","gioca-cervello":"cervello.html","gioca-verifica":"verifica.html"})[h];return}
+  if(h==="gioca-mille"||h==="gioca-mondo"||h==="gioca-calcolo"||h==="gioca-tabelline"||h==="gioca-materia"||h==="gioca-stati"||h==="gioca-metodo"||h==="gioca-labirinto"||h==="gioca-suoni"||h==="gioca-cervello"||h==="gioca-verifica"||h==="gioca-geometria"||h==="gioca-problemi"){location.href=({"gioca-geometria":"geometria.html","gioca-problemi":"problemi.html","gioca-mille":"mille.html","gioca-mondo":"mondo.html","gioca-calcolo":"calcolo.html","gioca-tabelline":"tabelline.html","gioca-materia":"materia.html","gioca-stati":"stati.html","gioca-metodo":"metodo.html","gioca-labirinto":"labirinto.html","gioca-suoni":"ritmo.html","gioca-cervello":"cervello.html","gioca-verifica":"verifica.html"})[h];return}
   if(!C.loaded){app.innerHTML='<div class="empty"><h3>Sto caricando la classe</h3><p>Un attimo.</p></div>';return}
   var tz=h==="maestra"||h==="codici"||h==="risultati"||h==="backup"||h==="maestre"||h.indexOf("a-")===0||h.indexOf("am-")===0||h.indexOf("cm-")===0||h==="alunni";
   if(tz){
